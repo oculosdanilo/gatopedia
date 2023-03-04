@@ -1,0 +1,99 @@
+Form(
+                    key: _formKey,
+                    child: Column(children: [
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'O login não pode ser vazio';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              Icons.alternate_email_rounded,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(
+                                  width: 2,
+                                  color: ColorScheme.fromSeed(
+                                          seedColor: Color(0xff000080),
+                                          brightness: Brightness.dark)
+                                      .outline),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50)),
+                              borderSide: BorderSide(
+                                  width: 2,
+                                  color: ColorScheme.fromSeed(
+                                          seedColor: Color(0xff000080),
+                                          brightness: Brightness.dark)
+                                      .primary),
+                            ),
+                            label: Text("Login",
+                                style: TextStyle(fontFamily: "Jost"))),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(
+                                  width: 2,
+                                  color: ColorScheme.fromSeed(
+                                          seedColor: Color(0xff000080),
+                                          brightness: Brightness.dark)
+                                      .outline),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50)),
+                              borderSide: BorderSide(
+                                  width: 2,
+                                  color: ColorScheme.fromSeed(
+                                          seedColor: Color(0xff000080),
+                                          brightness: Brightness.dark)
+                                      .primary),
+                            ),
+                            label: Text("Senha",
+                                style: TextStyle(fontFamily: "Jost"))),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              onPressed: () {},
+                              child: Text(
+                                "Sair",
+                                style: TextStyle(fontSize: 18),
+                              )),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          FilledButton(
+                              onPressed: () {
+                                // Validate returns true if the form is valid, or false otherwise.
+                                if (_formKey.currentState!.validate()) {
+                                  // If the form is valid, display a snackbar. In the real world,
+                                  // you'd often call a server or save the information in a database.
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Processing Data')),
+                                  );
+                                }
+                              },
+                              child: Text(
+                                "Cadastrar",
+                                style: TextStyle(fontSize: 18),
+                              ))
+                        ],
+                      )
+                    ]),
+                  ),
