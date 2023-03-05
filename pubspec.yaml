@@ -13,6 +13,8 @@ dependencies:
   page_transition: ^2.0.9
   flutter_native_splash: ^2.2.18
   url_launcher: ^6.1.10
+  http: ^0.13.5
+  audioplayers: ^3.0.1
 
 dev_dependencies:
   flutter_test:

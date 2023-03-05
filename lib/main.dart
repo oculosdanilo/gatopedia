@@ -1,19 +1,32 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_const_constructors, duplicate_ignore
-
+// ignore_for_file: prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_const_constructors, duplicate_ignore, unused_import, use_build_context_synchronously, must_be_immutable
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-// ignore: unnecessary_import
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
+final blueScheme = ColorScheme.fromSeed(
+    seedColor: const Color(0xff000080), brightness: Brightness.dark);
 final Uri _urlFlutter = Uri.parse('https://flutter.dev');
 final Uri _urlMaterialYou = Uri.parse('https://m3.material.io');
+final Uri _urlEmailDanilo = Uri.parse('mailto:danilo.lima124@etec.sp.gov.br');
+final Uri _urlEmailLucca = Uri.parse('mailto:juliana.barros36@etec.sp.gov.br');
+final Uri _urlLogin = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/salvar.php');
+final Uri _urlLoginAuth = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/auth.php');
+String buttonText = "Cadastrar/Entrar";
+bool esconderSenha = true;
+Icon iconeOlho = Icon(Icons.visibility_rounded);
+String username = "";
 
 void main() {
-  final blueScheme = ColorScheme.fromSeed(
-      seedColor: const Color(0xff000080), brightness: Brightness.dark);
   runApp(MaterialApp(
     theme: ThemeData(
+      snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
       inputDecorationTheme: InputDecorationTheme(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -92,12 +105,40 @@ class LoginState extends State<FormApp> {
   final _formKey = GlobalKey<FormState>();
   final blueScheme = ColorScheme.fromSeed(
       seedColor: const Color(0xff000080), brightness: Brightness.dark);
+  final txtControllerLogin = TextEditingController();
+  final txtControllerSenha = TextEditingController();
+
+  @override
+  void dispose() {
+    txtControllerLogin.dispose();
+    super.dispose();
+  }
 
   int txtFieldLenght = 0;
   dynamic counterColor;
 
   mudarCor(cor) {
     counterColor = cor;
+  }
+
+  mudarTextoDoBotao() {
+    setState(() {
+      buttonText = "Entrar";
+    });
+  }
+
+  mostrarSenha() {
+    if (esconderSenha) {
+      setState(() {
+        esconderSenha = false;
+        iconeOlho = Icon(Icons.visibility_off_rounded);
+      });
+    } else {
+      setState(() {
+        esconderSenha = true;
+        iconeOlho = Icon(Icons.visibility_rounded);
+      });
+    }
   }
 
   @override
@@ -109,6 +150,7 @@ class LoginState extends State<FormApp> {
           SizedBox(
             width: 300,
             child: TextFormField(
+              controller: txtControllerLogin,
               onChanged: (value) {
                 setState(() {
                   txtFieldLenght = value.length;
@@ -174,9 +216,17 @@ class LoginState extends State<FormApp> {
           ),
           SizedBox(
             width: 300,
+            height: 57,
             child: TextFormField(
-              obscureText: true,
-              decoration: const InputDecoration(
+              controller: txtControllerSenha,
+              obscureText: esconderSenha,
+              decoration: InputDecoration(
+                  suffix: IconButton(
+                    onPressed: () {
+                      mostrarSenha();
+                    },
+                    icon: iconeOlho,
+                  ),
                   label: Text("Senha", style: TextStyle(fontFamily: "Jost"))),
             ),
           ),
@@ -199,18 +249,48 @@ class LoginState extends State<FormApp> {
                 width: 15,
               ),
               FilledButton(
-                onPressed: () {
+                onPressed: () async {
                   // Validate returns true if the form is valid, or false otherwise.
                   if (_formKey.currentState!.validate()) {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('hmmm')),
-                    );
+                    var map = <String, String>{};
+                    map['login'] = txtControllerLogin.text;
+                    map['senha'] = txtControllerSenha.text;
+
+                    final response = await http.post(_urlLogin, body: map);
+                    if (!response.body.contains("true")) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(response.body)),
+                      );
+                      txtControllerLogin.text = "";
+                      txtControllerSenha.text = "";
+                      mudarTextoDoBotao();
+                    } else {
+                      var mapAuth = <String, String>{};
+                      mapAuth['login'] = txtControllerLogin.text;
+                      final responseAuth =
+                          await http.post(_urlLoginAuth, body: mapAuth);
+                      if (jsonDecode(responseAuth.body)[0]["SENHA"] ==
+                          txtControllerSenha.text) {
+                        username = txtControllerLogin.text;
+                        Navigator.push(context, SlideRightRoute(GatoLista()));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                            "Senha incorreta/usuário já existe!",
+                            style:
+                                TextStyle(color: blueScheme.onErrorContainer),
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: blueScheme.errorContainer,
+                        ));
+                      }
+                    }
                   }
                 },
-                child: const Text(
-                  "Cadastrar",
+                child: Text(
+                  buttonText,
                   style: TextStyle(fontSize: 18),
                 ),
               ),
@@ -221,7 +301,7 @@ class LoginState extends State<FormApp> {
           ),
           OutlinedButton(
               onPressed: () {
-                Navigator.push(context, SlideRightRoute(const Colaboradores()));
+                Navigator.push(context, SlideUpRoute(const Colaboradores()));
               },
               child: const Text("COLABORADORES")),
         ],
@@ -233,6 +313,94 @@ class LoginState extends State<FormApp> {
 class SlideRightRoute extends PageRouteBuilder {
   final Widget page;
   SlideRightRoute(this.page)
+      : super(
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionDuration: const Duration(milliseconds: 800),
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.fastOutSlowIn,
+              reverseCurve: Curves.fastOutSlowIn,
+            )),
+            child: child,
+          ),
+        );
+}
+
+class GatoLista extends StatelessWidget {
+  GatoLista({super.key});
+  final audioPlayer = AudioPlayer();
+  bool isPlaying = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar.medium(
+            iconTheme: IconThemeData(color: blueScheme.onPrimary),
+            expandedHeight: 120,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                "@$username",
+                style: TextStyle(color: blueScheme.onPrimary),
+              ),
+              background: Container(
+                alignment: Alignment.centerRight,
+                margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.pets_rounded,
+                    color: Colors.white,
+                  ),
+                  iconSize: 100,
+                  onPressed: () async {
+                    if (!isPlaying) {
+                      await audioPlayer
+                          .play(AssetSource('meow.m4a'));
+                    }
+                  },
+                ),
+              ),
+            ),
+            backgroundColor: blueScheme.primary,
+          ),
+          SliverList(
+            delegate:
+                SliverChildBuilderDelegate((BuildContext context, int index) {
+              return Container(
+                color: index.isOdd
+                    ? blueScheme.surfaceVariant
+                    : blueScheme.surface,
+                height: 100,
+              );
+            }, childCount: 20),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SlideUpRoute extends PageRouteBuilder {
+  final Widget page;
+  SlideUpRoute(this.page)
       : super(
           reverseTransitionDuration: const Duration(milliseconds: 500),
           transitionDuration: const Duration(milliseconds: 800),
@@ -379,12 +547,108 @@ class ColaboradoresState extends State {
           backgroundColor: blueScheme.primary,
         ),
         SliverToBoxAdapter(
-          child: Card(
-            surfaceTintColor: blueScheme.onBackground,
-            margin: EdgeInsets.all(20),
-            child: Text("aiai"),
-          ),
-        )
+            child: Column(
+          children: [
+            Card(
+              surfaceTintColor: blueScheme.onBackground,
+              margin: EdgeInsets.all(20),
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image(
+                        image: AssetImage('lib/assets/danilo.jpg'),
+                        width: 130,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 17,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Danilo Lima",
+                          style: TextStyle(
+                              fontFamily: "Jost",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25),
+                        ),
+                        SizedBox(
+                          height: 17,
+                        ),
+                        Text(
+                          "• Design e programação",
+                          style: TextStyle(fontFamily: "Jost"),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              launchUrl(_urlEmailDanilo);
+                            },
+                            child: Text("Email"))
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Card(
+              surfaceTintColor: blueScheme.onBackground,
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image(
+                        image: AssetImage('lib/assets/lucca.png'),
+                        width: 130,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 17,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Juliana Leal \n(Lucca)",
+                          style: TextStyle(
+                              fontFamily: "Jost",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25),
+                        ),
+                        SizedBox(
+                          height: 17,
+                        ),
+                        Text(
+                          "• Idealização e pesquisas",
+                          style: TextStyle(fontFamily: "Jost"),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              launchUrl(_urlEmailLucca);
+                            },
+                            child: Text("Email"))
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ))
       ]),
     );
   }
