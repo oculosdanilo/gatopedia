@@ -1,6 +1,10 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_const_constructors, duplicate_ignore, unused_import, use_build_context_synchronously, must_be_immutable
+import 'dart:ffi';
 import 'dart:io';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:another_flushbar/flushbar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/gestures.dart';
@@ -25,6 +29,8 @@ final Uri _urlLoginAuth = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/auth.php');
 final Uri _urlGatoList = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/listar.php');
+String urlMeow =
+    "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
 String buttonText = "Cadastrar/Entrar";
 bool esconderSenha = true;
 Icon iconeOlho = Icon(Icons.visibility_rounded);
@@ -62,10 +68,28 @@ void main() async {
   ));
 }
 
-class Gatopedia extends StatelessWidget {
-  Gatopedia({super.key});
-  final blueScheme = ColorScheme.fromSeed(
-      seedColor: const Color(0xff000080), brightness: Brightness.dark);
+class Gatopedia extends StatefulWidget {
+  const Gatopedia({super.key});
+
+  @override
+  GatopediaState createState() {
+    return GatopediaState();
+  }
+}
+
+class GatopediaState extends State {
+  final miau = AudioPlayer();
+
+  @override
+  void initState() {
+    super.initState();
+    _play();
+  }
+
+  void _play() async {
+    await miau.dynamicSet(url: urlMeow);
+    miau.play();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,12 +103,18 @@ class Gatopedia extends StatelessWidget {
                 image: AssetImage('lib/assets/icon.png'),
                 width: 270,
               ),
-              Text(
-                'Gatopédia!',
-                style: TextStyle(
-                    fontSize: 35,
-                    fontFamily: "Jost",
-                    fontWeight: FontWeight.bold),
+              AnimatedTextKit(
+                animatedTexts: [
+                  TyperAnimatedText(
+                    'Gatopédia!',
+                    textStyle: TextStyle(
+                        fontSize: 35,
+                        fontFamily: "Jost",
+                        fontWeight: FontWeight.bold),
+                    speed: Duration(milliseconds: 70),
+                  ),
+                ],
+                totalRepeatCount: 1,
               ),
               const SizedBox(
                 height: 60,
@@ -150,7 +180,9 @@ class LoginState extends State<FormApp> {
       String text = await file.readAsString();
       txtControllerLogin.text = text;
     } catch (e) {
-      print("Couldn't read file");
+      if (kDebugMode) {
+        print("Couldn't read file");
+      }
     }
   }
 
@@ -167,7 +199,9 @@ class LoginState extends State<FormApp> {
       final file = File('${directory.path}/my_file.txt');
       final text = username;
       await file.writeAsString(text);
-      print('saved');
+      if (kDebugMode) {
+        print('saved');
+      }
     }
 
     return Form(
@@ -197,7 +231,7 @@ class LoginState extends State<FormApp> {
                   return 'Obrigatório';
                 } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
                   return 'Caractere(s) inválido(s)!';
-                } else if (value.length <= 4) {
+                } else if (value.length <= 3) {
                   return "Nome muito pequeno!";
                 } else if (value.contains(RegExp(r'^[0-9]+$'))) {
                   return "só números? sério?";
@@ -285,11 +319,21 @@ class LoginState extends State<FormApp> {
                     map['login'] = txtControllerLogin.text;
                     map['senha'] = txtControllerSenha.text;
 
+                    Flushbar(
+                      message: "Conectando...",
+                      duration: Duration(seconds: 2),
+                      margin: EdgeInsets.all(20),
+                      borderRadius: BorderRadius.circular(50),
+                    ).show(context);
                     final response = await http.post(_urlLogin, body: map);
                     if (!response.body.contains("true")) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(response.body)),
-                      );
+                      Flushbar(
+                        message: response.body,
+                        duration: Duration(seconds: 2),
+                        margin: EdgeInsets.all(20),
+                        flushbarStyle: FlushbarStyle.FLOATING,
+                        borderRadius: BorderRadius.circular(50),
+                      ).show(context);
                       txtControllerLogin.text = "";
                       txtControllerSenha.text = "";
                       mudarTextoDoBotao();
@@ -306,15 +350,29 @@ class LoginState extends State<FormApp> {
                         save();
                         Navigator.push(context, SlideRightRoute(GatoLista()));
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                            "Senha incorreta/usuário já existe!",
-                            style:
-                                TextStyle(color: blueScheme.onErrorContainer),
+                        Flushbar(
+                          flushbarStyle: FlushbarStyle.FLOATING,
+                          margin: EdgeInsets.all(20),
+                          messageText: Row(
+                            children: [
+                              Icon(
+                                Icons.error_rounded,
+                                color: blueScheme.onErrorContainer,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "Senha incorreta: usuário já existe!",
+                                style: TextStyle(
+                                    color: blueScheme.onErrorContainer),
+                              ),
+                            ],
                           ),
-                          behavior: SnackBarBehavior.floating,
+                          duration: Duration(seconds: 5),
+                          borderRadius: BorderRadius.circular(50),
                           backgroundColor: blueScheme.errorContainer,
-                        ));
+                        ).show(context);
                       }
                     }
                   }
@@ -372,9 +430,6 @@ class SlideRightRoute extends PageRouteBuilder {
         );
 }
 
-String urlMeow =
-    "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
-
 class GatoLista extends StatefulWidget {
   const GatoLista({super.key});
 
@@ -389,7 +444,7 @@ class GatoListaState extends State {
   bool isPlaying = false;
 
   void _play() async {
-    await audioPlayer.dynamicSet(url: urlMeow);
+    await audioPlayer.dynamicSet(url: urlMeow, preload: true);
     audioPlayer.play();
   }
 
