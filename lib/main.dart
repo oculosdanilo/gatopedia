@@ -1,9 +1,14 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_const_constructors, duplicate_ignore, unused_import, use_build_context_synchronously, must_be_immutable
-import 'package:audioplayers/audioplayers.dart';
+import 'dart:io';
+
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -18,12 +23,16 @@ final Uri _urlLogin = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/salvar.php');
 final Uri _urlLoginAuth = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/auth.php');
+final Uri _urlGatoList = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/listar.php');
 String buttonText = "Cadastrar/Entrar";
 bool esconderSenha = true;
 Icon iconeOlho = Icon(Icons.visibility_rounded);
 String username = "";
+dynamic gatoLista = "";
+int indexClicado = 0;
 
-void main() {
+void main() async {
   runApp(MaterialApp(
     theme: ThemeData(
       snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
@@ -103,16 +112,9 @@ class FormApp extends StatefulWidget {
 
 class LoginState extends State<FormApp> {
   final _formKey = GlobalKey<FormState>();
-  final blueScheme = ColorScheme.fromSeed(
-      seedColor: const Color(0xff000080), brightness: Brightness.dark);
   final txtControllerLogin = TextEditingController();
   final txtControllerSenha = TextEditingController();
-
-  @override
-  void dispose() {
-    txtControllerLogin.dispose();
-    super.dispose();
-  }
+  String usernameDoDB = "";
 
   int txtFieldLenght = 0;
   dynamic counterColor;
@@ -141,8 +143,33 @@ class LoginState extends State<FormApp> {
     }
   }
 
+  _read() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/my_file.txt');
+      String text = await file.readAsString();
+      txtControllerLogin.text = text;
+    } catch (e) {
+      print("Couldn't read file");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _read();
+  }
+
   @override
   Widget build(BuildContext context) {
+    save() async {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/my_file.txt');
+      final text = username;
+      await file.writeAsString(text);
+      print('saved');
+    }
+
     return Form(
       key: _formKey,
       child: Column(
@@ -216,7 +243,7 @@ class LoginState extends State<FormApp> {
           ),
           SizedBox(
             width: 300,
-            height: 57,
+            height: 60,
             child: TextFormField(
               controller: txtControllerSenha,
               obscureText: esconderSenha,
@@ -274,6 +301,9 @@ class LoginState extends State<FormApp> {
                       if (jsonDecode(responseAuth.body)[0]["SENHA"] ==
                           txtControllerSenha.text) {
                         username = txtControllerLogin.text;
+                        final responseList = await http.post(_urlGatoList);
+                        gatoLista = jsonDecode(responseList.body);
+                        save();
                         Navigator.push(context, SlideRightRoute(GatoLista()));
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -342,10 +372,26 @@ class SlideRightRoute extends PageRouteBuilder {
         );
 }
 
-class GatoLista extends StatelessWidget {
-  GatoLista({super.key});
+String urlMeow =
+    "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
+
+class GatoLista extends StatefulWidget {
+  const GatoLista({super.key});
+
+  @override
+  GatoListaState createState() {
+    return GatoListaState();
+  }
+}
+
+class GatoListaState extends State {
   final audioPlayer = AudioPlayer();
   bool isPlaying = false;
+
+  void _play() async {
+    await audioPlayer.dynamicSet(url: urlMeow);
+    audioPlayer.play();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -359,7 +405,8 @@ class GatoLista extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 "@$username",
-                style: TextStyle(color: blueScheme.onPrimary),
+                style:
+                    TextStyle(color: blueScheme.onPrimary, fontFamily: "Jost"),
               ),
               background: Container(
                 alignment: Alignment.centerRight,
@@ -372,8 +419,7 @@ class GatoLista extends StatelessWidget {
                   iconSize: 100,
                   onPressed: () async {
                     if (!isPlaying) {
-                      await audioPlayer
-                          .play(AssetSource('meow.m4a'));
+                      _play();
                     }
                   },
                 ),
@@ -384,13 +430,129 @@ class GatoLista extends StatelessWidget {
           SliverList(
             delegate:
                 SliverChildBuilderDelegate((BuildContext context, int index) {
-              return Container(
-                color: index.isOdd
-                    ? blueScheme.surfaceVariant
-                    : blueScheme.surface,
-                height: 100,
+              return SizedBox(
+                height: 170,
+                child: Card(
+                  margin: EdgeInsets.fromLTRB(15, 10, 15, 5),
+                  child: InkWell(
+                    onTap: () {
+                      indexClicado = index;
+                      Navigator.push(context, SlideRightAgainRoute(GatoInfo()));
+                    },
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: FadeInImage(
+                                  placeholder:
+                                      AssetImage('lib/assets/loading.gif'),
+                                  image: NetworkImage(gatoLista[index]["IMG"]),
+                                  fadeInDuration: Duration(milliseconds: 300),
+                                  fadeOutDuration: Duration(milliseconds: 300),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              SizedBox(
+                                width: 250,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      gatoLista[index]["NOME"],
+                                      style: TextStyle(
+                                          fontFamily: "Jost",
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 25),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      gatoLista[index]["RESUMO"],
+                                      style: TextStyle(
+                                          fontFamily: "Jost", fontSize: 17),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               );
-            }, childCount: 20),
+            }, childCount: 10),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SlideRightAgainRoute extends PageRouteBuilder {
+  final Widget page;
+  SlideRightAgainRoute(this.page)
+      : super(
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.fastOutSlowIn,
+              reverseCurve: Curves.fastOutSlowIn,
+            )),
+            child: child,
+          ),
+        );
+}
+
+class GatoInfo extends StatelessWidget {
+  const GatoInfo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar.medium(
+            iconTheme: IconThemeData(color: blueScheme.onPrimary),
+            expandedHeight: 120,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                gatoLista[indexClicado]["NOME"],
+                style:
+                    TextStyle(color: blueScheme.onPrimary, fontFamily: "Jost"),
+              ),
+            ),
+            backgroundColor: blueScheme.primary,
           )
         ],
       ),
