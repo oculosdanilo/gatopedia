@@ -22,12 +22,12 @@ final Uri _urlFlutter = Uri.parse('https://flutter.dev');
 final Uri _urlMaterialYou = Uri.parse('https://m3.material.io');
 final Uri _urlEmailDanilo = Uri.parse('mailto:danilo.lima124@etec.sp.gov.br');
 final Uri _urlEmailLucca = Uri.parse('mailto:juliana.barros36@etec.sp.gov.br');
-final Uri _urlLogin = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/salvar.php');
-final Uri _urlLoginAuth = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/auth.php');
-final Uri _urlGatoList = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/listar.php');
+final Uri _urlLogin =
+    Uri.parse('https://etec199-danilolima.epizy.com/2022/1103/salvar.php');
+final Uri _urlLoginAuth =
+    Uri.parse('https://etec199-danilolima.epizy.com/2022/1103/auth.php');
+final Uri _urlGatoList =
+    Uri.parse('https://etec199-danilolima.epizy.com/2022/1103/listar.php');
 String urlMeow =
     "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
 String buttonText = "Cadastrar/Entrar";
