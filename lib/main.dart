@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_const_constructors, duplicate_ignore, unused_import, use_build_context_synchronously, must_be_immutable
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -241,35 +240,36 @@ class LoginState extends State<FormApp> {
                 return null;
               },
               decoration: InputDecoration(
-                  prefixIconColor: MaterialStateColor.resolveWith(
-                      (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.error)) {
-                      return blueScheme.error;
-                    }
-                    if (states.contains(MaterialState.focused)) {
-                      return blueScheme.primary;
-                    }
-                    return blueScheme.outline;
-                  }),
-                  counter: SizedBox(
-                    width: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text("$txtFieldLenght",
-                            style: TextStyle(color: counterColor)),
-                        Text(
-                          "/25",
-                          style: TextStyle(color: blueScheme.outline),
-                        )
-                      ],
-                    ),
+                prefixIconColor:
+                    MaterialStateColor.resolveWith((Set<MaterialState> states) {
+                  if (states.contains(MaterialState.error)) {
+                    return blueScheme.error;
+                  }
+                  if (states.contains(MaterialState.focused)) {
+                    return blueScheme.primary;
+                  }
+                  return blueScheme.outline;
+                }),
+                counter: SizedBox(
+                  width: 50,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text("$txtFieldLenght",
+                          style: TextStyle(color: counterColor)),
+                      Text(
+                        "/25",
+                        style: TextStyle(color: blueScheme.outline),
+                      )
+                    ],
                   ),
-                  prefixIcon: const Icon(
-                    Icons.alternate_email_rounded,
-                  ),
-                  label: const Text("Login",
-                      style: TextStyle(fontFamily: "Jost"))),
+                ),
+                prefixIcon: const Icon(
+                  Icons.alternate_email_rounded,
+                ),
+                label:
+                    const Text("Login", style: TextStyle(fontFamily: "Jost")),
+              ),
             ),
           ),
           const SizedBox(
@@ -277,11 +277,14 @@ class LoginState extends State<FormApp> {
           ),
           SizedBox(
             width: 300,
-            height: 60,
+            height: 65,
             child: TextFormField(
               controller: txtControllerSenha,
               obscureText: esconderSenha,
               decoration: InputDecoration(
+                  prefix: SizedBox(
+                    width: 10,
+                  ),
                   suffix: IconButton(
                     onPressed: () {
                       mostrarSenha();
@@ -713,15 +716,9 @@ class ColaboradoresState extends State {
                                       TextSpan(
                                           text: "Flutter",
                                           style: TextStyle(
-                                              color: blueScheme.primary),
-                                          children: [
-                                            WidgetSpan(
-                                              child: Icon(
-                                                Icons.open_in_new_rounded,
-                                                color: blueScheme.primary,
-                                              ),
-                                            )
-                                          ],
+                                              color: blueScheme.primary,
+                                              decoration:
+                                                  TextDecoration.underline),
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = () {
                                               _launchUrl(_urlFlutter);
@@ -730,15 +727,9 @@ class ColaboradoresState extends State {
                                       TextSpan(
                                           text: "Material You",
                                           style: TextStyle(
-                                              color: blueScheme.primary),
-                                          children: [
-                                            WidgetSpan(
-                                              child: Icon(
-                                                Icons.open_in_new_rounded,
-                                                color: blueScheme.primary,
-                                              ),
-                                            )
-                                          ],
+                                              color: blueScheme.primary,
+                                              decoration:
+                                                  TextDecoration.underline),
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = () {
                                               _launchUrl(_urlMaterialYou);
@@ -770,7 +761,7 @@ class ColaboradoresState extends State {
               surfaceTintColor: blueScheme.onBackground,
               margin: EdgeInsets.all(20),
               child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.fromLTRB(20, 20, 10, 20),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -804,11 +795,21 @@ class ColaboradoresState extends State {
                         SizedBox(
                           height: 10,
                         ),
-                        ElevatedButton(
-                            onPressed: () {
-                              launchUrl(_urlEmailDanilo);
-                            },
-                            child: Text("Email"))
+                        RichText(
+                          text: WidgetSpan(
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              child: Text(
+                                "danilo.lima124@etec.sp.gov.br",
+                                style: TextStyle(
+                                  color: blueScheme.primary,
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ],
