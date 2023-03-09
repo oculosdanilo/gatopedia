@@ -22,12 +22,14 @@ final Uri _urlFlutter = Uri.parse('https://flutter.dev');
 final Uri _urlMaterialYou = Uri.parse('https://m3.material.io');
 final Uri _urlEmailDanilo = Uri.parse('mailto:danilo.lima124@etec.sp.gov.br');
 final Uri _urlEmailLucca = Uri.parse('mailto:juliana.barros36@etec.sp.gov.br');
-final Uri _urlLogin =
-    Uri.parse('https://etec199-danilolima.epizy.com/2022/1103/salvar.php');
-final Uri _urlLoginAuth =
-    Uri.parse('https://etec199-danilolima.epizy.com/2022/1103/auth.php');
-final Uri _urlGatoList =
-    Uri.parse('https://etec199-danilolima.epizy.com/2022/1103/listar.php');
+final Uri _urlLogin = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/salvar.php');
+final Uri _urlLoginAuth = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/auth.php');
+final Uri _urlGatoList = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/listar.php');
+final Uri _urlCList = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php');
 String urlMeow =
     "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
 String buttonText = "Cadastrar/Entrar";
@@ -176,8 +178,9 @@ class LoginState extends State<FormApp> {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/my_file.txt');
+      // ignore: unused_local_variable
       String text = await file.readAsString();
-      txtControllerLogin.text = text;
+      mudarTextoDoBotao();
     } catch (e) {
       if (kDebugMode) {
         print("Couldn't read file");
@@ -205,197 +208,204 @@ class LoginState extends State<FormApp> {
 
     return Form(
       key: _formKey,
-      child: Column(
-        children: [
-          SizedBox(
-            width: 300,
-            child: TextFormField(
-              controller: txtControllerLogin,
-              onChanged: (value) {
-                setState(() {
-                  txtFieldLenght = value.length;
-                  if (value.length <= 4 || value.length > 25) {
-                    mudarCor(blueScheme.error);
-                  } else {
-                    mudarCor(blueScheme.primary);
-                  }
-                });
-                if (_formKey.currentState!.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
-                }
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Obrigatório';
-                } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
-                  return 'Caractere(s) inválido(s)!';
-                } else if (value.length <= 3) {
-                  return "Nome muito pequeno!";
-                } else if (value.contains(RegExp(r'^[0-9]+$'))) {
-                  return "só números? sério?";
-                } else if (value.length > 25) {
-                  return "Nome de usuário muito grande!";
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                prefixIconColor:
-                    MaterialStateColor.resolveWith((Set<MaterialState> states) {
-                  if (states.contains(MaterialState.error)) {
-                    return blueScheme.error;
-                  }
-                  if (states.contains(MaterialState.focused)) {
-                    return blueScheme.primary;
-                  }
-                  return blueScheme.outline;
-                }),
-                counter: SizedBox(
-                  width: 50,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text("$txtFieldLenght",
-                          style: TextStyle(color: counterColor)),
-                      Text(
-                        "/25",
-                        style: TextStyle(color: blueScheme.outline),
-                      )
-                    ],
-                  ),
-                ),
-                prefixIcon: const Icon(
-                  Icons.alternate_email_rounded,
-                ),
-                label:
-                    const Text("Login", style: TextStyle(fontFamily: "Jost")),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: 300,
-            height: 65,
-            child: TextFormField(
-              controller: txtControllerSenha,
-              obscureText: esconderSenha,
-              decoration: InputDecoration(
-                  prefix: SizedBox(
-                    width: 10,
-                  ),
-                  suffix: IconButton(
-                    onPressed: () {
-                      mostrarSenha();
-                    },
-                    icon: iconeOlho,
-                  ),
-                  label: Text("Senha", style: TextStyle(fontFamily: "Jost"))),
-            ),
-          ),
-          const SizedBox(
-            height: 27,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  SystemNavigator.pop();
-                },
-                child: const Text(
-                  "Sair",
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-              const SizedBox(
-                width: 15,
-              ),
-              FilledButton(
-                onPressed: () async {
-                  // Validate returns true if the form is valid, or false otherwise.
+      child: AutofillGroup(
+        child: Column(
+          children: [
+            SizedBox(
+              width: 300,
+              child: TextFormField(
+                autofillHints: [AutofillHints.username],
+                controller: txtControllerLogin,
+                onChanged: (value) {
+                  setState(() {
+                    txtFieldLenght = value.length;
+                    if (value.length <= 3 || value.length > 25) {
+                      mudarCor(blueScheme.error);
+                    } else {
+                      mudarCor(blueScheme.primary);
+                    }
+                  });
                   if (_formKey.currentState!.validate()) {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
-                    var map = <String, String>{};
-                    map['login'] = txtControllerLogin.text;
-                    map['senha'] = txtControllerSenha.text;
-
-                    Flushbar(
-                      message: "Conectando...",
-                      duration: Duration(seconds: 2),
-                      margin: EdgeInsets.all(20),
-                      borderRadius: BorderRadius.circular(50),
-                    ).show(context);
-                    final response = await http.post(_urlLogin, body: map);
-                    if (!response.body.contains("true")) {
-                      Flushbar(
-                        message: response.body,
-                        duration: Duration(seconds: 2),
-                        margin: EdgeInsets.all(20),
-                        flushbarStyle: FlushbarStyle.FLOATING,
-                        borderRadius: BorderRadius.circular(50),
-                      ).show(context);
-                      txtControllerLogin.text = "";
-                      txtControllerSenha.text = "";
-                      mudarTextoDoBotao();
-                    } else {
-                      var mapAuth = <String, String>{};
-                      mapAuth['login'] = txtControllerLogin.text;
-                      final responseAuth =
-                          await http.post(_urlLoginAuth, body: mapAuth);
-                      if (jsonDecode(responseAuth.body)[0]["SENHA"] ==
-                          txtControllerSenha.text) {
-                        username = txtControllerLogin.text;
-                        final responseList = await http.post(_urlGatoList);
-                        gatoLista = jsonDecode(responseList.body);
-                        save();
-                        Navigator.push(context, SlideRightRoute(GatoLista()));
-                      } else {
-                        Flushbar(
-                          flushbarStyle: FlushbarStyle.FLOATING,
-                          margin: EdgeInsets.all(20),
-                          messageText: Row(
-                            children: [
-                              Icon(
-                                Icons.error_rounded,
-                                color: blueScheme.onErrorContainer,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                "Senha incorreta: usuário já existe!",
-                                style: TextStyle(
-                                    color: blueScheme.onErrorContainer),
-                              ),
-                            ],
-                          ),
-                          duration: Duration(seconds: 5),
-                          borderRadius: BorderRadius.circular(50),
-                          backgroundColor: blueScheme.errorContainer,
-                        ).show(context);
-                      }
-                    }
                   }
                 },
-                child: Text(
-                  buttonText,
-                  style: TextStyle(fontSize: 18),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Obrigatório';
+                  } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
+                    return 'Caractere(s) inválido(s)!';
+                  } else if (value.length <= 3) {
+                    return "Nome muito pequeno!";
+                  } else if (value.contains(RegExp(r'^[0-9]+$'))) {
+                    return "só números? sério?";
+                  } else if (value.length > 25) {
+                    return "Nome de usuário muito grande!";
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  prefixIconColor: MaterialStateColor.resolveWith(
+                      (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.error)) {
+                      return blueScheme.error;
+                    }
+                    if (states.contains(MaterialState.focused)) {
+                      return blueScheme.primary;
+                    }
+                    return blueScheme.outline;
+                  }),
+                  counter: SizedBox(
+                    width: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text("$txtFieldLenght",
+                            style: TextStyle(color: counterColor)),
+                        Text(
+                          "/25",
+                          style: TextStyle(color: blueScheme.outline),
+                        )
+                      ],
+                    ),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.alternate_email_rounded,
+                  ),
+                  label:
+                      const Text("Login", style: TextStyle(fontFamily: "Jost")),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          OutlinedButton(
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            SizedBox(
+              width: 300,
+              height: 65,
+              child: TextFormField(
+                autofillHints: [AutofillHints.password],
+                controller: txtControllerSenha,
+                obscureText: esconderSenha,
+                decoration: InputDecoration(
+                    prefix: SizedBox(
+                      width: 10,
+                    ),
+                    suffix: IconButton(
+                      onPressed: () {
+                        mostrarSenha();
+                      },
+                      icon: iconeOlho,
+                    ),
+                    label: Text("Senha", style: TextStyle(fontFamily: "Jost"))),
+              ),
+            ),
+            const SizedBox(
+              height: 27,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    SystemNavigator.pop();
+                  },
+                  child: const Text(
+                    "Sair",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                FilledButton(
+                  onPressed: () async {
+                    // Validate returns true if the form is valid, or false otherwise.
+                    if (_formKey.currentState!.validate()) {
+                      TextInput.finishAutofillContext();
+                      // If the form is valid, display a snackbar. In the real world,
+                      // you'd often call a server or save the information in a database.
+                      var map = <String, String>{};
+                      map['login'] = txtControllerLogin.text;
+                      map['senha'] = txtControllerSenha.text;
+
+                      Flushbar(
+                        message: "Conectando...",
+                        duration: Duration(seconds: 2),
+                        margin: EdgeInsets.all(20),
+                        borderRadius: BorderRadius.circular(50),
+                      ).show(context);
+                      final response = await http.post(_urlLogin, body: map);
+                      if (!response.body.contains("true")) {
+                        Flushbar(
+                          message: response.body,
+                          duration: Duration(seconds: 2),
+                          margin: EdgeInsets.all(20),
+                          flushbarStyle: FlushbarStyle.FLOATING,
+                          borderRadius: BorderRadius.circular(50),
+                        ).show(context);
+                        txtControllerLogin.text = "";
+                        txtControllerSenha.text = "";
+                        mudarTextoDoBotao();
+                      } else {
+                        var mapAuth = <String, String>{};
+                        mapAuth['login'] = txtControllerLogin.text;
+                        final responseAuth =
+                            await http.post(_urlLoginAuth, body: mapAuth);
+                        if (jsonDecode(responseAuth.body)[0]["SENHA"] ==
+                            txtControllerSenha.text) {
+                          username = txtControllerLogin.text;
+                          final responseList = await http.post(_urlGatoList);
+                          gatoLista = jsonDecode(responseList.body);
+                          save();
+                          Navigator.push(context, SlideRightRoute(GatoLista()));
+                        } else {
+                          Flushbar(
+                            flushbarStyle: FlushbarStyle.FLOATING,
+                            margin: EdgeInsets.all(20),
+                            messageText: Row(
+                              children: [
+                                Icon(
+                                  Icons.error_rounded,
+                                  color: blueScheme.onErrorContainer,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  "Senha incorreta: usuário já existe!",
+                                  style: TextStyle(
+                                      color: blueScheme.onErrorContainer),
+                                ),
+                              ],
+                            ),
+                            duration: Duration(seconds: 5),
+                            borderRadius: BorderRadius.circular(50),
+                            backgroundColor: blueScheme.errorContainer,
+                          ).show(context);
+                        }
+                      }
+                    }
+                  },
+                  child: Text(
+                    buttonText,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            OutlinedButton.icon(
               onPressed: () {
                 Navigator.push(context, SlideUpRoute(const Colaboradores()));
               },
-              child: const Text("COLABORADORES")),
-        ],
+              label: const Text("COLABORADORES"),
+              icon: Icon(Icons.people_alt_rounded),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -489,7 +499,7 @@ class GatoListaState extends State {
             delegate:
                 SliverChildBuilderDelegate((BuildContext context, int index) {
               return SizedBox(
-                height: 170,
+                height: 140,
                 child: Card(
                   margin: EdgeInsets.fromLTRB(15, 10, 15, 5),
                   child: InkWell(
@@ -500,7 +510,7 @@ class GatoListaState extends State {
                     child: Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.all(20),
+                          padding: EdgeInsets.all(10),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -518,12 +528,12 @@ class GatoListaState extends State {
                                 width: 15,
                               ),
                               SizedBox(
-                                width: 250,
+                                width: 200,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
-                                      height: 20,
+                                      height: 10,
                                     ),
                                     Text(
                                       gatoLista[index]["NOME"],
@@ -531,6 +541,7 @@ class GatoListaState extends State {
                                           fontFamily: "Jost",
                                           fontWeight: FontWeight.bold,
                                           fontSize: 25),
+                                      softWrap: true,
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -538,7 +549,9 @@ class GatoListaState extends State {
                                     Text(
                                       gatoLista[index]["RESUMO"],
                                       style: TextStyle(
-                                          fontFamily: "Jost", fontSize: 17),
+                                          fontFamily: "Jost", fontSize: 15),
+                                      softWrap: true,
+                                      maxLines: 2,
                                     )
                                   ],
                                 ),
@@ -599,19 +612,90 @@ class GatoInfo extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar.medium(
-            iconTheme: IconThemeData(color: blueScheme.onPrimary),
-            expandedHeight: 120,
+          SliverAppBar.large(
+            iconTheme: IconThemeData(color: Colors.white, shadows: [
+              Shadow(
+                color: Colors.black,
+                blurRadius: 1,
+              )
+            ]),
+            expandedHeight: 360,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
+              stretchModes: [
+                StretchMode.blurBackground,
+                StretchMode.fadeTitle,
+                StretchMode.zoomBackground
+              ],
               title: Text(
                 gatoLista[indexClicado]["NOME"],
-                style:
-                    TextStyle(color: blueScheme.onPrimary, fontFamily: "Jost"),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "Jost",
+                ),
+              ),
+              centerTitle: true,
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image(
+                    image: NetworkImage(gatoLista[indexClicado]["IMG"]),
+                    fit: BoxFit.cover,
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment(0.0, 0.5),
+                        end: Alignment.center,
+                        colors: <Color>[
+                          Color(0x60000000),
+                          Color(0x00000000),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             backgroundColor: blueScheme.primary,
-          )
+          ),
+          SliverToBoxAdapter(
+              child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  gatoLista[indexClicado]["RESUMO"],
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 27,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  gatoLista[indexClicado]["DESC"],
+                  style: TextStyle(
+                    fontFamily: "Jost",
+                    fontSize: 20,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Text(
+                  "COMENTÁRIOS",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Jost",
+                      fontSize: 25),
+                )
+              ],
+            ),
+          ))
         ],
       ),
     );
@@ -672,9 +756,22 @@ class ColaboradoresState extends State {
       body: CustomScrollView(slivers: <Widget>[
         SliverAppBar.large(
           iconTheme: IconThemeData(color: blueScheme.onPrimary),
-          title: Text(
-            "COLABORADORES",
-            style: TextStyle(color: blueScheme.onPrimary, fontFamily: "Jost"),
+          title: Row(
+            children: [
+              Icon(
+                Icons.people_alt_rounded,
+                color: blueScheme.onPrimary,
+                size: 40,
+              ),
+              SizedBox(
+                width: 15,
+              ),
+              Text(
+                "COLABORADORES",
+                style:
+                    TextStyle(color: blueScheme.onPrimary, fontFamily: "Jost"),
+              ),
+            ],
           ),
           actions: [
             PopupMenuButton<MenuItens>(
@@ -711,8 +808,9 @@ class ColaboradoresState extends State {
                                         fontFamily: "Jost", fontSize: 17),
                                     children: [
                                       TextSpan(
-                                        text: "Produzido com ",
-                                      ),
+                                          text: "Produzido com ",
+                                          style:
+                                              TextStyle(color: Colors.white)),
                                       TextSpan(
                                           text: "Flutter",
                                           style: TextStyle(
@@ -723,7 +821,10 @@ class ColaboradoresState extends State {
                                             ..onTap = () {
                                               _launchUrl(_urlFlutter);
                                             }),
-                                      TextSpan(text: " e "),
+                                      TextSpan(
+                                          text: " e ",
+                                          style:
+                                              TextStyle(color: Colors.white)),
                                       TextSpan(
                                           text: "Material You",
                                           style: TextStyle(
@@ -795,20 +896,12 @@ class ColaboradoresState extends State {
                         SizedBox(
                           height: 10,
                         ),
-                        RichText(
-                          text: WidgetSpan(
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              child: Text(
-                                "danilo.lima124@etec.sp.gov.br",
-                                style: TextStyle(
-                                  color: blueScheme.primary,
-                                  decoration: TextDecoration.underline,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                          ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            _launchUrl(_urlEmailDanilo);
+                          },
+                          icon: Icon(Icons.mail_rounded),
+                          label: Text("Email"),
                         )
                       ],
                     ),
@@ -854,11 +947,13 @@ class ColaboradoresState extends State {
                         SizedBox(
                           height: 10,
                         ),
-                        ElevatedButton(
-                            onPressed: () {
-                              launchUrl(_urlEmailLucca);
-                            },
-                            child: Text("Email"))
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            _launchUrl(_urlEmailLucca);
+                          },
+                          icon: Icon(Icons.mail_rounded),
+                          label: Text("Email"),
+                        )
                       ],
                     ),
                   ],
