@@ -1,4 +1,5 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_const_constructors, duplicate_ignore, unused_import, use_build_context_synchronously, must_be_immutable
+// ignore_for_file: prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_const_constructors, duplicate_ignore, unused_import, use_build_context_synchronously, must_be_immutable, invalid_use_of_protected_member, no_leading_underscores_for_local_identifiers
+import 'dart:async';
 import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -30,6 +31,8 @@ final Uri _urlGatoList = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/listar.php');
 final Uri _urlCList = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php');
+final Uri _urlCAdd = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentAdd.php');
 String urlMeow =
     "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
 String buttonText = "Cadastrar/Entrar";
@@ -37,7 +40,9 @@ bool esconderSenha = true;
 Icon iconeOlho = Icon(Icons.visibility_rounded);
 String username = "";
 dynamic gatoLista = "";
+dynamic cLista;
 int indexClicado = 0;
+dynamic cListaTamanho;
 
 void main() async {
   runApp(MaterialApp(
@@ -461,6 +466,25 @@ class GatoListaState extends State {
     audioPlayer.play();
   }
 
+  Future<void> _navigateAndDisplaySelection(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      SlideRightAgainRoute(GatoInfo()),
+    );
+
+    // When a BuildContext is used from a StatefulWidget, the mounted property
+    // must be checked after an asynchronous gap.
+    if (!mounted) return;
+
+    // After the Selection Screen returns a result, hide any previous snackbars
+    // and show the new result.
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text('$result')));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -503,9 +527,17 @@ class GatoListaState extends State {
                 child: Card(
                   margin: EdgeInsets.fromLTRB(15, 10, 15, 5),
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
                       indexClicado = index;
-                      Navigator.push(context, SlideRightAgainRoute(GatoInfo()));
+                      var map = <String, String>{};
+                      int indexMais1 = indexClicado + 1;
+                      map['id'] = "$indexMais1";
+                      final response = await http.post(_urlCList, body: map);
+                      cLista = jsonDecode(response.body);
+                      cListaTamanho = cLista.length;
+
+                      print(cLista);
+                      _navigateAndDisplaySelection(context);
                     },
                     child: Row(
                       children: [
@@ -604,14 +636,28 @@ class SlideRightAgainRoute extends PageRouteBuilder {
         );
 }
 
-class GatoInfo extends StatelessWidget {
+class GatoInfo extends StatefulWidget {
   const GatoInfo({super.key});
 
   @override
+  GatoInfoState createState() {
+    return GatoInfoState();
+  }
+}
+
+class GatoInfoState extends State {
+  final txtControllerC = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
+    if (cLista.isNotEmpty) {
+      return Scaffold(
+        body: CustomScrollView(slivers: [
           SliverAppBar.large(
             iconTheme: IconThemeData(color: Colors.white, shadows: [
               Shadow(
@@ -622,11 +668,6 @@ class GatoInfo extends StatelessWidget {
             expandedHeight: 360,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              stretchModes: [
-                StretchMode.blurBackground,
-                StretchMode.fadeTitle,
-                StretchMode.zoomBackground
-              ],
               title: Text(
                 gatoLista[indexClicado]["NOME"],
                 style: TextStyle(
@@ -657,48 +698,304 @@ class GatoInfo extends StatelessWidget {
                 ],
               ),
             ),
-            backgroundColor: blueScheme.primary,
           ),
           SliverToBoxAdapter(
-              child: Padding(
-            padding: EdgeInsets.all(20),
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Text(
+                    gatoLista[indexClicado]["RESUMO"],
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 27,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    gatoLista[indexClicado]["DESC"],
+                    style: TextStyle(
+                      fontFamily: "Jost",
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Text(
+                    "COMENTÁRIOS",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Jost",
+                        fontSize: 25),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverList(
+            delegate:
+                SliverChildBuilderDelegate((BuildContext context, int index) {
+              return SizedBox(
+                height: 130,
+                child: Card(
+                  margin: EdgeInsets.fromLTRB(15, 10, 15, 5),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: Image(
+                                image: AssetImage("lib/assets/user.webp"),
+                                width: 50,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            SizedBox(
+                              width: 250,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    '@${cLista[index]["USERNAME"]}',
+                                    style: TextStyle(
+                                        fontFamily: "Jost",
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                                    softWrap: true,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    cLista[index]["COMENTARIO"],
+                                    style: TextStyle(
+                                        fontFamily: "Jost", fontSize: 15),
+                                    softWrap: true,
+                                    maxLines: 2,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }, childCount: cListaTamanho),
+          ),
+          SliverToBoxAdapter(
             child: Column(
               children: [
-                Text(
-                  gatoLista[indexClicado]["RESUMO"],
-                  style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontSize: 27,
+                SizedBox(
+                  height: 80,
+                  child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          flex: 2,
+                          child: TextField(
+                            controller: txtControllerC,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Flexible(
+                          child: FilledButton(
+                            onPressed: () async {
+                              var map = <String, String>{};
+                              map['id'] = "${indexClicado + 1}";
+                              map['username'] = username;
+                              map['comentario'] = txtControllerC.text;
+                              final response =
+                                  await http.post(_urlCAdd, body: map);
+                              /* Flushbar(
+                                message: response.body,
+                                duration: Duration(seconds: 2),
+                                margin: EdgeInsets.all(20),
+                                flushbarStyle: FlushbarStyle.FLOATING,
+                                borderRadius: BorderRadius.circular(50),
+                              ).show(context); */
+                              Navigator.pop(context, "meudeus");
+                            },
+                            child: Text("COMENTAR"),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                  textAlign: TextAlign.center,
+                )
+              ],
+            ),
+          ),
+        ]),
+      );
+    } else {
+      return Scaffold(
+        body: CustomScrollView(slivers: [
+          SliverAppBar.large(
+            iconTheme: IconThemeData(color: Colors.white, shadows: [
+              Shadow(
+                color: Colors.black,
+                blurRadius: 1,
+              )
+            ]),
+            expandedHeight: 360,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                gatoLista[indexClicado]["NOME"],
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "Jost",
+                ),
+              ),
+              centerTitle: true,
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image(
+                    image: NetworkImage(gatoLista[indexClicado]["IMG"]),
+                    fit: BoxFit.cover,
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment(0.0, 0.5),
+                        end: Alignment.center,
+                        colors: <Color>[
+                          Color(0x60000000),
+                          Color(0x00000000),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Text(
+                    gatoLista[indexClicado]["RESUMO"],
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 27,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    gatoLista[indexClicado]["DESC"],
+                    style: TextStyle(
+                      fontFamily: "Jost",
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Text(
+                    "COMENTÁRIOS",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Jost",
+                        fontSize: 25),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 80,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Nenhum comentário (ainda...)",
+                        style: TextStyle(fontFamily: "Jost"),
+                      )
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 15,
                 ),
-                Text(
-                  gatoLista[indexClicado]["DESC"],
-                  style: TextStyle(
-                    fontFamily: "Jost",
-                    fontSize: 20,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
                 SizedBox(
-                  height: 25,
-                ),
-                Text(
-                  "COMENTÁRIOS",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Jost",
-                      fontSize: 25),
+                  height: 80,
+                  child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          flex: 2,
+                          child: TextField(
+                            controller: txtControllerC,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Flexible(
+                          child: FilledButton(
+                            onPressed: () async {
+                              var map = <String, String>{};
+                              map['id'] = "${indexClicado + 1}";
+                              map['username'] = username;
+                              map['comentario'] = txtControllerC.text;
+                              final response =
+                                  await http.post(_urlCAdd, body: map);
+                              /* Flushbar(
+                                message: response.body,
+                                duration: Duration(seconds: 2),
+                                margin: EdgeInsets.all(20),
+                                flushbarStyle: FlushbarStyle.FLOATING,
+                                borderRadius: BorderRadius.circular(50),
+                              ).show(context); */
+                              Navigator.pop(context, "meudeus");
+                            },
+                            child: Text("COMENTAR"),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 )
               ],
             ),
-          ))
-        ],
-      ),
-    );
+          ),
+        ]),
+      );
+    }
   }
 }
 
