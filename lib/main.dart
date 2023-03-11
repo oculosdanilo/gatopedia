@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables, prefer_const_constructors, duplicate_ignore, unused_import, use_build_context_synchronously, must_be_immutable, invalid_use_of_protected_member, no_leading_underscores_for_local_identifiers
+// ignore_for_file: use_build_context_synchronously
 import 'dart:async';
 import 'dart:io';
 
@@ -10,9 +10,7 @@ import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -33,11 +31,13 @@ final Uri _urlCList = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php');
 final Uri _urlCAdd = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentAdd.php');
+final Uri _urlCDelete = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentDelete.php');
 String urlMeow =
     "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
 String buttonText = "Cadastrar/Entrar";
 bool esconderSenha = true;
-Icon iconeOlho = Icon(Icons.visibility_rounded);
+Icon iconeOlho = const Icon(Icons.visibility_rounded);
 String username = "";
 dynamic gatoLista = "";
 dynamic cLista;
@@ -47,7 +47,8 @@ dynamic cListaTamanho;
 void main() async {
   runApp(MaterialApp(
     theme: ThemeData(
-      snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
+      snackBarTheme:
+          const SnackBarThemeData(behavior: SnackBarBehavior.floating),
       inputDecorationTheme: InputDecorationTheme(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -70,7 +71,7 @@ void main() async {
       colorSchemeSeed: const Color(0xff000080),
       useMaterial3: true,
     ),
-    home: Gatopedia(),
+    home: const Gatopedia(),
   ));
 }
 
@@ -113,11 +114,11 @@ class GatopediaState extends State {
                 animatedTexts: [
                   TyperAnimatedText(
                     'Gatopédia!',
-                    textStyle: TextStyle(
+                    textStyle: const TextStyle(
                         fontSize: 35,
                         fontFamily: "Jost",
                         fontWeight: FontWeight.bold),
-                    speed: Duration(milliseconds: 70),
+                    speed: const Duration(milliseconds: 70),
                   ),
                 ],
                 totalRepeatCount: 1,
@@ -169,12 +170,12 @@ class LoginState extends State<FormApp> {
     if (esconderSenha) {
       setState(() {
         esconderSenha = false;
-        iconeOlho = Icon(Icons.visibility_off_rounded);
+        iconeOlho = const Icon(Icons.visibility_off_rounded);
       });
     } else {
       setState(() {
         esconderSenha = true;
-        iconeOlho = Icon(Icons.visibility_rounded);
+        iconeOlho = const Icon(Icons.visibility_rounded);
       });
     }
   }
@@ -219,7 +220,7 @@ class LoginState extends State<FormApp> {
             SizedBox(
               width: 300,
               child: TextFormField(
-                autofillHints: [AutofillHints.username],
+                autofillHints: const [AutofillHints.username],
                 controller: txtControllerLogin,
                 onChanged: (value) {
                   setState(() {
@@ -289,11 +290,11 @@ class LoginState extends State<FormApp> {
               width: 300,
               height: 65,
               child: TextFormField(
-                autofillHints: [AutofillHints.password],
+                autofillHints: const [AutofillHints.password],
                 controller: txtControllerSenha,
                 obscureText: esconderSenha,
                 decoration: InputDecoration(
-                    prefix: SizedBox(
+                    prefix: const SizedBox(
                       width: 10,
                     ),
                     suffix: IconButton(
@@ -302,7 +303,8 @@ class LoginState extends State<FormApp> {
                       },
                       icon: iconeOlho,
                     ),
-                    label: Text("Senha", style: TextStyle(fontFamily: "Jost"))),
+                    label: const Text("Senha",
+                        style: TextStyle(fontFamily: "Jost"))),
               ),
             ),
             const SizedBox(
@@ -336,16 +338,16 @@ class LoginState extends State<FormApp> {
 
                       Flushbar(
                         message: "Conectando...",
-                        duration: Duration(seconds: 2),
-                        margin: EdgeInsets.all(20),
+                        duration: const Duration(seconds: 2),
+                        margin: const EdgeInsets.all(20),
                         borderRadius: BorderRadius.circular(50),
                       ).show(context);
                       final response = await http.post(_urlLogin, body: map);
                       if (!response.body.contains("true")) {
                         Flushbar(
                           message: response.body,
-                          duration: Duration(seconds: 2),
-                          margin: EdgeInsets.all(20),
+                          duration: const Duration(seconds: 2),
+                          margin: const EdgeInsets.all(20),
                           flushbarStyle: FlushbarStyle.FLOATING,
                           borderRadius: BorderRadius.circular(50),
                         ).show(context);
@@ -363,18 +365,19 @@ class LoginState extends State<FormApp> {
                           final responseList = await http.post(_urlGatoList);
                           gatoLista = jsonDecode(responseList.body);
                           save();
-                          Navigator.push(context, SlideRightRoute(GatoLista()));
+                          Navigator.push(
+                              context, SlideRightRoute(const GatoLista()));
                         } else {
                           Flushbar(
                             flushbarStyle: FlushbarStyle.FLOATING,
-                            margin: EdgeInsets.all(20),
+                            margin: const EdgeInsets.all(20),
                             messageText: Row(
                               children: [
                                 Icon(
                                   Icons.error_rounded,
                                   color: blueScheme.onErrorContainer,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Text(
@@ -384,7 +387,7 @@ class LoginState extends State<FormApp> {
                                 ),
                               ],
                             ),
-                            duration: Duration(seconds: 5),
+                            duration: const Duration(seconds: 5),
                             borderRadius: BorderRadius.circular(50),
                             backgroundColor: blueScheme.errorContainer,
                           ).show(context);
@@ -394,7 +397,7 @@ class LoginState extends State<FormApp> {
                   },
                   child: Text(
                     buttonText,
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
                   ),
                 ),
               ],
@@ -407,7 +410,7 @@ class LoginState extends State<FormApp> {
                 Navigator.push(context, SlideUpRoute(const Colaboradores()));
               },
               label: const Text("COLABORADORES"),
-              icon: Icon(Icons.people_alt_rounded),
+              icon: const Icon(Icons.people_alt_rounded),
             ),
           ],
         ),
@@ -466,12 +469,12 @@ class GatoListaState extends State {
     audioPlayer.play();
   }
 
-  Future<void> _navigateAndDisplaySelection(BuildContext context) async {
+  Future<void> _navigateAndDisplaySelection(BuildContext context, index) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      SlideRightAgainRoute(GatoInfo()),
+      SlideRightAgainRoute(const GatoInfo()),
     );
 
     // When a BuildContext is used from a StatefulWidget, the mounted property
@@ -480,127 +483,184 @@ class GatoListaState extends State {
 
     // After the Selection Screen returns a result, hide any previous snackbars
     // and show the new result.
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('$result')));
+    if (result != null) {
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+            content: Text('$result'), behavior: SnackBarBehavior.floating));
+
+      indexClicado = index;
+      var map = <String, String>{};
+      int indexMais1 = indexClicado + 1;
+      map['id'] = "$indexMais1";
+      final response = await http.post(_urlCList, body: map);
+      cLista = jsonDecode(response.body);
+      cListaTamanho = cLista.length;
+
+      _navigateAndDisplaySelection(context, index);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar.medium(
-            iconTheme: IconThemeData(color: blueScheme.onPrimary),
-            expandedHeight: 120,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                "@$username",
-                style:
-                    TextStyle(color: blueScheme.onPrimary, fontFamily: "Jost"),
-              ),
-              background: Container(
-                alignment: Alignment.centerRight,
-                margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.pets_rounded,
-                    color: Colors.white,
+    return WillPopScope(
+        onWillPop: () async {
+          var dialogo = await showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Já vai? ;(",
+                        style: TextStyle(
+                            fontFamily: "Jost", fontWeight: FontWeight.bold),
+                      )
+                    ],
                   ),
-                  iconSize: 100,
-                  onPressed: () async {
-                    if (!isPlaying) {
-                      _play();
-                    }
-                  },
-                ),
-              ),
-            ),
-            backgroundColor: blueScheme.primary,
-          ),
-          SliverList(
-            delegate:
-                SliverChildBuilderDelegate((BuildContext context, int index) {
-              return SizedBox(
-                height: 140,
-                child: Card(
-                  margin: EdgeInsets.fromLTRB(15, 10, 15, 5),
-                  child: InkWell(
-                    onTap: () async {
-                      indexClicado = index;
-                      var map = <String, String>{};
-                      int indexMais1 = indexClicado + 1;
-                      map['id'] = "$indexMais1";
-                      final response = await http.post(_urlCList, body: map);
-                      cLista = jsonDecode(response.body);
-                      cListaTamanho = cLista.length;
-
-                      print(cLista);
-                      _navigateAndDisplaySelection(context);
-                    },
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: FadeInImage(
-                                  placeholder:
-                                      AssetImage('lib/assets/loading.gif'),
-                                  image: NetworkImage(gatoLista[index]["IMG"]),
-                                  fadeInDuration: Duration(milliseconds: 300),
-                                  fadeOutDuration: Duration(milliseconds: 300),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              SizedBox(
-                                width: 200,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      gatoLista[index]["NOME"],
-                                      style: TextStyle(
-                                          fontFamily: "Jost",
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 25),
-                                      softWrap: true,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      gatoLista[index]["RESUMO"],
-                                      style: TextStyle(
-                                          fontFamily: "Jost", fontSize: 15),
-                                      softWrap: true,
-                                      maxLines: 2,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  content: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [Text("Tem certeza que deseja sair?")]),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('CANCELAR'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              });
+          if (dialogo) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        child: Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar.medium(
+                iconTheme: IconThemeData(color: blueScheme.onPrimary),
+                expandedHeight: 120,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(
+                    "@$username",
+                    style: TextStyle(
+                        color: blueScheme.onPrimary, fontFamily: "Jost"),
+                  ),
+                  background: Container(
+                    alignment: Alignment.centerRight,
+                    margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.pets_rounded,
+                        color: Colors.white,
+                      ),
+                      iconSize: 100,
+                      onPressed: () async {
+                        if (!isPlaying) {
+                          _play();
+                        }
+                      },
                     ),
                   ),
                 ),
-              );
-            }, childCount: 10),
-          )
-        ],
-      ),
-    );
+                backgroundColor: blueScheme.primary,
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                  return SizedBox(
+                    height: 140,
+                    child: Card(
+                      margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+                      child: InkWell(
+                        onTap: () async {
+                          indexClicado = index;
+                          var map = <String, String>{};
+                          int indexMais1 = indexClicado + 1;
+                          map['id'] = "$indexMais1";
+                          final response =
+                              await http.post(_urlCList, body: map);
+                          cLista = jsonDecode(response.body);
+                          cListaTamanho = cLista.length;
+
+                          _navigateAndDisplaySelection(context, index);
+                        },
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: FadeInImage(
+                                      placeholder: const AssetImage(
+                                          'lib/assets/loading.gif'),
+                                      image:
+                                          NetworkImage(gatoLista[index]["IMG"]),
+                                      fadeInDuration:
+                                          const Duration(milliseconds: 300),
+                                      fadeOutDuration:
+                                          const Duration(milliseconds: 300),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 15,
+                                  ),
+                                  SizedBox(
+                                    width: 200,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          gatoLista[index]["NOME"],
+                                          style: const TextStyle(
+                                              fontFamily: "Jost",
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 25),
+                                          softWrap: true,
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          gatoLista[index]["RESUMO"],
+                                          style: const TextStyle(
+                                              fontFamily: "Jost", fontSize: 15),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }, childCount: 10),
+              )
+            ],
+          ),
+        ));
   }
 }
 
@@ -659,7 +719,7 @@ class GatoInfoState extends State {
       return Scaffold(
         body: CustomScrollView(slivers: [
           SliverAppBar.large(
-            iconTheme: IconThemeData(color: Colors.white, shadows: [
+            iconTheme: const IconThemeData(color: Colors.white, shadows: [
               Shadow(
                 color: Colors.black,
                 blurRadius: 1,
@@ -670,7 +730,7 @@ class GatoInfoState extends State {
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 gatoLista[indexClicado]["NOME"],
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontFamily: "Jost",
                 ),
@@ -701,32 +761,32 @@ class GatoInfoState extends State {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   Text(
                     gatoLista[indexClicado]["RESUMO"],
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontStyle: FontStyle.italic,
                       fontSize: 27,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   Text(
                     gatoLista[indexClicado]["DESC"],
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: "Jost",
                       fontSize: 20,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 25,
                   ),
-                  Text(
+                  const Text(
                     "COMENTÁRIOS",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -737,106 +797,47 @@ class GatoInfoState extends State {
               ),
             ),
           ),
-          SliverList(
-            delegate:
-                SliverChildBuilderDelegate((BuildContext context, int index) {
-              return SizedBox(
-                height: 130,
-                child: Card(
-                  margin: EdgeInsets.fromLTRB(15, 10, 15, 5),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                              child: Image(
-                                image: AssetImage("lib/assets/user.webp"),
-                                width: 50,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            SizedBox(
-                              width: 250,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    '@${cLista[index]["USERNAME"]}',
-                                    style: TextStyle(
-                                        fontFamily: "Jost",
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15),
-                                    softWrap: true,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    cLista[index]["COMENTARIO"],
-                                    style: TextStyle(
-                                        fontFamily: "Jost", fontSize: 15),
-                                    softWrap: true,
-                                    maxLines: 2,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }, childCount: cListaTamanho),
-          ),
           SliverToBoxAdapter(
             child: Column(
               children: [
                 SizedBox(
                   height: 80,
                   child: Padding(
-                    padding: EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(15),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Flexible(
-                          flex: 2,
+                          flex: 7,
                           child: TextField(
                             controller: txtControllerC,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Flexible(
+                          flex: 5,
                           child: FilledButton(
                             onPressed: () async {
-                              var map = <String, String>{};
-                              map['id'] = "${indexClicado + 1}";
-                              map['username'] = username;
-                              map['comentario'] = txtControllerC.text;
-                              final response =
-                                  await http.post(_urlCAdd, body: map);
-                              /* Flushbar(
+                              if (txtControllerC.text != "") {
+                                var map = <String, String>{};
+                                map['id'] = "${indexClicado + 1}";
+                                map['username'] = username;
+                                map['comentario'] = txtControllerC.text;
+                                final response =
+                                    await http.post(_urlCAdd, body: map);
+                                /* Flushbar(
                                 message: response.body,
                                 duration: Duration(seconds: 2),
                                 margin: EdgeInsets.all(20),
                                 flushbarStyle: FlushbarStyle.FLOATING,
                                 borderRadius: BorderRadius.circular(50),
                               ).show(context); */
-                              Navigator.pop(context, "meudeus");
+                                Navigator.pop(context, response.body);
+                              }
                             },
-                            child: Text("COMENTAR"),
+                            child: const Text("COMENTAR"),
                           ),
                         )
                       ],
@@ -846,13 +847,127 @@ class GatoInfoState extends State {
               ],
             ),
           ),
+          SliverList(
+            delegate:
+                SliverChildBuilderDelegate((BuildContext context, int index) {
+              return SizedBox(
+                height: 130,
+                child: Card(
+                  margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: const Image(
+                            image: AssetImage("lib/assets/user.webp"),
+                            width: 50,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          flex: 20,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                '@${cLista[index]["USERNAME"]}',
+                                style: const TextStyle(
+                                    fontFamily: "Jost",
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                                softWrap: true,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                cLista[index]["COMENTARIO"],
+                                style: const TextStyle(
+                                    fontFamily: "Jost", fontSize: 15),
+                                softWrap: true,
+                                maxLines: 3,
+                              )
+                            ],
+                          ),
+                        ),
+                        cLista[index]["USERNAME"] == username
+                            ? Ink(
+                                decoration: ShapeDecoration(
+                                  color: blueScheme.errorContainer,
+                                  shape: const CircleBorder(),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  color: Colors.white,
+                                  onPressed: () async {
+                                    var dialogo = await showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            content: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: const [
+                                                  Flexible(
+                                                    child: Text(
+                                                      "Tem certeza que deseja deletear esse comentário? Ele sumirá para sempre! (muito tempo)",
+                                                      style: TextStyle(
+                                                          fontSize: 15),
+                                                    ),
+                                                  )
+                                                ]),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    context, false),
+                                                child: const Text('CANCELAR'),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () => Navigator.pop(
+                                                    context, true),
+                                                child: const Text('OK'),
+                                              ),
+                                            ],
+                                          );
+                                        });
+                                    if (dialogo) {
+                                      final map = <String, String>{};
+                                      map['id'] = cLista[index]["ID"];
+                                      final response = await http
+                                          .post(_urlCDelete, body: map);
+                                      Navigator.pop(context, response.body);
+                                    }
+                                  },
+                                ))
+                            : const Text("")
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }, childCount: cListaTamanho),
+          ),
+          const SliverToBoxAdapter(
+            child: SizedBox(
+              height: 25,
+            ),
+          )
         ]),
       );
     } else {
       return Scaffold(
         body: CustomScrollView(slivers: [
           SliverAppBar.large(
-            iconTheme: IconThemeData(color: Colors.white, shadows: [
+            iconTheme: const IconThemeData(color: Colors.white, shadows: [
               Shadow(
                 color: Colors.black,
                 blurRadius: 1,
@@ -863,7 +978,7 @@ class GatoInfoState extends State {
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 gatoLista[indexClicado]["NOME"],
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontFamily: "Jost",
                 ),
@@ -894,32 +1009,32 @@ class GatoInfoState extends State {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   Text(
                     gatoLista[indexClicado]["RESUMO"],
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontStyle: FontStyle.italic,
                       fontSize: 27,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   Text(
                     gatoLista[indexClicado]["DESC"],
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: "Jost",
                       fontSize: 20,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 25,
                   ),
-                  Text(
+                  const Text(
                     "COMENTÁRIOS",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -935,10 +1050,54 @@ class GatoInfoState extends State {
               children: [
                 SizedBox(
                   height: 80,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          flex: 7,
+                          child: TextField(
+                            controller: txtControllerC,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Flexible(
+                          flex: 5,
+                          child: FilledButton(
+                            onPressed: () async {
+                              if (txtControllerC.text != "") {
+                                var map = <String, String>{};
+                                map['id'] = "${indexClicado + 1}";
+                                map['username'] = username;
+                                map['comentario'] = txtControllerC.text;
+                                final response =
+                                    await http.post(_urlCAdd, body: map);
+                                /* Flushbar(
+                                message: response.body,
+                                duration: Duration(seconds: 2),
+                                margin: EdgeInsets.all(20),
+                                flushbarStyle: FlushbarStyle.FLOATING,
+                                borderRadius: BorderRadius.circular(50),
+                              ).show(context); */
+                                Navigator.pop(context, response.body);
+                              }
+                            },
+                            child: const Text("COMENTAR"),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 80,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                    children: const [
                       Text(
                         "Nenhum comentário (ainda...)",
                         style: TextStyle(fontFamily: "Jost"),
@@ -946,50 +1105,9 @@ class GatoInfoState extends State {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 15,
+                const SizedBox(
+                  height: 25,
                 ),
-                SizedBox(
-                  height: 80,
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          flex: 2,
-                          child: TextField(
-                            controller: txtControllerC,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Flexible(
-                          child: FilledButton(
-                            onPressed: () async {
-                              var map = <String, String>{};
-                              map['id'] = "${indexClicado + 1}";
-                              map['username'] = username;
-                              map['comentario'] = txtControllerC.text;
-                              final response =
-                                  await http.post(_urlCAdd, body: map);
-                              /* Flushbar(
-                                message: response.body,
-                                duration: Duration(seconds: 2),
-                                margin: EdgeInsets.all(20),
-                                flushbarStyle: FlushbarStyle.FLOATING,
-                                borderRadius: BorderRadius.circular(50),
-                              ).show(context); */
-                              Navigator.pop(context, "meudeus");
-                            },
-                            child: Text("COMENTAR"),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
               ],
             ),
           ),
@@ -1043,9 +1161,6 @@ class Colaboradores extends StatefulWidget {
 enum MenuItens { itemUm }
 
 class ColaboradoresState extends State {
-  final blueScheme = ColorScheme.fromSeed(
-      seedColor: const Color(0xff000080), brightness: Brightness.dark);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1060,7 +1175,7 @@ class ColaboradoresState extends State {
                 color: blueScheme.onPrimary,
                 size: 40,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 15,
               ),
               Text(
@@ -1088,10 +1203,10 @@ class ColaboradoresState extends State {
                                     Icons.info_rounded,
                                     color: blueScheme.onBackground,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
-                                  Text(
+                                  const Text(
                                     "Sobre o projeto",
                                     style: TextStyle(
                                         fontFamily: "Jost",
@@ -1101,10 +1216,10 @@ class ColaboradoresState extends State {
                               ),
                               content: RichText(
                                 text: TextSpan(
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontFamily: "Jost", fontSize: 17),
                                     children: [
-                                      TextSpan(
+                                      const TextSpan(
                                           text: "Produzido com ",
                                           style:
                                               TextStyle(color: Colors.white)),
@@ -1118,7 +1233,7 @@ class ColaboradoresState extends State {
                                             ..onTap = () {
                                               _launchUrl(_urlFlutter);
                                             }),
-                                      TextSpan(
+                                      const TextSpan(
                                           text: " e ",
                                           style:
                                               TextStyle(color: Colors.white)),
@@ -1157,50 +1272,52 @@ class ColaboradoresState extends State {
           children: [
             Card(
               surfaceTintColor: blueScheme.onBackground,
-              margin: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(20),
               child: Padding(
-                padding: EdgeInsets.fromLTRB(20, 20, 10, 20),
+                padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image(
+                      child: const Image(
                         image: AssetImage('lib/assets/danilo.jpg'),
                         width: 130,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 17,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Danilo Lima",
-                          style: TextStyle(
-                              fontFamily: "Jost",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25),
-                        ),
-                        SizedBox(
-                          height: 17,
-                        ),
-                        Text(
-                          "• Design e programação",
-                          style: TextStyle(fontFamily: "Jost"),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            _launchUrl(_urlEmailDanilo);
-                          },
-                          icon: Icon(Icons.mail_rounded),
-                          label: Text("Email"),
-                        )
-                      ],
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Danilo Lima",
+                            style: TextStyle(
+                                fontFamily: "Jost",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25),
+                          ),
+                          const SizedBox(
+                            height: 17,
+                          ),
+                          const Text(
+                            "• Design e programação",
+                            style: TextStyle(fontFamily: "Jost"),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              _launchUrl(_urlEmailDanilo);
+                            },
+                            icon: const Icon(Icons.mail_rounded),
+                            label: const Text("Email"),
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -1208,50 +1325,52 @@ class ColaboradoresState extends State {
             ),
             Card(
               surfaceTintColor: blueScheme.onBackground,
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image(
+                      child: const Image(
                         image: AssetImage('lib/assets/lucca.png'),
                         width: 130,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 17,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Juliana Leal \n(Lucca)",
-                          style: TextStyle(
-                              fontFamily: "Jost",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25),
-                        ),
-                        SizedBox(
-                          height: 17,
-                        ),
-                        Text(
-                          "• Idealização e pesquisas",
-                          style: TextStyle(fontFamily: "Jost"),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            _launchUrl(_urlEmailLucca);
-                          },
-                          icon: Icon(Icons.mail_rounded),
-                          label: Text("Email"),
-                        )
-                      ],
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Juliana Leal \n(Lucca)",
+                            style: TextStyle(
+                                fontFamily: "Jost",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25),
+                          ),
+                          const SizedBox(
+                            height: 17,
+                          ),
+                          const Text(
+                            "• Idealização e pesquisas",
+                            style: TextStyle(fontFamily: "Jost"),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              _launchUrl(_urlEmailLucca);
+                            },
+                            icon: const Icon(Icons.mail_rounded),
+                            label: const Text("Email"),
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),
