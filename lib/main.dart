@@ -919,7 +919,7 @@ class GatoInfoState extends State {
                                                 children: const [
                                                   Flexible(
                                                     child: Text(
-                                                      "Tem certeza que deseja deletear esse comentário? Ele sumirá para sempre! (muito tempo)",
+                                                      "Tem certeza que deseja deletar esse comentário? Ele sumirá para sempre! (muito tempo)",
                                                       style: TextStyle(
                                                           fontSize: 15),
                                                     ),
