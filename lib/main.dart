@@ -4,8 +4,8 @@ import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/gestures.dart';
@@ -44,42 +44,7 @@ dynamic gatoLista = "";
 dynamic cLista;
 int indexClicado = 0;
 dynamic cListaTamanho;
-
-class NetworkConnectivity {
-  NetworkConnectivity._();
-  static final _instance = NetworkConnectivity._();
-  static NetworkConnectivity get instance => _instance;
-  final _networkConnectivity = Connectivity();
-  final _controller = StreamController.broadcast();
-  Stream get myStream => _controller.stream;
-  // 1.
-  void initialise() async {
-    ConnectivityResult result = await _networkConnectivity.checkConnectivity();
-    _checkStatus(result);
-    _networkConnectivity.onConnectivityChanged.listen((result) {
-      print(result);
-      _checkStatus(result);
-    });
-  }
-
-// 2.
-  void _checkStatus(ConnectivityResult result) async {
-    bool isOnline = false;
-    try {
-      final result = await InternetAddress.lookup('example.com');
-      isOnline = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-    } on SocketException catch (_) {
-      isOnline = false;
-    }
-    _controller.sink.add({result: isOnline});
-  }
-
-  void disposeStream() => _controller.close();
-}
-
-Map _source = {ConnectivityResult.none: false};
-final NetworkConnectivity _networkConnectivity = NetworkConnectivity.instance;
-String string = '';
+bool internet = true;
 
 void main() async {
   runApp(MaterialApp(
@@ -128,6 +93,17 @@ class GatopediaState extends State {
   void initState() {
     super.initState();
     _play();
+    // ignore: unused_local_variable
+    var listener = InternetConnectionChecker().onStatusChange.listen((status) {
+      switch (status) {
+        case InternetConnectionStatus.disconnected:
+          internet = false;
+          Navigator.push(context, SlideUpRoute(const SemInternet()));
+          break;
+        case InternetConnectionStatus.connected:
+          break;
+      }
+    });
   }
 
   void _play() async {
@@ -172,6 +148,84 @@ class GatopediaState extends State {
         ),
       ),
     );
+  }
+}
+
+class SemInternet extends StatefulWidget {
+  const SemInternet({super.key});
+
+  @override
+  SemInternetState createState() {
+    return SemInternetState();
+  }
+}
+
+class SemInternetState extends State {
+  // ignore: prefer_typing_uninitialized_variables
+  var listener;
+
+  @override
+  void initState() {
+    super.initState();
+    listener = InternetConnectionChecker().onStatusChange.listen((status) {
+      switch (status) {
+        case InternetConnectionStatus.disconnected:
+          break;
+        case InternetConnectionStatus.connected:
+          internet = true;
+          Navigator.of(context, rootNavigator: true).pop();
+          break;
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    listener.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+        child: Scaffold(
+          body: Container(
+            margin: const EdgeInsets.all(20),
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Icon(
+                  Icons.wifi_off_rounded,
+                  size: 170,
+                ),
+                Text(
+                  "Sem internet",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Jost",
+                      fontSize: 30),
+                ),
+                Text("Aguardando conexão"),
+                SizedBox(
+                  height: 30,
+                ),
+                CircularProgressIndicator(
+                  value: null,
+                )
+              ],
+            ),
+          ),
+        ),
+        onWillPop: () async {
+          if (internet) {
+            return true;
+          } else {
+            return false;
+          }
+        });
   }
 }
 
