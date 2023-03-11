@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_cache/just_audio_cache.dart';
@@ -43,6 +44,42 @@ dynamic gatoLista = "";
 dynamic cLista;
 int indexClicado = 0;
 dynamic cListaTamanho;
+
+class NetworkConnectivity {
+  NetworkConnectivity._();
+  static final _instance = NetworkConnectivity._();
+  static NetworkConnectivity get instance => _instance;
+  final _networkConnectivity = Connectivity();
+  final _controller = StreamController.broadcast();
+  Stream get myStream => _controller.stream;
+  // 1.
+  void initialise() async {
+    ConnectivityResult result = await _networkConnectivity.checkConnectivity();
+    _checkStatus(result);
+    _networkConnectivity.onConnectivityChanged.listen((result) {
+      print(result);
+      _checkStatus(result);
+    });
+  }
+
+// 2.
+  void _checkStatus(ConnectivityResult result) async {
+    bool isOnline = false;
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      isOnline = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      isOnline = false;
+    }
+    _controller.sink.add({result: isOnline});
+  }
+
+  void disposeStream() => _controller.close();
+}
+
+Map _source = {ConnectivityResult.none: false};
+final NetworkConnectivity _networkConnectivity = NetworkConnectivity.instance;
+String string = '';
 
 void main() async {
   runApp(MaterialApp(
