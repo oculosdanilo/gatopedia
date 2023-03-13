@@ -5,21 +5,25 @@ import 'dart:io';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-final blueScheme = ColorScheme.fromSeed(
-    seedColor: const Color(0xff000080), brightness: Brightness.dark);
 final Uri _urlFlutter = Uri.parse('https://flutter.dev');
 final Uri _urlMaterialYou = Uri.parse('https://m3.material.io');
+final Uri _urlGatopediaGit =
+    Uri.parse('https://github.com/oculosdanilo/gatopedia');
+final Uri _urlGatopediaGitLatest =
+    Uri.parse('https://github.com/oculosdanilo/gatopedia/releases');
 final Uri _urlEmailDanilo = Uri.parse('mailto:danilo.lima124@etec.sp.gov.br');
 final Uri _urlEmailLucca = Uri.parse('mailto:juliana.barros36@etec.sp.gov.br');
 final Uri _urlLogin = Uri.parse(
@@ -45,36 +49,85 @@ dynamic cLista;
 int indexClicado = 0;
 dynamic cListaTamanho;
 bool internet = true;
+Icon iconeGato = const Icon(Icons.pets_rounded);
+Icon iconeConfig = const Icon(Icons.settings_outlined);
+ColorScheme blueScheme = ColorScheme.fromSeed(
+    seedColor: const Color(0xff000080), brightness: Brightness.dark);
 
 void main() async {
-  runApp(MaterialApp(
-    theme: ThemeData(
-      snackBarTheme:
-          const SnackBarThemeData(behavior: SnackBarBehavior.floating),
-      inputDecorationTheme: InputDecorationTheme(
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(width: 2, color: blueScheme.outline),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(50)),
-          borderSide: BorderSide(width: 2, color: blueScheme.primary),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(width: 3, color: blueScheme.error),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50),
-          borderSide: BorderSide(width: 3, color: blueScheme.error),
-        ),
-      ),
-      brightness: Brightness.dark,
-      colorSchemeSeed: const Color(0xff000080),
-      useMaterial3: true,
-    ),
-    home: const Gatopedia(),
-  ));
+  runApp(const App());
+}
+
+class App extends StatelessWidget {
+  static final ValueNotifier<ThemeMode> themeNotifier =
+      ValueNotifier(ThemeMode.light);
+
+  const App({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<ThemeMode>(
+        valueListenable: themeNotifier,
+        builder: (_, ThemeMode currentMode, __) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              snackBarTheme:
+                  const SnackBarThemeData(behavior: SnackBarBehavior.floating),
+              inputDecorationTheme: InputDecorationTheme(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(width: 2, color: blueScheme.outline),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(50)),
+                  borderSide: BorderSide(width: 2, color: Colors.blue[900]!),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                      width: 3, color: Theme.of(context).colorScheme.error),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50),
+                  borderSide: BorderSide(
+                      width: 3, color: Theme.of(context).colorScheme.error),
+                ),
+              ),
+              brightness: Brightness.light,
+              colorSchemeSeed: const Color(0xff000080),
+              useMaterial3: true,
+            ),
+            darkTheme: ThemeData(
+              snackBarTheme:
+                  const SnackBarThemeData(behavior: SnackBarBehavior.floating),
+              inputDecorationTheme: InputDecorationTheme(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(width: 2, color: blueScheme.outline),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(50)),
+                  borderSide: BorderSide(width: 2, color: blueScheme.primary),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(width: 3, color: blueScheme.error),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50),
+                  borderSide: BorderSide(width: 3, color: blueScheme.error),
+                ),
+              ),
+              brightness: Brightness.dark,
+              colorSchemeSeed: const Color(0xff000080),
+              useMaterial3: true,
+            ),
+            themeMode: currentMode,
+            home: const Gatopedia(),
+          );
+        });
+  }
 }
 
 class Gatopedia extends StatefulWidget {
@@ -88,6 +141,26 @@ class Gatopedia extends StatefulWidget {
 
 class GatopediaState extends State {
   final miau = AudioPlayer();
+
+  _read() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/dark.txt');
+      String text = await file.readAsString();
+      if (text == "dark") {
+        App.themeNotifier.value = ThemeMode.dark;
+      } else {
+        App.themeNotifier.value = ThemeMode.light;
+      }
+      if (kDebugMode) {
+        print(text);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Couldn't read file");
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -104,6 +177,7 @@ class GatopediaState extends State {
           break;
       }
     });
+    _read();
   }
 
   void _play() async {
@@ -298,9 +372,6 @@ class LoginState extends State<FormApp> {
       final file = File('${directory.path}/my_file.txt');
       final text = username;
       await file.writeAsString(text);
-      if (kDebugMode) {
-        print('saved');
-      }
     }
 
     return Form(
@@ -317,9 +388,9 @@ class LoginState extends State<FormApp> {
                   setState(() {
                     txtFieldLenght = value.length;
                     if (value.length <= 3 || value.length > 25) {
-                      mudarCor(blueScheme.error);
+                      mudarCor(Theme.of(context).colorScheme.error);
                     } else {
-                      mudarCor(blueScheme.primary);
+                      mudarCor(Theme.of(context).colorScheme.primary);
                     }
                   });
                   if (_formKey.currentState!.validate()) {
@@ -345,10 +416,10 @@ class LoginState extends State<FormApp> {
                   prefixIconColor: MaterialStateColor.resolveWith(
                       (Set<MaterialState> states) {
                     if (states.contains(MaterialState.error)) {
-                      return blueScheme.error;
+                      return Theme.of(context).colorScheme.error;
                     }
                     if (states.contains(MaterialState.focused)) {
-                      return blueScheme.primary;
+                      return Theme.of(context).colorScheme.primary;
                     }
                     return blueScheme.outline;
                   }),
@@ -554,6 +625,39 @@ class GatoLista extends StatefulWidget {
 class GatoListaState extends State {
   final audioPlayer = AudioPlayer();
   bool isPlaying = false;
+  String appName = "";
+  String packageName = "";
+  String version = "";
+  String buildNumber = "";
+
+  saveDark() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/dark.txt');
+    const text = "dark";
+    await file.writeAsString(text);
+    if (kDebugMode) {
+      print(text);
+    }
+  }
+
+  saveLight() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/dark.txt');
+    const text = "light";
+    await file.writeAsString(text);
+    if (kDebugMode) {
+      print(text);
+    }
+  }
+
+  _pegarVersao() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    appName = packageInfo.appName;
+    packageName = packageInfo.packageName;
+    version = packageInfo.version;
+    buildNumber = packageInfo.buildNumber;
+  }
 
   void _play() async {
     await audioPlayer.dynamicSet(url: urlMeow, preload: true);
@@ -593,165 +697,307 @@ class GatoListaState extends State {
   }
 
   @override
+  void initState() {
+    _pegarVersao();
+    super.initState();
+  }
+
+  int paginaSelecionada = 0;
+  bool _dark = App.themeNotifier.value == ThemeMode.dark ? true : false;
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () async {
-          var dialogo = await showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Já vai? ;(",
-                        style: TextStyle(
-                            fontFamily: "Jost", fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                  content: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [Text("Tem certeza que deseja sair?")]),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('CANCELAR'),
+      onWillPop: () async {
+        var dialogo = await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const <Widget>[
+                    SizedBox(
+                      width: 10,
                     ),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('OK'),
-                    ),
+                    Text(
+                      "Já vai? ;(",
+                      style: TextStyle(
+                          fontFamily: "Jost", fontWeight: FontWeight.bold),
+                    )
                   ],
-                );
-              });
-          if (dialogo) {
-            return true;
-          } else {
-            return false;
-          }
-        },
-        child: Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar.medium(
-                iconTheme: IconThemeData(color: blueScheme.onPrimary),
-                expandedHeight: 120,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    "@$username",
-                    style: TextStyle(
-                        color: blueScheme.onPrimary, fontFamily: "Jost"),
-                  ),
-                  background: Container(
-                    alignment: Alignment.centerRight,
-                    margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.pets_rounded,
-                        color: Colors.white,
-                      ),
-                      iconSize: 100,
-                      onPressed: () async {
-                        if (!isPlaying) {
-                          _play();
-                        }
-                      },
-                    ),
-                  ),
                 ),
-                backgroundColor: blueScheme.primary,
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                  return SizedBox(
-                    height: 140,
-                    child: Card(
-                      margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
-                      child: InkWell(
-                        onTap: () async {
-                          indexClicado = index;
-                          var map = <String, String>{};
-                          int indexMais1 = indexClicado + 1;
-                          map['id'] = "$indexMais1";
-                          final response =
-                              await http.post(_urlCList, body: map);
-                          cLista = jsonDecode(response.body);
-                          cListaTamanho = cLista.length;
-
-                          _navigateAndDisplaySelection(context, index);
-                        },
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: FadeInImage(
-                                      placeholder: const AssetImage(
-                                          'lib/assets/loading.gif'),
-                                      image:
-                                          NetworkImage(gatoLista[index]["IMG"]),
-                                      fadeInDuration:
-                                          const Duration(milliseconds: 300),
-                                      fadeOutDuration:
-                                          const Duration(milliseconds: 300),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  SizedBox(
-                                    width: 200,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          gatoLista[index]["NOME"],
-                                          style: const TextStyle(
-                                              fontFamily: "Jost",
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 25),
-                                          softWrap: true,
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          gatoLista[index]["RESUMO"],
-                                          style: const TextStyle(
-                                              fontFamily: "Jost", fontSize: 15),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }, childCount: 10),
-              )
+                content: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [Text("Tem certeza que deseja sair?")]),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: const Text('CANCELAR'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            });
+        if (dialogo) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      child: Scaffold(
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: paginaSelecionada,
+            onDestinationSelected: (index) {
+              setState(() {
+                if (index == 0) {
+                  iconeGato = const Icon(Icons.pets_rounded);
+                  iconeConfig = const Icon(Icons.settings_outlined);
+                } else {
+                  iconeConfig = const Icon(Icons.settings_rounded);
+                  iconeGato = const Icon(Icons.pets_outlined);
+                }
+                paginaSelecionada = index;
+              });
+            },
+            destinations: <NavigationDestination>[
+              NavigationDestination(icon: iconeGato, label: "Gatos"),
+              NavigationDestination(icon: iconeConfig, label: "Configurações")
             ],
           ),
-        ));
+          body: [
+            CustomScrollView(
+              slivers: [
+                SliverAppBar.medium(
+                  iconTheme: IconThemeData(
+                      color: Theme.of(context).colorScheme.onPrimary),
+                  expandedHeight: 120,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: Text(
+                      "@$username",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontFamily: "Jost"),
+                    ),
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.pets_rounded,
+                          color: Colors.white,
+                        ),
+                        iconSize: 100,
+                        onPressed: () async {
+                          if (!isPlaying) {
+                            _play();
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                    return SizedBox(
+                      height: 140,
+                      child: Card(
+                        margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+                        child: InkWell(
+                          onTap: () async {
+                            indexClicado = index;
+                            var map = <String, String>{};
+                            int indexMais1 = indexClicado + 1;
+                            map['id'] = "$indexMais1";
+                            final response =
+                                await http.post(_urlCList, body: map);
+                            cLista = jsonDecode(response.body);
+                            cListaTamanho = cLista.length;
+
+                            _navigateAndDisplaySelection(context, index);
+                          },
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: FadeInImage(
+                                        placeholder: const AssetImage(
+                                            'lib/assets/loading.gif'),
+                                        image: NetworkImage(
+                                            gatoLista[index]["IMG"]),
+                                        fadeInDuration:
+                                            const Duration(milliseconds: 300),
+                                        fadeOutDuration:
+                                            const Duration(milliseconds: 300),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            gatoLista[index]["NOME"],
+                                            style: const TextStyle(
+                                                fontFamily: "Jost",
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 25),
+                                            softWrap: true,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            gatoLista[index]["RESUMO"],
+                                            style: const TextStyle(
+                                                fontFamily: "Jost",
+                                                fontSize: 15),
+                                            softWrap: true,
+                                            maxLines: 2,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }, childCount: 10),
+                )
+              ],
+            ),
+            CustomScrollView(
+              slivers: [
+                SliverAppBar.medium(
+                  automaticallyImplyLeading: false,
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: Text(
+                      "Configurações",
+                      style: TextStyle(
+                          fontFamily: "Jost",
+                          color: Theme.of(context).colorScheme.onBackground),
+                    ),
+                    centerTitle: true,
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(5, 10, 5, 0),
+                    child: ListView(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      children: [
+                        SwitchListTile(
+                          secondary: const Icon(Icons.dark_mode_rounded),
+                          title: const Text(
+                            "Modo escuro",
+                            style: TextStyle(fontFamily: "Jost", fontSize: 20),
+                          ),
+                          subtitle: const Text(
+                            "Lindo como gatos pretos!",
+                            style: TextStyle(fontFamily: "Jost"),
+                          ),
+                          value: _dark,
+                          onChanged: (bool value) {
+                            if (value) {
+                              App.themeNotifier.value = ThemeMode.dark;
+                              saveDark();
+                            } else {
+                              App.themeNotifier.value = ThemeMode.light;
+                              saveLight();
+                            }
+                            setState(() {
+                              _dark = value;
+                            });
+                          },
+                        ),
+                        const Divider(),
+                        Container(
+                          margin: const EdgeInsets.all(15),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Sobre o aplicativo",
+                                style:
+                                    TextStyle(fontFamily: "Jost", fontSize: 25),
+                              ),
+                              Text(
+                                packageName,
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                              Text(
+                                "Versão: $version ($buildNumber)",
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton.icon(
+                              onPressed: () {
+                                _launchUrl(_urlGatopediaGit);
+                              },
+                              icon: const Icon(AntDesign.github),
+                              label: const Text(
+                                "Github",
+                                style: TextStyle(fontFamily: "Jost"),
+                              ),
+                            ),
+                            TextButton.icon(
+                              onPressed: () {
+                                _launchUrl(_urlGatopediaGitLatest);
+                              },
+                              icon: const Icon(AntDesign.github),
+                              label: const Text(
+                                "Versões",
+                                style: TextStyle(fontFamily: "Jost"),
+                              ),
+                            ),
+                            /* IconButton(
+                                onPressed: () {
+                                  _launchUrl(_urlGatopediaGit);
+                                },
+                                icon: const Icon(AntDesign.github)),
+                            IconButton(
+                                onPressed: () {
+                                  _launchUrl(_urlGatopediaGitLatest);
+                                },
+                                icon: const Icon(Icons.file_download)) */
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            )
+          ][paginaSelecionada]),
+    );
   }
 }
 
@@ -1292,7 +1538,9 @@ class ColaboradoresState extends State {
                                 children: <Widget>[
                                   Icon(
                                     Icons.info_rounded,
-                                    color: blueScheme.onBackground,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground,
                                   ),
                                   const SizedBox(
                                     width: 10,
@@ -1310,28 +1558,36 @@ class ColaboradoresState extends State {
                                     style: const TextStyle(
                                         fontFamily: "Jost", fontSize: 17),
                                     children: [
-                                      const TextSpan(
+                                      TextSpan(
                                           text: "Produzido com ",
-                                          style:
-                                              TextStyle(color: Colors.white)),
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground)),
                                       TextSpan(
                                           text: "Flutter",
                                           style: TextStyle(
-                                              color: blueScheme.primary,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
                                               decoration:
                                                   TextDecoration.underline),
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = () {
                                               _launchUrl(_urlFlutter);
                                             }),
-                                      const TextSpan(
+                                      TextSpan(
                                           text: " e ",
-                                          style:
-                                              TextStyle(color: Colors.white)),
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground)),
                                       TextSpan(
                                           text: "Material You",
                                           style: TextStyle(
-                                              color: blueScheme.primary,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
                                               decoration:
                                                   TextDecoration.underline),
                                           recognizer: TapGestureRecognizer()
@@ -1362,7 +1618,7 @@ class ColaboradoresState extends State {
             child: Column(
           children: [
             Card(
-              surfaceTintColor: blueScheme.onBackground,
+              surfaceTintColor: Theme.of(context).colorScheme.onBackground,
               margin: const EdgeInsets.all(20),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
@@ -1415,7 +1671,7 @@ class ColaboradoresState extends State {
               ),
             ),
             Card(
-              surfaceTintColor: blueScheme.onBackground,
+              surfaceTintColor: Theme.of(context).colorScheme.onBackground,
               margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: Padding(
                 padding: const EdgeInsets.all(20),
