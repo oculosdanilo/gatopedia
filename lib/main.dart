@@ -958,7 +958,7 @@ class GatoListaState extends State {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            TextButton.icon(
+                            ElevatedButton.icon(
                               onPressed: () {
                                 _launchUrl(_urlGatopediaGit);
                               },
@@ -968,7 +968,10 @@ class GatoListaState extends State {
                                 style: TextStyle(fontFamily: "Jost"),
                               ),
                             ),
-                            TextButton.icon(
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            ElevatedButton.icon(
                               onPressed: () {
                                 _launchUrl(_urlGatopediaGitLatest);
                               },
@@ -978,6 +981,19 @@ class GatoListaState extends State {
                                 style: TextStyle(fontFamily: "Jost"),
                               ),
                             ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                _launchUrl(Uri.parse("https://example.com"));
+                              },
+                              icon: const Icon(Icons.public),
+                              label: const Text(
+                                "Web",
+                                style: TextStyle(fontFamily: "Jost"),
+                              ),
+                            )
                             /* IconButton(
                                 onPressed: () {
                                   _launchUrl(_urlGatopediaGit);
