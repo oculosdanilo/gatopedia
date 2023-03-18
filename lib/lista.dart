@@ -1,16 +1,20 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:gatopedia/main.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:gatopedia/main.dart';
+import 'package:gatopedia/info.dart';
 
 final Uri _urlCList = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php');
@@ -421,6 +425,38 @@ class GatoListaState extends State {
           ][paginaSelecionada]),
     );
   }
+}
+
+class SlideRightAgainRoute extends PageRouteBuilder {
+  final Widget page;
+  SlideRightAgainRoute(this.page)
+      : super(
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.fastOutSlowIn,
+              reverseCurve: Curves.fastOutSlowIn,
+            )),
+            child: child,
+          ),
+        );
 }
 
 Future<void> _launchUrl(url) async {
