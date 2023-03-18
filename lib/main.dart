@@ -46,6 +46,10 @@ class App extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
+              appBarTheme: AppBarTheme(
+                  backgroundColor: ColorScheme.fromSeed(
+                seedColor: const Color(0xff000080),
+              ).primary),
               snackBarTheme:
                   const SnackBarThemeData(behavior: SnackBarBehavior.floating),
               inputDecorationTheme: InputDecorationTheme(
@@ -73,6 +77,7 @@ class App extends StatelessWidget {
               useMaterial3: true,
             ),
             darkTheme: ThemeData(
+              appBarTheme: AppBarTheme(backgroundColor: blueScheme.background),
               snackBarTheme:
                   const SnackBarThemeData(behavior: SnackBarBehavior.floating),
               inputDecorationTheme: InputDecorationTheme(

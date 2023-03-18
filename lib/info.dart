@@ -40,7 +40,6 @@ class GatoInfoState extends State {
             ]),
             expandedHeight: 360,
             pinned: true,
-            backgroundColor: Theme.of(context).colorScheme.primary,
             flexibleSpace: FlexibleSpaceBar(
               expandedTitleScale: 2,
               title: Text(

@@ -27,12 +27,13 @@ class ColaboradoresState extends State {
       // ignore: prefer_const_literals_to_create_immutables
       body: CustomScrollView(slivers: <Widget>[
         SliverAppBar.large(
-          iconTheme: IconThemeData(color: blueScheme.onPrimary),
+          iconTheme:
+              IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
           title: Row(
             children: [
               Icon(
                 Icons.people_alt_rounded,
-                color: blueScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onPrimary,
                 size: 40,
               ),
               const SizedBox(
@@ -40,8 +41,9 @@ class ColaboradoresState extends State {
               ),
               Text(
                 "COLABORADORES",
-                style:
-                    TextStyle(color: blueScheme.onPrimary, fontFamily: "Jost"),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontFamily: "Jost"),
               ),
             ],
           ),
@@ -135,7 +137,7 @@ class ColaboradoresState extends State {
               ],
             )
           ],
-          backgroundColor: blueScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
         SliverToBoxAdapter(
             child: Column(

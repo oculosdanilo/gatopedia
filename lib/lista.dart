@@ -1,4 +1,4 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe
+// ignore_for_file: import_of_legacy_library_into_null_safe, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:io';
@@ -301,6 +301,7 @@ class GatoListaState extends State {
               slivers: [
                 SliverAppBar.medium(
                   automaticallyImplyLeading: false,
+                  backgroundColor: Theme.of(context).colorScheme.background,
                   flexibleSpace: FlexibleSpaceBar(
                     title: Text(
                       "Configurações",
