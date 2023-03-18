@@ -2,8 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:gatopedia/main.dart';
-
 final Uri _urlFlutter = Uri.parse('https://flutter.dev');
 final Uri _urlMaterialYou = Uri.parse('https://m3.material.io');
 final Uri _urlEmailDanilo = Uri.parse('mailto:danilo.lima124@etec.sp.gov.br');
