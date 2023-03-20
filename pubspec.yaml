@@ -30,6 +30,12 @@ dependencies:
   internet_connection_checker: ^1.0.0+1
   package_info_plus: ^3.0.3
   flutter_icons: ^1.1.0
+  in_app_update: ^4.0.1
+  r_upgrade: ^0.4.2
+  ota_update: ^4.0.3
+  auto_update: ^0.0.4
+  firebase_core: ^2.8.0
+  firebase_messaging: ^14.3.0
 
 dev_dependencies:
   flutter_test:

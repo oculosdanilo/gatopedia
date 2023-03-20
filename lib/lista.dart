@@ -406,16 +406,6 @@ class GatoListaState extends State {
                                 style: TextStyle(fontFamily: "Jost"),
                               ),
                             )
-                            /* IconButton(
-                                onPressed: () {
-                                  _launchUrl(_urlGatopediaGit);
-                                },
-                                icon: const Icon(AntDesign.github)),
-                            IconButton(
-                                onPressed: () {
-                                  _launchUrl(_urlGatopediaGitLatest);
-                                },
-                                icon: const Icon(Icons.file_download)) */
                           ],
                         )
                       ],

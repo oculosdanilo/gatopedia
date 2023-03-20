@@ -8,6 +8,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'package:gatopedia/seminternet.dart';
 import 'package:gatopedia/form.dart';
@@ -28,7 +30,7 @@ Icon iconeConfig = const Icon(Icons.settings_outlined);
 ColorScheme blueScheme = ColorScheme.fromSeed(
     seedColor: const Color(0xff000080), brightness: Brightness.dark);
 
-void main() async {
+void main() {
   runApp(const App());
 }
 
@@ -157,6 +159,13 @@ class GatopediaState extends State {
       }
     });
     _read();
+    firebase();
+  }
+
+  firebase() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 
   void _play() async {
