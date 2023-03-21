@@ -5,13 +5,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/info.dart';
@@ -153,6 +153,8 @@ class GatoListaState extends State {
             });
         if (dialogo) {
           return true;
+        } else if (dialogo == null || !dialogo) {
+          return false;
         } else {
           return false;
         }
@@ -162,19 +164,18 @@ class GatoListaState extends State {
             selectedIndex: paginaSelecionada,
             onDestinationSelected: (index) {
               setState(() {
-                if (index == 0) {
-                  iconeGato = const Icon(Icons.pets_rounded);
-                  iconeConfig = const Icon(Icons.settings_outlined);
-                } else {
-                  iconeConfig = const Icon(Icons.settings_rounded);
-                  iconeGato = const Icon(Icons.pets_outlined);
-                }
                 paginaSelecionada = index;
               });
             },
-            destinations: <NavigationDestination>[
-              NavigationDestination(icon: iconeGato, label: "Gatos"),
-              NavigationDestination(icon: iconeConfig, label: "Configurações")
+            destinations: const <NavigationDestination>[
+              NavigationDestination(
+                  icon: Icon(Ionicons.paw_outline),
+                  selectedIcon: Icon(Ionicons.paw),
+                  label: "Gatos"),
+              NavigationDestination(
+                  icon: Icon(Icons.settings_outlined),
+                  selectedIcon: Icon(Icons.settings),
+                  label: "Configurações")
             ],
           ),
           body: [

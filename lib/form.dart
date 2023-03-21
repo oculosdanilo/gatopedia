@@ -245,6 +245,7 @@ class LoginState extends State<FormApp> {
                           final responseList = await http.post(_urlGatoList);
                           gatoLista = jsonDecode(responseList.body);
                           save();
+                          mudarTextoDoBotao();
                           Navigator.push(
                               context, SlideRightRoute(const GatoLista()));
                         } else {

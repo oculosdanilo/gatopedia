@@ -7,7 +7,6 @@ environment:
   sdk: ">=2.19.3 <3.0.0"
 
 dependencies:
-  animated_splash_screen: ^1.3.0
   flutter:
     sdk: flutter
   page_transition: ^2.0.9
@@ -29,13 +28,11 @@ dependencies:
   connectivity_plus: ^3.0.3
   internet_connection_checker: ^1.0.0+1
   package_info_plus: ^3.0.3
-  flutter_icons: ^1.1.0
-  in_app_update: ^4.0.1
-  r_upgrade: ^0.4.2
-  ota_update: ^4.0.3
-  auto_update: ^0.0.4
   firebase_core: ^2.8.0
   firebase_messaging: ^14.3.0
+  ionicons: ^0.2.2
+  flutter_vector_icons: ^2.0.0
+  ota_update: ^4.0.3
 
 dev_dependencies:
   flutter_test:
