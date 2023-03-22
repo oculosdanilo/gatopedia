@@ -29,6 +29,13 @@
             {
               "client_id": "906400327488-6dh8e8rgk64lb6cpa87j358n15k0cs3f.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "906400327488-enj0r6pn80ho3in3gucp1je1vg9un4nj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.oculosdanilo.gatopedia"
+              }
             }
           ]
         }

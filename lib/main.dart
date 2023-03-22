@@ -2,12 +2,12 @@
 import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/material.dart';
-import 'package:ota_update/ota_update.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -142,29 +142,6 @@ class GatopediaState extends State {
     }
   }
 
-  update() {
-    try {
-      //LINK CONTAINS APK OF FLUTTER HELLO WORLD FROM FLUTTER SDK EXAMPLES
-      OtaUpdate()
-          .execute(
-        'https://github.com/oculosdanilo/gatopedia/releases/latest/download/app-release.apk',
-        // OPTIONAL
-        destinationFilename: 'app-release.apk',
-      )
-          .listen(
-        (OtaEvent event) {
-          if (kDebugMode) {
-            print('$event');
-          }
-        },
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print('Failed to make OTA update. Details: $e');
-      }
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -182,13 +159,16 @@ class GatopediaState extends State {
     });
     _read();
     firebase();
-    update();
   }
 
   firebase() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    if (kDebugMode) {
+      print(fcmToken);
+    }
   }
 
   void _play() async {
