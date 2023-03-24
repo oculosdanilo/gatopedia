@@ -34,6 +34,8 @@ dependencies:
   flutter_vector_icons: ^2.0.0
   ota_update: ^4.0.3
   firebase_analytics: ^10.1.6
+  elegant_notification: ^1.8.1
+  animations: ^2.0.7
 
 dev_dependencies:
   flutter_test:

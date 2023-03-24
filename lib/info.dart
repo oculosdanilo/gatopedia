@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:gatopedia/main.dart';
@@ -8,6 +10,8 @@ final Uri _urlCAdd = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentAdd.php');
 final Uri _urlCDelete = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentDelete.php');
+final Uri _urlCList = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php');
 
 class GatoInfo extends StatefulWidget {
   const GatoInfo({super.key});
@@ -141,14 +145,18 @@ class GatoInfoState extends State {
                                 map['comentario'] = txtControllerC.text;
                                 final response =
                                     await http.post(_urlCAdd, body: map);
-                                /* Flushbar(
-                                message: response.body,
-                                duration: Duration(seconds: 2),
-                                margin: EdgeInsets.all(20),
-                                flushbarStyle: FlushbarStyle.FLOATING,
-                                borderRadius: BorderRadius.circular(50),
-                              ).show(context); */
-                                Navigator.pop(context, response.body);
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(response.body)));
+
+                                var mapUp = <String, String>{};
+                                int indexMais1 = indexClicado + 1;
+                                mapUp['id'] = "$indexMais1";
+                                final responseUp =
+                                    await http.post(_urlCList, body: mapUp);
+                                cLista = jsonDecode(responseUp.body);
+                                cListaTamanho = cLista.length;
+                                setState(() {});
                               }
                             },
                             child: const Text("COMENTAR"),
@@ -258,7 +266,19 @@ class GatoInfoState extends State {
                                       map['id'] = cLista[index]["ID"];
                                       final response = await http
                                           .post(_urlCDelete, body: map);
-                                      Navigator.pop(context, response.body);
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(response.body)));
+
+                                      var mapUp = <String, String>{};
+                                      int indexMais1 = indexClicado + 1;
+                                      mapUp['id'] = "$indexMais1";
+                                      final responseUp = await http
+                                          .post(_urlCList, body: mapUp);
+                                      cLista = jsonDecode(responseUp.body);
+                                      cListaTamanho = cLista.length;
+                                      setState(() {});
                                     }
                                   },
                                 ))

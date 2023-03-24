@@ -1,16 +1,17 @@
-// ignore_for_file: use_build_context_synchronously, import_of_legacy_library_into_null_safe
+// ignore_for_file: use_build_context_synchronously, import_of_legacy_library_into_null_safe, unused_local_variable
 import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:elegant_notification/elegant_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 import 'package:gatopedia/seminternet.dart';
 import 'package:gatopedia/form.dart';
@@ -28,8 +29,21 @@ dynamic cListaTamanho;
 bool internet = true;
 ColorScheme blueScheme = ColorScheme.fromSeed(
     seedColor: const Color(0xff000080), brightness: Brightness.dark);
+dynamic mensagem;
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+}
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    // handle message here
+  });
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(const App());
 }
 
@@ -146,7 +160,6 @@ class GatopediaState extends State {
   void initState() {
     super.initState();
     _play();
-    // ignore: unused_local_variable
     var listener = InternetConnectionChecker().onStatusChange.listen((status) {
       switch (status) {
         case InternetConnectionStatus.disconnected:
@@ -162,13 +175,63 @@ class GatopediaState extends State {
   }
 
   firebase() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+    await Firebase.initializeApp();
+
+    dynamic token = await FirebaseMessaging.instance.getToken();
+
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
     );
-    final fcmToken = await FirebaseMessaging.instance.getToken();
+
     if (kDebugMode) {
-      print(fcmToken);
+      print(token);
     }
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage remoteMessage) async {
+      if (kDebugMode) {
+        print(remoteMessage.notification?.body);
+      }
+      String appName = "";
+      String packageName = "";
+      String version = "";
+      String buildNumber = "";
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+      appName = packageInfo.appName;
+      packageName = packageInfo.packageName;
+      version = packageInfo.version;
+      buildNumber = packageInfo.buildNumber;
+
+      if (version != remoteMessage.data.values.first) {
+        ElegantNotification(
+          title: const Text("Nova versão disponível!"),
+          description: Text("Versão: ${remoteMessage.data.values.first}"),
+          icon: const Icon(
+            Icons.access_alarm,
+            color: Colors.orange,
+          ),
+          action: const Text("auau"),
+          onActionPressed: () {
+            if (kDebugMode) {
+              print("object");
+            }
+          },
+          progressIndicatorColor: Colors.orange,
+          toastDuration: const Duration(seconds: 10),
+        ).show(context);
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("aaaaaa")));
+      }
+    });
   }
 
   void _play() async {

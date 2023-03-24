@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -74,38 +75,6 @@ class GatoListaState extends State {
     audioPlayer.play();
   }
 
-  Future<void> _navigateAndDisplaySelection(BuildContext context, index) async {
-    // Navigator.push returns a Future that completes after calling
-    // Navigator.pop on the Selection Screen.
-    final result = await Navigator.push(
-      context,
-      SlideRightAgainRoute(const GatoInfo()),
-    );
-
-    // When a BuildContext is used from a StatefulWidget, the mounted property
-    // must be checked after an asynchronous gap.
-    if (!mounted) return;
-
-    // After the Selection Screen returns a result, hide any previous snackbars
-    // and show the new result.
-    if (result != null) {
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(SnackBar(
-            content: Text('$result'), behavior: SnackBarBehavior.floating));
-
-      indexClicado = index;
-      var map = <String, String>{};
-      int indexMais1 = indexClicado + 1;
-      map['id'] = "$indexMais1";
-      final response = await http.post(_urlCList, body: map);
-      cLista = jsonDecode(response.body);
-      cListaTamanho = cLista.length;
-
-      _navigateAndDisplaySelection(context, index);
-    }
-  }
-
   @override
   void initState() {
     _pegarVersao();
@@ -120,6 +89,7 @@ class GatoListaState extends State {
     return WillPopScope(
       onWillPop: () async {
         var dialogo = await showDialog(
+            barrierDismissible: false,
             context: context,
             builder: (context) {
               return AlertDialog(
@@ -215,7 +185,106 @@ class GatoListaState extends State {
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
-                    return SizedBox(
+                    return Container(
+                      margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+                      child: OpenContainer(
+                        closedShape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        transitionType: ContainerTransitionType.fade,
+                        transitionDuration: const Duration(milliseconds: 500),
+                        openBuilder: (context, _) => const GatoInfo(),
+                        closedElevation: 0,
+                        openColor: _dark
+                            ? const Color(0xff23232a)
+                            : const Color(0xffebe8f1),
+                        onClosed: (data) async {},
+                        closedColor: _dark
+                            ? const Color(0xff23232a)
+                            : const Color(0xffebe8f1),
+                        closedBuilder: (context, VoidCallback openContainer) =>
+                            SizedBox(
+                          height: 140,
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            shadowColor: Colors.transparent,
+                            margin: const EdgeInsets.all(0),
+                            child: InkWell(
+                              onTap: () async {
+                                indexClicado = index;
+                                var map = <String, String>{};
+                                int indexMais1 = indexClicado + 1;
+                                map['id'] = "$indexMais1";
+                                final response =
+                                    await http.post(_urlCList, body: map);
+                                cLista = jsonDecode(response.body);
+                                cListaTamanho = cLista.length;
+                                openContainer.call();
+
+                                /* _navigateAndDisplaySelection(context, index); */
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: FadeInImage(
+                                        placeholder: const AssetImage(
+                                            'lib/assets/loading.gif'),
+                                        image: NetworkImage(
+                                            gatoLista[index]["IMG"]),
+                                        fadeInDuration:
+                                            const Duration(milliseconds: 300),
+                                        fadeOutDuration:
+                                            const Duration(milliseconds: 300),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            gatoLista[index]["NOME"],
+                                            style: const TextStyle(
+                                                fontFamily: "Jost",
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 25),
+                                            softWrap: true,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            gatoLista[index]["RESUMO"],
+                                            style: const TextStyle(
+                                                fontFamily: "Jost",
+                                                fontSize: 15),
+                                            softWrap: true,
+                                            maxLines: 2,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+
+                    /* SizedBox(
                       height: 140,
                       child: Card(
                         margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
@@ -293,9 +362,9 @@ class GatoListaState extends State {
                           ),
                         ),
                       ),
-                    );
+                    ); */
                   }, childCount: 10),
-                )
+                ),
               ],
             ),
             CustomScrollView(
