@@ -11,8 +11,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/lista.dart';
 import 'package:gatopedia/colab.dart';
+import 'home.dart';
 
 final Uri _urlLogin = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/salvar.php');
@@ -247,7 +247,7 @@ class LoginState extends State<FormApp> {
                           save();
                           mudarTextoDoBotao();
                           Navigator.push(
-                              context, SlideRightRoute(const GatoLista()));
+                              context, SlideRightRoute(const Home()));
                         } else {
                           Flushbar(
                             flushbarStyle: FlushbarStyle.FLOATING,

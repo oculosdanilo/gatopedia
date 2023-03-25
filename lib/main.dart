@@ -1,9 +1,8 @@
-// ignore_for_file: use_build_context_synchronously, import_of_legacy_library_into_null_safe, unused_local_variable
+// ignore_for_file: use_build_context_synchronously
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:elegant_notification/elegant_notification.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
@@ -11,13 +10,16 @@ import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:http/http.dart' as http;
+import 'package:ota_update/ota_update.dart';
 
 import 'package:gatopedia/seminternet.dart';
 import 'package:gatopedia/form.dart';
 
 String urlMeow =
     "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
+final Uri _urlVersao = Uri.parse(
+    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/versao.php');
 String buttonText = "Cadastrar/Entrar";
 bool esconderSenha = true;
 Icon iconeOlho = const Icon(Icons.visibility_rounded);
@@ -31,20 +33,16 @@ ColorScheme blueScheme = ColorScheme.fromSeed(
     seedColor: const Color(0xff000080), brightness: Brightness.dark);
 dynamic mensagem;
 
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
+void main() {
+  runApp(const App());
 }
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    // handle message here
-  });
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  runApp(const App());
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
+  }
 }
 
 class App extends StatelessWidget {
@@ -135,6 +133,10 @@ class Gatopedia extends StatefulWidget {
 
 class GatopediaState extends State {
   final miau = AudioPlayer();
+  String appName = "";
+  String packageName = "";
+  String version = "";
+  String buildNumber = "";
 
   _read() async {
     try {
@@ -156,11 +158,65 @@ class GatopediaState extends State {
     }
   }
 
+  checarUpdate() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    appName = packageInfo.appName;
+    packageName = packageInfo.packageName;
+    version = packageInfo.version;
+    buildNumber = packageInfo.buildNumber;
+
+    final response = await http.post(_urlVersao);
+    List versoes = jsonDecode(response.body);
+    if (version != versoes.first['VERSAO']) {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            icon: const Icon(Icons.info_rounded),
+            title: const Text("Nova versão disponível"),
+            content: Text(
+                "A versão ${versoes.first['VERSAO']} acabou de sair! Quentinha do forno"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("ME LEMBRE DEPOIS"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  try {
+                    //LINK CONTAINS APK OF FLUTTER HELLO WORLD FROM FLUTTER SDK EXAMPLES
+                    OtaUpdate()
+                        .execute(
+                            'https://github.com/oculosdanilo/gatopedia/releases/latest/download/app-release.apk')
+                        .listen(
+                      (OtaEvent event) {
+                        // ignore: unused_local_variable
+                        OtaEvent currentEvent;
+                        setState(() => currentEvent = event);
+                      },
+                    );
+                  } catch (e) {
+                    debugPrint('Failed to make OTA update. Details: $e');
+                  }
+                },
+                child: const Text("ATUALIZAR"),
+              )
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _play();
-    var listener = InternetConnectionChecker().onStatusChange.listen((status) {
+    InternetConnectionChecker().onStatusChange.listen((status) {
       switch (status) {
         case InternetConnectionStatus.disconnected:
           internet = false;
@@ -171,67 +227,7 @@ class GatopediaState extends State {
       }
     });
     _read();
-    firebase();
-  }
-
-  firebase() async {
-    await Firebase.initializeApp();
-
-    dynamic token = await FirebaseMessaging.instance.getToken();
-
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-
-    if (kDebugMode) {
-      print(token);
-    }
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage remoteMessage) async {
-      if (kDebugMode) {
-        print(remoteMessage.notification?.body);
-      }
-      String appName = "";
-      String packageName = "";
-      String version = "";
-      String buildNumber = "";
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-      appName = packageInfo.appName;
-      packageName = packageInfo.packageName;
-      version = packageInfo.version;
-      buildNumber = packageInfo.buildNumber;
-
-      if (version != remoteMessage.data.values.first) {
-        ElegantNotification(
-          title: const Text("Nova versão disponível!"),
-          description: Text("Versão: ${remoteMessage.data.values.first}"),
-          icon: const Icon(
-            Icons.access_alarm,
-            color: Colors.orange,
-          ),
-          action: const Text("auau"),
-          onActionPressed: () {
-            if (kDebugMode) {
-              print("object");
-            }
-          },
-          progressIndicatorColor: Colors.orange,
-          toastDuration: const Duration(seconds: 10),
-        ).show(context);
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("aaaaaa")));
-      }
-    });
+    checarUpdate();
   }
 
   void _play() async {

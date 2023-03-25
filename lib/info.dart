@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:gatopedia/main.dart';
@@ -146,9 +147,14 @@ class GatoInfoState extends State {
                                 final response =
                                     await http.post(_urlCAdd, body: map);
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(response.body)));
+                                Flushbar(
+                                  message: response.body,
+                                  duration: const Duration(seconds: 2),
+                                  margin: const EdgeInsets.all(20),
+                                  borderRadius: BorderRadius.circular(50),
+                                ).show(context);
 
+                                txtControllerC.text = "";
                                 var mapUp = <String, String>{};
                                 int indexMais1 = indexClicado + 1;
                                 mapUp['id'] = "$indexMais1";
@@ -267,9 +273,12 @@ class GatoInfoState extends State {
                                       final response = await http
                                           .post(_urlCDelete, body: map);
 
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(response.body)));
+                                      Flushbar(
+                                        message: response.body,
+                                        duration: const Duration(seconds: 2),
+                                        margin: const EdgeInsets.all(20),
+                                        borderRadius: BorderRadius.circular(50),
+                                      ).show(context);
 
                                       var mapUp = <String, String>{};
                                       int indexMais1 = indexClicado + 1;
@@ -409,14 +418,23 @@ class GatoInfoState extends State {
                                 map['comentario'] = txtControllerC.text;
                                 final response =
                                     await http.post(_urlCAdd, body: map);
-                                /* Flushbar(
-                                message: response.body,
-                                duration: Duration(seconds: 2),
-                                margin: EdgeInsets.all(20),
-                                flushbarStyle: FlushbarStyle.FLOATING,
-                                borderRadius: BorderRadius.circular(50),
-                              ).show(context); */
-                                Navigator.pop(context, response.body);
+
+                                Flushbar(
+                                  message: response.body,
+                                  duration: const Duration(seconds: 2),
+                                  margin: const EdgeInsets.all(20),
+                                  borderRadius: BorderRadius.circular(50),
+                                ).show(context);
+
+                                txtControllerC.text = "";
+                                var mapUp = <String, String>{};
+                                int indexMais1 = indexClicado + 1;
+                                mapUp['id'] = "$indexMais1";
+                                final responseUp =
+                                    await http.post(_urlCList, body: mapUp);
+                                cLista = jsonDecode(responseUp.body);
+                                cListaTamanho = cLista.length;
+                                setState(() {});
                               }
                             },
                             child: const Text("COMENTAR"),
