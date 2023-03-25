@@ -9,6 +9,7 @@ import 'config.dart';
 import 'lista.dart';
 
 List<Widget> telasHome = [const GatoLista(), const Config()];
+bool mudou = false;
 
 class Home extends StatefulWidget {
   const Home({super.key});

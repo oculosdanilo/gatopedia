@@ -47,7 +47,7 @@ class MyBehavior extends ScrollBehavior {
 
 class App extends StatelessWidget {
   static final ValueNotifier<ThemeMode> themeNotifier =
-      ValueNotifier(ThemeMode.light);
+      ValueNotifier(ThemeMode.dark);
 
   const App({super.key});
 
@@ -188,7 +188,6 @@ class GatopediaState extends State {
               ElevatedButton(
                 onPressed: () {
                   try {
-                    //LINK CONTAINS APK OF FLUTTER HELLO WORLD FROM FLUTTER SDK EXAMPLES
                     OtaUpdate()
                         .execute(
                             'https://github.com/oculosdanilo/gatopedia/releases/latest/download/app-release.apk')
@@ -209,6 +208,8 @@ class GatopediaState extends State {
           );
         },
       );
+    } else {
+      debugPrint("atualizado");
     }
   }
 

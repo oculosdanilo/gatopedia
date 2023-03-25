@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'main.dart';
+import 'home.dart';
 
 final Uri _urlGatopediaGit =
     Uri.parse('https://github.com/oculosdanilo/gatopedia');
@@ -115,6 +116,7 @@ class _ConfigState extends State<Config> {
                       }
                       setState(() {
                         _dark = value;
+                        mudou = true;
                       });
                     },
                   ),

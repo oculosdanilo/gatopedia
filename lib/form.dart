@@ -39,6 +39,18 @@ class LoginState extends State<FormApp> {
   int txtFieldLenght = 0;
   dynamic counterColor;
 
+  Future<void> _navegarAtt(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the SelectionScreen in the next step.
+      SlideRightRoute(const Home()),
+    );
+
+    debugPrint("mudou");
+  }
+
   mudarCor(cor) {
     counterColor = cor;
   }
@@ -246,8 +258,7 @@ class LoginState extends State<FormApp> {
                           gatoLista = jsonDecode(responseList.body);
                           save();
                           mudarTextoDoBotao();
-                          Navigator.push(
-                              context, SlideRightRoute(const Home()));
+                          _navegarAtt(context);
                         } else {
                           Flushbar(
                             flushbarStyle: FlushbarStyle.FLOATING,
