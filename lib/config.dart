@@ -1,14 +1,10 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'main.dart';
-import 'home.dart';
 
 final Uri _urlGatopediaGit =
     Uri.parse('https://github.com/oculosdanilo/gatopedia');
@@ -18,6 +14,7 @@ String appName = "";
 String packageName = "";
 String version = "";
 String buildNumber = "";
+bool dark = App.themeNotifier.value == ThemeMode.dark ? true : false;
 
 class Config extends StatefulWidget {
   const Config({super.key});
@@ -26,7 +23,7 @@ class Config extends StatefulWidget {
 }
 
 class _ConfigState extends State<Config> {
-  bool _dark = App.themeNotifier.value == ThemeMode.dark ? true : false;
+  bool dark = App.themeNotifier.value == ThemeMode.dark ? true : false;
 
   _pegarVersao() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -40,23 +37,13 @@ class _ConfigState extends State<Config> {
   }
 
   saveDark() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/dark.txt');
-    const text = "dark";
-    await file.writeAsString(text);
-    if (kDebugMode) {
-      print(text);
-    }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("dark", "dark");
   }
 
   saveLight() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/dark.txt');
-    const text = "light";
-    await file.writeAsString(text);
-    if (kDebugMode) {
-      print(text);
-    }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("dark", "light");
   }
 
   @override
@@ -105,7 +92,7 @@ class _ConfigState extends State<Config> {
                       "Lindo como gatos pretos!",
                       style: TextStyle(fontFamily: "Jost"),
                     ),
-                    value: _dark,
+                    value: dark,
                     onChanged: (bool value) {
                       if (value) {
                         App.themeNotifier.value = ThemeMode.dark;
@@ -115,8 +102,7 @@ class _ConfigState extends State<Config> {
                         saveLight();
                       }
                       setState(() {
-                        _dark = value;
-                        mudou = true;
+                        dark = value;
                       });
                     },
                   ),
@@ -142,48 +128,60 @@ class _ConfigState extends State<Config> {
                       ],
                     ),
                   ),
-                  Row(
+                  Center(
+                    child: SizedBox(
+                      height: 40,
+                      child: ListView(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              _launchUrl(_urlGatopediaGit);
+                            },
+                            icon: const Icon(AntDesign.github),
+                            label: const Text(
+                              "Repositório",
+                              style: TextStyle(fontFamily: "Jost"),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              _launchUrl(_urlGatopediaGitLatest);
+                            },
+                            icon: const Icon(AntDesign.github),
+                            label: const Text(
+                              "Versões",
+                              style: TextStyle(fontFamily: "Jost"),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              _launchUrl(Uri.parse(
+                                  "https://etec199-danilolima.epizy.com/2023/0318/"));
+                            },
+                            icon: const Icon(Icons.public),
+                            label: const Text(
+                              "Web",
+                              style: TextStyle(fontFamily: "Jost"),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  /* Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          _launchUrl(_urlGatopediaGit);
-                        },
-                        icon: const Icon(AntDesign.github),
-                        label: const Text(
-                          "Repositório",
-                          style: TextStyle(fontFamily: "Jost"),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          _launchUrl(_urlGatopediaGitLatest);
-                        },
-                        icon: const Icon(AntDesign.github),
-                        label: const Text(
-                          "Versões",
-                          style: TextStyle(fontFamily: "Jost"),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          _launchUrl(Uri.parse(
-                              "https://etec199-danilolima.epizy.com/2023/0318/"));
-                        },
-                        icon: const Icon(Icons.public),
-                        label: const Text(
-                          "Web",
-                          style: TextStyle(fontFamily: "Jost"),
-                        ),
-                      )
+                      
                     ],
-                  ),
+                  ), */
                   const SizedBox(
                     height: 17,
                   ),

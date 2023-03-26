@@ -7,9 +7,9 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 import 'config.dart';
 import 'lista.dart';
+import 'main.dart';
 
 List<Widget> telasHome = [const GatoLista(), const Config()];
-bool mudou = false;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -70,11 +70,21 @@ class HomeState extends State {
                     children: const [Text("Tem certeza que deseja sair?")]),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.pop(context, false),
+                    onPressed: () {
+                      setState(() {
+                        dark = App.themeNotifier.value == ThemeMode.dark;
+                      });
+                      Navigator.pop(context, false);
+                    },
                     child: const Text('CANCELAR'),
                   ),
                   ElevatedButton(
-                    onPressed: () => Navigator.pop(context, true),
+                    onPressed: () {
+                      setState(() {
+                        dark = App.themeNotifier.value == ThemeMode.dark;
+                      });
+                      Navigator.pop(context, true);
+                    },
                     child: const Text('OK'),
                   ),
                 ],
@@ -93,6 +103,7 @@ class HomeState extends State {
           selectedIndex: paginaSelecionada,
           onDestinationSelected: (index) {
             setState(() {
+              dark = App.themeNotifier.value == ThemeMode.dark;
               paginaSelecionada = index;
             });
           },

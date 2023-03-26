@@ -8,10 +8,10 @@ import 'package:http/http.dart' as http;
 
 import 'main.dart';
 import 'info.dart';
+import 'config.dart';
 
 final Uri _urlCList = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php');
-bool _dark = App.themeNotifier.value == ThemeMode.dark ? true : false;
 
 class GatoLista extends StatefulWidget {
   const GatoLista({super.key});
@@ -68,7 +68,7 @@ class _GatoListaState extends State<GatoLista> {
         ];
       },
       body: ListView.builder(
-          itemCount: 10,
+          itemCount: gatoLista.length,
           itemBuilder: (context, index) {
             return Container(
               margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
@@ -81,15 +81,15 @@ class _GatoListaState extends State<GatoLista> {
                 openBuilder: (context, _) => const GatoInfo(),
                 closedElevation: 0,
                 openColor:
-                    _dark ? const Color(0xff23232a) : const Color(0xfff5f2fb),
+                    dark ? const Color(0xff23232a) : const Color(0xfff5f2fb),
                 onClosed: (data) {},
                 closedColor:
-                    _dark ? const Color(0xff23232a) : const Color(0xfff5f2fb),
+                    dark ? const Color(0xff23232a) : const Color(0xfff5f2fb),
                 closedBuilder: (context, VoidCallback openContainer) =>
                     SizedBox(
                   height: 140,
                   child: Card(
-                    shadowColor: _dark ? Colors.transparent : Colors.black,
+                    shadowColor: Colors.transparent,
                     margin: const EdgeInsets.all(0),
                     child: InkWell(
                       onTap: () async {
@@ -105,11 +105,12 @@ class _GatoListaState extends State<GatoLista> {
                       child: Padding(
                         padding: const EdgeInsets.all(10),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: FadeInImage(
+                                width: 100,
                                 placeholder:
                                     const AssetImage('lib/assets/loading.gif'),
                                 image: NetworkImage(gatoLista[index]["IMG"]),

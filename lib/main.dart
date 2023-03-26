@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/foundation.dart';
@@ -9,12 +8,12 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:ota_update/ota_update.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:gatopedia/seminternet.dart';
-import 'package:gatopedia/form.dart';
+import 'seminternet.dart';
+import 'form.dart';
 
 String urlMeow =
     "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
@@ -140,9 +139,8 @@ class GatopediaState extends State {
 
   _read() async {
     try {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/dark.txt');
-      String text = await file.readAsString();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? text = prefs.getString("dark");
       if (text == "dark") {
         App.themeNotifier.value = ThemeMode.dark;
       } else {
@@ -217,18 +215,20 @@ class GatopediaState extends State {
   void initState() {
     super.initState();
     _play();
-    InternetConnectionChecker().onStatusChange.listen((status) {
-      switch (status) {
-        case InternetConnectionStatus.disconnected:
-          internet = false;
-          Navigator.push(context, SlideUpRoute(const SemInternet()));
-          break;
-        case InternetConnectionStatus.connected:
-          break;
-      }
-    });
+    if (!kIsWeb) {
+      InternetConnectionChecker().onStatusChange.listen((status) {
+        switch (status) {
+          case InternetConnectionStatus.disconnected:
+            internet = false;
+            Navigator.push(context, SlideUpRoute(const SemInternet()));
+            break;
+          case InternetConnectionStatus.connected:
+            break;
+        }
+      });
+    }
     _read();
-    checarUpdate();
+    /* checarUpdate(); */
   }
 
   void _play() async {

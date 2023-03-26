@@ -1,17 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/colab.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 
 final Uri _urlLogin = Uri.parse(
@@ -42,17 +40,19 @@ class LoginState extends State<FormApp> {
   Future<void> _navegarAtt(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    final result = await Navigator.push(
+    await Navigator.push(
       context,
       // Create the SelectionScreen in the next step.
       SlideRightRoute(const Home()),
     );
 
-    debugPrint("mudou");
+    mudarCor(Theme.of(context).colorScheme.primary);
   }
 
   mudarCor(cor) {
-    counterColor = cor;
+    setState(() {
+      counterColor = cor;
+    });
   }
 
   mudarTextoDoBotao() {
@@ -76,16 +76,10 @@ class LoginState extends State<FormApp> {
   }
 
   _read() async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/my_file.txt');
-      // ignore: unused_local_variable
-      String text = await file.readAsString();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? user = prefs.getString("user");
+    if (user != null) {
       mudarTextoDoBotao();
-    } catch (e) {
-      if (kDebugMode) {
-        print("Couldn't read file");
-      }
     }
   }
 
@@ -98,10 +92,8 @@ class LoginState extends State<FormApp> {
   @override
   Widget build(BuildContext context) {
     save() async {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/my_file.txt');
-      final text = username;
-      await file.writeAsString(text);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("user", username);
     }
 
     return Form(
@@ -120,7 +112,7 @@ class LoginState extends State<FormApp> {
                     if (value.length <= 3 || value.length > 25) {
                       mudarCor(Theme.of(context).colorScheme.error);
                     } else {
-                      mudarCor(Theme.of(context).colorScheme.primary);
+                      mudarCor(Theme.of(context).colorScheme.onBackground);
                     }
                   });
                   if (_formKey.currentState!.validate()) {
