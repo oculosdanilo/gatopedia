@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "906400327488",
+    "firebase_url": "https://fluttergatopedia-default-rtdb.firebaseio.com",
     "project_id": "fluttergatopedia",
     "storage_bucket": "fluttergatopedia.appspot.com"
   },

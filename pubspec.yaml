@@ -13,7 +13,6 @@ dependencies:
   url_launcher: ^6.1.10
   http: ^0.13.5
   just_audio: ^0.9.31
-  just_audio_cache: ^0.1.1
   path_provider: ^2.0.13
   another_flushbar: ^1.12.29
   animated_text_kit: ^4.2.2
@@ -24,6 +23,7 @@ dependencies:
   animations: ^2.0.7
   just_audio_windows: ^0.2.0
   shared_preferences: ^2.0.20
+  firebase_core: ^2.9.0
 
 dev_dependencies:
   flutter_test:

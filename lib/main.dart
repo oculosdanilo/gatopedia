@@ -5,7 +5,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_cache/just_audio_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:http/http.dart' as http;
@@ -32,6 +31,10 @@ ColorScheme blueScheme = ColorScheme.fromSeed(
   seedColor: const Color(0xff000080),
   brightness: Brightness.dark,
 );
+ColorScheme blueSchemeL = ColorScheme.fromSeed(
+  seedColor: const Color(0xff000080),
+  brightness: Brightness.light,
+);
 dynamic mensagem;
 
 void main() {
@@ -55,71 +58,99 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
-        valueListenable: themeNotifier,
-        builder: (_, ThemeMode currentMode, __) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              appBarTheme: AppBarTheme(
-                  backgroundColor: ColorScheme.fromSeed(
-                seedColor: const Color(0xff000080),
-              ).primary),
-              snackBarTheme:
-                  const SnackBarThemeData(behavior: SnackBarBehavior.floating),
-              inputDecorationTheme: InputDecorationTheme(
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(width: 2, color: blueScheme.outline),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(50)),
-                  borderSide: BorderSide(width: 2, color: Colors.blue[900]!),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                      width: 3, color: Theme.of(context).colorScheme.error),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(
-                      width: 3, color: Theme.of(context).colorScheme.error),
+      valueListenable: themeNotifier,
+      builder: (_, ThemeMode currentMode, __) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            navigationBarTheme: NavigationBarThemeData(
+              indicatorColor: blueSchemeL.primary,
+            ),
+            appBarTheme: AppBarTheme(backgroundColor: blueSchemeL.primary),
+            snackBarTheme: const SnackBarThemeData(
+              behavior: SnackBarBehavior.floating,
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                  width: 2,
+                  color: blueScheme.outline,
                 ),
               ),
-              brightness: Brightness.light,
-              colorSchemeSeed: const Color(0xff000080),
-              useMaterial3: true,
-            ),
-            darkTheme: ThemeData(
-              appBarTheme: AppBarTheme(backgroundColor: blueScheme.background),
-              snackBarTheme:
-                  const SnackBarThemeData(behavior: SnackBarBehavior.floating),
-              inputDecorationTheme: InputDecorationTheme(
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(width: 2, color: blueScheme.outline),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(50)),
-                  borderSide: BorderSide(width: 2, color: blueScheme.primary),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(width: 3, color: blueScheme.error),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(width: 3, color: blueScheme.error),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(50)),
+                borderSide: BorderSide(
+                  width: 2,
+                  color: Colors.blue[900]!,
                 ),
               ),
-              brightness: Brightness.dark,
-              colorSchemeSeed: const Color(0xff000080),
-              useMaterial3: true,
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  width: 3,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(
+                  width: 3,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
             ),
-            themeMode: currentMode,
-            home: const Gatopedia(),
-          );
-        });
+            brightness: Brightness.light,
+            colorSchemeSeed: const Color(0xff000080),
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            navigationBarTheme: NavigationBarThemeData(
+              indicatorColor: blueScheme.primary,
+            ),
+            appBarTheme: AppBarTheme(backgroundColor: blueScheme.background),
+            snackBarTheme: const SnackBarThemeData(
+              behavior: SnackBarBehavior.floating,
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                  width: 2,
+                  color: blueScheme.outline,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(50)),
+                borderSide: BorderSide(
+                  width: 2,
+                  color: blueScheme.primary,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  width: 3,
+                  color: blueScheme.error,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(
+                  width: 3,
+                  color: blueScheme.error,
+                ),
+              ),
+            ),
+            brightness: Brightness.dark,
+            colorSchemeSeed: const Color(0xff000080),
+            useMaterial3: true,
+          ),
+          themeMode: currentMode,
+          home: const Gatopedia(),
+        );
+      },
+    );
   }
 }
 
@@ -132,7 +163,7 @@ class Gatopedia extends StatefulWidget {
   }
 }
 
-class GatopediaState extends State {
+class GatopediaState extends State with SingleTickerProviderStateMixin {
   final miau = AudioPlayer();
   String appName = "";
   String packageName = "";
@@ -248,18 +279,29 @@ class GatopediaState extends State {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Image(
-                image: AssetImage('lib/assets/icon.png'),
-                width: 270,
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0.0, end: 1.0),
+                curve: Curves.easeIn,
+                duration: const Duration(seconds: 1),
+                builder: (BuildContext context, double opacity, Widget? child) {
+                  return Opacity(
+                    opacity: opacity,
+                    child: const Image(
+                      image: AssetImage('lib/assets/icon.png'),
+                      width: 270,
+                    ),
+                  );
+                },
               ),
               AnimatedTextKit(
                 animatedTexts: [
                   TyperAnimatedText(
                     'Gatopédia!',
                     textStyle: const TextStyle(
-                        fontSize: 35,
-                        fontFamily: "Jost",
-                        fontWeight: FontWeight.bold),
+                      fontSize: 35,
+                      fontFamily: "Jost",
+                      fontWeight: FontWeight.bold,
+                    ),
                     speed: const Duration(milliseconds: 70),
                   ),
                 ],
@@ -302,11 +344,13 @@ class SlideUpRoute extends PageRouteBuilder {
             position: Tween<Offset>(
               begin: const Offset(0, 1),
               end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.fastOutSlowIn,
-              reverseCurve: Curves.fastOutSlowIn,
-            )),
+            ).animate(
+              CurvedAnimation(
+                parent: animation,
+                curve: Curves.fastOutSlowIn,
+                reverseCurve: Curves.fastOutSlowIn,
+              ),
+            ),
             child: child,
           ),
         );

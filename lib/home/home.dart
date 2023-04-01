@@ -113,28 +113,37 @@ class HomeState extends State {
               tabIndex = 0;
             });
           },
-          destinations: const <NavigationDestination>[
+          destinations: <NavigationDestination>[
             NavigationDestination(
-                icon: Icon(Ionicons.paw_outline),
-                selectedIcon: Icon(Ionicons.paw),
-                label: "Gatos"),
+              icon: const Icon(Ionicons.paw_outline),
+              selectedIcon: Icon(
+                Ionicons.paw,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              label: "Gatos",
+            ),
             NavigationDestination(
-                icon: Icon(Icons.settings_outlined),
-                selectedIcon: Icon(Icons.settings),
-                label: "Configurações")
+              icon: const Icon(Icons.settings_outlined),
+              selectedIcon: Icon(
+                Icons.settings,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              label: "Configurações",
+            )
           ],
         ),
         body: PageTransitionSwitcher(
-            reverse: paginaSelecionada == 0,
-            transitionBuilder: (child, animation, secondAnimation) =>
-                SharedAxisTransition(
-                  animation: animation,
-                  secondaryAnimation: secondAnimation,
-                  transitionType: SharedAxisTransitionType.horizontal,
-                  child: child,
-                ),
-            duration: const Duration(milliseconds: 200),
-            child: telasHome[paginaSelecionada]),
+          reverse: paginaSelecionada == 0,
+          transitionBuilder: (child, animation, secondAnimation) =>
+              SharedAxisTransition(
+            animation: animation,
+            secondaryAnimation: secondAnimation,
+            transitionType: SharedAxisTransitionType.horizontal,
+            child: child,
+          ),
+          duration: const Duration(milliseconds: 200),
+          child: telasHome[paginaSelecionada],
+        ),
       ),
     );
   }
