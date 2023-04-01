@@ -12,8 +12,8 @@ import 'package:http/http.dart' as http;
 import 'package:ota_update/ota_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'seminternet.dart';
-import 'form.dart';
+import 'loginScreen/seminternet.dart';
+import 'loginScreen/form.dart';
 
 String urlMeow =
     "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
@@ -29,7 +29,9 @@ int indexClicado = 0;
 dynamic cListaTamanho;
 bool internet = true;
 ColorScheme blueScheme = ColorScheme.fromSeed(
-    seedColor: const Color(0xff000080), brightness: Brightness.dark);
+  seedColor: const Color(0xff000080),
+  brightness: Brightness.dark,
+);
 dynamic mensagem;
 
 void main() {
@@ -233,8 +235,8 @@ class GatopediaState extends State {
     }
   }
 
-  void _play() async {
-    await miau.dynamicSet(url: urlMeow);
+  void _play() {
+    miau.setAsset("lib/assets/meow.mp3");
     miau.play();
   }
 

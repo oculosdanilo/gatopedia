@@ -4,7 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'main.dart';
+import '../../main.dart';
 
 final Uri _urlGatopediaGit =
     Uri.parse('https://github.com/oculosdanilo/gatopedia');

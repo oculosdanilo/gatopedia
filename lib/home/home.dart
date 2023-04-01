@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
-import 'config.dart';
-import 'gatos.dart';
-import 'main.dart';
+import 'config/config.dart';
+import 'gatos/gatos.dart';
+import '../main.dart';
 
 List<Widget> telasHome = [const GatoLista(), const Config()];
 

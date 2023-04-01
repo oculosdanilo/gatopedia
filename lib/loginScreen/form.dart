@@ -8,9 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/colab.dart';
+import 'package:gatopedia/loginScreen/colab.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'home.dart';
+import '../home/home.dart';
 
 final Uri _urlLogin = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/salvar.php');

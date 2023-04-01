@@ -1,11 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_cache/just_audio_cache.dart';
 
-import 'main.dart';
+import '../../main.dart';
 import 'forum.dart';
-import 'wiki.dart';
+import 'wiki/wiki.dart';
 
 int tabIndex = 0;
 List<Widget> telasGatos = [const Wiki(), const Forum()];
@@ -18,12 +17,12 @@ class GatoLista extends StatefulWidget {
 }
 
 class _GatoListaState extends State<GatoLista> {
-  final audioPlayer = AudioPlayer();
+  final miau = AudioPlayer();
   bool isPlaying = false;
 
-  void _play() async {
-    await audioPlayer.dynamicSet(url: urlMeow, preload: true);
-    audioPlayer.play();
+  void _play() {
+    miau.setAsset("lib/assets/meow.mp3");
+    miau.play();
   }
 
   @override

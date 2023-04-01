@@ -4,9 +4,9 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'config.dart';
+import '../../config/config.dart';
 import 'info.dart';
-import 'main.dart';
+import '../../../main.dart';
 
 final Uri _urlCList = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php');
