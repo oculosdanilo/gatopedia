@@ -228,7 +228,9 @@ class GatopediaState extends State {
       });
     }
     _read();
-    /* checarUpdate(); */
+    if (!kDebugMode) {
+      checarUpdate();
+    }
   }
 
   void _play() async {

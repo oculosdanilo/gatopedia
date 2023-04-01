@@ -6,7 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 import 'config.dart';
-import 'lista.dart';
+import 'gatos.dart';
 import 'main.dart';
 
 List<Widget> telasHome = [const GatoLista(), const Config()];
@@ -38,6 +38,9 @@ class HomeState extends State {
   @override
   void initState() {
     _pegarVersao();
+    setState(() {
+      tabIndex = 0;
+    });
     super.initState();
   }
 
@@ -61,7 +64,9 @@ class HomeState extends State {
                     Text(
                       "Já vai? ;(",
                       style: TextStyle(
-                          fontFamily: "Jost", fontWeight: FontWeight.bold),
+                        fontFamily: "Jost",
+                        fontWeight: FontWeight.bold,
+                      ),
                     )
                   ],
                 ),
@@ -105,6 +110,7 @@ class HomeState extends State {
             setState(() {
               dark = App.themeNotifier.value == ThemeMode.dark;
               paginaSelecionada = index;
+              tabIndex = 0;
             });
           },
           destinations: const <NavigationDestination>[

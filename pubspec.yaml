@@ -1,7 +1,7 @@
 name: gatopedia
 description: Uma enciclopédia de gatos!
 publish_to: "none"
-version: 1.2.1+4
+version: 1.3.0+5
 
 environment:
   sdk: ">=2.19.3 <3.0.0"
