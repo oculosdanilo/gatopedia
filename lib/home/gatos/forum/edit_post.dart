@@ -27,7 +27,7 @@ class _EditPostState extends State<EditPost> {
 
   @override
   void initState() {
-    txtEdit.text = (snapshot?.value as Map)[widget.post.toString()]["content"];
+    txtEdit.text = (snapshot?.value as List)[widget.post]["content"];
     super.initState();
   }
 
@@ -46,7 +46,7 @@ class _EditPostState extends State<EditPost> {
         ),
         ElevatedButton(
           onPressed: () {
-            if ((snapshot?.value as Map)[widget.post.toString()]["content"] !=
+            if ((snapshot?.value as List)[widget.post]["content"] !=
                 txtEdit.text) {
               _editar(widget.post);
               Navigator.pop(

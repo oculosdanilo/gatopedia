@@ -34,6 +34,7 @@ class _ForumState extends State<Forum> {
   String pedaco1 = "";
   String pedaco2 = "";
   bool flag = true;
+  bool liked = false;
 
   _firebasePegar() async {
     FirebaseDatabase database = FirebaseDatabase.instance;
@@ -66,14 +67,17 @@ class _ForumState extends State<Forum> {
   }
 
   _postarImagem(int post) async {
-    await FirebaseStorage.instance.ref("posts/${post + 1}.png").putFile(file!);
+    await FirebaseStorage.instance.ref("posts/$post.png").putFile(file!);
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
-    ref.update({
-      "${post + 1}": {
+    await ref.update({
+      "$post": {
         "username": username,
         "content": legenda,
-        "likes": 0,
+        "likes": {
+          "lenght": 0,
+          "users": "",
+        },
         "img": true,
       }
     });
@@ -85,16 +89,44 @@ class _ForumState extends State<Forum> {
     ).show(context);
   }
 
-  _postar(int postN) {
+  _postar(int postN) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
-    ref.update({
-      "${postN + 1}": {
+    await ref.update({
+      "$postN": {
         "username": username,
         "content": txtPost.text,
-        "likes": 0,
+        "likes": {
+          "lenght": 0,
+          "users": "",
+        },
       }
     });
+  }
+
+  _like(int post) {
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("posts/$post/likes");
+    ref.update({
+      "lenght": (snapshot?.value as List)[post]["likes"]["lenght"] + 1,
+      "users": "${(snapshot?.value as List)[post]["likes"]["users"]}$username"
+    });
+    liked = true;
+  }
+
+  _unlike(int post) {
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("posts/$post/likes");
+    ref.update({
+      "lenght": (snapshot?.value as List)[post]["likes"]["lenght"] - 1,
+      "users": (snapshot?.value as List)[post]["likes"]["users"]
+          .toString()
+          .replaceAll(
+            username,
+            "",
+          ),
+    });
+    liked = false;
   }
 
   @override
@@ -286,10 +318,9 @@ class _ForumState extends State<Forum> {
             Expanded(
               child: ListView.builder(
                 itemBuilder: (context, index) {
-                  return (snapshot?.value as Map)[
-                              (int.parse(snapshot?.children.last.key ?? "0") -
-                                      index)
-                                  .toString()] !=
+                  return (snapshot?.value as List)[
+                              int.parse(snapshot?.children.last.key ?? "0") -
+                                  index] !=
                           null
                       ? Card(
                           child: Padding(
@@ -320,7 +351,7 @@ class _ForumState extends State<Forum> {
                                           Expanded(
                                             flex: 4,
                                             child: Text(
-                                              "@${(snapshot?.value as Map)[(int.parse(snapshot?.children.last.key ?? "0") - index).toString()]["username"]}",
+                                              "@${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["username"]}",
                                               style: const TextStyle(
                                                 fontFamily: "Jost",
                                                 fontWeight: FontWeight.bold,
@@ -330,15 +361,13 @@ class _ForumState extends State<Forum> {
                                             ),
                                           ),
                                           username ==
-                                                  (snapshot?.value
-                                                      as Map)[(int.parse(
-                                                              snapshot
-                                                                      ?.children
-                                                                      .last
-                                                                      .key ??
-                                                                  "0") -
-                                                          index)
-                                                      .toString()]["username"]
+                                                  (snapshot?.value as List)[
+                                                      int.parse(snapshot
+                                                                  ?.children
+                                                                  .last
+                                                                  .key ??
+                                                              "0") -
+                                                          index]["username"]
                                               ? Flexible(
                                                   child: Align(
                                                     alignment:
@@ -433,12 +462,10 @@ class _ForumState extends State<Forum> {
                                       ),
                                       Text(
                                         _maisDe2Linhas(
-                                          (snapshot?.value as Map)[(int.parse(
-                                                      snapshot?.children.last
-                                                              .key ??
-                                                          "0") -
-                                                  index)
-                                              .toString()]["content"],
+                                          (snapshot?.value as List)[int.parse(
+                                                  snapshot?.children.last.key ??
+                                                      "0") -
+                                              index]["content"],
                                         )
                                             ? flag
                                                 ? "$pedaco1..."
@@ -462,15 +489,14 @@ class _ForumState extends State<Forum> {
                                               });
                                             },
                                             child: Text(
-                                              _maisDe2Linhas((snapshot?.value
-                                                      as Map)[(int.parse(
-                                                              snapshot
+                                              _maisDe2Linhas(
+                                                      (snapshot?.value as List)[
+                                                          int.parse(snapshot
                                                                       ?.children
                                                                       .last
                                                                       .key ??
                                                                   "0") -
-                                                          index)
-                                                      .toString()]["content"])
+                                                              index]["content"])
                                                   ? flag
                                                       ? "mostrar mais"
                                                       : "mostrar menos"
@@ -485,12 +511,11 @@ class _ForumState extends State<Forum> {
                                       const SizedBox(
                                         height: 5,
                                       ),
-                                      (snapshot?.value as Map)[(int.parse(
-                                                          snapshot?.children
-                                                                  .last.key ??
-                                                              "0") -
-                                                      index)
-                                                  .toString()]["img"] !=
+                                      (snapshot?.value as List)[int.parse(
+                                                      snapshot?.children.last
+                                                              .key ??
+                                                          "0") -
+                                                  index]["img"] !=
                                               null
                                           ? Padding(
                                               padding:
@@ -530,12 +555,53 @@ class _ForumState extends State<Forum> {
                                                   .onBackground,
                                             ),
                                           ),
-                                          onPressed: () {},
-                                          icon: const Icon(
-                                            Icons.thumb_up_alt_outlined,
+                                          onPressed: () {
+                                            if (!(snapshot?.value as List)[
+                                                    int.parse(snapshot?.children
+                                                                .last.key ??
+                                                            "0") -
+                                                        index]["likes"]["users"]
+                                                .toString()
+                                                .contains(username)) {
+                                              _like(int.parse(snapshot
+                                                          ?.children.last.key ??
+                                                      "0") -
+                                                  index);
+                                            } else {
+                                              _unlike(int.parse(snapshot
+                                                          ?.children.last.key ??
+                                                      "0") -
+                                                  index);
+                                            }
+                                            setState(() {
+                                              liked = !liked;
+                                            });
+                                          },
+                                          icon: Icon(
+                                            (snapshot?.value as List)[int.parse(
+                                                            snapshot?.children
+                                                                    .last.key ??
+                                                                "0") -
+                                                        index]["likes"]["users"]
+                                                    .contains(username)
+                                                ? Icons.thumb_up_alt
+                                                : Icons.thumb_up_alt_outlined,
+                                            color: (snapshot?.value
+                                                        as List)[int.parse(
+                                                            snapshot?.children
+                                                                    .last.key ??
+                                                                "0") -
+                                                        index]["likes"]["users"]
+                                                    .contains(username)
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .onBackground,
                                           ),
                                           label: Text(
-                                            "${(snapshot?.value as Map)[(int.parse(snapshot?.children.last.key ?? "0") - index).toString()]["likes"]}",
+                                            "${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["likes"]["lenght"]}",
                                             style: TextStyle(
                                               fontSize: 18,
                                               color: Theme.of(context)
@@ -551,7 +617,6 @@ class _ForumState extends State<Forum> {
                               ],
                             ),
                           ),
-                          /* "${(snapshot?.value as Map)["post$index"]['user']}" */
                         )
                       : Row();
                 },
