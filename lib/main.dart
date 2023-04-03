@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
@@ -36,6 +37,8 @@ ColorScheme blueSchemeL = ColorScheme.fromSeed(
   brightness: Brightness.light,
 );
 dynamic mensagem;
+DataSnapshot? snapshot;
+Map<String, String> listaDownload = {};
 
 void main() {
   runApp(const App());
@@ -50,9 +53,9 @@ class MyBehavior extends ScrollBehavior {
 }
 
 class App extends StatelessWidget {
-  static final ValueNotifier<ThemeMode> themeNotifier =
-      ValueNotifier(ThemeMode.dark);
-
+  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
+    ThemeMode.dark,
+  );
   const App({super.key});
 
   @override
@@ -61,7 +64,6 @@ class App extends StatelessWidget {
       valueListenable: themeNotifier,
       builder: (_, ThemeMode currentMode, __) {
         return MaterialApp(
-          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             navigationBarTheme: NavigationBarThemeData(
               indicatorColor: blueSchemeL.primary,

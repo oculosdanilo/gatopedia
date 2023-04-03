@@ -76,8 +76,7 @@ class _WikiState extends State<Wiki> {
                           const SizedBox(
                             width: 15,
                           ),
-                          SizedBox(
-                            width: 200,
+                          Flexible(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -100,7 +99,7 @@ class _WikiState extends State<Wiki> {
                                   style: const TextStyle(
                                       fontFamily: "Jost", fontSize: 15),
                                   softWrap: true,
-                                  maxLines: 2,
+                                  maxLines: 3,
                                 )
                               ],
                             ),

@@ -3,13 +3,16 @@
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:gatopedia/main.dart';
-import 'package:gatopedia/loginScreen/colab.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../main.dart';
+import '../loginScreen/colab.dart';
+import '../firebase_options.dart';
 import '../home/home.dart';
 
 final Uri _urlLogin = Uri.parse(
@@ -47,6 +50,16 @@ class LoginState extends State<FormApp> {
     );
 
     mudarCor(Theme.of(context).colorScheme.primary);
+  }
+
+  _firebaseStart() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("posts");
+    snapshot = await ref.get();
+    debugPrint("${snapshot?.value}");
   }
 
   mudarCor(cor) {
@@ -87,6 +100,7 @@ class LoginState extends State<FormApp> {
   void initState() {
     super.initState();
     _read();
+    _firebaseStart();
   }
 
   @override
@@ -104,6 +118,8 @@ class LoginState extends State<FormApp> {
             SizedBox(
               width: 300,
               child: TextFormField(
+                maxLength: 25,
+                textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.username],
                 controller: txtControllerLogin,
                 onChanged: (value) {
@@ -174,6 +190,76 @@ class LoginState extends State<FormApp> {
               width: 300,
               height: 65,
               child: TextFormField(
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (value) async {
+                  if (_formKey.currentState!.validate()) {
+                    TextInput.finishAutofillContext();
+                    // If the form is valid, display a snackbar. In the real world,
+                    // you'd often call a server or save the information in a database.
+                    var map = <String, String>{};
+                    map['login'] = txtControllerLogin.text;
+                    map['senha'] = txtControllerSenha.text;
+
+                    Flushbar(
+                      message: "Conectando...",
+                      duration: const Duration(seconds: 2),
+                      margin: const EdgeInsets.all(20),
+                      borderRadius: BorderRadius.circular(50),
+                    ).show(context);
+                    final response = await http.post(_urlLogin, body: map);
+                    if (!response.body.contains("true")) {
+                      Flushbar(
+                        message: response.body,
+                        duration: const Duration(seconds: 2),
+                        margin: const EdgeInsets.all(20),
+                        flushbarStyle: FlushbarStyle.FLOATING,
+                        borderRadius: BorderRadius.circular(50),
+                      ).show(context);
+                      txtControllerLogin.text = "";
+                      txtControllerSenha.text = "";
+                      mudarTextoDoBotao();
+                    } else {
+                      var mapAuth = <String, String>{};
+                      mapAuth['login'] = txtControllerLogin.text;
+                      final responseAuth =
+                          await http.post(_urlLoginAuth, body: mapAuth);
+                      if (jsonDecode(responseAuth.body)[0]["SENHA"] ==
+                          txtControllerSenha.text) {
+                        username = txtControllerLogin.text;
+                        final responseList = await http.post(_urlGatoList);
+                        gatoLista = jsonDecode(responseList.body);
+                        save();
+                        mudarTextoDoBotao();
+                        _firebaseStart();
+                        _navegarAtt(context);
+                      } else {
+                        Flushbar(
+                          flushbarStyle: FlushbarStyle.FLOATING,
+                          margin: const EdgeInsets.all(20),
+                          messageText: Row(
+                            children: [
+                              Icon(
+                                Icons.error_rounded,
+                                color: blueScheme.onErrorContainer,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "Senha incorreta: usuário já existe!",
+                                style: TextStyle(
+                                    color: blueScheme.onErrorContainer),
+                              ),
+                            ],
+                          ),
+                          duration: const Duration(seconds: 5),
+                          borderRadius: BorderRadius.circular(50),
+                          backgroundColor: blueScheme.errorContainer,
+                        ).show(context);
+                      }
+                    }
+                  }
+                },
                 autofillHints: const [AutofillHints.password],
                 controller: txtControllerSenha,
                 obscureText: esconderSenha,
@@ -250,6 +336,7 @@ class LoginState extends State<FormApp> {
                           gatoLista = jsonDecode(responseList.body);
                           save();
                           mudarTextoDoBotao();
+                          _firebaseStart();
                           _navegarAtt(context);
                         } else {
                           Flushbar(

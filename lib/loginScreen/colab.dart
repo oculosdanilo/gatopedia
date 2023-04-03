@@ -46,6 +46,8 @@ class ColaboradoresState extends State {
           ),
           actions: [
             PopupMenuButton<MenuItens>(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
               itemBuilder: (BuildContext context) =>
                   <PopupMenuEntry<MenuItens>>[
                 PopupMenuItem(
@@ -55,25 +57,14 @@ class ColaboradoresState extends State {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.info_rounded,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Text(
-                                    "Sobre o projeto",
-                                    style: TextStyle(
-                                        fontFamily: "Jost",
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
+                              icon: const Icon(Icons.info_rounded),
+                              title: const Text(
+                                "Sobre o projeto",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: "Jost",
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               content: RichText(
                                 text: TextSpan(

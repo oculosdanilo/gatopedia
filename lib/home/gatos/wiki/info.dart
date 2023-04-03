@@ -1,5 +1,3 @@
-
-
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
@@ -239,41 +237,46 @@ class GatoInfoState extends State {
                                   color: Colors.white,
                                   onPressed: () async {
                                     var dialogo = await showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            content: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: const [
-                                                  Flexible(
-                                                    child: Text(
-                                                      "Tem certeza que deseja deletar esse comentário? Ele sumirá para sempre! (muito tempo)",
-                                                      style: TextStyle(
-                                                          fontSize: 15),
-                                                    ),
-                                                  )
-                                                ]),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                    context, false),
-                                                child: const Text('CANCELAR'),
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          icon: const Icon(
+                                            Icons.delete_rounded,
+                                          ),
+                                          title: const Text(
+                                            "Tem certeza que deseja deletar esse comentário?",
+                                          ),
+                                          content: const Text(
+                                            "Ele sumirá para sempre! (muito tempo)",
+                                            style: TextStyle(fontSize: 15),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(
+                                                context,
+                                                false,
                                               ),
-                                              ElevatedButton(
-                                                onPressed: () => Navigator.pop(
-                                                    context, true),
-                                                child: const Text('OK'),
+                                              child: const Text('CANCELAR'),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () => Navigator.pop(
+                                                context,
+                                                true,
                                               ),
-                                            ],
-                                          );
-                                        });
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
                                     if (dialogo) {
                                       final map = <String, String>{};
                                       map['id'] = cLista[index]["ID"];
-                                      final response = await http
-                                          .post(_urlCDelete, body: map);
+                                      final response = await http.post(
+                                        _urlCDelete,
+                                        body: map,
+                                      );
 
                                       Flushbar(
                                         message: response.body,

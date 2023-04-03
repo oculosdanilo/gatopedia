@@ -24,6 +24,10 @@ dependencies:
   just_audio_windows: ^0.2.0
   shared_preferences: ^2.0.20
   firebase_core: ^2.9.0
+  firebase_database: ^10.1.0
+  firebase_storage: ^11.1.0
+  lorem_ipsum: ^0.0.1
+  file_picker: ^5.2.6
 
 dev_dependencies:
   flutter_test:

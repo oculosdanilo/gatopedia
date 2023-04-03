@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../main.dart';
-import 'forum.dart';
+import 'forum/forum.dart';
 import 'wiki/wiki.dart';
 
 int tabIndex = 0;
@@ -51,9 +51,11 @@ class _GatoListaState extends State<GatoLista> {
                     alignment: Alignment.centerRight,
                     margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
                     child: IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.pets_rounded,
-                        color: Colors.white,
+                        color: App.themeNotifier.value == ThemeMode.light
+                            ? Colors.grey
+                            : Colors.white,
                       ),
                       iconSize: 100,
                       onPressed: () async {
