@@ -28,6 +28,7 @@ dependencies:
   firebase_storage: ^11.1.0
   lorem_ipsum: ^0.0.1
   file_picker: ^5.2.6
+  badges: ^3.0.3
 
 dev_dependencies:
   flutter_test:

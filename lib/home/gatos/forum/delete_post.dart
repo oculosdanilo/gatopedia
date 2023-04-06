@@ -1,8 +1,12 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:typed_data';
+
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:gatopedia/main.dart';
 
 class DeletePost extends StatefulWidget {
   dynamic post;
@@ -14,10 +18,17 @@ class DeletePost extends StatefulWidget {
 }
 
 class _DeletePostState extends State<DeletePost> {
-  _deletar(int postN) {
+  _deletar(int postN) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$postN");
     debugPrint("post/$postN");
+    if ((snapshot?.value as List)[postN]["img"] != null) {
+      Reference refI = FirebaseStorage.instance.ref("posts/$postN.png");
+      Uint8List? lista = await refI.getData();
+      if (lista?.isNotEmpty ?? false) {
+        refI.delete();
+      }
+    }
     ref.remove();
   }
 

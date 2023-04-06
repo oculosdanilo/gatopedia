@@ -316,7 +316,7 @@ class LoginState extends State<FormApp> {
                       if (!response.body.contains("true")) {
                         Flushbar(
                           message: response.body,
-                          duration: const Duration(seconds: 2),
+                          duration: const Duration(seconds: 5),
                           margin: const EdgeInsets.all(20),
                           flushbarStyle: FlushbarStyle.FLOATING,
                           borderRadius: BorderRadius.circular(50),

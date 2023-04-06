@@ -79,7 +79,7 @@ class _GatoListaState extends State<GatoLista> {
                     },
                     labelStyle: const TextStyle(
                       fontFamily: "Jost",
-                      fontSize: 16,
+                      fontSize: 19,
                     ),
                     labelColor: Theme.of(context).colorScheme.onPrimary,
                     unselectedLabelColor: Theme.of(context).colorScheme.outline,

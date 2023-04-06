@@ -7,6 +7,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/home/gatos/forum/comentarios.dart';
 
 import 'delete_post.dart';
 import 'edit_post.dart';
@@ -34,7 +35,6 @@ class _ForumState extends State<Forum> {
   String pedaco1 = "";
   String pedaco2 = "";
   bool flag = true;
-  bool liked = false;
 
   _firebasePegar() async {
     FirebaseDatabase database = FirebaseDatabase.instance;
@@ -79,6 +79,10 @@ class _ForumState extends State<Forum> {
           "users": "",
         },
         "img": true,
+        "comentarios": [
+          {"a": "a"},
+          {"a": "a"}
+        ]
       }
     });
     Flushbar(
@@ -100,6 +104,10 @@ class _ForumState extends State<Forum> {
           "lenght": 0,
           "users": "",
         },
+        "comentarios": [
+          {"a": "a"},
+          {"a": "a"}
+        ]
       }
     });
   }
@@ -109,9 +117,8 @@ class _ForumState extends State<Forum> {
     DatabaseReference ref = database.ref("posts/$post/likes");
     ref.update({
       "lenght": (snapshot?.value as List)[post]["likes"]["lenght"] + 1,
-      "users": "${(snapshot?.value as List)[post]["likes"]["users"]}$username"
+      "users": "${(snapshot?.value as List)[post]["likes"]["users"]}$username,"
     });
-    liked = true;
   }
 
   _unlike(int post) {
@@ -122,11 +129,10 @@ class _ForumState extends State<Forum> {
       "users": (snapshot?.value as List)[post]["likes"]["users"]
           .toString()
           .replaceAll(
-            username,
+            "$username,",
             "",
           ),
     });
-    liked = false;
   }
 
   @override
@@ -220,8 +226,10 @@ class _ForumState extends State<Forum> {
                         margin: const EdgeInsets.all(20),
                         borderRadius: BorderRadius.circular(50),
                       ).show(context);
-                      _postarImagem(
-                          int.parse("${snapshot?.children.last.key ?? 0}") + 1);
+                      _postarImagem((snapshot?.exists ?? false)
+                          ? (int.parse("${snapshot?.children.last.key ?? 0}") +
+                              1)
+                          : 0);
                     }
                   },
                   closedBuilder: (context, action) {
@@ -293,8 +301,11 @@ class _ForumState extends State<Forum> {
                       onPressed: () async {
                         if (txtPost.text != "") {
                           _postar(
-                            int.parse("${snapshot?.children.last.key ?? 0}") +
-                                1,
+                            (snapshot?.exists ?? false)
+                                ? int.parse(
+                                        "${snapshot?.children.last.key ?? 0}") +
+                                    1
+                                : 0,
                           );
                           txtPost.text = "";
                           Flushbar(
@@ -306,7 +317,7 @@ class _ForumState extends State<Forum> {
                         }
                       },
                       icon: const Icon(Icons.send),
-                      label: const Text("ENVIAR"),
+                      label: const Text("POSTAR"),
                     ),
                   ),
                 )
@@ -315,314 +326,391 @@ class _ForumState extends State<Forum> {
             const SizedBox(
               height: 15,
             ),
-            Expanded(
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  return (snapshot?.value as List)[
-                              int.parse(snapshot?.children.last.key ?? "0") -
-                                  index] !=
-                          null
-                      ? Card(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                  child: Image(
-                                    image: AssetImage("lib/assets/user.webp"),
-                                    width: 50,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                Flexible(
+            (snapshot?.exists ?? false)
+                ? (Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        return (snapshot?.value as List)[int.parse(
+                                        snapshot?.children.last.key ?? "0") -
+                                    index] !=
+                                null
+                            ? Card(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 10, 10, 20),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
                                     children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
                                       Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Expanded(
-                                            flex: 4,
-                                            child: Text(
-                                              "@${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["username"]}",
-                                              style: const TextStyle(
-                                                fontFamily: "Jost",
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              ),
-                                              softWrap: true,
+                                          const Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                0, 10, 0, 0),
+                                            child: Image(
+                                              image: AssetImage(
+                                                  "lib/assets/user.webp"),
+                                              width: 50,
                                             ),
                                           ),
-                                          username ==
-                                                  (snapshot?.value as List)[
-                                                      int.parse(snapshot
-                                                                  ?.children
-                                                                  .last
-                                                                  .key ??
-                                                              "0") -
-                                                          index]["username"]
-                                              ? Flexible(
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.topRight,
-                                                    child: PopupMenuButton<
-                                                        MenuItems>(
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20),
-                                                      ),
-                                                      itemBuilder: (context) =>
-                                                          [
-                                                        PopupMenuItem(
-                                                          onTap: () {
-                                                            WidgetsBinding
-                                                                .instance
-                                                                .addPostFrameCallback(
-                                                                    (_) {
-                                                              showDialog(
-                                                                context:
-                                                                    context,
-                                                                builder:
-                                                                    (context) =>
-                                                                        EditPost(
-                                                                  int.parse(snapshot
-                                                                              ?.children
-                                                                              .last
-                                                                              .key ??
-                                                                          "0") -
-                                                                      index,
-                                                                ),
-                                                              ).then((value) {
-                                                                if (value) {
-                                                                  Flushbar(
-                                                                    message:
-                                                                        "Editado com sucesso!",
-                                                                    duration: const Duration(
-                                                                        seconds:
-                                                                            3),
-                                                                    margin:
-                                                                        const EdgeInsets.all(
-                                                                            20),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            50),
-                                                                  ).show(
-                                                                      context);
-                                                                }
-                                                              });
-                                                            });
-                                                          },
-                                                          child: const Text(
-                                                              "Editar"),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 4,
+                                                      child: Text(
+                                                        "@${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["username"]}",
+                                                        style: const TextStyle(
+                                                          fontFamily: "Jost",
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 20,
                                                         ),
-                                                        PopupMenuItem(
-                                                          onTap: () {
-                                                            WidgetsBinding
-                                                                .instance
-                                                                .addPostFrameCallback(
-                                                                    (_) {
-                                                              showDialog(
-                                                                context:
-                                                                    context,
-                                                                builder:
-                                                                    (context) =>
-                                                                        DeletePost(
-                                                                  int.parse(snapshot
-                                                                              ?.children
-                                                                              .last
-                                                                              .key ??
-                                                                          "0") -
-                                                                      index,
-                                                                ),
-                                                              );
-                                                            });
-                                                          },
-                                                          child: const Text(
-                                                            "Deletar",
-                                                          ),
-                                                        )
-                                                      ],
+                                                        softWrap: true,
+                                                      ),
                                                     ),
+                                                    username ==
+                                                            (snapshot?.value
+                                                                as List)[int.parse(snapshot
+                                                                        ?.children
+                                                                        .last
+                                                                        .key ??
+                                                                    "0") -
+                                                                index]["username"]
+                                                        ? Flexible(
+                                                            child: Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topRight,
+                                                              child:
+                                                                  PopupMenuButton<
+                                                                      MenuItems>(
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              20),
+                                                                ),
+                                                                itemBuilder:
+                                                                    (context) =>
+                                                                        [
+                                                                  PopupMenuItem(
+                                                                    onTap: () {
+                                                                      WidgetsBinding
+                                                                          .instance
+                                                                          .addPostFrameCallback(
+                                                                              (_) {
+                                                                        showDialog(
+                                                                          barrierDismissible:
+                                                                              false,
+                                                                          context:
+                                                                              context,
+                                                                          builder: (context) =>
+                                                                              EditPost(
+                                                                            (int.parse(snapshot?.children.last.key ?? "0") -
+                                                                                index),
+                                                                            (snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["img"] !=
+                                                                                null,
+                                                                          ),
+                                                                        ).then(
+                                                                            (value) {
+                                                                          if (value) {
+                                                                            Flushbar(
+                                                                              message: "Editado com sucesso!",
+                                                                              duration: const Duration(seconds: 3),
+                                                                              margin: const EdgeInsets.all(20),
+                                                                              borderRadius: BorderRadius.circular(50),
+                                                                            ).show(context);
+                                                                          }
+                                                                        });
+                                                                      });
+                                                                    },
+                                                                    child: const Text(
+                                                                        "Editar"),
+                                                                  ),
+                                                                  PopupMenuItem(
+                                                                    onTap: () {
+                                                                      WidgetsBinding
+                                                                          .instance
+                                                                          .addPostFrameCallback(
+                                                                              (_) {
+                                                                        showDialog(
+                                                                          context:
+                                                                              context,
+                                                                          builder: (context) =>
+                                                                              DeletePost(
+                                                                            int.parse(snapshot?.children.last.key ?? "0") -
+                                                                                index,
+                                                                          ),
+                                                                        );
+                                                                      });
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      "Deletar",
+                                                                    ),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : const Text(""),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(
+                                                  _maisDe2Linhas(
+                                                    (snapshot?.value as List)[
+                                                        int.parse(snapshot
+                                                                    ?.children
+                                                                    .last
+                                                                    .key ??
+                                                                "0") -
+                                                            index]["content"],
+                                                  )
+                                                      ? flag
+                                                          ? "$pedaco1..."
+                                                          : pedaco1 + pedaco2
+                                                      : pedaco1,
+                                                  style: const TextStyle(
+                                                    fontFamily: "Jost",
+                                                    fontSize: 15,
                                                   ),
-                                                )
-                                              : const Text(""),
+                                                  softWrap: true,
+                                                  maxLines: 50,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          flag = !flag;
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        _maisDe2Linhas((snapshot
+                                                                    ?.value
+                                                                as List)[int.parse(snapshot
+                                                                        ?.children
+                                                                        .last
+                                                                        .key ??
+                                                                    "0") -
+                                                                index]["content"])
+                                                            ? flag
+                                                                ? "mostrar mais"
+                                                                : "mostrar menos"
+                                                            : "",
+                                                        style: const TextStyle(
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 5,
+                                                ),
+                                                (snapshot?.value as List)[
+                                                            int.parse(snapshot
+                                                                        ?.children
+                                                                        .last
+                                                                        .key ??
+                                                                    "0") -
+                                                                index]["img"] !=
+                                                        null
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .fromLTRB(
+                                                                0, 10, 10, 10),
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          child: FadeInImage(
+                                                            fit: BoxFit.cover,
+                                                            width:
+                                                                double.infinity,
+                                                            fadeInDuration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        300),
+                                                            fadeOutDuration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        300),
+                                                            placeholder:
+                                                                const AssetImage(
+                                                                    'lib/assets/loading.gif'),
+                                                            image: NetworkImage(
+                                                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.png?alt=media"),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : const SizedBox(),
+                                                const SizedBox(
+                                                  height: 5,
+                                                ),
+                                              ],
+                                            ),
+                                          )
                                         ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        _maisDe2Linhas(
-                                          (snapshot?.value as List)[int.parse(
-                                                  snapshot?.children.last.key ??
-                                                      "0") -
-                                              index]["content"],
-                                        )
-                                            ? flag
-                                                ? "$pedaco1..."
-                                                : pedaco1 + pedaco2
-                                            : pedaco1,
-                                        style: const TextStyle(
-                                          fontFamily: "Jost",
-                                          fontSize: 15,
-                                        ),
-                                        softWrap: true,
-                                        maxLines: 50,
                                       ),
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.end,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                flag = !flag;
-                                              });
-                                            },
-                                            child: Text(
-                                              _maisDe2Linhas(
-                                                      (snapshot?.value as List)[
-                                                          int.parse(snapshot
-                                                                      ?.children
-                                                                      .last
-                                                                      .key ??
-                                                                  "0") -
-                                                              index]["content"])
-                                                  ? flag
-                                                      ? "mostrar mais"
-                                                      : "mostrar menos"
-                                                  : "",
-                                              style: const TextStyle(
-                                                color: Colors.grey,
-                                              ),
+                                          OpenContainer(
+                                            closedColor: Theme.of(context)
+                                                .colorScheme
+                                                .background,
+                                            closedShape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      (snapshot?.value as List)[int.parse(
-                                                      snapshot?.children.last
-                                                              .key ??
-                                                          "0") -
-                                                  index]["img"] !=
-                                              null
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      0, 10, 10, 10),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                child: FadeInImage(
-                                                  fit: BoxFit.cover,
-                                                  width: double.infinity,
-                                                  fadeInDuration:
-                                                      const Duration(
-                                                          milliseconds: 300),
-                                                  fadeOutDuration:
-                                                      const Duration(
-                                                          milliseconds: 300),
-                                                  placeholder: const AssetImage(
-                                                      'lib/assets/loading.gif'),
-                                                  image: NetworkImage(
-                                                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.png?alt=media"),
+                                            transitionDuration: const Duration(
+                                              milliseconds: 500,
+                                            ),
+                                            onClosed: (value) {},
+                                            openColor: Theme.of(context)
+                                                .colorScheme
+                                                .background,
+                                            closedBuilder: (context, action) =>
+                                                Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: TextButton(
+                                                onPressed: () async {
+                                                  action.call();
+                                                },
+                                                child: Text(
+                                                  "Comentários (${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["comentarios"] != null ? (((snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["comentarios"] as List).length - 2) : 0})",
                                                 ),
                                               ),
-                                            )
-                                          : const SizedBox(),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: TextButton.icon(
-                                          style: ButtonStyle(
-                                            iconColor:
-                                                MaterialStateProperty.all(
-                                              Theme.of(context)
-                                                  .colorScheme
-                                                  .onBackground,
                                             ),
+                                            openBuilder: (context, action) =>
+                                                Comentarios(int.parse(snapshot
+                                                            ?.children
+                                                            .last
+                                                            .key ??
+                                                        "0") -
+                                                    index),
                                           ),
-                                          onPressed: () {
-                                            if (!(snapshot?.value as List)[
-                                                    int.parse(snapshot?.children
-                                                                .last.key ??
-                                                            "0") -
-                                                        index]["likes"]["users"]
-                                                .toString()
-                                                .contains(username)) {
-                                              _like(int.parse(snapshot
-                                                          ?.children.last.key ??
-                                                      "0") -
-                                                  index);
-                                            } else {
-                                              _unlike(int.parse(snapshot
-                                                          ?.children.last.key ??
-                                                      "0") -
-                                                  index);
-                                            }
-                                            setState(() {
-                                              liked = !liked;
-                                            });
-                                          },
-                                          icon: Icon(
-                                            (snapshot?.value as List)[int.parse(
-                                                            snapshot?.children
-                                                                    .last.key ??
-                                                                "0") -
-                                                        index]["likes"]["users"]
-                                                    .contains(username)
-                                                ? Icons.thumb_up_alt
-                                                : Icons.thumb_up_alt_outlined,
-                                            color: (snapshot?.value
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: TextButton.icon(
+                                              style: ButtonStyle(
+                                                iconColor:
+                                                    MaterialStateProperty.all(
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .onBackground,
+                                                ),
+                                                backgroundColor:
+                                                    MaterialStatePropertyAll(
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .background,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                if (!(snapshot?.value
                                                         as List)[int.parse(
                                                             snapshot?.children
                                                                     .last.key ??
                                                                 "0") -
                                                         index]["likes"]["users"]
-                                                    .contains(username)
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .primary
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .onBackground,
-                                          ),
-                                          label: Text(
-                                            "${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["likes"]["lenght"]}",
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onBackground,
+                                                    .toString()
+                                                    .split(",")
+                                                    .contains(username)) {
+                                                  _like(int.parse(snapshot
+                                                              ?.children
+                                                              .last
+                                                              .key ??
+                                                          "0") -
+                                                      index);
+                                                } else {
+                                                  _unlike(int.parse(snapshot
+                                                              ?.children
+                                                              .last
+                                                              .key ??
+                                                          "0") -
+                                                      index);
+                                                }
+                                              },
+                                              icon: Icon(
+                                                (snapshot?.value
+                                                            as List)[int.parse(
+                                                                snapshot
+                                                                        ?.children
+                                                                        .last
+                                                                        .key ??
+                                                                    "0") -
+                                                            index]["likes"]["users"]
+                                                        .toString()
+                                                        .split(",")
+                                                        .contains(username)
+                                                    ? Icons.thumb_up_alt
+                                                    : Icons.thumb_up_alt_outlined,
+                                                color: (snapshot?.value as List)[
+                                                                int.parse(
+                                                                      snapshot
+                                                                              ?.children
+                                                                              .last
+                                                                              .key ??
+                                                                          "0",
+                                                                    ) -
+                                                                    index]
+                                                            ["likes"]["users"]
+                                                        .toString()
+                                                        .split(",")
+                                                        .contains(username)
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .primary
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .onBackground,
+                                              ),
+                                              label: Text(
+                                                "${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["likes"]["lenght"]}",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onBackground,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      : Row();
-                },
-                itemCount: (int.parse("${snapshot?.children.last.key}") + 1),
-              ),
-            ),
+                                ),
+                              )
+                            : Row();
+                      },
+                      itemCount: (snapshot?.exists ?? false)
+                          ? (int.parse("${snapshot?.children.last.key}") + 1)
+                          : 0,
+                    ),
+                  ))
+                : const Text("Nenhum comentário!"),
           ],
         ),
       ),

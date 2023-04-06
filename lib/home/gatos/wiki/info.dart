@@ -119,71 +119,66 @@ class GatoInfoState extends State {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                SizedBox(
-                  height: 80,
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          flex: 7,
-                          child: TextField(
-                            controller: txtControllerC,
-                          ),
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        flex: 7,
+                        child: TextField(
+                          controller: txtControllerC,
                         ),
-                        const SizedBox(
-                          width: 10,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                        flex: 5,
+                        child: FilledButton(
+                          onPressed: () async {
+                            if (txtControllerC.text != "") {
+                              var map = <String, String>{};
+                              map['id'] = "${indexClicado + 1}";
+                              map['username'] = username;
+                              map['comentario'] = txtControllerC.text;
+                              final response =
+                                  await http.post(_urlCAdd, body: map);
+
+                              Flushbar(
+                                message: response.body,
+                                duration: const Duration(seconds: 2),
+                                margin: const EdgeInsets.all(20),
+                                borderRadius: BorderRadius.circular(50),
+                              ).show(context);
+
+                              txtControllerC.text = "";
+                              var mapUp = <String, String>{};
+                              int indexMais1 = indexClicado + 1;
+                              mapUp['id'] = "$indexMais1";
+                              final responseUp =
+                                  await http.post(_urlCList, body: mapUp);
+                              cLista = jsonDecode(responseUp.body);
+                              cListaTamanho = cLista.length;
+                              setState(() {});
+                            }
+                          },
+                          child: const Text("COMENTAR"),
                         ),
-                        Flexible(
-                          flex: 5,
-                          child: FilledButton(
-                            onPressed: () async {
-                              if (txtControllerC.text != "") {
-                                var map = <String, String>{};
-                                map['id'] = "${indexClicado + 1}";
-                                map['username'] = username;
-                                map['comentario'] = txtControllerC.text;
-                                final response =
-                                    await http.post(_urlCAdd, body: map);
-
-                                Flushbar(
-                                  message: response.body,
-                                  duration: const Duration(seconds: 2),
-                                  margin: const EdgeInsets.all(20),
-                                  borderRadius: BorderRadius.circular(50),
-                                ).show(context);
-
-                                txtControllerC.text = "";
-                                var mapUp = <String, String>{};
-                                int indexMais1 = indexClicado + 1;
-                                mapUp['id'] = "$indexMais1";
-                                final responseUp =
-                                    await http.post(_urlCList, body: mapUp);
-                                cLista = jsonDecode(responseUp.body);
-                                cListaTamanho = cLista.length;
-                                setState(() {});
-                              }
-                            },
-                            child: const Text("COMENTAR"),
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
                 )
               ],
             ),
           ),
           SliverList(
-            delegate:
-                SliverChildBuilderDelegate((BuildContext context, int index) {
-              return SizedBox(
-                height: 130,
-                child: Card(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return Card(
                   margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
                   child: Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -221,88 +216,91 @@ class GatoInfoState extends State {
                                 style: const TextStyle(
                                     fontFamily: "Jost", fontSize: 15),
                                 softWrap: true,
-                                maxLines: 3,
+                                maxLines: 50,
                               )
                             ],
                           ),
                         ),
                         cLista[index]["USERNAME"] == username
-                            ? Ink(
-                                decoration: ShapeDecoration(
-                                  color: blueScheme.errorContainer,
-                                  shape: const CircleBorder(),
+                            ? IconButton(
+                                icon: const Icon(Icons.delete),
+                                color: Colors.white,
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll(
+                                    Theme.of(context)
+                                        .colorScheme
+                                        .errorContainer,
+                                  ),
                                 ),
-                                child: IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.white,
-                                  onPressed: () async {
-                                    var dialogo = await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          icon: const Icon(
-                                            Icons.delete_rounded,
-                                          ),
-                                          title: const Text(
-                                            "Tem certeza que deseja deletar esse comentário?",
-                                          ),
-                                          content: const Text(
-                                            "Ele sumirá para sempre! (muito tempo)",
-                                            style: TextStyle(fontSize: 15),
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                context,
-                                                false,
-                                              ),
-                                              child: const Text('CANCELAR'),
+                                onPressed: () async {
+                                  var dialogo = await showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        icon: const Icon(
+                                          Icons.delete_rounded,
+                                        ),
+                                        title: const Text(
+                                          "Tem certeza que deseja deletar esse comentário?",
+                                        ),
+                                        content: const Text(
+                                          "Ele sumirá para sempre! (muito tempo)",
+                                          style: TextStyle(fontSize: 15),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(
+                                              context,
+                                              false,
                                             ),
-                                            ElevatedButton(
-                                              onPressed: () => Navigator.pop(
-                                                context,
-                                                true,
-                                              ),
-                                              child: const Text('OK'),
+                                            child: const Text('CANCELAR'),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () => Navigator.pop(
+                                              context,
+                                              true,
                                             ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                    if (dialogo) {
-                                      final map = <String, String>{};
-                                      map['id'] = cLista[index]["ID"];
-                                      final response = await http.post(
-                                        _urlCDelete,
-                                        body: map,
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
                                       );
+                                    },
+                                  );
+                                  if (dialogo) {
+                                    final map = <String, String>{};
+                                    map['id'] = cLista[index]["ID"];
+                                    final response = await http.post(
+                                      _urlCDelete,
+                                      body: map,
+                                    );
 
-                                      Flushbar(
-                                        message: response.body,
-                                        duration: const Duration(seconds: 2),
-                                        margin: const EdgeInsets.all(20),
-                                        borderRadius: BorderRadius.circular(50),
-                                      ).show(context);
+                                    Flushbar(
+                                      message: response.body,
+                                      duration: const Duration(seconds: 2),
+                                      margin: const EdgeInsets.all(20),
+                                      borderRadius: BorderRadius.circular(50),
+                                    ).show(context);
 
-                                      var mapUp = <String, String>{};
-                                      int indexMais1 = indexClicado + 1;
-                                      mapUp['id'] = "$indexMais1";
-                                      final responseUp = await http
-                                          .post(_urlCList, body: mapUp);
-                                      cLista = jsonDecode(responseUp.body);
-                                      cListaTamanho = cLista.length;
-                                      setState(() {});
-                                    }
-                                  },
-                                ))
-                            : const Text("")
+                                    var mapUp = <String, String>{};
+                                    int indexMais1 = indexClicado + 1;
+                                    mapUp['id'] = "$indexMais1";
+                                    final responseUp =
+                                        await http.post(_urlCList, body: mapUp);
+                                    cLista = jsonDecode(responseUp.body);
+                                    cListaTamanho = cLista.length;
+                                    setState(() {});
+                                  }
+                                },
+                              )
+                            : const Text(""),
                       ],
                     ),
                   ),
-                ),
-              );
-            }, childCount: cListaTamanho),
+                );
+              },
+              childCount: cListaTamanho,
+            ),
           ),
           const SliverToBoxAdapter(
             child: SizedBox(
@@ -396,57 +394,54 @@ class GatoInfoState extends State {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                SizedBox(
-                  height: 80,
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          flex: 7,
-                          child: TextField(
-                            controller: txtControllerC,
-                          ),
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        flex: 7,
+                        child: TextField(
+                          controller: txtControllerC,
                         ),
-                        const SizedBox(
-                          width: 10,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                        flex: 5,
+                        child: FilledButton(
+                          onPressed: () async {
+                            if (txtControllerC.text != "") {
+                              var map = <String, String>{};
+                              map['id'] = "${indexClicado + 1}";
+                              map['username'] = username;
+                              map['comentario'] = txtControllerC.text;
+                              final response =
+                                  await http.post(_urlCAdd, body: map);
+
+                              Flushbar(
+                                message: response.body,
+                                duration: const Duration(seconds: 2),
+                                margin: const EdgeInsets.all(20),
+                                borderRadius: BorderRadius.circular(50),
+                              ).show(context);
+
+                              txtControllerC.text = "";
+                              var mapUp = <String, String>{};
+                              int indexMais1 = indexClicado + 1;
+                              mapUp['id'] = "$indexMais1";
+                              final responseUp =
+                                  await http.post(_urlCList, body: mapUp);
+                              cLista = jsonDecode(responseUp.body);
+                              cListaTamanho = cLista.length;
+                              setState(() {});
+                            }
+                          },
+                          child: const Text("COMENTAR"),
                         ),
-                        Flexible(
-                          flex: 5,
-                          child: FilledButton(
-                            onPressed: () async {
-                              if (txtControllerC.text != "") {
-                                var map = <String, String>{};
-                                map['id'] = "${indexClicado + 1}";
-                                map['username'] = username;
-                                map['comentario'] = txtControllerC.text;
-                                final response =
-                                    await http.post(_urlCAdd, body: map);
-
-                                Flushbar(
-                                  message: response.body,
-                                  duration: const Duration(seconds: 2),
-                                  margin: const EdgeInsets.all(20),
-                                  borderRadius: BorderRadius.circular(50),
-                                ).show(context);
-
-                                txtControllerC.text = "";
-                                var mapUp = <String, String>{};
-                                int indexMais1 = indexClicado + 1;
-                                mapUp['id'] = "$indexMais1";
-                                final responseUp =
-                                    await http.post(_urlCList, body: mapUp);
-                                cLista = jsonDecode(responseUp.body);
-                                cListaTamanho = cLista.length;
-                                setState(() {});
-                              }
-                            },
-                            child: const Text("COMENTAR"),
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
                 ),
                 SizedBox(
