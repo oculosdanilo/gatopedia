@@ -1,7 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/home/profile/pp_edit.dart';
+import 'package:gatopedia/home/eu/pp_edit.dart';
 
 import '../../main.dart';
 import '../home.dart';

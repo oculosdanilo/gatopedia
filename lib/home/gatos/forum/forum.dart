@@ -144,36 +144,173 @@ class _ForumState extends State<Forum> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    return StretchingOverscrollIndicator(
-      axisDirection: AxisDirection.down,
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
-        child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image(
-                    image: listaTemImagem.contains(username)
-                        ? NetworkImage(
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
-                          )
-                        : const AssetImage("lib/assets/user.webp")
-                            as ImageProvider,
-                    width: 50,
+    return Container(
+      margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: Image(
+                  image: listaTemImagem.contains(username)
+                      ? NetworkImage(
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
+                        )
+                      : const AssetImage("lib/assets/user.webp")
+                          as ImageProvider,
+                  width: 50,
+                ),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              Flexible(
+                child: TextField(
+                  onSubmitted: (value) {
+                    if (txtPost.text != "") {
+                      _postar(
+                        int.parse("${snapshot?.children.last.key ?? 0}") + 1,
+                      );
+                      txtPost.text = "";
+                      Flushbar(
+                        message: "Postado com sucesso!",
+                        duration: const Duration(seconds: 3),
+                        margin: const EdgeInsets.all(20),
+                        borderRadius: BorderRadius.circular(50),
+                      ).show(context);
+                    }
+                  },
+                  controller: txtPost,
+                  maxLength: 400,
+                  decoration: InputDecoration(
+                    hintText: "No que está pensando, $username?",
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.outline,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
+                  maxLines: 2,
                 ),
-                const SizedBox(
-                  width: 20,
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Row(
+            children: [
+              OpenContainer(
+                closedColor: Theme.of(context).colorScheme.surfaceVariant,
+                closedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
                 ),
-                Flexible(
-                  child: TextField(
-                    onSubmitted: (value) {
+                openColor: Theme.of(context).colorScheme.background,
+                transitionDuration: const Duration(milliseconds: 400),
+                transitionType: ContainerTransitionType.fadeThrough,
+                openBuilder: (context, action) => ImagePost("image"),
+                openShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                onClosed: (data) async {
+                  debugPrint("$postado");
+                  if (postado) {
+                    Flushbar(
+                      message: "Postando...",
+                      duration: const Duration(seconds: 5),
+                      margin: const EdgeInsets.all(20),
+                      borderRadius: BorderRadius.circular(50),
+                    ).show(context);
+                    _postarImagem((snapshot?.exists ?? false)
+                        ? (int.parse("${snapshot?.children.last.key ?? 0}") + 1)
+                        : 0);
+                  }
+                },
+                closedBuilder: (context, action) {
+                  return IconButton(
+                    onPressed: () {
+                      action.call();
+                    },
+                    icon: Icon(
+                      Icons.image,
+                      color: colors.primary,
+                    ),
+                    style: IconButton.styleFrom(
+                      focusColor: colors.onSurfaceVariant.withOpacity(0.12),
+                      highlightColor: colors.onSurface.withOpacity(0.12),
+                      side: BorderSide(color: colors.primary),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              OpenContainer(
+                closedColor: Theme.of(context).colorScheme.surfaceVariant,
+                closedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                openColor: Theme.of(context).colorScheme.background,
+                transitionDuration: const Duration(milliseconds: 400),
+                transitionType: ContainerTransitionType.fadeThrough,
+                onClosed: (data) {
+                  debugPrint("$postado");
+                  if (postado) {
+                    Flushbar(
+                      message: "Postando...",
+                      duration: const Duration(seconds: 5),
+                      margin: const EdgeInsets.all(20),
+                      borderRadius: BorderRadius.circular(50),
+                    ).show(context);
+                    _postarImagem(
+                        int.parse("${snapshot?.children.last.key ?? 0}") + 1);
+                  }
+                },
+                openBuilder: (context, action) => ImagePost("gif"),
+                openShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                closedBuilder: (context, action) {
+                  return IconButton(
+                    onPressed: () {
+                      action.call();
+                    },
+                    icon: Icon(
+                      Icons.gif,
+                      color: colors.primary,
+                    ),
+                    style: IconButton.styleFrom(
+                      focusColor: colors.onSurfaceVariant.withOpacity(0.12),
+                      highlightColor: colors.onSurface.withOpacity(0.12),
+                      side: BorderSide(color: colors.primary),
+                    ),
+                  );
+                },
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: FilledButton.icon(
+                    onPressed: () async {
                       if (txtPost.text != "") {
                         _postar(
-                          int.parse("${snapshot?.children.last.key ?? 0}") + 1,
+                          (snapshot?.exists ?? false)
+                              ? int.parse(
+                                      "${snapshot?.children.last.key ?? 0}") +
+                                  1
+                              : 0,
                         );
                         txtPost.text = "";
                         Flushbar(
@@ -184,158 +321,20 @@ class _ForumState extends State<Forum> {
                         ).show(context);
                       }
                     },
-                    controller: txtPost,
-                    maxLength: 400,
-                    decoration: InputDecoration(
-                      hintText: "No que está pensando, $username?",
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.outline,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    maxLines: 2,
+                    icon: const Icon(Icons.send),
+                    label: const Text("POSTAR"),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Row(
-              children: [
-                OpenContainer(
-                  closedColor: Theme.of(context).colorScheme.surfaceVariant,
-                  closedShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  openColor: Theme.of(context).colorScheme.background,
-                  transitionDuration: const Duration(milliseconds: 400),
-                  transitionType: ContainerTransitionType.fadeThrough,
-                  openBuilder: (context, action) => ImagePost("image"),
-                  openShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  onClosed: (data) async {
-                    debugPrint("$postado");
-                    if (postado) {
-                      Flushbar(
-                        message: "Postando...",
-                        duration: const Duration(seconds: 5),
-                        margin: const EdgeInsets.all(20),
-                        borderRadius: BorderRadius.circular(50),
-                      ).show(context);
-                      _postarImagem((snapshot?.exists ?? false)
-                          ? (int.parse("${snapshot?.children.last.key ?? 0}") +
-                              1)
-                          : 0);
-                    }
-                  },
-                  closedBuilder: (context, action) {
-                    return IconButton(
-                      onPressed: () {
-                        action.call();
-                      },
-                      icon: Icon(
-                        Icons.image,
-                        color: colors.primary,
-                      ),
-                      style: IconButton.styleFrom(
-                        focusColor: colors.onSurfaceVariant.withOpacity(0.12),
-                        highlightColor: colors.onSurface.withOpacity(0.12),
-                        side: BorderSide(color: colors.primary),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                OpenContainer(
-                  closedColor: Theme.of(context).colorScheme.surfaceVariant,
-                  closedShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  openColor: Theme.of(context).colorScheme.background,
-                  transitionDuration: const Duration(milliseconds: 400),
-                  transitionType: ContainerTransitionType.fadeThrough,
-                  onClosed: (data) {
-                    debugPrint("$postado");
-                    if (postado) {
-                      Flushbar(
-                        message: "Postando...",
-                        duration: const Duration(seconds: 5),
-                        margin: const EdgeInsets.all(20),
-                        borderRadius: BorderRadius.circular(50),
-                      ).show(context);
-                      _postarImagem(
-                          int.parse("${snapshot?.children.last.key ?? 0}") + 1);
-                    }
-                  },
-                  openBuilder: (context, action) => ImagePost("gif"),
-                  openShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  closedBuilder: (context, action) {
-                    return IconButton(
-                      onPressed: () {
-                        action.call();
-                      },
-                      icon: Icon(
-                        Icons.gif,
-                        color: colors.primary,
-                      ),
-                      style: IconButton.styleFrom(
-                        focusColor: colors.onSurfaceVariant.withOpacity(0.12),
-                        highlightColor: colors.onSurface.withOpacity(0.12),
-                        side: BorderSide(color: colors.primary),
-                      ),
-                    );
-                  },
-                ),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: FilledButton.icon(
-                      onPressed: () async {
-                        if (txtPost.text != "") {
-                          _postar(
-                            (snapshot?.exists ?? false)
-                                ? int.parse(
-                                        "${snapshot?.children.last.key ?? 0}") +
-                                    1
-                                : 0,
-                          );
-                          txtPost.text = "";
-                          Flushbar(
-                            message: "Postado com sucesso!",
-                            duration: const Duration(seconds: 3),
-                            margin: const EdgeInsets.all(20),
-                            borderRadius: BorderRadius.circular(50),
-                          ).show(context);
-                        }
-                      },
-                      icon: const Icon(Icons.send),
-                      label: const Text("POSTAR"),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            (snapshot?.exists ?? false)
-                ? (Expanded(
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          (snapshot?.exists ?? false)
+              ? (Expanded(
+                  child: StretchingOverscrollIndicator(
+                    axisDirection: AxisDirection.down,
                     child: ListView.builder(
                       itemBuilder: (context, index) {
                         return (snapshot?.value as List)[int.parse(
@@ -352,13 +351,29 @@ class _ForumState extends State<Forum> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Padding(
-                                            padding: EdgeInsets.fromLTRB(
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
                                                 0, 10, 0, 0),
-                                            child: Image(
-                                              image: AssetImage(
-                                                  "lib/assets/user.webp"),
-                                              width: 50,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              child: Image(
+                                                image: listaTemImagem.contains(
+                                                        (snapshot?.value
+                                                            as List)[int.parse(
+                                                                snapshot
+                                                                        ?.children
+                                                                        .last
+                                                                        .key ??
+                                                                    "0") -
+                                                            index]["username"])
+                                                    ? NetworkImage(
+                                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["username"]}.png?alt=media")
+                                                    : const AssetImage(
+                                                            "lib/assets/user.webp")
+                                                        as ImageProvider,
+                                                width: 50,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(
@@ -717,10 +732,10 @@ class _ForumState extends State<Forum> {
                           ? (int.parse("${snapshot?.children.last.key}") + 1)
                           : 0,
                     ),
-                  ))
-                : const Text("Nenhum comentário!"),
-          ],
-        ),
+                  ),
+                ))
+              : const Text("Nenhum comentário!"),
+        ],
       ),
     );
   }
