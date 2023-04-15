@@ -2,6 +2,7 @@
 
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/home/profile/profile.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
@@ -9,7 +10,8 @@ import 'config/config.dart';
 import 'gatos/gatos.dart';
 import '../main.dart';
 
-List<Widget> telasHome = [const GatoLista(), const Config()];
+List<Widget> telasHome = [const GatoLista(), const Profile(), const Config()];
+int indexAntigo = 0;
 
 class Home extends StatefulWidget {
   const Home({super.key});
