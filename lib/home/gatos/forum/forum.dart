@@ -153,9 +153,17 @@ class _ForumState extends State<Forum> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Image(
-                  image: AssetImage("lib/assets/user.webp"),
-                  width: 50,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image(
+                    image: listaTemImagem.contains(username)
+                        ? NetworkImage(
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
+                          )
+                        : const AssetImage("lib/assets/user.webp")
+                            as ImageProvider,
+                    width: 50,
+                  ),
                 ),
                 const SizedBox(
                   width: 20,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gatopedia/home/home.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../main.dart';
@@ -22,6 +23,12 @@ class _GatoListaState extends State<GatoLista> {
   void _play() {
     miau.setAsset("lib/assets/meow.mp3");
     miau.play();
+  }
+
+  @override
+  void initState() {
+    indexAntigo = 0;
+    super.initState();
   }
 
   @override
