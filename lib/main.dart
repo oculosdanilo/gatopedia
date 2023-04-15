@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -12,12 +11,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:ota_update/ota_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:system_theme/system_theme.dart';
 
 import 'loginScreen/seminternet.dart';
 import 'loginScreen/form.dart';
 
-List listaTemImagem = [];
 String urlMeow =
     "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
 final Uri _urlVersao = Uri.parse(
@@ -41,6 +38,7 @@ ColorScheme blueSchemeL = ColorScheme.fromSeed(
 );
 dynamic mensagem;
 DataSnapshot? snapshot;
+Map<String, String> listaDownload = {};
 
 void main() {
   runApp(const App());
@@ -66,7 +64,6 @@ class App extends StatelessWidget {
       valueListenable: themeNotifier,
       builder: (_, ThemeMode currentMode, __) {
         return MaterialApp(
-          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             navigationBarTheme: NavigationBarThemeData(
               indicatorColor: blueSchemeL.primary,
@@ -175,38 +172,6 @@ class GatopediaState extends State with SingleTickerProviderStateMixin {
   String version = "";
   String buildNumber = "";
 
-  pegarImagens() async {
-    await Firebase.initializeApp();
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("users/");
-    DataSnapshot userinfo = await ref.get();
-    int i = 0;
-    while (i < userinfo.children.length) {
-      if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
-        setState(() {
-          listaTemImagem.add(
-            "${(userinfo.children.map((i) => i)).toList()[i].key}",
-          );
-        });
-      }
-      i++;
-    }
-    debugPrint("$listaTemImagem");
-  }
-
-  _adaptarTema() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    if (pref.getInt("adapt") != 1) {
-      final bool temaDisp = SystemTheme.isDarkMode;
-      if (temaDisp) {
-        App.themeNotifier.value = ThemeMode.dark;
-      } else {
-        App.themeNotifier.value = ThemeMode.light;
-      }
-      pref.setInt("adapt", 1);
-    }
-  }
-
   _read() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -284,7 +249,6 @@ class GatopediaState extends State with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    pegarImagens();
     _play();
     if (!kIsWeb) {
       InternetConnectionChecker().onStatusChange.listen((status) {
@@ -302,7 +266,6 @@ class GatopediaState extends State with SingleTickerProviderStateMixin {
     if (!kDebugMode) {
       checarUpdate();
     }
-    _adaptarTema();
   }
 
   void _play() {
