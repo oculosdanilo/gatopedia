@@ -112,8 +112,7 @@ class _ProfileState extends State<Profile> {
                         <PopupMenuEntry<MenuItensImg>>[
                       PopupMenuItem(
                         onTap: () async {
-                          var edicao;
-                          edicao = await Navigator.push(
+                          var edicao = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const PPEdit(),
