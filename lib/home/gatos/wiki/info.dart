@@ -3,6 +3,8 @@
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:gatopedia/main.dart';
@@ -26,8 +28,28 @@ class GatoInfo extends StatefulWidget {
 class GatoInfoState extends State {
   final txtControllerC = TextEditingController();
 
+  pegarImagens() async {
+    await Firebase.initializeApp();
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("users/");
+    DataSnapshot userinfo = await ref.get();
+    int i = 0;
+    while (i < userinfo.children.length) {
+      if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
+        setState(() {
+          listaTemImagem.add(
+            "${(userinfo.children.map((i) => i)).toList()[i].key}",
+          );
+        });
+      }
+      i++;
+    }
+    debugPrint("$listaTemImagem");
+  }
+
   @override
   void initState() {
+    pegarImagens();
     super.initState();
   }
 
@@ -184,8 +206,13 @@ class GatoInfoState extends State {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(50),
-                          child: const Image(
-                            image: AssetImage("lib/assets/user.webp"),
+                          child: Image(
+                            image: listaTemImagem
+                                    .contains(cLista[index]["USERNAME"])
+                                ? NetworkImage(
+                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media")
+                                : const AssetImage("lib/assets/user.webp")
+                                    as ImageProvider,
                             width: 50,
                           ),
                         ),

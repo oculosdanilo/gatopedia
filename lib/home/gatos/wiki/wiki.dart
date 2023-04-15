@@ -20,6 +20,11 @@ class Wiki extends StatefulWidget {
 
 class _WikiState extends State<Wiki> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StretchingOverscrollIndicator(
       axisDirection: AxisDirection.down,
@@ -27,7 +32,12 @@ class _WikiState extends State<Wiki> {
         itemCount: gatoLista.length,
         itemBuilder: (context, index) {
           return Container(
-            margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+            margin: EdgeInsets.fromLTRB(
+              15,
+              index == 0 ? 15 : 10,
+              15,
+              index == 9 ? 15 : 5,
+            ),
             child: OpenContainer(
               closedShape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -41,7 +51,7 @@ class _WikiState extends State<Wiki> {
               closedColor:
                   dark ? const Color(0xff23232a) : const Color(0xfff5f2fb),
               closedBuilder: (context, VoidCallback openContainer) => SizedBox(
-                height: 140,
+                height: 130,
                 child: Card(
                   shadowColor: Colors.transparent,
                   margin: const EdgeInsets.all(0),
@@ -57,14 +67,12 @@ class _WikiState extends State<Wiki> {
                       openContainer.call();
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
                             child: FadeInImage(
-                              width: 100,
                               placeholder:
                                   const AssetImage('lib/assets/loading.gif'),
                               image: NetworkImage(gatoLista[index]["IMG"]),

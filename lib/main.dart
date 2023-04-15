@@ -26,7 +26,7 @@ String buttonText = "Cadastrar/Entrar";
 bool esconderSenha = true;
 Icon iconeOlho = const Icon(Icons.visibility_rounded);
 String username = "";
-dynamic gatoLista = "";
+List gatoLista = [];
 dynamic cLista;
 int indexClicado = 0;
 dynamic cListaTamanho;

@@ -1,4 +1,5 @@
 import 'package:another_flushbar/flushbar.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/eu/pp_edit.dart';
@@ -29,6 +30,25 @@ class _ProfileState extends State<Profile> {
     if (mounted) {
       super.setState(fn);
     }
+  }
+
+  pegarImagens() async {
+    await Firebase.initializeApp();
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("users/");
+    DataSnapshot userinfo = await ref.get();
+    int i = 0;
+    while (i < userinfo.children.length) {
+      if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
+        setState(() {
+          listaTemImagem.add(
+            "${(userinfo.children.map((i) => i)).toList()[i].key}",
+          );
+        });
+      }
+      i++;
+    }
+    debugPrint("$listaTemImagem");
   }
 
   _atualizar() {
@@ -68,6 +88,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   void initState() {
+    pegarImagens();
     indexAntigo = 1;
     _atualizar();
     _pegarUserinfo(username);

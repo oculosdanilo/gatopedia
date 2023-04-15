@@ -94,9 +94,16 @@ class _ComentariosState extends State<Comentarios> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image(
-                    image: AssetImage("lib/assets/user.webp"),
-                    width: 30,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image(
+                      image: listaTemImagem.contains((snapshot?.value
+                              as List)[widget.post]["username"])
+                          ? NetworkImage(
+                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["username"]}.png?alt=media")
+                          : AssetImage("lib/assets/user.webp") as ImageProvider,
+                      width: 30,
+                    ),
                   ),
                   SizedBox(
                     width: 15,

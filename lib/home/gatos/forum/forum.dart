@@ -4,10 +4,12 @@ import 'dart:io';
 
 import 'package:animations/animations.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/gatos/forum/comentarios.dart';
+import 'package:gatopedia/home/gatos/forum/imagem.dart';
 
 import 'delete_post.dart';
 import 'edit_post.dart';
@@ -384,9 +386,6 @@ class _ForumState extends State<Forum> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
                                                 Row(
                                                   children: [
                                                     Expanded(
@@ -565,23 +564,37 @@ class _ForumState extends State<Forum> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
-                                                          child: FadeInImage(
-                                                            fit: BoxFit.cover,
-                                                            width:
-                                                                double.infinity,
-                                                            fadeInDuration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        300),
-                                                            fadeOutDuration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        300),
-                                                            placeholder:
-                                                                const AssetImage(
-                                                                    'lib/assets/loading.gif'),
-                                                            image: NetworkImage(
-                                                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.png?alt=media"),
+                                                          child: OpenContainer(
+                                                            onClosed: (data) {},
+                                                            closedColor: Colors
+                                                                .transparent,
+                                                            openColor:
+                                                                Colors.black,
+                                                            openBuilder: (context,
+                                                                    action) =>
+                                                                Imagem(
+                                                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.png?alt=media"),
+                                                            closedBuilder:
+                                                                (context,
+                                                                        action) =>
+                                                                    FadeInImage(
+                                                              fit: BoxFit.cover,
+                                                              width: double
+                                                                  .infinity,
+                                                              fadeInDuration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                              fadeOutDuration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                              placeholder:
+                                                                  const AssetImage(
+                                                                      'lib/assets/loading.gif'),
+                                                              image: CachedNetworkImageProvider(
+                                                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.png?alt=media"),
+                                                            ),
                                                           ),
                                                         ),
                                                       )
