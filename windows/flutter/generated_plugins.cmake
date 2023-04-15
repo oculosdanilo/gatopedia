@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   just_audio_windows
-  system_theme
   url_launcher_windows
 )
 
