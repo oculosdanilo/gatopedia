@@ -105,18 +105,23 @@ class _ProfileState extends State<Profile> {
           actions: (temImagem ?? false)
               ? [
                   PopupMenuButton<MenuItensImg>(
+                    onSelected: (value) {
+                      if (value == MenuItensImg.editar) {
+                        Navigator.push(
+                          context,
+                          SlideRightAgainRoute(const PPEdit()),
+                        );
+                      } else {
+                        debugPrint("aafolou");
+                      }
+                    },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<MenuItensImg>>[
                       PopupMenuItem(
-                        onTap: () async {
-                          final edicao = await Navigator.push(
-                            context,
-                            SlideRightAgainRoute(const PPEdit()),
-                          );
-                        },
+                        value: MenuItensImg.editar,
                         child: Row(
                           children: const [
                             Icon(Icons.edit_rounded),
@@ -126,6 +131,7 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       PopupMenuItem(
+                        value: MenuItensImg.remover,
                         child: Row(
                           children: const [
                             Icon(Icons.delete_forever_rounded),
@@ -244,10 +250,10 @@ class _ProfileState extends State<Profile> {
                                     editMode = false;
                                   });
                                 },
-                                child: const Text("Cancelar"),
+                                child: const Text("CANCELAR"),
                               ),
                               FilledButton(
-                                child: const Text("Salvar"),
+                                child: const Text("SALVAR"),
                                 onPressed: () async {
                                   if (txtBio.text != "" &&
                                       txtBio.text != bioText) {
