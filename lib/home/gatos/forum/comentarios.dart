@@ -5,6 +5,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/main.dart';
 
+import '../../home.dart';
+import '../public_profile.dart';
+
 class Comentarios extends StatefulWidget {
   final int post;
 
@@ -96,13 +99,27 @@ class _ComentariosState extends State<Comentarios> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(50),
-                    child: Image(
-                      image: listaTemImagem.contains((snapshot?.value
-                              as List)[widget.post]["username"])
-                          ? NetworkImage(
-                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["username"]}.png?alt=media")
-                          : AssetImage("lib/assets/user.webp") as ImageProvider,
-                      width: 30,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          SlideRightAgainRoute(
+                            PublicProfile(
+                              (snapshot?.value as List)[widget.post]
+                                  ["username"],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Image(
+                        image: listaTemImagem.contains((snapshot?.value
+                                as List)[widget.post]["username"])
+                            ? NetworkImage(
+                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["username"]}.png?alt=media")
+                            : AssetImage("lib/assets/user.webp")
+                                as ImageProvider,
+                        width: 30,
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -113,14 +130,27 @@ class _ComentariosState extends State<Comentarios> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "@${(snapshot?.value as List)[widget.post]["username"]}",
-                          style: const TextStyle(
-                            fontFamily: "Jost",
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              SlideRightAgainRoute(
+                                PublicProfile(
+                                  (snapshot?.value as List)[widget.post]
+                                      ["username"],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "@${(snapshot?.value as List)[widget.post]["username"]}",
+                            style: const TextStyle(
+                              fontFamily: "Jost",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                            softWrap: true,
                           ),
-                          softWrap: true,
                         ),
                         const SizedBox(
                           height: 5,
@@ -227,20 +257,42 @@ class _ComentariosState extends State<Comentarios> {
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(50),
-                                        child: Image(
-                                          image: listaTemImagem.contains((snapshot
-                                                          ?.value
-                                                      as List)[widget.post]
-                                                  ["comentarios"][((snapshot
-                                                                  ?.value
-                                                              as List)[widget.post]
-                                                          ["comentarios"] as List)
-                                                      .length -
-                                                  index -
-                                                  1]["username"])
-                                              ? NetworkImage("https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.png?alt=media")
-                                              : AssetImage("lib/assets/user.webp") as ImageProvider,
-                                          width: 50,
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              SlideRightAgainRoute(
+                                                PublicProfile(
+                                                  (snapshot?.value
+                                                          as List)[widget.post]
+                                                      ["comentarios"][((snapshot
+                                                                          ?.value
+                                                                      as List)[
+                                                                  widget.post][
+                                                              "comentarios"] as List)
+                                                          .length -
+                                                      index -
+                                                      1]["username"],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Image(
+                                            image: listaTemImagem.contains(
+                                                    (snapshot?.value as List)[widget.post]
+                                                            ["comentarios"][
+                                                        ((snapshot?.value as List)[widget.post]
+                                                                        ["comentarios"]
+                                                                    as List)
+                                                                .length -
+                                                            index -
+                                                            1]["username"])
+                                                ? NetworkImage(
+                                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.png?alt=media")
+                                                : AssetImage("lib/assets/user.webp")
+                                                    as ImageProvider,
+                                            width: 50,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(
@@ -255,13 +307,35 @@ class _ComentariosState extends State<Comentarios> {
                                             const SizedBox(
                                               height: 10,
                                             ),
-                                            Text(
-                                              "@${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}",
-                                              style: const TextStyle(
-                                                  fontFamily: "Jost",
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15),
-                                              softWrap: true,
+                                            InkWell(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  SlideRightAgainRoute(
+                                                    PublicProfile(
+                                                      (snapshot?.value as List)[
+                                                              widget.post][
+                                                          "comentarios"][((snapshot
+                                                                              ?.value
+                                                                          as List)[
+                                                                      widget
+                                                                          .post]
+                                                                  ["comentarios"] as List)
+                                                              .length -
+                                                          index -
+                                                          1]["username"],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Text(
+                                                "@${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}",
+                                                style: const TextStyle(
+                                                    fontFamily: "Jost",
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15),
+                                                softWrap: true,
+                                              ),
                                             ),
                                             const SizedBox(
                                               height: 10,
@@ -355,14 +429,6 @@ class _ComentariosState extends State<Comentarios> {
                                                               )),
                                                     );
                                                   });
-                                                  /* _deletarC(((snapshot?.value
-                                                                        as List)[
-                                                                    widget.post]
-                                                                ["comentarios"]
-                                                            as List)
-                                                        .length -
-                                                    index -
-                                                    1); */
                                                 },
                                               ),
                                             )

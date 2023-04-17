@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:gatopedia/main.dart';
 
+import '../../home.dart';
+import '../public_profile.dart';
+
 final Uri _urlCAdd = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentAdd.php');
 final Uri _urlCDelete = Uri.parse(
@@ -218,15 +221,28 @@ class GatoInfoState extends State {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(50),
-                            child: Image(
-                              image: listaTemImagem
-                                      .contains(cLista[index]["USERNAME"])
-                                  ? CachedNetworkImageProvider(
-                                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
-                                      cacheKey: UniqueKey().toString())
-                                  : const AssetImage("lib/assets/user.webp")
-                                      as ImageProvider,
-                              width: 50,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  SlideRightAgainRoute(
+                                    PublicProfile(
+                                      cLista[index]["USERNAME"],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Image(
+                                image: listaTemImagem
+                                        .contains(cLista[index]["USERNAME"])
+                                    ? CachedNetworkImageProvider(
+                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
+                                        cacheKey: UniqueKey().toString(),
+                                      )
+                                    : const AssetImage("lib/assets/user.webp")
+                                        as ImageProvider,
+                                width: 50,
+                              ),
                             ),
                           ),
                           const SizedBox(
@@ -240,13 +256,25 @@ class GatoInfoState extends State {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                Text(
-                                  '@${cLista[index]["USERNAME"]}',
-                                  style: const TextStyle(
-                                      fontFamily: "Jost",
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15),
-                                  softWrap: true,
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      SlideRightAgainRoute(
+                                        PublicProfile(
+                                          cLista[index]["USERNAME"],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    '@${cLista[index]["USERNAME"]}',
+                                    style: const TextStyle(
+                                        fontFamily: "Jost",
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                                    softWrap: true,
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 10,

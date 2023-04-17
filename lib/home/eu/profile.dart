@@ -124,7 +124,6 @@ class _ProfileState extends State<Profile> {
           actions: (temImagem ?? false)
               ? [
                   PopupMenuButton<MenuItensImg>(
-                    /*  */
                     onSelected: (value) async {
                       if (value == MenuItensImg.editar) {
                         dynamic resposta = await Navigator.push(
@@ -271,6 +270,7 @@ class _ProfileState extends State<Profile> {
               children: [
                 (temImagem ?? false)
                     ? FadeInImage(
+                        fadeInDuration: const Duration(milliseconds: 100),
                         placeholder: const AssetImage("lib/assets/user.webp"),
                         image: NetworkImage(
                           "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
