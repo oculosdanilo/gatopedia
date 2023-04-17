@@ -124,6 +124,7 @@ class _ProfileState extends State<Profile> {
           actions: (temImagem ?? false)
               ? [
                   PopupMenuButton<MenuItensImg>(
+                    /*  */
                     onSelected: (value) async {
                       if (value == MenuItensImg.editar) {
                         dynamic resposta = await Navigator.push(
