@@ -124,6 +124,13 @@ class _ProfileState extends State<Profile> {
           actions: (temImagem ?? false)
               ? [
                   PopupMenuButton<MenuItensImg>(
+                    icon: const Icon(
+                      Icons.more_vert_rounded,
+                      shadows: [
+                        Shadow(blurRadius: 10),
+                      ],
+                      color: Colors.white,
+                    ),
                     onSelected: (value) async {
                       if (value == MenuItensImg.editar) {
                         dynamic resposta = await Navigator.push(
@@ -229,6 +236,13 @@ class _ProfileState extends State<Profile> {
                 ]
               : [
                   PopupMenuButton<MenuItensSemImg>(
+                    icon: const Icon(
+                      Icons.more_vert_rounded,
+                      shadows: [
+                        Shadow(blurRadius: 10),
+                      ],
+                      color: Colors.white,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -281,15 +295,6 @@ class _ProfileState extends State<Profile> {
                         "lib/assets/user.webp",
                         fit: BoxFit.cover,
                       ),
-                /* Image(
-                  image: (temImagem ?? false)
-                      ? NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
-                        )
-                      : const AssetImage("lib/assets/user.webp")
-                          as ImageProvider,
-                  fit: BoxFit.cover,
-                ), */
                 const DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(

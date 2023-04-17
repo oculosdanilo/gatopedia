@@ -235,9 +235,8 @@ class GatoInfoState extends State {
                               child: Image(
                                 image: listaTemImagem
                                         .contains(cLista[index]["USERNAME"])
-                                    ? CachedNetworkImageProvider(
-                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
-                                        cacheKey: UniqueKey().toString(),
+                                    ? NetworkImage(
+                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${cLista[index]["USERNAME"]}.png?alt=media",
                                       )
                                     : const AssetImage("lib/assets/user.webp")
                                         as ImageProvider,
