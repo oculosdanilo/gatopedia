@@ -3,10 +3,14 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/main.dart';
+import 'package:image_cropper/image_cropper.dart';
 
-File? file;
-bool imagemSelecionada = false, postado = false;
+File? file, imagemEditada;
+bool imagemSelecionada = false;
 
 class PPEdit extends StatefulWidget {
   const PPEdit({super.key});
@@ -16,6 +20,19 @@ class PPEdit extends StatefulWidget {
 }
 
 class _PPEditState extends State<PPEdit> {
+  _salvarPP(File file) async {
+    FirebaseStorage storage = FirebaseStorage.instance;
+    final refS = storage.ref("users/$username.png");
+    await refS.putFile(file);
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    final ref = database.ref("users/$username/");
+    await ref.update(
+      {"img": true},
+    );
+    setState(() {});
+    Navigator.pop(context, true);
+  }
+
   _pegaImagem() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowedExtensions: ['jpeg', 'jpg', 'png'],
@@ -23,19 +40,86 @@ class _PPEditState extends State<PPEdit> {
     );
     if (result != null) {
       file = File(result.files.single.path!);
-      setState(() {
-        imagemSelecionada = true;
-      });
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: file!.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: '✂️Cortando...',
+            hideBottomControls: true,
+            toolbarColor: Theme.of(context).colorScheme.primary,
+            toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
+            initAspectRatio: CropAspectRatioPreset.original,
+            activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
+            statusBarColor: Theme.of(context).colorScheme.primary,
+            lockAspectRatio: true,
+          ),
+          IOSUiSettings(
+            title: 'Cropper',
+          ),
+          WebUiSettings(
+            context: context,
+          ),
+        ],
+      );
+      if (croppedFile != null) {
+        setState(() {
+          imagemEditada = File(croppedFile.path);
+        });
+      } else {
+        Navigator.pop(context, false);
+      }
     } else {
-      postado = false;
-      Navigator.pop(context);
+      Navigator.pop(context, false);
+    }
+  }
+
+  _editarImagem(File? file) async {
+    if (file != null) {
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: file.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: '✂️Cortando...',
+            hideBottomControls: true,
+            toolbarColor: Theme.of(context).colorScheme.primary,
+            toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
+            initAspectRatio: CropAspectRatioPreset.original,
+            activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
+            statusBarColor: Theme.of(context).colorScheme.primary,
+            lockAspectRatio: true,
+          ),
+          IOSUiSettings(
+            title: 'Cropper',
+          ),
+          WebUiSettings(
+            context: context,
+          ),
+        ],
+      );
+      if (croppedFile != null) {
+        setState(() {
+          imagemEditada = File(croppedFile.path);
+        });
+      } else {
+        Navigator.pop(context, false);
+      }
+    } else {
+      Navigator.pop(context, false);
     }
   }
 
   @override
   void initState() {
+    file = null;
+    imagemEditada = null;
     imagemSelecionada = false;
-    /* _pegaImagem(); */
+    _pegaImagem();
     super.initState();
   }
 
@@ -50,10 +134,6 @@ class _PPEditState extends State<PPEdit> {
             sliver: SliverAppBar.large(
               leading: IconButton(
                 onPressed: () {
-                  setState(() {
-                    postado = false;
-                    imagemSelecionada = false;
-                  });
                   Navigator.pop(context);
                 },
                 icon: const Icon(Icons.close_rounded),
@@ -93,10 +173,35 @@ class _PPEditState extends State<PPEdit> {
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
-                            /* SizedBox(
+                            SizedBox(
                               width: double.infinity,
-                              child: imagemSelecionada
-                                  ? Text("aafolou")
+                              child: imagemEditada != null
+                                  ? Stack(
+                                      fit: StackFit.passthrough,
+                                      children: [
+                                        Image(
+                                          image: FileImage(imagemEditada!),
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Positioned.fill(
+                                          child: Container(
+                                            width: double.infinity,
+                                            decoration: const BoxDecoration(
+                                              color:
+                                                  Color.fromARGB(155, 0, 0, 0),
+                                            ),
+                                          ),
+                                        ),
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(500),
+                                          child: Image(
+                                            image: FileImage(imagemEditada!),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                   : const Padding(
                                       padding: EdgeInsets.fromLTRB(
                                         0,
@@ -109,16 +214,21 @@ class _PPEditState extends State<PPEdit> {
                                         textAlign: TextAlign.center,
                                       ),
                                     ),
-                            ), */
+                            ),
                             const SizedBox(
                               height: 20,
                             ),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                OutlinedButton(
+                                    onPressed: () {
+                                      _editarImagem(file);
+                                    },
+                                    child: const Text("EDITAR")),
                                 ElevatedButton(
                                   onPressed: () {
-                                    _pegaImagem();
+                                    _salvarPP(imagemEditada!);
                                   },
                                   child: const Text("SALVAR"),
                                 )

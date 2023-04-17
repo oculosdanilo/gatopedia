@@ -16,7 +16,8 @@ class GatoLista extends StatefulWidget {
   State<GatoLista> createState() => _GatoListaState();
 }
 
-class _GatoListaState extends State<GatoLista> {
+class _GatoListaState extends State<GatoLista>
+    with AutomaticKeepAliveClientMixin {
   final miau = AudioPlayer();
   bool isPlaying = false;
 
@@ -33,6 +34,7 @@ class _GatoListaState extends State<GatoLista> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ScrollConfiguration(
       behavior: const ScrollBehavior().copyWith(overscroll: false),
       child: DefaultTabController(
@@ -111,6 +113,9 @@ class _GatoListaState extends State<GatoLista> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {

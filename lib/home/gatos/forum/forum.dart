@@ -5,12 +5,13 @@ import 'dart:io';
 import 'package:animations/animations.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/home/gatos/forum/comentarios.dart';
-import 'package:gatopedia/home/gatos/forum/imagem.dart';
 
+import 'comentarios.dart';
+import 'imagem.dart';
 import 'delete_post.dart';
 import 'edit_post.dart';
 import 'image_post.dart';
@@ -31,7 +32,7 @@ class Forum extends StatefulWidget {
 
 enum MenuItems { itemUm, itemDois }
 
-class _ForumState extends State<Forum> {
+class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   bool enabled = true;
   final txtPost = TextEditingController();
   String pedaco1 = "";
@@ -137,14 +138,43 @@ class _ForumState extends State<Forum> {
     });
   }
 
+  _pegarImagens() async {
+    await Firebase.initializeApp();
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("users/");
+    DataSnapshot userinfo = await ref.get();
+    int i = 0;
+    while (i < userinfo.children.length) {
+      if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
+        setState(() {
+          listaTemImagem.add(
+            "${(userinfo.children.map((i) => i)).toList()[i].key}",
+          );
+        });
+      } else {
+        setState(() {
+          listaTemImagem.remove(
+            "${(userinfo.children.map((i) => i)).toList()[i].key}",
+          );
+        });
+      }
+      i++;
+    }
+    debugPrint("$listaTemImagem");
+  }
+
   @override
   void initState() {
+    _pegarImagens();
     _atualizar();
+    imageCache.clear();
+    imageCache.clearLiveImages();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final ColorScheme colors = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
@@ -155,14 +185,25 @@ class _ForumState extends State<Forum> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(50),
-                child: Image(
-                  image: listaTemImagem.contains(username)
-                      ? NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
-                        )
-                      : const AssetImage("lib/assets/user.webp")
-                          as ImageProvider,
+                child: SizedBox(
                   width: 50,
+                  height: 50,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset("lib/assets/user.webp"),
+                      Image(
+                        image: listaTemImagem.contains(username)
+                            ? CachedNetworkImageProvider(
+                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
+                                cacheKey: UniqueKey().toString(),
+                              )
+                            : const AssetImage("lib/assets/user.webp")
+                                as ImageProvider,
+                        width: 50,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(
@@ -355,7 +396,7 @@ class _ForumState extends State<Forum> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.fromLTRB(
-                                                0, 10, 0, 0),
+                                                0, 5, 0, 0),
                                             child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(50),
@@ -369,8 +410,9 @@ class _ForumState extends State<Forum> {
                                                                         .key ??
                                                                     "0") -
                                                             index]["username"])
-                                                    ? NetworkImage(
-                                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["username"]}.png?alt=media")
+                                                    ? CachedNetworkImageProvider(
+                                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["username"]}.png?alt=media",
+                                                      )
                                                     : const AssetImage(
                                                             "lib/assets/user.webp")
                                                         as ImageProvider,
@@ -584,11 +626,11 @@ class _ForumState extends State<Forum> {
                                                               fadeInDuration:
                                                                   const Duration(
                                                                       milliseconds:
-                                                                          300),
+                                                                          150),
                                                               fadeOutDuration:
                                                                   const Duration(
                                                                       milliseconds:
-                                                                          300),
+                                                                          150),
                                                               placeholder:
                                                                   const AssetImage(
                                                                       'lib/assets/loading.gif'),
@@ -752,4 +794,7 @@ class _ForumState extends State<Forum> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

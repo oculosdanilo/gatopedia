@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:animations/animations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,14 +21,35 @@ class Wiki extends StatefulWidget {
   State<Wiki> createState() => _WikiState();
 }
 
-class _WikiState extends State<Wiki> {
-  @override
-  void initState() {
-    super.initState();
+class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
+  pegarImagens() async {
+    await Firebase.initializeApp();
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("users/");
+    DataSnapshot userinfo = await ref.get();
+    int i = 0;
+    while (i < userinfo.children.length) {
+      if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
+        setState(() {
+          listaTemImagem.add(
+            "${(userinfo.children.map((i) => i)).toList()[i].key}",
+          );
+        });
+      } else {
+        setState(() {
+          listaTemImagem.remove(
+            "${(userinfo.children.map((i) => i)).toList()[i].key}",
+          );
+        });
+      }
+      i++;
+    }
+    debugPrint("$listaTemImagem");
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return StretchingOverscrollIndicator(
       axisDirection: AxisDirection.down,
       child: ListView.builder(
@@ -72,13 +96,13 @@ class _WikiState extends State<Wiki> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           ClipRRect(
-                            child: FadeInImage(
-                              placeholder:
-                                  const AssetImage('lib/assets/loading.gif'),
-                              image: NetworkImage(gatoLista[index]["IMG"]),
-                              fadeInDuration: const Duration(milliseconds: 300),
+                            child: CachedNetworkImage(
+                              imageUrl: gatoLista[index]["IMG"],
+                              placeholder: (context, url) =>
+                                  Image.asset("lib/assets/loading.gif"),
+                              fadeInDuration: const Duration(milliseconds: 150),
                               fadeOutDuration:
-                                  const Duration(milliseconds: 300),
+                                  const Duration(milliseconds: 150),
                             ),
                           ),
                           const SizedBox(
@@ -124,4 +148,7 @@ class _WikiState extends State<Wiki> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

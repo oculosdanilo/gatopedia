@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/home/eu/pp_edit.dart';
 
+import 'pp_edit.dart';
 import '../../main.dart';
 import '../home.dart';
 
@@ -32,6 +35,16 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  _apagarImagem(username) async {
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    final ref = database.ref("users/$username/img");
+    FirebaseStorage storage = FirebaseStorage.instance;
+    final refS = storage.ref("users/$username.png");
+    await ref.remove();
+    await refS.delete();
+    _pegarUserinfo(username);
+  }
+
   pegarImagens() async {
     await Firebase.initializeApp();
     FirebaseDatabase database = FirebaseDatabase.instance;
@@ -42,6 +55,12 @@ class _ProfileState extends State<Profile> {
       if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
         setState(() {
           listaTemImagem.add(
+            "${(userinfo.children.map((i) => i)).toList()[i].key}",
+          );
+        });
+      } else {
+        setState(() {
+          listaTemImagem.remove(
             "${(userinfo.children.map((i) => i)).toList()[i].key}",
           );
         });
@@ -105,14 +124,79 @@ class _ProfileState extends State<Profile> {
           actions: (temImagem ?? false)
               ? [
                   PopupMenuButton<MenuItensImg>(
-                    onSelected: (value) {
+                    onSelected: (value) async {
                       if (value == MenuItensImg.editar) {
-                        Navigator.push(
+                        dynamic resposta = await Navigator.push(
                           context,
                           SlideRightAgainRoute(const PPEdit()),
                         );
+                        if (resposta != null) {
+                          if (resposta) {
+                            Flushbar(
+                              message: "Atualizada com sucesso!",
+                              duration: const Duration(seconds: 2),
+                              margin: const EdgeInsets.all(20),
+                              borderRadius: BorderRadius.circular(50),
+                            ).show(context);
+                          } else {
+                            Flushbar(
+                              message: "Ação cancelada.",
+                              duration: const Duration(seconds: 2),
+                              margin: const EdgeInsets.all(20),
+                              borderRadius: BorderRadius.circular(50),
+                            ).show(context);
+                          }
+                        } else {
+                          Flushbar(
+                            message: "Ação cancelada.",
+                            duration: const Duration(seconds: 2),
+                            margin: const EdgeInsets.all(20),
+                            borderRadius: BorderRadius.circular(50),
+                          ).show(context);
+                        }
                       } else {
-                        debugPrint("aafolou");
+                        WidgetsBinding.instance.addPostFrameCallback(
+                          (_) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                icon: const Icon(Icons.delete_rounded),
+                                title: const Text(
+                                  "Tem certeza que deseja remover sua foto de perfil?",
+                                  textAlign: TextAlign.center,
+                                ),
+                                content: const Text(
+                                  "Essa ação é irreversível",
+                                  textAlign: TextAlign.center,
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: const Text("CANCELAR"),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: const Text("OK"),
+                                  )
+                                ],
+                              ),
+                            ).then((value) {
+                              if (value) {
+                                _apagarImagem(username);
+                                Flushbar(
+                                  message: "Removida com sucesso!",
+                                  duration: const Duration(seconds: 2),
+                                  margin: const EdgeInsets.all(20),
+                                  borderRadius: BorderRadius.circular(50),
+                                ).show(context);
+                              }
+                            });
+                          },
+                        );
                       }
                     },
                     shape: RoundedRectangleBorder(
@@ -124,7 +208,7 @@ class _ProfileState extends State<Profile> {
                         value: MenuItensImg.editar,
                         child: Row(
                           children: const [
-                            Icon(Icons.edit_rounded),
+                            Icon(Icons.add_photo_alternate_rounded),
                             SizedBox(width: 10),
                             Text("Mudar foto de perfil"),
                           ],
@@ -144,13 +228,26 @@ class _ProfileState extends State<Profile> {
                   ),
                 ]
               : [
-                  PopupMenuButton<MenuItensImg>(
+                  PopupMenuButton<MenuItensSemImg>(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
+                    onSelected: (value) async {
+                      if (value == MenuItensSemImg.adicionar) {
+                        await Navigator.push(
+                          context,
+                          SlideRightAgainRoute(const PPEdit()),
+                        );
+                        setState(() {
+                          imageCache.clear();
+                          imageCache.clearLiveImages();
+                        });
+                      }
+                    },
                     itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<MenuItensImg>>[
+                        <PopupMenuEntry<MenuItensSemImg>>[
                       PopupMenuItem(
+                        value: MenuItensSemImg.adicionar,
                         child: Row(
                           children: const [
                             Icon(Icons.add_photo_alternate_rounded),
@@ -163,7 +260,7 @@ class _ProfileState extends State<Profile> {
                   ),
                 ],
           automaticallyImplyLeading: false,
-          expandedHeight: 300,
+          expandedHeight: 400,
           backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
           flexibleSpace: FlexibleSpaceBar(
             centerTitle: true,
@@ -171,14 +268,27 @@ class _ProfileState extends State<Profile> {
             background: Stack(
               fit: StackFit.expand,
               children: [
-                Image(
+                (temImagem ?? false)
+                    ? FadeInImage(
+                        placeholder: const AssetImage("lib/assets/user.webp"),
+                        image: NetworkImage(
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
+                        ),
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        "lib/assets/user.webp",
+                        fit: BoxFit.cover,
+                      ),
+                /* Image(
                   image: (temImagem ?? false)
                       ? NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media")
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
+                        )
                       : const AssetImage("lib/assets/user.webp")
                           as ImageProvider,
                   fit: BoxFit.cover,
-                ),
+                ), */
                 const DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
