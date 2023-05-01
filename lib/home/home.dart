@@ -9,7 +9,7 @@ import 'gatos/gatos.dart';
 import 'eu/profile.dart';
 import '../main.dart';
 
-List<Widget> telasHome = [const GatoLista(), const Profile(), const Config()];
+List<Widget> telasHome = const [GatoLista(), Profile(false), Config()];
 int indexAntigo = 0;
 
 class Home extends StatefulWidget {

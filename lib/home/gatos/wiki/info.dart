@@ -380,7 +380,6 @@ class GatoInfoState extends State {
     } else {
       return Scaffold(
         body: CustomScrollView(
-          physics: const NeverScrollableScrollPhysics(),
           slivers: [
             SliverAppBar.large(
               iconTheme: const IconThemeData(color: Colors.white, shadows: [

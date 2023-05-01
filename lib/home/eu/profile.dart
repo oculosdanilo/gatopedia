@@ -18,7 +18,8 @@ enum MenuItensImg { editar, remover }
 enum MenuItensSemImg { adicionar }
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
+  final bool? botaoVoltar;
+  const Profile(this.botaoVoltar, {super.key});
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -118,7 +119,6 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      physics: const NeverScrollableScrollPhysics(),
       slivers: [
         SliverAppBar(
           actions: (temImagem ?? false)
@@ -273,7 +273,8 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                 ],
-          automaticallyImplyLeading: false,
+          /* ignore_for_line: dead_null_aware_expression */
+          automaticallyImplyLeading: widget.botaoVoltar ?? false,
           expandedHeight: 400,
           backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
           flexibleSpace: FlexibleSpaceBar(

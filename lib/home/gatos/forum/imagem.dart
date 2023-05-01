@@ -13,35 +13,37 @@ class _ImagemState extends State<Imagem> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Center(
-            child: InteractiveViewer(
-              child: Image.network(
-                widget.imagemUrl,
-                height: double.infinity,
-                width: double.infinity,
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(5),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Material(
-                color: Colors.black,
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(Icons.close_rounded),
-                  ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                child: Image.network(
+                  widget.imagemUrl,
+                  height: double.infinity,
+                  width: double.infinity,
+                  fit: BoxFit.fitWidth,
                 ),
               ),
             ),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: Material(
+                  color: Colors.black,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(Icons.close_rounded),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -63,12 +63,12 @@ class _PublicProfileState extends State<PublicProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: widget.username == username
-          ? const Profile()
+          ? const Profile(true)
           : CustomScrollView(
               physics: const NeverScrollableScrollPhysics(),
               slivers: [
                 SliverAppBar(
-                  automaticallyImplyLeading: false,
+                  automaticallyImplyLeading: true,
                   expandedHeight: 400,
                   backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
                   flexibleSpace: FlexibleSpaceBar(
