@@ -2,7 +2,7 @@
 
 Projeto do antigo Gatopédia (feito em AppInventor) repaginado em Material Design 3 e Flutter. <br>
 
-## Capturas de tela:
+### Capturas de tela:
 
 <div>
 <img src="screenshots/login.png" width="250" />
