@@ -18,8 +18,6 @@ import 'loginScreen/seminternet.dart';
 import 'loginScreen/form.dart';
 
 List listaTemImagem = [];
-String urlMeow =
-    "https://drive.google.com/uc?export=download&id=1Sn1NxfA5S1_KAwdet5bEf9ocI4qJ4dEy";
 final Uri _urlVersao = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/versao.php');
 String buttonText = "Cadastrar/Entrar";
@@ -27,7 +25,7 @@ bool esconderSenha = true;
 Icon iconeOlho = const Icon(Icons.visibility_rounded);
 String username = "";
 List gatoLista = [];
-dynamic cLista;
+List cLista = [];
 int indexClicado = 0;
 dynamic cListaTamanho;
 bool internet = true;
