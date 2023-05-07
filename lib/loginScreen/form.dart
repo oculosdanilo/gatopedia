@@ -8,12 +8,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 import '../loginScreen/colab.dart';
 import '../firebase_options.dart';
 import '../home/home.dart';
+import '../update.dart';
 
 final Uri _urlLogin = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/salvar.php');
@@ -39,6 +41,20 @@ class LoginState extends State<FormApp> {
 
   int txtFieldLenght = 0;
   dynamic counterColor;
+
+  checarUpdate(context) async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    String version = packageInfo.version;
+
+    final response = await http.post(urlVersao);
+    List versoes = jsonDecode(response.body);
+    if (version != versoes.first['VERSAO']) {
+      Navigator.push(context, SlideRightRoute(Update(versoes.first["VERSAO"])));
+    } else {
+      debugPrint("atualizado");
+    }
+  }
 
   Future<void> _navegarAtt(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling

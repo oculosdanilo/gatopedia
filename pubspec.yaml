@@ -1,7 +1,7 @@
 name: gatopedia
 description: Uma enciclopédia de gatos!
 publish_to: "none"
-version: 1.4.1+7
+version: 1.4.2+8
 
 environment:
   sdk: ">=2.19.3 <3.0.0"
@@ -32,6 +32,7 @@ dependencies:
   system_theme: ^2.1.0
   image_cropper: ^3.0.2
   flutter_cache_manager: ^3.3.0
+  flutter_downloader: ^1.10.2
 
 dev_dependencies:
   flutter_test:
@@ -99,7 +100,7 @@ flutter_native_splash:
     # 640 pixels in diameter.
     # App icon without an icon background: This should be 1152×1152 pixels, and fit within a circle
     # 768 pixels in diameter.
-    #image: assets/android12splash.png
+    image: lib/assets/icon.png
 
     # Splash screen background color.
     color: "#1c1c1c"

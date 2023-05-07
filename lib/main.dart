@@ -8,17 +8,18 @@ import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:ota_update/ota_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:http/http.dart' as http;
-import 'package:ota_update/ota_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:system_theme/system_theme.dart';
 
 import 'loginScreen/seminternet.dart';
 import 'loginScreen/form.dart';
+import 'update.dart';
 
 List listaTemImagem = [];
-final Uri _urlVersao = Uri.parse(
+final Uri urlVersao = Uri.parse(
     'http://etec199-2023-danilolima.atwebpages.com/2022/1103/versao.php');
 String buttonText = "Cadastrar/Entrar";
 bool esconderSenha = true;
@@ -232,48 +233,10 @@ class GatopediaState extends State with SingleTickerProviderStateMixin {
     version = packageInfo.version;
     buildNumber = packageInfo.buildNumber;
 
-    final response = await http.post(_urlVersao);
+    final response = await http.post(urlVersao);
     List versoes = jsonDecode(response.body);
     if (version != versoes.first['VERSAO']) {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            icon: const Icon(Icons.info_rounded),
-            title: const Text("Nova versão disponível"),
-            content: Text(
-                "A versão ${versoes.first['VERSAO']} acabou de sair! Quentinha do forno"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("ME LEMBRE DEPOIS"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  try {
-                    OtaUpdate()
-                        .execute(
-                            'https://github.com/oculosdanilo/gatopedia/releases/latest/download/app-release.apk')
-                        .listen(
-                      (OtaEvent event) {
-                        // ignore: unused_local_variable
-                        OtaEvent currentEvent;
-                        setState(() => currentEvent = event);
-                      },
-                    );
-                  } catch (e) {
-                    debugPrint('Failed to make OTA update. Details: $e');
-                  }
-                },
-                child: const Text("ATUALIZAR"),
-              )
-            ],
-          );
-        },
-      );
+      Navigator.push(context, SlideRightRoute(Update(versoes.first["VERSAO"])));
     } else {
       debugPrint("atualizado");
     }
