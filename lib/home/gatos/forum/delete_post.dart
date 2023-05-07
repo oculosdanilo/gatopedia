@@ -23,7 +23,7 @@ class _DeletePostState extends State<DeletePost> {
     DatabaseReference ref = database.ref("posts/$postN");
     debugPrint("post/$postN");
     if ((snapshot?.value as List)[postN]["img"] != null) {
-      Reference refI = FirebaseStorage.instance.ref("posts/$postN.png");
+      Reference refI = FirebaseStorage.instance.ref("posts/$postN.webp");
       Uint8List? lista = await refI.getData();
       if (lista?.isNotEmpty ?? false) {
         refI.delete();

@@ -121,6 +121,15 @@ class _ProfileState extends State<Profile> {
     return CustomScrollView(
       slivers: [
         SliverAppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+            shadows: [
+              Shadow(
+                color: Colors.black,
+                blurRadius: 20,
+              ),
+            ],
+          ),
           actions: (temImagem ?? false)
               ? [
                   PopupMenuButton<MenuItensImg>(

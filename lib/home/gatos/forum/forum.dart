@@ -8,6 +8,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../gatos/public_profile.dart';
 import '../../home.dart';
@@ -53,7 +55,6 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
-    debugPrint("aiai");
     ref.onValue.listen((event) {
       _firebasePegar();
       imageCache.clear();
@@ -73,7 +74,14 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   }
 
   _postarImagem(int post) async {
-    await FirebaseStorage.instance.ref("posts/$post.png").putFile(file!);
+    XFile? result = await FlutterImageCompress.compressAndGetFile(
+      file!.absolute.path,
+      "${(await getApplicationDocumentsDirectory()).path}aa.webp",
+      quality: 80,
+      format: CompressFormat.webp,
+    );
+    File finalFile = File(result!.path);
+    await FirebaseStorage.instance.ref("posts/$post.webp").putFile(finalFile);
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
     await ref.update({
@@ -180,7 +188,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
     super.build(context);
     final ColorScheme colors = Theme.of(context).colorScheme;
     return Container(
-      margin: const EdgeInsets.fromLTRB(10, 30, 10, 0),
+      margin: const EdgeInsets.fromLTRB(10, 25, 10, 0),
       child: Column(
         children: [
           Row(
@@ -706,10 +714,12 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                                                               openBuilder: (context,
                                                                       action) =>
                                                                   Imagem(
-                                                                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.png?alt=media"),
+                                                                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.webp?alt=media"),
                                                               closedBuilder: (context,
                                                                       action) =>
                                                                   FadeInImage(
+                                                                key:
+                                                                    UniqueKey(),
                                                                 fit: BoxFit
                                                                     .cover,
                                                                 width: double
@@ -728,7 +738,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                                                                 ),
                                                                 image:
                                                                     NetworkImage(
-                                                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.png?alt=media",
+                                                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.webp?alt=media",
                                                                 ),
                                                               ),
                                                             ),

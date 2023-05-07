@@ -4,7 +4,8 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/home/gatos/forum/forum.dart';
+
+import 'forum.dart';
 
 bool imagemSelecionada = false;
 

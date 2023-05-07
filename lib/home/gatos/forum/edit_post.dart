@@ -7,8 +7,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import 'package:gatopedia/main.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../config/config.dart';
 
@@ -36,9 +38,14 @@ class _EditPostState extends State<EditPost> {
       allowMultiple: false,
     );
     if (result != null) {
-      debugPrint("${result.paths.first}");
+      XFile? resultWebp = await FlutterImageCompress.compressAndGetFile(
+        result.paths.first!,
+        "${(await getApplicationDocumentsDirectory()).path}aa.webp",
+        quality: 80,
+        format: CompressFormat.webp,
+      );
       setState(() {
-        imagemFile = File(result.paths.first ?? "");
+        imagemFile = File(resultWebp?.path ?? "");
         widget.imagem = true;
         imagemSelecionada = true;
         imagemRemovida = false;
@@ -52,10 +59,10 @@ class _EditPostState extends State<EditPost> {
     debugPrint("$imagemRemovida");
     DataSnapshot dataSnapshot = await ref.get();
     if ((dataSnapshot.value as Map)["img"] != null && imagemRemovida) {
-      Reference refI = FirebaseStorage.instance.ref("posts/$post.png");
+      Reference refI = FirebaseStorage.instance.ref("posts/$post.webp");
       await refI.delete();
     } else if (imagemSelecionada) {
-      Reference refI = FirebaseStorage.instance.ref("posts/$post.png");
+      Reference refI = FirebaseStorage.instance.ref("posts/$post.webp");
       await refI.putFile(imagemFile ?? File(""));
     }
     ref.update(
@@ -111,7 +118,7 @@ class _EditPostState extends State<EditPost> {
         textAlign: TextAlign.center,
       ),
       icon: const Icon(Icons.edit_rounded),
-      content: SizedBox(
+      content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -263,7 +270,7 @@ class _EditPostState extends State<EditPost> {
                             placeholder:
                                 const AssetImage('lib/assets/loading.gif'),
                             image: NetworkImage(
-                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.post}.png?alt=media",
+                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.post}.webp?alt=media",
                             ),
                           ),
                   )

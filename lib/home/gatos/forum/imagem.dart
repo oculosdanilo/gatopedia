@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class Imagem extends StatefulWidget {
@@ -18,8 +19,9 @@ class _ImagemState extends State<Imagem> {
           children: [
             Center(
               child: InteractiveViewer(
-                child: Image.network(
-                  widget.imagemUrl,
+                child: CachedNetworkImage(
+                  key: UniqueKey(),
+                  imageUrl: widget.imagemUrl,
                   height: double.infinity,
                   width: double.infinity,
                   fit: BoxFit.fitWidth,

@@ -70,12 +70,15 @@ class GatoInfoState extends State {
         body: CustomScrollView(
           slivers: [
             SliverAppBar.large(
-              iconTheme: const IconThemeData(color: Colors.white, shadows: [
-                Shadow(
-                  color: Colors.black,
-                  blurRadius: 1,
-                ),
-              ]),
+              iconTheme: const IconThemeData(
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    color: Colors.black,
+                    blurRadius: 20,
+                  ),
+                ],
+              ),
               expandedHeight: 360,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
@@ -382,14 +385,17 @@ class GatoInfoState extends State {
         body: CustomScrollView(
           slivers: [
             SliverAppBar.large(
-              iconTheme: const IconThemeData(color: Colors.white, shadows: [
-                Shadow(
-                  color: Colors.black,
-                  blurRadius: 1,
-                )
-              ]),
               expandedHeight: 360,
               pinned: true,
+              iconTheme: const IconThemeData(
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    color: Colors.black,
+                    blurRadius: 20,
+                  ),
+                ],
+              ),
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   gatoLista[indexClicado]["NOME"],

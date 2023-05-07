@@ -68,6 +68,15 @@ class _PublicProfileState extends State<PublicProfile> {
               physics: const NeverScrollableScrollPhysics(),
               slivers: [
                 SliverAppBar(
+                  iconTheme: const IconThemeData(
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black,
+                        blurRadius: 20,
+                      ),
+                    ],
+                  ),
                   automaticallyImplyLeading: true,
                   expandedHeight: 400,
                   backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
