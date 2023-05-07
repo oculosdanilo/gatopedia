@@ -257,14 +257,34 @@ class _ProfileState extends State<Profile> {
                     ),
                     onSelected: (value) async {
                       if (value == MenuItensSemImg.adicionar) {
-                        await Navigator.push(
+                        var resposta = await Navigator.push(
                           context,
                           SlideRightAgainRoute(const PPEdit()),
                         );
-                        setState(() {
-                          imageCache.clear();
-                          imageCache.clearLiveImages();
-                        });
+                        if (resposta != null) {
+                          if (resposta) {
+                            Flushbar(
+                              message: "Adicionada com sucesso!",
+                              duration: const Duration(seconds: 2),
+                              margin: const EdgeInsets.all(20),
+                              borderRadius: BorderRadius.circular(50),
+                            ).show(context);
+                          } else {
+                            Flushbar(
+                              message: "Ação cancelada.",
+                              duration: const Duration(seconds: 2),
+                              margin: const EdgeInsets.all(20),
+                              borderRadius: BorderRadius.circular(50),
+                            ).show(context);
+                          }
+                        } else {
+                          Flushbar(
+                            message: "Ação cancelada.",
+                            duration: const Duration(seconds: 2),
+                            margin: const EdgeInsets.all(20),
+                            borderRadius: BorderRadius.circular(50),
+                          ).show(context);
+                        }
                       }
                     },
                     itemBuilder: (BuildContext context) =>

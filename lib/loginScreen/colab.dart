@@ -119,8 +119,24 @@ class ColaboradoresState extends State {
                           });
                     });
                   },
-                  child: const Text("Sobre o projeto",
-                      style: TextStyle(fontFamily: "Jost", fontSize: 17)),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_rounded,
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        "Sobre o projeto",
+                        style: TextStyle(
+                          fontFamily: "Jost",
+                          fontSize: 17,
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               ],
             )
