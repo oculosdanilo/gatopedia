@@ -89,7 +89,7 @@ class _PublicProfileState extends State<PublicProfile> {
                         Image(
                           image: listaTemImagem.contains(widget.username)
                               ? NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.username}.png?alt=media")
+                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.username}.webp?alt=media")
                               : const AssetImage("lib/assets/user.webp")
                                   as ImageProvider,
                           width: 50,
