@@ -40,7 +40,7 @@ class _ProfileState extends State<Profile> {
     FirebaseDatabase database = FirebaseDatabase.instance;
     final ref = database.ref("users/$username/img");
     FirebaseStorage storage = FirebaseStorage.instance;
-    final refS = storage.ref("users/$username.png");
+    final refS = storage.ref("users/$username.webp");
     await ref.remove();
     await refS.delete();
     _pegarUserinfo(username);
@@ -302,7 +302,6 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                 ],
-          /* ignore_for_line: dead_null_aware_expression */
           automaticallyImplyLeading: widget.botaoVoltar ?? false,
           expandedHeight: 400,
           backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
@@ -317,7 +316,7 @@ class _ProfileState extends State<Profile> {
                         fadeInDuration: const Duration(milliseconds: 100),
                         placeholder: const AssetImage("lib/assets/user.webp"),
                         image: NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
                         ),
                         fit: BoxFit.cover,
                       )

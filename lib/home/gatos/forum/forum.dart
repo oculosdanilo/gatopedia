@@ -63,9 +63,9 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   }
 
   _maisDe2Linhas(String text) {
-    if (text.length > 30) {
-      pedaco1 = text.substring(0, 30);
-      pedaco2 = text.substring(30, text.length);
+    if (text.length > 50) {
+      pedaco1 = text.substring(0, 50);
+      pedaco2 = text.substring(50, text.length);
       return true;
     } else {
       pedaco1 = text;
@@ -215,7 +215,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                                 placeholder:
                                     const AssetImage("lib/assets/user.webp"),
                                 image: NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.png?alt=media",
+                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
                                 ),
                                 fit: BoxFit.cover,
                               )
@@ -475,7 +475,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                                                                         "lib/assets/user.webp"),
                                                                 image:
                                                                     NetworkImage(
-                                                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["username"]}.png?alt=media",
+                                                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["username"]}.webp?alt=media",
                                                                 ),
                                                                 fit: BoxFit
                                                                     .cover,
@@ -779,7 +779,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                                                     action.call();
                                                   },
                                                   child: Text(
-                                                    "Comentários (${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["comentarios"] != null ? (((snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["comentarios"] as List).length - 2) : 0})",
+                                                    "Comentários (${(snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["comentarios"] != null ? (((snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["comentarios"] as List).whereType<Map>().toList().length - 2) : 0})",
                                                   ),
                                                 ),
                                               ),

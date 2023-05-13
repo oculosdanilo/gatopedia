@@ -115,7 +115,7 @@ class _ComentariosState extends State<Comentarios> {
                         image: listaTemImagem.contains((snapshot?.value
                                 as List)[widget.post]["username"])
                             ? NetworkImage(
-                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["username"]}.png?alt=media")
+                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["username"]}.webp?alt=media")
                             : AssetImage("lib/assets/user.webp")
                                 as ImageProvider,
                         width: 30,
@@ -288,7 +288,7 @@ class _ComentariosState extends State<Comentarios> {
                                                             index -
                                                             1]["username"])
                                                 ? NetworkImage(
-                                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.png?alt=media")
+                                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.webp?alt=media")
                                                 : AssetImage("lib/assets/user.webp")
                                                     as ImageProvider,
                                             width: 50,

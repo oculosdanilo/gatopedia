@@ -6,8 +6,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gatopedia/main.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:path_provider/path_provider.dart';
 
 File? file, imagemEditada;
 bool imagemSelecionada = false;
@@ -20,10 +22,16 @@ class PPEdit extends StatefulWidget {
 }
 
 class _PPEditState extends State<PPEdit> {
-  _salvarPP(File file) async {
+  _salvarPP(File? file) async {
+    XFile? result = await FlutterImageCompress.compressAndGetFile(
+      file!.absolute.path,
+      "${(await getApplicationDocumentsDirectory()).path}aa.webp",
+      quality: 80,
+      format: CompressFormat.webp,
+    );
     FirebaseStorage storage = FirebaseStorage.instance;
-    final refS = storage.ref("users/$username.png");
-    await refS.putFile(file);
+    final refS = storage.ref("users/$username.webp");
+    await refS.putFile(File(result!.path));
     FirebaseDatabase database = FirebaseDatabase.instance;
     final ref = database.ref("users/$username/");
     await ref.update(
