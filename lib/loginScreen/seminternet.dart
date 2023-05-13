@@ -44,10 +44,10 @@ class SemInternetState extends State {
           body: Container(
             margin: const EdgeInsets.all(20),
             width: MediaQuery.of(context).size.width,
-            child: Column(
+            child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
+              children: [
                 Icon(
                   Icons.wifi_off_rounded,
                   size: 170,

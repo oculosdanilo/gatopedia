@@ -24,6 +24,8 @@ class ColaboradoresState extends State {
     return Scaffold(
       body: CustomScrollView(slivers: [
         SliverAppBar.large(
+          actionsIconTheme:
+              IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
           iconTheme:
               IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
           title: Row(
@@ -46,6 +48,7 @@ class ColaboradoresState extends State {
           ),
           actions: [
             PopupMenuButton<MenuItens>(
+              color: Theme.of(context).colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               itemBuilder: (BuildContext context) =>

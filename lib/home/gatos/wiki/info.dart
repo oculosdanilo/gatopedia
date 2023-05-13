@@ -523,12 +523,12 @@ class GatoInfoState extends State {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 80,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
+                      children: [
                         Text(
                           "Nenhum comentário (ainda...)",
                           style: TextStyle(fontFamily: "Jost"),

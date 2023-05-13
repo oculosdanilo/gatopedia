@@ -885,7 +885,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                                   ),
                                 ),
                               )
-                            : Row();
+                            : const Row();
                       },
                       itemCount: (snapshot?.exists ?? false)
                           ? (int.parse("${snapshot?.children.last.key}") + 1)

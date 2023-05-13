@@ -46,9 +46,9 @@ class HomeState extends State {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Row(
+                title: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
+                  children: <Widget>[
                     SizedBox(
                       width: 10,
                     ),
@@ -61,9 +61,9 @@ class HomeState extends State {
                     )
                   ],
                 ),
-                content: Row(
+                content: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [Text("Tem certeza que deseja sair?")]),
+                    children: [Text("Tem certeza que deseja sair?")]),
                 actions: [
                   TextButton(
                     onPressed: () {

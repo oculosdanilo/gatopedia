@@ -100,8 +100,8 @@ class _UpdateState extends State<Update> {
                         ),
                       ],
                     )
-                  : Column(
-                      children: const [
+                  : const Column(
+                      children: [
                         SizedBox(
                           height: 20,
                         ),

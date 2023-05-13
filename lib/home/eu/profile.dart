@@ -220,20 +220,20 @@ class _ProfileState extends State<Profile> {
                     ),
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<MenuItensImg>>[
-                      PopupMenuItem(
+                      const PopupMenuItem(
                         value: MenuItensImg.editar,
                         child: Row(
-                          children: const [
+                          children: [
                             Icon(Icons.add_photo_alternate_rounded),
                             SizedBox(width: 10),
                             Text("Mudar foto de perfil"),
                           ],
                         ),
                       ),
-                      PopupMenuItem(
+                      const PopupMenuItem(
                         value: MenuItensImg.remover,
                         child: Row(
-                          children: const [
+                          children: [
                             Icon(Icons.delete_forever_rounded),
                             SizedBox(width: 10),
                             Text("Remover foto de perfil"),
@@ -289,10 +289,10 @@ class _ProfileState extends State<Profile> {
                     },
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<MenuItensSemImg>>[
-                      PopupMenuItem(
+                      const PopupMenuItem(
                         value: MenuItensSemImg.adicionar,
                         child: Row(
-                          children: const [
+                          children: [
                             Icon(Icons.add_photo_alternate_rounded),
                             SizedBox(width: 10),
                             Text("Adicionar foto de perfil"),
