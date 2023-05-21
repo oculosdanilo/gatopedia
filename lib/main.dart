@@ -272,48 +272,54 @@ class GatopediaState extends State with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0.0, end: 1.0),
-                curve: Curves.easeIn,
-                duration: const Duration(seconds: 1),
-                builder: (BuildContext context, double opacity, Widget? child) {
-                  return Opacity(
-                    opacity: opacity,
-                    child: const Image(
-                      image: AssetImage('lib/assets/icon.png'),
-                      width: 270,
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+        body: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0.0, end: 1.0),
+                  curve: Curves.easeIn,
+                  duration: const Duration(seconds: 1),
+                  builder:
+                      (BuildContext context, double opacity, Widget? child) {
+                    return Opacity(
+                      opacity: opacity,
+                      child: const Image(
+                        image: AssetImage('lib/assets/icon.png'),
+                        width: 270,
+                      ),
+                    );
+                  },
+                ),
+                AnimatedTextKit(
+                  animatedTexts: [
+                    TyperAnimatedText(
+                      'Gatopédia!',
+                      textStyle: const TextStyle(
+                        fontSize: 35,
+                        fontFamily: "Jost",
+                        fontWeight: FontWeight.bold,
+                      ),
+                      speed: const Duration(milliseconds: 70),
                     ),
-                  );
-                },
-              ),
-              AnimatedTextKit(
-                animatedTexts: [
-                  TyperAnimatedText(
-                    'Gatopédia!',
-                    textStyle: const TextStyle(
-                      fontSize: 35,
-                      fontFamily: "Jost",
-                      fontWeight: FontWeight.bold,
-                    ),
-                    speed: const Duration(milliseconds: 70),
-                  ),
-                ],
-                totalRepeatCount: 1,
-              ),
-              const SizedBox(
-                height: 60,
-              ),
-              const SizedBox(
-                width: 300,
-              ),
-              const FormApp()
-            ],
+                  ],
+                  totalRepeatCount: 1,
+                ),
+                const SizedBox(
+                  height: 60,
+                ),
+                const SizedBox(
+                  width: 300,
+                ),
+                const FormApp()
+              ],
+            ),
           ),
         ),
       ),

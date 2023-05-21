@@ -38,7 +38,10 @@ class _ImagemState extends State<Imagem> {
                     padding: const EdgeInsets.all(4),
                     child: InkWell(
                       onTap: () => Navigator.pop(context),
-                      child: const Icon(Icons.close_rounded),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),

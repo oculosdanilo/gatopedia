@@ -66,8 +66,9 @@ class _ConfigState extends State<Config> {
             title: Text(
               "Configurações",
               style: TextStyle(
-                  fontFamily: "Jost",
-                  color: Theme.of(context).colorScheme.onBackground),
+                fontFamily: "Jost",
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
             ),
             centerTitle: true,
           ),
@@ -96,14 +97,15 @@ class _ConfigState extends State<Config> {
                     ),
                     value: dark,
                     onChanged: (bool value) {
-                      if (value) {
-                        App.themeNotifier.value = ThemeMode.dark;
-                        saveDark();
-                      } else {
-                        App.themeNotifier.value = ThemeMode.light;
-                        saveLight();
-                      }
                       setState(() {
+                        if (value) {
+                          App.themeNotifier.value = ThemeMode.dark;
+                          saveDark();
+                        } else {
+                          App.themeNotifier.value = ThemeMode.light;
+                          saveLight();
+                        }
+
                         dark = value;
                       });
                     },

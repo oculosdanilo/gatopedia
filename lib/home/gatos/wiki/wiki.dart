@@ -12,7 +12,9 @@ import 'info.dart';
 import '../../../main.dart';
 
 final Uri _urlCList = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php');
+  'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php',
+);
+bool clicavel = true;
 
 class Wiki extends StatefulWidget {
   const Wiki({super.key});
@@ -70,8 +72,13 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
               transitionDuration: const Duration(milliseconds: 500),
               openBuilder: (context, _) => const GatoInfo(),
               closedElevation: 0,
+              tappable: clicavel,
               openColor: Theme.of(context).colorScheme.background,
-              onClosed: (data) {},
+              onClosed: (data) {
+                setState(() {
+                  clicavel = true;
+                });
+              },
               closedColor:
                   dark ? const Color(0xff23232a) : const Color(0xfff5f2fb),
               closedBuilder: (context, VoidCallback openContainer) => SizedBox(
@@ -80,16 +87,22 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
                   shadowColor: Colors.transparent,
                   margin: const EdgeInsets.all(0),
                   child: InkWell(
-                    onTap: () async {
-                      indexClicado = index;
-                      var map = <String, String>{};
-                      int indexMais1 = indexClicado + 1;
-                      map['id'] = "$indexMais1";
-                      final response = await http.post(_urlCList, body: map);
-                      cLista = jsonDecode(response.body);
-                      cListaTamanho = cLista.length;
-                      openContainer.call();
-                    },
+                    onTap: clicavel
+                        ? () async {
+                            setState(() {
+                              clicavel = false;
+                            });
+                            indexClicado = index;
+                            var map = <String, String>{};
+                            int indexMais1 = indexClicado + 1;
+                            map['id'] = "$indexMais1";
+                            final response =
+                                await http.post(_urlCList, body: map);
+                            cLista = jsonDecode(response.body);
+                            cListaTamanho = cLista.length;
+                            openContainer.call();
+                          }
+                        : null,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: Row(

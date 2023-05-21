@@ -324,7 +324,7 @@ class LoginState extends State<FormApp> {
 
                       Flushbar(
                         message: "Conectando...",
-                        duration: const Duration(seconds: 2),
+                        duration: const Duration(seconds: 10),
                         margin: const EdgeInsets.all(20),
                         borderRadius: BorderRadius.circular(50),
                       ).show(context);
