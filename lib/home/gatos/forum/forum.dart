@@ -57,8 +57,6 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
     DatabaseReference ref = database.ref("posts");
     ref.onValue.listen((event) {
       _firebasePegar();
-      imageCache.clear();
-      imageCache.clearLiveImages();
     });
   }
 
@@ -178,8 +176,6 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   void initState() {
     _pegarImagens();
     _atualizar();
-    imageCache.clear();
-    imageCache.clearLiveImages();
     super.initState();
   }
 
@@ -693,11 +689,12 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                                                       ? Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .fromLTRB(
-                                                                  0,
-                                                                  10,
-                                                                  10,
-                                                                  10),
+                                                                  .fromLTRB(
+                                                            0,
+                                                            10,
+                                                            10,
+                                                            10,
+                                                          ),
                                                           child: ClipRRect(
                                                             borderRadius:
                                                                 BorderRadius
@@ -717,28 +714,32 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                                                                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.webp?alt=media"),
                                                               closedBuilder: (context,
                                                                       action) =>
-                                                                  FadeInImage(
-                                                                key:
-                                                                    UniqueKey(),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                width: double
-                                                                    .infinity,
-                                                                fadeInDuration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            150),
-                                                                fadeOutDuration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            150),
-                                                                placeholder:
-                                                                    const AssetImage(
-                                                                  'lib/assets/loading.gif',
-                                                                ),
-                                                                image:
-                                                                    NetworkImage(
-                                                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.webp?alt=media",
+                                                                  AspectRatio(
+                                                                aspectRatio: 1,
+                                                                child:
+                                                                    FadeInImage(
+                                                                  key:
+                                                                      UniqueKey(),
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  width: double
+                                                                      .infinity,
+                                                                  fadeInDuration:
+                                                                      const Duration(
+                                                                          milliseconds:
+                                                                              150),
+                                                                  fadeOutDuration:
+                                                                      const Duration(
+                                                                          milliseconds:
+                                                                              150),
+                                                                  placeholder:
+                                                                      const AssetImage(
+                                                                    'lib/assets/loading.gif',
+                                                                  ),
+                                                                  image:
+                                                                      NetworkImage(
+                                                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.webp?alt=media",
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
