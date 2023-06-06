@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -47,10 +48,23 @@ class LoginState extends State<FormApp> {
 
     String version = packageInfo.version;
 
-    final response = await http.post(urlVersao);
-    List versoes = jsonDecode(response.body);
-    if (version != versoes.first['VERSAO']) {
-      Navigator.push(context, SlideRightRoute(Update(versoes.first["VERSAO"])));
+    final response = await http.get(
+      Uri.parse(
+        "https://api.github.com/repos/oculosdanilo/gatopedia/releases/latest",
+      ),
+    );
+    Map<String, dynamic> versaoAtt = jsonDecode(response.body);
+    debugPrint(versaoAtt["tag_name"]);
+    if (version != versaoAtt["tag_name"]) {
+      Navigator.push(
+        context,
+        SlideRightRoute(
+          Update(
+            versaoAtt["tag_name"],
+            versaoAtt["body"],
+          ),
+        ),
+      );
     } else {
       debugPrint("atualizado");
     }
@@ -398,6 +412,11 @@ class LoginState extends State<FormApp> {
             OutlinedButton.icon(
               onPressed: () {
                 Navigator.push(context, SlideUpRoute(const Colaboradores()));
+              },
+              onLongPress: () async {
+                if (kDebugMode) {
+                  checarUpdate(context);
+                }
               },
               label: const Text("COLABORADORES"),
               icon: const Icon(Icons.people_alt_rounded),

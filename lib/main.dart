@@ -232,10 +232,23 @@ class GatopediaState extends State with SingleTickerProviderStateMixin {
     version = packageInfo.version;
     buildNumber = packageInfo.buildNumber;
 
-    final response = await http.post(urlVersao);
-    List versoes = jsonDecode(response.body);
-    if (version != versoes.first['VERSAO']) {
-      Navigator.push(context, SlideRightRoute(Update(versoes.first["VERSAO"])));
+    final response = await http.get(
+      Uri.parse(
+        "https://api.github.com/repos/oculosdanilo/gatopedia/releases/latest",
+      ),
+    );
+    Map<String, dynamic> versaoAtt = jsonDecode(response.body);
+    debugPrint(versaoAtt["tag_name"]);
+    if (version != versaoAtt["tag_name"]) {
+      Navigator.push(
+        context,
+        SlideRightRoute(
+          Update(
+            versaoAtt["tag_name"],
+            versaoAtt["body"],
+          ),
+        ),
+      );
     } else {
       debugPrint("atualizado");
     }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:ota_update/ota_update.dart';
 
 bool baixando = false;
@@ -7,7 +8,8 @@ late OtaEvent currentEvent;
 
 class Update extends StatefulWidget {
   final String versao;
-  const Update(this.versao, {super.key});
+  final String desc;
+  const Update(this.versao, this.desc, {super.key});
 
   @override
   State<Update> createState() => _UpdateState();
@@ -18,7 +20,8 @@ class _UpdateState extends State<Update> {
     try {
       OtaUpdate()
           .execute(
-              'https://github.com/oculosdanilo/gatopedia/releases/latest/download/app-release.apk')
+        'https://github.com/oculosdanilo/gatopedia/releases/latest/download/app-release.apk',
+      )
           .listen(
         (OtaEvent event) {
           setState(() {
@@ -61,13 +64,19 @@ class _UpdateState extends State<Update> {
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
           child: Column(
             children: [
-              Text(
-                "A versão ${widget.versao} acabou de sair!",
-                style: const TextStyle(fontFamily: "Jost", fontSize: 20),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  "A versão ${widget.versao} acabou de sair!",
+                  style: const TextStyle(fontFamily: "Jost", fontSize: 20),
+                ),
               ),
-              const Text(
-                "Quentinha do forno",
-                style: TextStyle(fontFamily: "Jost", fontSize: 20),
+              const Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  "Quentinha do forno",
+                  style: TextStyle(fontFamily: "Jost", fontSize: 20),
+                ),
               ),
               const SizedBox(
                 height: 10,
@@ -97,6 +106,22 @@ class _UpdateState extends State<Update> {
                             color: Colors.grey,
                             fontFamily: "monospace",
                           ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          "O que mudou?",
+                          style: TextStyle(
+                            fontFamily: "Jost",
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                          ),
+                        ),
+                        Markdown(
+                          data: widget.desc,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
                         ),
                       ],
                     )
