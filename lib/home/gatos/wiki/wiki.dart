@@ -12,7 +12,7 @@ import 'info.dart';
 import '../../../main.dart';
 
 final Uri _urlCList = Uri.parse(
-  'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php',
+  'https://etec199-danilolima.xp3.biz/2022/1103/commentListar.php',
 );
 bool clicavel = true;
 

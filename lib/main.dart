@@ -18,8 +18,8 @@ import 'loginScreen/form.dart';
 import 'update.dart';
 
 List listaTemImagem = [];
-final Uri urlVersao = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/versao.php');
+final Uri urlVersao =
+    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/versao.php');
 String buttonText = "Cadastrar/Entrar";
 bool esconderSenha = true;
 Icon iconeOlho = const Icon(Icons.visibility_rounded);

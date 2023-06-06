@@ -13,12 +13,12 @@ import 'package:gatopedia/main.dart';
 import '../../home.dart';
 import '../public_profile.dart';
 
-final Uri _urlCAdd = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentAdd.php');
-final Uri _urlCDelete = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentDelete.php');
-final Uri _urlCList = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/commentListar.php');
+final Uri _urlCAdd =
+    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/commentAdd.php');
+final Uri _urlCDelete =
+    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/commentDelete.php');
+final Uri _urlCList =
+    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/commentListar.php');
 
 class GatoInfo extends StatefulWidget {
   const GatoInfo({super.key});

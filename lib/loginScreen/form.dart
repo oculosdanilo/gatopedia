@@ -17,12 +17,12 @@ import '../firebase_options.dart';
 import '../home/home.dart';
 import '../update.dart';
 
-final Uri _urlLogin = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/salvar.php');
-final Uri _urlLoginAuth = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/auth.php');
-final Uri _urlGatoList = Uri.parse(
-    'http://etec199-2023-danilolima.atwebpages.com/2022/1103/listar.php');
+final Uri _urlLogin =
+    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/salvar.php');
+final Uri _urlLoginAuth =
+    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/auth.php');
+final Uri _urlGatoList =
+    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/listar.php');
 
 class FormApp extends StatefulWidget {
   const FormApp({super.key});
@@ -280,17 +280,20 @@ class LoginState extends State<FormApp> {
                 controller: txtControllerSenha,
                 obscureText: esconderSenha,
                 decoration: InputDecoration(
-                    prefix: const SizedBox(
-                      width: 10,
-                    ),
-                    suffix: IconButton(
-                      onPressed: () {
-                        mostrarSenha();
-                      },
-                      icon: iconeOlho,
-                    ),
-                    label: const Text("Senha",
-                        style: TextStyle(fontFamily: "Jost"))),
+                  prefix: const SizedBox(
+                    width: 10,
+                  ),
+                  suffix: IconButton(
+                    onPressed: () {
+                      mostrarSenha();
+                    },
+                    icon: iconeOlho,
+                  ),
+                  label: const Text(
+                    "Senha",
+                    style: TextStyle(fontFamily: "Jost"),
+                  ),
+                ),
               ),
             ),
             const SizedBox(
