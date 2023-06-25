@@ -24,8 +24,6 @@ class Config extends StatefulWidget {
 }
 
 class _ConfigState extends State<Config> {
-  bool dark = App.themeNotifier.value == ThemeMode.dark ? true : false;
-
   _pegarVersao() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
@@ -37,14 +35,14 @@ class _ConfigState extends State<Config> {
     });
   }
 
-  saveDark() async {
+  _saveDark() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("dark", "dark");
+    await prefs.setBool("dark", true);
   }
 
-  saveLight() async {
+  _saveLight() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("dark", "light");
+    await prefs.setBool("dark", false);
   }
 
   @override
@@ -100,10 +98,10 @@ class _ConfigState extends State<Config> {
                       setState(() {
                         if (value) {
                           App.themeNotifier.value = ThemeMode.dark;
-                          saveDark();
+                          _saveDark();
                         } else {
                           App.themeNotifier.value = ThemeMode.light;
-                          saveLight();
+                          _saveLight();
                         }
 
                         dark = value;

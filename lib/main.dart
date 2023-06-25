@@ -18,8 +18,6 @@ import 'loginScreen/form.dart';
 import 'update.dart';
 
 List listaTemImagem = [];
-final Uri urlVersao =
-    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/versao.php');
 String buttonText = "Cadastrar/Entrar";
 bool esconderSenha = true;
 Icon iconeOlho = const Icon(Icons.visibility_rounded);
@@ -54,7 +52,7 @@ class MyBehavior extends ScrollBehavior {
 
 class App extends StatelessWidget {
   static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
-    ThemeMode.dark,
+    SystemTheme.isDarkMode ? ThemeMode.dark : ThemeMode.light,
   );
   const App({super.key});
 
@@ -194,34 +192,7 @@ class GatopediaState extends State with SingleTickerProviderStateMixin {
 
   _adaptarTema() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    if (pref.getInt("adapt") != 1) {
-      final bool temaDisp = SystemTheme.isDarkMode;
-      if (temaDisp) {
-        App.themeNotifier.value = ThemeMode.dark;
-      } else {
-        App.themeNotifier.value = ThemeMode.light;
-      }
-      pref.setInt("adapt", 1);
-    }
-  }
-
-  _read() async {
-    try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final String? text = prefs.getString("dark");
-      if (text == "dark") {
-        App.themeNotifier.value = ThemeMode.dark;
-      } else {
-        App.themeNotifier.value = ThemeMode.light;
-      }
-      if (kDebugMode) {
-        print(text);
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print("Couldn't read file");
-      }
-    }
+    if (pref.getBool("dark") ?? SystemTheme.isDarkMode) {}
   }
 
   checarUpdate() async {
@@ -271,7 +242,6 @@ class GatopediaState extends State with SingleTickerProviderStateMixin {
         }
       });
     }
-    _read();
     if (!kDebugMode) {
       checarUpdate();
     }

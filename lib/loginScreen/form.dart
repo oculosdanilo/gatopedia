@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -86,10 +87,6 @@ class LoginState extends State<FormApp> {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("posts");
-    snapshot = await ref.get();
-    debugPrint("${snapshot?.value}");
   }
 
   mudarCor(cor) {
@@ -196,8 +193,10 @@ class LoginState extends State<FormApp> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text("$txtFieldLenght",
-                            style: TextStyle(color: counterColor)),
+                        Text(
+                          "$txtFieldLenght",
+                          style: TextStyle(color: counterColor),
+                        ),
                         Text(
                           "/25",
                           style: TextStyle(color: blueScheme.outline),
@@ -208,8 +207,10 @@ class LoginState extends State<FormApp> {
                   prefixIcon: const Icon(
                     Icons.alternate_email_rounded,
                   ),
-                  label:
-                      const Text("Login", style: TextStyle(fontFamily: "Jost")),
+                  label: const Text(
+                    "Login",
+                    style: TextStyle(fontFamily: "Jost"),
+                  ),
                 ),
               ),
             ),
@@ -221,75 +222,6 @@ class LoginState extends State<FormApp> {
               height: 65,
               child: TextFormField(
                 textInputAction: TextInputAction.done,
-                onFieldSubmitted: (value) async {
-                  if (_formKey.currentState!.validate()) {
-                    TextInput.finishAutofillContext();
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
-                    var map = <String, String>{};
-                    map['login'] = txtControllerLogin.text;
-                    map['senha'] = txtControllerSenha.text;
-
-                    Flushbar(
-                      message: "Conectando...",
-                      duration: const Duration(seconds: 2),
-                      margin: const EdgeInsets.all(20),
-                      borderRadius: BorderRadius.circular(50),
-                    ).show(context);
-                    final response = await http.post(_urlLogin, body: map);
-                    if (!response.body.contains("true")) {
-                      Flushbar(
-                        message: response.body,
-                        duration: const Duration(seconds: 2),
-                        margin: const EdgeInsets.all(20),
-                        flushbarStyle: FlushbarStyle.FLOATING,
-                        borderRadius: BorderRadius.circular(50),
-                      ).show(context);
-                      txtControllerLogin.text = "";
-                      txtControllerSenha.text = "";
-                      mudarTextoDoBotao();
-                    } else {
-                      var mapAuth = <String, String>{};
-                      mapAuth['login'] = txtControllerLogin.text;
-                      final responseAuth =
-                          await http.post(_urlLoginAuth, body: mapAuth);
-                      if (jsonDecode(responseAuth.body)[0]["SENHA"] ==
-                          txtControllerSenha.text) {
-                        username = txtControllerLogin.text;
-                        final responseList = await http.post(_urlGatoList);
-                        gatoLista = jsonDecode(responseList.body);
-                        save();
-                        mudarTextoDoBotao();
-                        _firebaseStart();
-                        _navegarAtt(context);
-                      } else {
-                        Flushbar(
-                          flushbarStyle: FlushbarStyle.FLOATING,
-                          margin: const EdgeInsets.all(20),
-                          messageText: Row(
-                            children: [
-                              Icon(
-                                Icons.error_rounded,
-                                color: blueScheme.onErrorContainer,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                "Senha incorreta: usuário já existe!",
-                                style: TextStyle(
-                                    color: blueScheme.onErrorContainer),
-                              ),
-                            ],
-                          ),
-                          duration: const Duration(seconds: 5),
-                          borderRadius: BorderRadius.circular(50),
-                          backgroundColor: blueScheme.errorContainer,
-                        ).show(context);
-                      }
-                    }
-                  }
-                },
                 autofillHints: const [AutofillHints.password],
                 controller: txtControllerSenha,
                 obscureText: esconderSenha,
@@ -333,13 +265,14 @@ class LoginState extends State<FormApp> {
                     // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
                       TextInput.finishAutofillContext();
-                      // If the form is valid, display a snackbar. In the real world,
-                      // you'd often call a server or save the information in a database.
-                      var map = <String, String>{};
-                      map['login'] = txtControllerLogin.text;
-                      map['senha'] = txtControllerSenha.text;
 
-                      Flushbar(
+                      DatabaseReference ref = FirebaseDatabase.instance.ref(
+                        "users/${txtControllerLogin.text}",
+                      );
+                      final snapshot = await ref.get();
+                      if (snapshot.exists) {
+                      } else {}
+                      /* Flushbar(
                         message: "Conectando...",
                         duration: const Duration(seconds: 10),
                         margin: const EdgeInsets.all(20),
@@ -387,7 +320,8 @@ class LoginState extends State<FormApp> {
                                 Text(
                                   "Senha incorreta: usuário já existe!",
                                   style: TextStyle(
-                                      color: blueScheme.onErrorContainer),
+                                    color: blueScheme.onErrorContainer,
+                                  ),
                                 ),
                               ],
                             ),
@@ -396,7 +330,7 @@ class LoginState extends State<FormApp> {
                             backgroundColor: blueScheme.errorContainer,
                           ).show(context);
                         }
-                      }
+                      } */
                     }
                   },
                   child: Text(
