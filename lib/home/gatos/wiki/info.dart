@@ -9,9 +9,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:gatopedia/main.dart';
-
-import '../../home.dart';
-import '../public_profile.dart';
+import 'package:gatopedia/home/home.dart';
+import 'package:gatopedia/home/gatos/public_profile.dart';
 
 final Uri _urlCAdd =
     Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/commentAdd.php');
@@ -21,7 +20,8 @@ final Uri _urlCList =
     Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/commentListar.php');
 
 class GatoInfo extends StatefulWidget {
-  const GatoInfo({super.key});
+  final DataSnapshot gatoInfo;
+  const GatoInfo(this.gatoInfo, {super.key});
 
   @override
   GatoInfoState createState() {
@@ -29,7 +29,7 @@ class GatoInfo extends StatefulWidget {
   }
 }
 
-class GatoInfoState extends State {
+class GatoInfoState extends State<GatoInfo> {
   final txtControllerC = TextEditingController();
 
   pegarImagens() async {
@@ -84,7 +84,7 @@ class GatoInfoState extends State {
               flexibleSpace: FlexibleSpaceBar(
                 expandedTitleScale: 2,
                 title: Text(
-                  gatoLista[indexClicado]["NOME"],
+                  widget.gatoInfo.key ?? "",
                   style: const TextStyle(
                     color: Colors.white,
                     fontFamily: "Jost",
@@ -95,7 +95,7 @@ class GatoInfoState extends State {
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
-                      imageUrl: gatoLista[indexClicado]["IMG"],
+                      imageUrl: widget.gatoInfo.child("img").value.toString(),
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Image.asset(
                         "lib/assets/loading.gif",
@@ -124,7 +124,7 @@ class GatoInfoState extends State {
                 child: Column(
                   children: [
                     Text(
-                      gatoLista[indexClicado]["RESUMO"],
+                      widget.gatoInfo.child("resumo").value.toString(),
                       style: const TextStyle(
                         fontStyle: FontStyle.italic,
                         fontSize: 27,
@@ -135,7 +135,7 @@ class GatoInfoState extends State {
                       height: 15,
                     ),
                     Text(
-                      gatoLista[indexClicado]["DESC"],
+                      widget.gatoInfo.child("descricao").value.toString(),
                       style: const TextStyle(
                         fontFamily: "Jost",
                         fontSize: 20,
@@ -398,7 +398,7 @@ class GatoInfoState extends State {
               ),
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
-                  gatoLista[indexClicado]["NOME"],
+                  widget.gatoInfo.key ?? "",
                   style: const TextStyle(
                     color: Colors.white,
                     fontFamily: "Jost",
@@ -409,7 +409,7 @@ class GatoInfoState extends State {
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
-                      imageUrl: gatoLista[indexClicado]["IMG"],
+                      imageUrl: widget.gatoInfo.child("img").value.toString(),
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Image.asset(
                         "lib/assets/loading.gif",
@@ -438,7 +438,7 @@ class GatoInfoState extends State {
                 child: Column(
                   children: [
                     Text(
-                      gatoLista[indexClicado]["RESUMO"],
+                      widget.gatoInfo.child("resumo").value.toString(),
                       style: const TextStyle(
                         fontStyle: FontStyle.italic,
                         fontSize: 27,
@@ -449,7 +449,7 @@ class GatoInfoState extends State {
                       height: 15,
                     ),
                     Text(
-                      gatoLista[indexClicado]["DESC"],
+                      widget.gatoInfo.child("descricao").value.toString(),
                       style: const TextStyle(
                         fontFamily: "Jost",
                         fontSize: 20,

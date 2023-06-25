@@ -10,15 +10,14 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../gatos/public_profile.dart';
-import '../../home.dart';
-import 'comentarios.dart';
-import 'imagem.dart';
-import 'delete_post.dart';
-import 'edit_post.dart';
-import 'image_post.dart';
-import '../../../main.dart';
+import 'package:gatopedia/home/gatos/public_profile.dart';
+import 'package:gatopedia/home/home.dart';
+import 'package:gatopedia/home/gatos/forum/comentarios.dart';
+import 'package:gatopedia/home/gatos/forum/imagem.dart';
+import 'package:gatopedia/home/gatos/forum/delete_post.dart';
+import 'package:gatopedia/home/gatos/forum/edit_post.dart';
+import 'package:gatopedia/home/gatos/forum/image_post.dart';
+import 'package:gatopedia/main.dart';
 
 bool postado = false;
 String imgUrl = "";
@@ -49,7 +48,6 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
     if (mounted) {
       setState(() {});
     }
-    debugPrint("${snapshot?.value}");
   }
 
   _atualizar() {
@@ -136,15 +134,17 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   _unlike(int post) {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$post/likes");
-    ref.update({
-      "lenght": (snapshot?.value as List)[post]["likes"]["lenght"] - 1,
-      "users": (snapshot?.value as List)[post]["likes"]["users"]
-          .toString()
-          .replaceAll(
-            "$username,",
-            "",
-          ),
-    });
+    ref.update(
+      {
+        "lenght": (snapshot?.value as List)[post]["likes"]["lenght"] - 1,
+        "users": (snapshot?.value as List)[post]["likes"]["users"]
+            .toString()
+            .replaceAll(
+              "$username,",
+              "",
+            ),
+      },
+    );
   }
 
   _pegarImagens() async {
@@ -169,7 +169,6 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
       }
       i++;
     }
-    debugPrint("$listaTemImagem");
   }
 
   @override

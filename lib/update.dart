@@ -89,7 +89,9 @@ class _UpdateState extends State<Update> {
                           children: [
                             ElevatedButton.icon(
                               onPressed: () async {
-                                baixando = true;
+                                setState(() {
+                                  baixando = true;
+                                });
                                 _atualizar();
                               },
                               icon: const Icon(Icons.download),
@@ -110,12 +112,18 @@ class _UpdateState extends State<Update> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
-                          "O que mudou?",
-                          style: TextStyle(
-                            fontFamily: "Jost",
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22,
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "O que mudou?",
+                              style: TextStyle(
+                                fontFamily: "Jost",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                              ),
+                            ),
                           ),
                         ),
                         Markdown(

@@ -14,13 +14,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:system_theme/system_theme.dart';
 
 import 'loginScreen/seminternet.dart';
-import 'loginScreen/form.dart';
+import 'loginScreen/login/form.dart';
 import 'update.dart';
 
 List listaTemImagem = [];
-String buttonText = "Cadastrar/Entrar";
-bool esconderSenha = true;
-Icon iconeOlho = const Icon(Icons.visibility_rounded);
 String username = "";
 List gatoLista = [];
 List cLista = [];
@@ -45,7 +42,10 @@ void main() {
 class MyBehavior extends ScrollBehavior {
   @override
   Widget buildOverscrollIndicator(
-      BuildContext context, Widget child, ScrollableDetails details) {
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
     return child;
   }
 }
