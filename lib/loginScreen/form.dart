@@ -2,10 +2,8 @@
 
 import 'dart:convert';
 
-import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,12 +28,10 @@ class FormApp extends StatefulWidget {
   const FormApp({super.key});
 
   @override
-  LoginState createState() {
-    return LoginState();
-  }
+  FormAppState createState() => FormAppState();
 }
 
-class LoginState extends State<FormApp> {
+class FormAppState extends State<FormApp> {
   final _formKey = GlobalKey<FormState>();
   final txtControllerLogin = TextEditingController();
   final txtControllerSenha = TextEditingController();
