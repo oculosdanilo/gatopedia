@@ -7,7 +7,7 @@ import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/wiki/info.dart';
 import 'package:gatopedia/main.dart';
 
-bool clicavel = true;
+late Future<DataSnapshot> _getData;
 
 class Wiki extends StatefulWidget {
   const Wiki({super.key});
@@ -25,11 +25,14 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
     int i = 0;
     while (i < userinfo.children.length) {
       if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
-        setState(() {
-          listaTemImagem.add(
-            "${(userinfo.children.map((i) => i)).toList()[i].key}",
-          );
-        });
+        if (!listaTemImagem
+            .contains("${(userinfo.children.map((i) => i)).toList()[i].key}")) {
+          setState(() {
+            listaTemImagem.add(
+              "${(userinfo.children.map((i) => i)).toList()[i].key}",
+            );
+          });
+        }
       } else {
         setState(() {
           listaTemImagem.remove(
@@ -41,9 +44,10 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  Future<DataSnapshot> _pegarGatitos() async {
-    var gatos = await FirebaseDatabase.instance.ref().child("gatos").get();
-    return gatos;
+  @override
+  void initState() {
+    _getData = FirebaseDatabase.instance.ref().child("gatos").get();
+    super.initState();
   }
 
   @override
@@ -51,8 +55,8 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return StretchingOverscrollIndicator(
       axisDirection: AxisDirection.down,
-      child: FutureBuilder(
-        future: _pegarGatitos(),
+      child: FutureBuilder<DataSnapshot>(
+        future: _getData,
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
@@ -60,7 +64,6 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
               shrinkWrap: true,
               children: snapshot.data!.children
                   .map<Widget>(
-                    // ignore: avoid_unnecessary_containers
                     (e) => Container(
                       margin: EdgeInsets.fromLTRB(
                         15,

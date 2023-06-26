@@ -30,13 +30,11 @@ class _ComentariosState extends State<Comentarios> {
     if (mounted) {
       setState(() {});
     }
-    debugPrint("${snapshot?.value}");
   }
 
   _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
-    debugPrint("aiai");
     ref.onValue.listen((event) {
       _firebasePegar();
     });
@@ -369,75 +367,74 @@ class _ComentariosState extends State<Comentarios> {
                                                     showDialog(
                                                       barrierDismissible: false,
                                                       context: context,
-                                                      builder:
-                                                          ((context) =>
-                                                              AlertDialog(
-                                                                icon:
-                                                                    const Icon(
-                                                                  Icons
-                                                                      .delete_rounded,
-                                                                ),
-                                                                title:
-                                                                    const Text(
-                                                                  "Tem certeza que deseja deletar esse comentário?",
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                ),
-                                                                content:
-                                                                    const Text(
-                                                                  "Ele sumirá para sempre! (muito tempo)",
-                                                                ),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.pop(
-                                                                            context),
-                                                                    child:
-                                                                        const Text(
-                                                                      "CANCELAR",
-                                                                    ),
-                                                                  ),
-                                                                  ElevatedButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      _deletarC(((snapshot?.value as List)[widget.post]["comentarios"] as List)
-                                                                              .length -
-                                                                          index -
-                                                                          1);
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                      Flushbar(
-                                                                        message:
-                                                                            "Excluído com sucesso!",
-                                                                        duration:
-                                                                            const Duration(seconds: 3),
-                                                                        margin:
-                                                                            const EdgeInsets.all(20),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(50),
-                                                                      ).show(
-                                                                        context,
-                                                                      );
-                                                                    },
-                                                                    child:
-                                                                        const Text(
-                                                                      "OK",
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              )),
+                                                      builder: (context) =>
+                                                          AlertDialog(
+                                                        icon: const Icon(
+                                                          Icons.delete_rounded,
+                                                        ),
+                                                        title: const Text(
+                                                          "Tem certeza que deseja deletar esse comentário?",
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        content: const Text(
+                                                          "Ele sumirá para sempre! (muito tempo)",
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context),
+                                                            child: const Text(
+                                                              "CANCELAR",
+                                                            ),
+                                                          ),
+                                                          ElevatedButton(
+                                                            onPressed: () {
+                                                              _deletarC(((snapshot?.value
+                                                                              as List)[
+                                                                          widget
+                                                                              .post]["comentarios"] as List)
+                                                                      .length -
+                                                                  index -
+                                                                  1);
+                                                              Navigator.pop(
+                                                                  context);
+                                                              Flushbar(
+                                                                message:
+                                                                    "Excluído com sucesso!",
+                                                                duration:
+                                                                    const Duration(
+                                                                        seconds:
+                                                                            3),
+                                                                margin:
+                                                                    const EdgeInsets
+                                                                        .all(20),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            50),
+                                                              ).show(
+                                                                context,
+                                                              );
+                                                            },
+                                                            child: const Text(
+                                                              "OK",
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     );
                                                   });
                                                 },
                                               ),
                                             )
-                                          : const Text(""),
+                                          : const Row(),
                                     ],
                                   ),
                                 ),
                               )
-                            : Text("");
+                            : Row();
                       },
                       itemCount: (snapshot?.value as List)[widget.post]
                                   ["comentarios"] !=

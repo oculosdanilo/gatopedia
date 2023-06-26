@@ -1,23 +1,13 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'dart:convert';
-
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:gatopedia/main.dart';
-import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
+import 'package:gatopedia/home/home.dart';
+import 'package:gatopedia/main.dart';
 
-final Uri _urlCAdd =
-    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/commentAdd.php');
-final Uri _urlCDelete =
-    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/commentDelete.php');
-final Uri _urlCList =
-    Uri.parse('https://etec199-danilolima.xp3.biz/2022/1103/commentListar.php');
+late Future<DataSnapshot> _getData;
 
 class GatoInfo extends StatefulWidget {
   final DataSnapshot gatoInfo;
@@ -34,17 +24,19 @@ class GatoInfoState extends State<GatoInfo> {
 
   pegarImagens() async {
     await Firebase.initializeApp();
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("users/");
+    DatabaseReference ref = FirebaseDatabase.instance.ref("users/");
     DataSnapshot userinfo = await ref.get();
     int i = 0;
     while (i < userinfo.children.length) {
       if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
-        setState(() {
-          listaTemImagem.add(
-            "${(userinfo.children.map((i) => i)).toList()[i].key}",
-          );
-        });
+        if (!listaTemImagem
+            .contains("${(userinfo.children.map((i) => i)).toList()[i].key}")) {
+          setState(() {
+            listaTemImagem.add(
+              "${(userinfo.children.map((i) => i)).toList()[i].key}",
+            );
+          });
+        }
       } else {
         setState(() {
           listaTemImagem.remove(
@@ -54,171 +46,266 @@ class GatoInfoState extends State<GatoInfo> {
       }
       i++;
     }
-    debugPrint("$listaTemImagem");
   }
 
   @override
   void initState() {
     pegarImagens();
+    _getData = FirebaseDatabase.instance
+        .ref("gatos/${widget.gatoInfo.key}/comentarios")
+        .get();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (cLista.isNotEmpty) {
-      return Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar.large(
-              iconTheme: const IconThemeData(
-                color: Colors.white,
-                shadows: [
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 20,
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar.large(
+            iconTheme: const IconThemeData(
+              color: Colors.white,
+              shadows: [
+                Shadow(
+                  color: Colors.black,
+                  blurRadius: 20,
+                ),
+              ],
+            ),
+            expandedHeight: 360,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              expandedTitleScale: 2,
+              title: Text(
+                widget.gatoInfo.key ?? "",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: "Jost",
+                ),
+              ),
+              centerTitle: true,
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: widget.gatoInfo.child("img").value.toString(),
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Image.asset(
+                      "lib/assets/loading.gif",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment(0.0, 0.5),
+                        end: Alignment.center,
+                        colors: <Color>[
+                          Color(0x60000000),
+                          Color(0x00000000),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
-              expandedHeight: 360,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                expandedTitleScale: 2,
-                title: Text(
-                  widget.gatoInfo.key ?? "",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontFamily: "Jost",
-                  ),
-                ),
-                centerTitle: true,
-                background: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CachedNetworkImage(
-                      imageUrl: widget.gatoInfo.child("img").value.toString(),
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Image.asset(
-                        "lib/assets/loading.gif",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment(0.0, 0.5),
-                          end: Alignment.center,
-                          colors: <Color>[
-                            Color(0x60000000),
-                            Color(0x00000000),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Text(
-                      widget.gatoInfo.child("resumo").value.toString(),
-                      style: const TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: 27,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      widget.gatoInfo.child("descricao").value.toString(),
-                      style: const TextStyle(
-                        fontFamily: "Jost",
-                        fontSize: 20,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    const Text(
-                      "COMENTÁRIOS",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Jost",
-                          fontSize: 25),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(15),
+                  Text(
+                    widget.gatoInfo.child("resumo").value.toString(),
+                    style: const TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 27,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    widget.gatoInfo
+                        .child("descricao")
+                        .value
+                        .toString()
+                        .replaceAll("\\n", "\n"),
+                    style: const TextStyle(
+                      fontFamily: "Jost",
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  const Text(
+                    "COMENTÁRIOS",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Jost",
+                      fontSize: 25,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    flex: 7,
+                    child: TextField(
+                      controller: txtControllerC,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  IconButton.filled(
+                    onPressed: () async {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      if (txtControllerC.text != "") {
+                        await _getData.then((value) async {
+                          await value.ref
+                              .child(
+                            "${int.parse(value.children.last.key!) + 1}",
+                          )
+                              .update({
+                            "user": username,
+                            "content": txtControllerC.text,
+                          });
+                        });
+                        setState(() {
+                          _getData = FirebaseDatabase.instance
+                              .ref("gatos/${widget.gatoInfo.key}/comentarios")
+                              .get();
+                        });
+                        if (!mounted) return;
+                        Flushbar(
+                          message: "Postado com sucesso!",
+                          duration: const Duration(seconds: 2),
+                          margin: const EdgeInsets.all(20),
+                          borderRadius: BorderRadius.circular(50),
+                        ).show(context);
+                        txtControllerC.text = "";
+                      }
+                    },
+                    icon: const Icon(Icons.send),
+                    iconSize: 35,
+                  ),
+                  /* FilledButton(
+                    onPressed: () async {
+                      if (txtControllerC.text != "") {
+                        /* var map = <String, String>{};
+                        map['id'] = "${indexClicado + 1}";
+                        map['username'] = username;
+                        map['comentario'] = txtControllerC.text;
+                        final response =
+                            await http.post(_urlCAdd, body: map);
+                  
+                        Flushbar(
+                          message: response.body,
+                          duration: const Duration(seconds: 2),
+                          margin: const EdgeInsets.all(20),
+                          borderRadius: BorderRadius.circular(50),
+                        ).show(context);
+                  
+                        txtControllerC.text = "";
+                        var mapUp = <String, String>{};
+                        int indexMais1 = indexClicado + 1;
+                        mapUp['id'] = "$indexMais1";
+                        final responseUp =
+                            await http.post(_urlCList, body: mapUp);
+                        cLista = jsonDecode(responseUp.body);
+                        cListaTamanho = cLista.length; */
+                        
+                      }
+                    },
+                    child: const Text(
+                      "COMENTAR",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ), */
+                ],
+              ),
+            ),
+          ),
+          widget.gatoInfo.child("comentarios").children.length > 2
+              ? Comentarios(widget.gatoInfo)
+              : const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 80,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Flexible(
-                          flex: 7,
-                          child: TextField(
-                            controller: txtControllerC,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Flexible(
-                          flex: 5,
-                          child: FilledButton(
-                            onPressed: () async {
-                              if (txtControllerC.text != "") {
-                                var map = <String, String>{};
-                                map['id'] = "${indexClicado + 1}";
-                                map['username'] = username;
-                                map['comentario'] = txtControllerC.text;
-                                final response =
-                                    await http.post(_urlCAdd, body: map);
-
-                                Flushbar(
-                                  message: response.body,
-                                  duration: const Duration(seconds: 2),
-                                  margin: const EdgeInsets.all(20),
-                                  borderRadius: BorderRadius.circular(50),
-                                ).show(context);
-
-                                txtControllerC.text = "";
-                                var mapUp = <String, String>{};
-                                int indexMais1 = indexClicado + 1;
-                                mapUp['id'] = "$indexMais1";
-                                final responseUp =
-                                    await http.post(_urlCList, body: mapUp);
-                                cLista = jsonDecode(responseUp.body);
-                                cListaTamanho = cLista.length;
-                                setState(() {});
-                              }
-                            },
-                            child: const Text("COMENTAR"),
-                          ),
+                        Text(
+                          "Nenhum comentário (ainda...)",
+                          style: TextStyle(fontFamily: "Jost"),
                         )
                       ],
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+          const SliverToBoxAdapter(
+            child: SizedBox(
+              height: 25,
             ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class Comentarios extends StatefulWidget {
+  final DataSnapshot gatoInfo;
+  const Comentarios(this.gatoInfo, {super.key});
+
+  @override
+  State<Comentarios> createState() => _ComentariosState();
+}
+
+class _ComentariosState extends State<Comentarios> {
+  @override
+  void initState() {
+    _getData = FirebaseDatabase.instance
+        .ref()
+        .child("gatos/${widget.gatoInfo.key}/comentarios")
+        .get();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: FutureBuilder<DataSnapshot>(
+        future: _getData,
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.done) {
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: int.parse(snapshot.data!.children.last.key!) - 1,
+              itemBuilder: (context, index) {
+                if ((snapshot.data!.value as List)[
+                        (snapshot.data!.value as List).length - index - 1] !=
+                    null) {
                   return Card(
                     margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                      padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -230,16 +317,25 @@ class GatoInfoState extends State<GatoInfo> {
                                   context,
                                   SlideRightAgainRoute(
                                     PublicProfile(
-                                      cLista[index]["USERNAME"],
-                                    ),
+                                        (snapshot.data!.value as List)[
+                                                (snapshot.data!.value as List)
+                                                        .length -
+                                                    index -
+                                                    1]["user"]
+                                            .toString()),
                                   ),
                                 );
                               },
                               child: Image(
-                                image: listaTemImagem
-                                        .contains(cLista[index]["USERNAME"])
+                                image: listaTemImagem.contains(
+                                        (snapshot.data!.value as List)[
+                                                (snapshot.data!.value as List)
+                                                        .length -
+                                                    index -
+                                                    1]["user"]
+                                            .toString())
                                     ? NetworkImage(
-                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${cLista[index]["USERNAME"]}.webp?alt=media",
+                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot.data!.value as List)[(snapshot.data!.value as List).length - index - 1]["user"].toString()}.webp?alt=media",
                                       )
                                     : const AssetImage("lib/assets/user.webp")
                                         as ImageProvider,
@@ -264,17 +360,28 @@ class GatoInfoState extends State<GatoInfo> {
                                       context,
                                       SlideRightAgainRoute(
                                         PublicProfile(
-                                          cLista[index]["USERNAME"],
+                                          (snapshot.data!.value as List)[
+                                                  (snapshot.data!.value as List)
+                                                          .length -
+                                                      index -
+                                                      1]["user"]
+                                              .toString(),
                                         ),
                                       ),
                                     );
                                   },
                                   child: Text(
-                                    '@${cLista[index]["USERNAME"]}',
+                                    (snapshot.data!.value as List)[
+                                            (snapshot.data!.value as List)
+                                                    .length -
+                                                index -
+                                                1]["user"]
+                                        .toString(),
                                     style: const TextStyle(
-                                        fontFamily: "Jost",
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15),
+                                      fontFamily: "Jost",
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
                                     softWrap: true,
                                   ),
                                 ),
@@ -282,16 +389,29 @@ class GatoInfoState extends State<GatoInfo> {
                                   height: 10,
                                 ),
                                 Text(
-                                  cLista[index]["COMENTARIO"],
+                                  (snapshot.data!.value as List)[
+                                          (snapshot.data!.value as List)
+                                                  .length -
+                                              index -
+                                              1]["content"]
+                                      .toString(),
                                   style: const TextStyle(
-                                      fontFamily: "Jost", fontSize: 15),
+                                    fontFamily: "Jost",
+                                    fontSize: 15,
+                                  ),
                                   softWrap: true,
                                   maxLines: 50,
                                 )
                               ],
                             ),
                           ),
-                          cLista[index]["USERNAME"] == username
+                          (snapshot.data!.value as List)[
+                                          (snapshot.data!.value as List)
+                                                  .length -
+                                              index -
+                                              1]["user"]
+                                      .toString() ==
+                                  username
                               ? IconButton(
                                   icon: const Icon(Icons.delete),
                                   color: Colors.white,
@@ -338,28 +458,24 @@ class GatoInfoState extends State<GatoInfo> {
                                       },
                                     );
                                     if (dialogo) {
-                                      final map = <String, String>{};
-                                      map['id'] = cLista[index]["ID"];
-                                      final response = await http.post(
-                                        _urlCDelete,
-                                        body: map,
-                                      );
-
+                                      await FirebaseDatabase.instance
+                                          .ref()
+                                          .child(
+                                              "gatos/${widget.gatoInfo.key}/comentarios/${(snapshot.data!.value as List).length - index - 1}")
+                                          .remove();
+                                      setState(() {
+                                        _getData = FirebaseDatabase.instance
+                                            .ref(
+                                                "gatos/${widget.gatoInfo.key}/comentarios")
+                                            .get();
+                                      });
+                                      if (!mounted) return;
                                       Flushbar(
-                                        message: response.body,
+                                        message: "Removido com sucesso!",
                                         duration: const Duration(seconds: 2),
                                         margin: const EdgeInsets.all(20),
                                         borderRadius: BorderRadius.circular(50),
                                       ).show(context);
-
-                                      var mapUp = <String, String>{};
-                                      int indexMais1 = indexClicado + 1;
-                                      mapUp['id'] = "$indexMais1";
-                                      final responseUp = await http
-                                          .post(_urlCList, body: mapUp);
-                                      cLista = jsonDecode(responseUp.body);
-                                      cListaTamanho = cLista.length;
-                                      setState(() {});
                                     }
                                   },
                                 )
@@ -368,183 +484,16 @@ class GatoInfoState extends State<GatoInfo> {
                       ),
                     ),
                   );
-                },
-                childCount: cListaTamanho,
-              ),
-            ),
-            const SliverToBoxAdapter(
-              child: SizedBox(
-                height: 25,
-              ),
-            )
-          ],
-        ),
-      );
-    } else {
-      return Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar.large(
-              expandedHeight: 360,
-              pinned: true,
-              iconTheme: const IconThemeData(
-                color: Colors.white,
-                shadows: [
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 20,
-                  ),
-                ],
-              ),
-              flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  widget.gatoInfo.key ?? "",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontFamily: "Jost",
-                  ),
-                ),
-                centerTitle: true,
-                background: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CachedNetworkImage(
-                      imageUrl: widget.gatoInfo.child("img").value.toString(),
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Image.asset(
-                        "lib/assets/loading.gif",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment(0.0, 0.5),
-                          end: Alignment.center,
-                          colors: <Color>[
-                            Color(0x60000000),
-                            Color(0x00000000),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Text(
-                      widget.gatoInfo.child("resumo").value.toString(),
-                      style: const TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: 27,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      widget.gatoInfo.child("descricao").value.toString(),
-                      style: const TextStyle(
-                        fontFamily: "Jost",
-                        fontSize: 20,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    const Text(
-                      "COMENTÁRIOS",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Jost",
-                          fontSize: 25),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          flex: 7,
-                          child: TextField(
-                            controller: txtControllerC,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Flexible(
-                          flex: 5,
-                          child: FilledButton(
-                            onPressed: () async {
-                              if (txtControllerC.text != "") {
-                                var map = <String, String>{};
-                                map['id'] = "${indexClicado + 1}";
-                                map['username'] = username;
-                                map['comentario'] = txtControllerC.text;
-                                final response =
-                                    await http.post(_urlCAdd, body: map);
-
-                                Flushbar(
-                                  message: response.body,
-                                  duration: const Duration(seconds: 2),
-                                  margin: const EdgeInsets.all(20),
-                                  borderRadius: BorderRadius.circular(50),
-                                ).show(context);
-
-                                txtControllerC.text = "";
-                                var mapUp = <String, String>{};
-                                int indexMais1 = indexClicado + 1;
-                                mapUp['id'] = "$indexMais1";
-                                final responseUp =
-                                    await http.post(_urlCList, body: mapUp);
-                                cLista = jsonDecode(responseUp.body);
-                                cListaTamanho = cLista.length;
-                                setState(() {});
-                              }
-                            },
-                            child: const Text("COMENTAR"),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 80,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Nenhum comentário (ainda...)",
-                          style: TextStyle(fontFamily: "Jost"),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+                } else {
+                  return const Row();
+                }
+              },
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
   }
 }

@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:animations/animations.dart';
@@ -40,6 +41,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   String pedaco1 = "";
   String pedaco2 = "";
   bool flag = true;
+  late StreamSubscription<DatabaseEvent> _sub;
 
   _firebasePegar() async {
     FirebaseDatabase database = FirebaseDatabase.instance;
@@ -53,7 +55,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
-    ref.onValue.listen((event) {
+    _sub = ref.onValue.listen((event) {
       _firebasePegar();
     });
   }
@@ -154,12 +156,14 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
     DataSnapshot userinfo = await ref.get();
     int i = 0;
     while (i < userinfo.children.length) {
-      if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
-        setState(() {
-          listaTemImagem.add(
-            "${(userinfo.children.map((i) => i)).toList()[i].key}",
-          );
-        });
+      if ((userinfo.children.toList()[i].value as Map)["img"] != null) {
+        if (!listaTemImagem.contains("${userinfo.children.toList()[i].key}")) {
+          setState(() {
+            listaTemImagem.add(
+              "${userinfo.children.toList()[i].key}",
+            );
+          });
+        }
       } else {
         setState(() {
           listaTemImagem.remove(
@@ -176,6 +180,12 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
     _pegarImagens();
     _atualizar();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
   }
 
   @override
@@ -893,7 +903,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                     ),
                   ),
                 ))
-              : const Text("Nenhum comentário!"),
+              : const Text("Nenhum post!"),
         ],
       ),
     );

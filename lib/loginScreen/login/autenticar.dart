@@ -23,7 +23,6 @@ Future<(bool, String?)> autenticar(
     await ref.update({
       "senha": base64Encode(utf8.encode(senhaDigitada)),
       "bio": "(vazio)",
-      "img": false,
     });
     return (
       false,

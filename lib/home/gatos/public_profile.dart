@@ -1,15 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/eu/profile.dart';
-
-import '../../main.dart';
+import 'package:gatopedia/main.dart';
 
 String bioText = "(vazio)";
 
 class PublicProfile extends StatefulWidget {
   final String username;
   const PublicProfile(this.username, {super.key});
-
   @override
   State<PublicProfile> createState() => _PublicProfileState();
 }

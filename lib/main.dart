@@ -12,17 +12,12 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:system_theme/system_theme.dart';
-
-import 'loginScreen/seminternet.dart';
-import 'loginScreen/login/form.dart';
-import 'update.dart';
+import 'package:gatopedia/loginScreen/seminternet.dart';
+import 'package:gatopedia/loginScreen/login/form.dart';
+import 'package:gatopedia/update.dart';
 
 List listaTemImagem = [];
-String username = "";
-List gatoLista = [];
-List cLista = [];
-int indexClicado = 0;
-dynamic cListaTamanho;
+late String username;
 bool internet = true;
 ColorScheme blueScheme = ColorScheme.fromSeed(
   seedColor: const Color(0xff000080),

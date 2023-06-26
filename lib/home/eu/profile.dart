@@ -54,11 +54,14 @@ class _ProfileState extends State<Profile> {
     int i = 0;
     while (i < userinfo.children.length) {
       if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
-        setState(() {
-          listaTemImagem.add(
-            "${(userinfo.children.map((i) => i)).toList()[i].key}",
-          );
-        });
+        if (!listaTemImagem
+            .contains("${(userinfo.children.map((i) => i)).toList()[i].key}")) {
+          setState(() {
+            listaTemImagem.add(
+              "${(userinfo.children.map((i) => i)).toList()[i].key}",
+            );
+          });
+        }
       } else {
         setState(() {
           listaTemImagem.remove(
