@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable, prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously
-
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -10,9 +8,9 @@ import 'forum.dart';
 bool imagemSelecionada = false;
 
 class ImagePost extends StatefulWidget {
-  String imageType;
+  final String imageType;
 
-  ImagePost(this.imageType, {super.key});
+  const ImagePost(this.imageType, {super.key});
 
   @override
   State<ImagePost> createState() => _ImagePostState();
@@ -36,6 +34,7 @@ class _ImagePostState extends State<ImagePost> {
       });
     } else {
       postado = false;
+      if (!mounted) return;
       Navigator.pop(context);
     }
   }
@@ -109,8 +108,8 @@ class _ImagePostState extends State<ImagePost> {
                                       image: FileImage(file!),
                                       fit: BoxFit.cover,
                                     )
-                                  : Padding(
-                                      padding: const EdgeInsets.fromLTRB(
+                                  : const Padding(
+                                      padding: EdgeInsets.fromLTRB(
                                         0,
                                         10,
                                         0,
@@ -139,7 +138,7 @@ class _ImagePostState extends State<ImagePost> {
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             Row(
@@ -156,8 +155,8 @@ class _ImagePostState extends State<ImagePost> {
                                       Navigator.pop(context);
                                     }
                                   },
-                                  icon: Icon(Icons.send_rounded),
-                                  label: Text("ENVIAR"),
+                                  icon: const Icon(Icons.send_rounded),
+                                  label: const Text("ENVIAR"),
                                 )
                               ],
                             )
