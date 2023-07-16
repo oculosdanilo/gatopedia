@@ -132,7 +132,7 @@ class _ConfigState extends State<Config> {
                   ),
                   Center(
                     child: SizedBox(
-                      height: 40,
+                      height: 42,
                       child: ListView(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
@@ -165,8 +165,11 @@ class _ConfigState extends State<Config> {
                           ),
                           ElevatedButton.icon(
                             onPressed: () {
-                              _launchUrl(Uri.parse(
-                                  "https://etec199-danilolima.epizy.com/2023/0318/"));
+                              _launchUrl(
+                                Uri.parse(
+                                  "https://etec199-danilolima.xp3.biz/2023/0318/",
+                                ),
+                              );
                             },
                             icon: const Icon(Icons.public),
                             label: const Text(
@@ -188,10 +191,10 @@ class _ConfigState extends State<Config> {
                     height: 17,
                   ),
                   const Divider(),
-                  const Center(
+                  Center(
                     child: Text(
-                      "© 2023 Danilo Lima",
-                      style: TextStyle(
+                      "© ${DateTime.now().year} Danilo Lima",
+                      style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
                           fontFamily: "monospace"),

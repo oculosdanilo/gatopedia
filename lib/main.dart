@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:system_theme/system_theme.dart';
 import 'package:gatopedia/loginScreen/seminternet.dart';
 import 'package:gatopedia/loginScreen/login/form.dart';
 import 'package:gatopedia/update.dart';
@@ -47,7 +46,9 @@ class MyBehavior extends ScrollBehavior {
 
 class App extends StatelessWidget {
   static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
-    SystemTheme.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+    PlatformDispatcher.instance.platformBrightness == Brightness.dark
+        ? ThemeMode.dark
+        : ThemeMode.light,
   );
   const App({super.key});
 
@@ -154,12 +155,13 @@ class Gatopedia extends StatefulWidget {
   const Gatopedia({super.key});
 
   @override
-  GatopediaState createState() {
-    return GatopediaState();
+  State<Gatopedia> createState() {
+    return _GatopediaState();
   }
 }
 
-class GatopediaState extends State with SingleTickerProviderStateMixin {
+class _GatopediaState extends State<Gatopedia>
+    with SingleTickerProviderStateMixin {
   final miau = AudioPlayer();
   String appName = "";
   String packageName = "";
@@ -182,12 +184,18 @@ class GatopediaState extends State with SingleTickerProviderStateMixin {
       }
       i++;
     }
-    debugPrint("$listaTemImagem");
   }
 
   _adaptarTema() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    if (pref.getBool("dark") ?? SystemTheme.isDarkMode) {}
+    setState(() {
+      if (pref.getBool("dark") ??
+          PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
+        App.themeNotifier.value = ThemeMode.dark;
+      } else {
+        App.themeNotifier.value = ThemeMode.light;
+      }
+    });
   }
 
   checarUpdate() async {

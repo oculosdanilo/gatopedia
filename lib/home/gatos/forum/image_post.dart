@@ -123,6 +123,8 @@ class _ImagePostState extends State<ImagePost> {
                             ),
                             TextField(
                               controller: txtLegenda,
+                              maxLength: 255,
+                              maxLines: 30,
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(
