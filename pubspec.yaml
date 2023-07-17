@@ -47,9 +47,12 @@ flutter:
         - asset: lib/assets/jost.ttf
 
 flutter_native_splash:
-  color: "#1c1c1c"
+  color: "#fffbff"
   image: lib/assets/icon.png
   branding: lib/assets/createdby-dark.png
+  image_dark: lib/assets/icon.png
+  color_dark: "#1c1c1c"
+  branding_dark: lib/assets/icon.png
   android_12:
     image: lib/assets/icon.png
     color: "#1c1c1c"

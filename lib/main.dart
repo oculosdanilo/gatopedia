@@ -29,8 +29,15 @@ ColorScheme blueSchemeL = ColorScheme.fromSeed(
 dynamic mensagem;
 DataSnapshot? snapshot;
 
-void main() {
-  runApp(const App());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final SharedPreferences pref = await SharedPreferences.getInstance();
+  if (pref.getBool("dark") ??
+      PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
+    runApp(const App(ThemeMode.dark));
+  } else {
+    runApp(const App(ThemeMode.light));
+  }
 }
 
 class MyBehavior extends ScrollBehavior {
@@ -44,109 +51,125 @@ class MyBehavior extends ScrollBehavior {
   }
 }
 
-class App extends StatelessWidget {
-  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
-    PlatformDispatcher.instance.platformBrightness == Brightness.dark
-        ? ThemeMode.dark
-        : ThemeMode.light,
-  );
-  const App({super.key});
+class App extends StatefulWidget {
+  static late final ValueNotifier<ThemeMode> themeNotifier;
+  final ThemeMode temaInicial;
+  const App(this.temaInicial, {super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
+  void initState() {
+    App.themeNotifier = ValueNotifier(widget.temaInicial);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
+      valueListenable: App.themeNotifier,
       builder: (_, ThemeMode currentMode, __) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            navigationBarTheme: NavigationBarThemeData(
-              indicatorColor: blueSchemeL.primary,
-            ),
-            appBarTheme: AppBarTheme(backgroundColor: blueSchemeL.primary),
-            snackBarTheme: const SnackBarThemeData(
-              behavior: SnackBarBehavior.floating,
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(
-                  width: 2,
-                  color: blueScheme.outline,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(50)),
-                borderSide: BorderSide(
-                  width: 2,
-                  color: Colors.blue[900]!,
-                ),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  width: 3,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(50),
-                borderSide: BorderSide(
-                  width: 3,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-            ),
-            brightness: Brightness.light,
-            colorSchemeSeed: const Color(0xff000080),
-            useMaterial3: true,
-          ),
-          darkTheme: ThemeData(
-            navigationBarTheme: NavigationBarThemeData(
-              indicatorColor: blueScheme.primary,
-            ),
-            appBarTheme: AppBarTheme(backgroundColor: blueScheme.background),
-            snackBarTheme: const SnackBarThemeData(
-              behavior: SnackBarBehavior.floating,
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(
-                  width: 2,
-                  color: blueScheme.outline,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(50)),
-                borderSide: BorderSide(
-                  width: 2,
-                  color: blueScheme.primary,
-                ),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  width: 3,
-                  color: blueScheme.error,
-                ),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(50),
-                borderSide: BorderSide(
-                  width: 3,
-                  color: blueScheme.error,
-                ),
-              ),
-            ),
-            brightness: Brightness.dark,
-            colorSchemeSeed: const Color(0xff000080),
-            useMaterial3: true,
-          ),
+          theme: temaLight(context),
+          darkTheme: temaDark(),
           themeMode: currentMode,
           home: const Gatopedia(),
         );
       },
+    );
+  }
+
+  ThemeData temaLight(BuildContext context) {
+    return ThemeData(
+      navigationBarTheme: NavigationBarThemeData(
+        indicatorColor: blueSchemeL.primary,
+      ),
+      appBarTheme: AppBarTheme(backgroundColor: blueSchemeL.primary),
+      snackBarTheme: const SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(
+            width: 2,
+            color: blueScheme.outline,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(50)),
+          borderSide: BorderSide(
+            width: 2,
+            color: Colors.blue[900]!,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            width: 3,
+            color: blueSchemeL.error,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+          borderSide: BorderSide(
+            width: 3,
+            color: blueSchemeL.error,
+          ),
+        ),
+      ),
+      brightness: Brightness.light,
+      colorSchemeSeed: const Color(0xff000080),
+      useMaterial3: true,
+    );
+  }
+
+  ThemeData temaDark() {
+    return ThemeData(
+      navigationBarTheme: NavigationBarThemeData(
+        indicatorColor: blueScheme.primary,
+      ),
+      appBarTheme: AppBarTheme(backgroundColor: blueScheme.background),
+      snackBarTheme: const SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(
+            width: 2,
+            color: blueScheme.outline,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(50)),
+          borderSide: BorderSide(
+            width: 2,
+            color: blueScheme.primary,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            width: 3,
+            color: blueScheme.error,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+          borderSide: BorderSide(
+            width: 3,
+            color: blueScheme.error,
+          ),
+        ),
+      ),
+      brightness: Brightness.dark,
+      colorSchemeSeed: const Color(0xff000080),
+      useMaterial3: true,
     );
   }
 }
@@ -186,17 +209,7 @@ class _GatopediaState extends State<Gatopedia>
     }
   }
 
-  _adaptarTema() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(() {
-      if (pref.getBool("dark") ??
-          PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
-        App.themeNotifier.value = ThemeMode.dark;
-      } else {
-        App.themeNotifier.value = ThemeMode.light;
-      }
-    });
-  }
+  _adaptarTema() async {}
 
   checarUpdate() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
