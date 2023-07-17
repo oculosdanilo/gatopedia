@@ -57,9 +57,9 @@ class _ComentariosState extends State<Comentarios> {
   }
 
   _maisDe2Linhas(String text) {
-    if (text.length > 30) {
-      pedaco1 = text.substring(0, 30);
-      pedaco2 = text.substring(30, text.length);
+    if (text.length > 65) {
+      pedaco1 = text.substring(0, 65);
+      pedaco2 = text.substring(65, text.length);
       return true;
     } else {
       pedaco1 = text;
