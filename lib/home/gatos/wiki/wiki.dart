@@ -8,6 +8,7 @@ import 'package:gatopedia/home/gatos/wiki/info.dart';
 import 'package:gatopedia/main.dart';
 
 late Future<DataSnapshot> _getData;
+bool pegouInfo = false;
 
 class Wiki extends StatefulWidget {
   const Wiki({super.key});
@@ -46,7 +47,10 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
 
   @override
   void initState() {
-    _getData = FirebaseDatabase.instance.ref().child("gatos").get();
+    if (!pegouInfo) {
+      _getData = FirebaseDatabase.instance.ref().child("gatos").get();
+      pegouInfo = true;
+    }
     super.initState();
   }
 

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:animations/animations.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -59,9 +60,9 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   }
 
   _maisDe2Linhas(String text) {
-    if (text.length > 50) {
-      pedaco1 = text.substring(0, 50);
-      pedaco2 = text.substring(50, text.length);
+    if (text.length > 65) {
+      pedaco1 = text.substring(0, 65);
+      pedaco2 = text.substring(65, text.length);
       return true;
     } else {
       pedaco1 = text;
@@ -778,7 +779,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                                                                       'lib/assets/loading.gif',
                                                                     ),
                                                                     image:
-                                                                        NetworkImage(
+                                                                        CachedNetworkImageProvider(
                                                                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${(int.parse(snapshot?.children.last.key ?? "0") - index).toString()}.webp?alt=media",
                                                                     ),
                                                                   ),
