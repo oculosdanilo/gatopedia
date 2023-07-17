@@ -77,29 +77,14 @@ class _GatoListaState extends State<GatoLista>
                 ),
                 backgroundColor: Theme.of(context).colorScheme.primary,
               ),
-              SliverPersistentHeader(
-                delegate: _SliverAppBarDelegate(
-                  TabBar(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    onTap: (index) {
-                      setState(() {
-                        tabIndex = index;
-                      });
-                    },
-                    labelStyle: const TextStyle(
-                      fontFamily: "Jost",
-                      fontSize: 19,
-                    ),
-                    labelColor: Theme.of(context).colorScheme.onPrimary,
-                    unselectedLabelColor: Theme.of(context).colorScheme.outline,
-                    indicatorColor: Theme.of(context).colorScheme.onPrimary,
-                    tabs: const [
-                      Tab(text: "Wiki"),
-                      Tab(text: "Fórum"),
-                    ],
+              SliverToBoxAdapter(
+                child: PreferredSize(
+                  preferredSize: _tabbar.preferredSize,
+                  child: Material(
+                    color: Theme.of(context).colorScheme.primary,
+                    child: _tabbar,
                   ),
                 ),
-                pinned: true,
               ),
             ];
           },
@@ -114,31 +99,28 @@ class _GatoListaState extends State<GatoLista>
     );
   }
 
-  @override
-  bool get wantKeepAlive => true;
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar);
-
-  final TabBar _tabBar;
-
-  @override
-  double get minExtent => _tabBar.preferredSize.height;
-  @override
-  double get maxExtent => _tabBar.preferredSize.height;
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
-      child: _tabBar,
+  TabBar get _tabbar {
+    return TabBar(
+      physics: const AlwaysScrollableScrollPhysics(),
+      onTap: (index) {
+        setState(() {
+          tabIndex = index;
+        });
+      },
+      labelColor: Theme.of(context).colorScheme.onPrimary,
+      unselectedLabelColor: Theme.of(context).colorScheme.outline,
+      indicatorColor: Theme.of(context).colorScheme.onPrimary,
+      labelStyle: const TextStyle(
+        fontFamily: "Jost",
+        fontSize: 19,
+      ),
+      tabs: const [
+        Tab(text: "Wiki"),
+        Tab(text: "Fórum"),
+      ],
     );
   }
 
   @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
-  }
+  bool get wantKeepAlive => true;
 }
