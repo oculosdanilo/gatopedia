@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -44,8 +42,7 @@ class _ComentariosState extends State<Comentarios> {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/${widget.post}/comentarios");
     await ref.update({
-      // ignore: unnecessary_null_comparison
-      "${((snapshot?.value as List)[widget.post]["comentarios"] as List) != null ? ((snapshot?.value as List)[widget.post]["comentarios"] as List).length : 1}":
+      "${(snapshot?.value as List)[widget.post]["comentarios"] != null ? ((snapshot?.value as List)[widget.post]["comentarios"] as List).length : 1}":
           {
         "username": username,
         "content": txtComment.text,
@@ -80,6 +77,7 @@ class _ComentariosState extends State<Comentarios> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
         automaticallyImplyLeading: false,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -114,13 +112,13 @@ class _ComentariosState extends State<Comentarios> {
                                 as List)[widget.post]["username"])
                             ? NetworkImage(
                                 "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["username"]}.webp?alt=media")
-                            : AssetImage("lib/assets/user.webp")
+                            : const AssetImage("lib/assets/user.webp")
                                 as ImageProvider,
                         width: 30,
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   Expanded(
@@ -195,7 +193,7 @@ class _ComentariosState extends State<Comentarios> {
                 ],
               ),
             ),
-            Divider(),
+            const Divider(),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -287,7 +285,7 @@ class _ComentariosState extends State<Comentarios> {
                                                             1]["username"])
                                                 ? NetworkImage(
                                                     "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.webp?alt=media")
-                                                : AssetImage("lib/assets/user.webp")
+                                                : const AssetImage("lib/assets/user.webp")
                                                     as ImageProvider,
                                             width: 50,
                                           ),
@@ -434,7 +432,7 @@ class _ComentariosState extends State<Comentarios> {
                                   ),
                                 ),
                               )
-                            : Row();
+                            : const Row();
                       },
                       itemCount: (snapshot?.value as List)[widget.post]
                                   ["comentarios"] !=
@@ -446,12 +444,12 @@ class _ComentariosState extends State<Comentarios> {
                           : 0,
                     ),
                   )
-                : SizedBox(
+                : const SizedBox(
                     height: 80,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
+                      children: [
                         Text(
                           "Nenhum comentário (ainda...)",
                           style: TextStyle(fontFamily: "Jost"),

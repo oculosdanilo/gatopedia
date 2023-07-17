@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -38,6 +36,7 @@ class _PPEditState extends State<PPEdit> {
       {"img": true},
     );
     setState(() {});
+    if (!mounted) return;
     Navigator.pop(context, true);
   }
 
@@ -46,8 +45,10 @@ class _PPEditState extends State<PPEdit> {
       allowedExtensions: ['jpeg', 'jpg', 'png'],
       type: FileType.custom,
     );
+    if (!mounted) return;
     if (result != null) {
       file = File(result.files.single.path!);
+
       CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: file!.path,
         aspectRatioPresets: [
@@ -64,12 +65,6 @@ class _PPEditState extends State<PPEdit> {
             statusBarColor: Theme.of(context).colorScheme.primary,
             lockAspectRatio: true,
           ),
-          IOSUiSettings(
-            title: 'Cropper',
-          ),
-          WebUiSettings(
-            context: context,
-          ),
         ],
       );
       if (croppedFile != null) {
@@ -77,6 +72,7 @@ class _PPEditState extends State<PPEdit> {
           imagemEditada = File(croppedFile.path);
         });
       } else {
+        if (!mounted) return;
         Navigator.pop(context, false);
       }
     } else {
@@ -115,6 +111,7 @@ class _PPEditState extends State<PPEdit> {
           imagemEditada = File(croppedFile.path);
         });
       } else {
+        if (!mounted) return;
         Navigator.pop(context, false);
       }
     } else {

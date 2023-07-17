@@ -1,10 +1,10 @@
-// ignore_for_file: use_build_context_synchronously
 import 'dart:convert';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +31,9 @@ DataSnapshot? snapshot;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+    [DeviceOrientation.portraitUp],
+  );
   final SharedPreferences pref = await SharedPreferences.getInstance();
   if (pref.getBool("dark") ??
       PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
@@ -226,6 +229,7 @@ class _GatopediaState extends State<Gatopedia>
     );
     Map<String, dynamic> versaoAtt = jsonDecode(response.body);
     debugPrint(versaoAtt["tag_name"]);
+    if (!mounted) return;
     if (version != versaoAtt["tag_name"]) {
       Navigator.push(
         context,

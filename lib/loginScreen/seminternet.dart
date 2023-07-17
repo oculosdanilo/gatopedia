@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:gatopedia/main.dart';
@@ -12,8 +14,7 @@ class SemInternet extends StatefulWidget {
 }
 
 class SemInternetState extends State {
-  // ignore: prefer_typing_uninitialized_variables
-  var listener;
+  late StreamSubscription listener;
 
   @override
   void initState() {

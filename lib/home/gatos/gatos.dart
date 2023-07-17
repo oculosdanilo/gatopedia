@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:just_audio/just_audio.dart';
-
-import '../../main.dart';
-import 'forum/forum.dart';
-import 'wiki/wiki.dart';
+import 'package:gatopedia/main.dart';
+import 'package:gatopedia/home/gatos/forum/forum.dart';
+import 'package:gatopedia/home/gatos/wiki/wiki.dart';
 
 int tabIndex = 0;
 List<Widget> telasGatos = [const Wiki(), const Forum()];
+late ScrollController scrollController;
+String txtEnviar = "ENVIAR";
 
 class GatoLista extends StatefulWidget {
   const GatoLista({super.key});
@@ -29,98 +30,127 @@ class _GatoListaState extends State<GatoLista>
   @override
   void initState() {
     indexAntigo = 0;
+    scrollController = ScrollController();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return ScrollConfiguration(
-      behavior: const ScrollBehavior().copyWith(overscroll: false),
-      child: DefaultTabController(
-        length: 2,
-        child: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerCoiso) {
-            return [
-              SliverAppBar.medium(
-                iconTheme: IconThemeData(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                expandedHeight: 120,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    "@$username",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontFamily: "Jost",
-                    ),
+    return DefaultTabController(
+      length: 2,
+      child: NestedScrollView(
+        controller: scrollController,
+        headerSliverBuilder: (BuildContext context, bool innerCoiso) {
+          return [
+            SliverAppBar.medium(
+              iconTheme: IconThemeData(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              expandedHeight: 120,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text(
+                  "@$username",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontFamily: "Jost",
                   ),
-                  background: Container(
-                    alignment: Alignment.centerRight,
-                    margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.pets_rounded,
-                        color: App.themeNotifier.value == ThemeMode.light
-                            ? Colors.grey
-                            : Colors.white,
+                ),
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.pets_rounded,
+                      color: App.themeNotifier.value == ThemeMode.light
+                          ? Colors.grey
+                          : Colors.white,
+                    ),
+                    iconSize: 100,
+                    onPressed: () async {
+                      if (!isPlaying) {
+                        _play();
+                      }
+                    },
+                  ),
+                ),
+              ),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            SliverPersistentHeader(
+              delegate: _SliverAppBarDelegate(
+                TabBar(
+                  onTap: (index) {
+                    setState(() {
+                      tabIndex = index;
+                    });
+                  },
+                  labelStyle: const TextStyle(
+                    fontFamily: "Jost",
+                    fontSize: 19,
+                  ),
+                  labelColor: Theme.of(context).colorScheme.onPrimary,
+                  unselectedLabelColor: Theme.of(context).colorScheme.outline,
+                  indicatorColor: Theme.of(context).colorScheme.onPrimary,
+                  tabs: const [
+                    InkWell(
+                      child: Tab(
+                        text: "Wiki",
                       ),
-                      iconSize: 100,
-                      onPressed: () async {
-                        if (!isPlaying) {
-                          _play();
-                        }
-                      },
                     ),
-                  ),
-                ),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-              ),
-              SliverToBoxAdapter(
-                child: PreferredSize(
-                  preferredSize: _tabbar.preferredSize,
-                  child: Material(
-                    color: Theme.of(context).colorScheme.primary,
-                    child: _tabbar,
-                  ),
+                    InkWell(
+                      child: Tab(
+                        text: "Fórum",
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ];
-          },
-          body: TabBarView(
-            children: [
-              telasGatos[0],
-              telasGatos[1],
-            ],
+              pinned: true,
+            ),
+          ];
+        },
+        body: ScrollConfiguration(
+          behavior: MyBehavior(),
+          child: TabBarView(
+            children: telasGatos,
           ),
         ),
       ),
     );
   }
 
-  TabBar get _tabbar {
-    return TabBar(
-      physics: const AlwaysScrollableScrollPhysics(),
-      onTap: (index) {
-        setState(() {
-          tabIndex = index;
-        });
-      },
-      labelColor: Theme.of(context).colorScheme.onPrimary,
-      unselectedLabelColor: Theme.of(context).colorScheme.outline,
-      indicatorColor: Theme.of(context).colorScheme.onPrimary,
-      labelStyle: const TextStyle(
-        fontFamily: "Jost",
-        fontSize: 19,
-      ),
-      tabs: const [
-        Tab(text: "Wiki"),
-        Tab(text: "Fórum"),
-      ],
+  @override
+  bool get wantKeepAlive => true;
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
+      child: _tabBar,
     );
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
+  }
 }

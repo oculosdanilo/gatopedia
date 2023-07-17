@@ -125,6 +125,7 @@ class _ImagePostState extends State<ImagePost> {
                               controller: txtLegenda,
                               maxLength: 255,
                               maxLines: 30,
+                              minLines: 1,
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(

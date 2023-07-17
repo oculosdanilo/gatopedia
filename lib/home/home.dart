@@ -1,13 +1,10 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe, use_build_context_synchronously
-
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-
-import 'config/config.dart';
-import 'gatos/gatos.dart';
-import 'eu/profile.dart';
-import '../main.dart';
+import 'package:gatopedia/home/config/config.dart';
+import 'package:gatopedia/home/gatos/gatos.dart';
+import 'package:gatopedia/home/eu/profile.dart';
+import 'package:gatopedia/main.dart';
 
 List<Widget> telasHome = const [GatoLista(), Profile(false), Config()];
 int indexAntigo = 0;

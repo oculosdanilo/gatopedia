@@ -1,14 +1,11 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
-import 'pp_edit.dart';
-import '../../main.dart';
-import '../home.dart';
+import 'package:gatopedia/home/eu/pp_edit.dart';
+import 'package:gatopedia/main.dart';
+import 'package:gatopedia/home/home.dart';
 
 String bioText = "(vazio)";
 bool? temImagem;
@@ -71,7 +68,6 @@ class _ProfileState extends State<Profile> {
       }
       i++;
     }
-    debugPrint("$listaTemImagem");
   }
 
   _atualizar() {
@@ -149,6 +145,7 @@ class _ProfileState extends State<Profile> {
                           context,
                           SlideRightAgainRoute(const PPEdit()),
                         );
+                        if (!mounted) return;
                         if (resposta != null) {
                           if (resposta) {
                             Flushbar(
@@ -264,6 +261,7 @@ class _ProfileState extends State<Profile> {
                           context,
                           SlideRightAgainRoute(const PPEdit()),
                         );
+                        if (!mounted) return;
                         if (resposta != null) {
                           if (resposta) {
                             Flushbar(

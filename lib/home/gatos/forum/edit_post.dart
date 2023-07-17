@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -8,21 +6,19 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-
 import 'package:gatopedia/main.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../config/config.dart';
+import 'package:gatopedia/home/config/config.dart';
 
 bool imagemRemovida = false;
 File? imagemFile;
 bool imagemSelecionada = false;
+bool imagem = false;
 
 class EditPost extends StatefulWidget {
-  dynamic post;
-  bool imagem = false;
+  final dynamic post;
 
-  EditPost(this.post, this.imagem, {super.key});
+  const EditPost(this.post, {super.key});
 
   @override
   State<EditPost> createState() => _EditPostState();
@@ -46,7 +42,7 @@ class _EditPostState extends State<EditPost> {
       );
       setState(() {
         imagemFile = File(resultWebp?.path ?? "");
-        widget.imagem = true;
+        imagem = true;
         imagemSelecionada = true;
         imagemRemovida = false;
       });
@@ -68,7 +64,7 @@ class _EditPostState extends State<EditPost> {
     ref.update(
       {
         "content": txtEdit.text,
-        "img": widget.imagem ? (imagemRemovida ? null : true) : null,
+        "img": imagem ? (imagemRemovida ? null : true) : null,
       },
     );
   }
@@ -146,7 +142,7 @@ class _EditPostState extends State<EditPost> {
             const SizedBox(
               height: 10,
             ),
-            widget.imagem
+            imagem
                 ? badges.Badge(
                     badgeContent: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
@@ -193,7 +189,7 @@ class _EditPostState extends State<EditPost> {
                                   debugPrint("$value");
                                   if (value) {
                                     setState(() {
-                                      widget.imagem = false;
+                                      imagem = false;
                                       imagemRemovida = true;
                                     });
                                   }

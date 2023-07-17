@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'dart:typed_data';
 
 import 'package:another_flushbar/flushbar.dart';
@@ -9,9 +7,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:gatopedia/main.dart';
 
 class DeletePost extends StatefulWidget {
-  dynamic post;
+  final dynamic post;
 
-  DeletePost(this.post, {super.key});
+  const DeletePost(this.post, {super.key});
 
   @override
   State<DeletePost> createState() => _DeletePostState();

@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
@@ -69,7 +67,7 @@ class FormAppState extends State<FormApp> {
       // Create the SelectionScreen in the next step.
       SlideRightRoute(const Home()),
     );
-
+    if (!mounted) return;
     mudarCor(Theme.of(context).colorScheme.primary);
   }
 
