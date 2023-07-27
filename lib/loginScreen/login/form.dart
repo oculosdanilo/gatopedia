@@ -248,6 +248,7 @@ class FormAppState extends State<FormApp> {
                               txtControllerLogin.text,
                               txtControllerSenha.text,
                             );
+                            if (!mounted) return;
                             if (!resposta.$1) {
                               Flushbar(
                                 duration: const Duration(seconds: 10),

@@ -212,8 +212,6 @@ class _GatopediaState extends State<Gatopedia>
     }
   }
 
-  _adaptarTema() async {}
-
   checarUpdate() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
@@ -265,7 +263,6 @@ class _GatopediaState extends State<Gatopedia>
     if (!kDebugMode) {
       checarUpdate();
     }
-    _adaptarTema();
   }
 
   void _play() {
