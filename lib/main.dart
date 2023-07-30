@@ -248,18 +248,18 @@ class _GatopediaState extends State<Gatopedia>
     super.initState();
     pegarImagens();
     _play();
-    if (!kIsWeb) {
-      InternetConnectionChecker().onStatusChange.listen((status) {
-        switch (status) {
-          case InternetConnectionStatus.disconnected:
-            internet = false;
-            Navigator.push(context, SlideUpRoute(const SemInternet()));
-            break;
-          case InternetConnectionStatus.connected:
-            break;
-        }
-      });
-    }
+
+    InternetConnectionChecker().onStatusChange.listen((status) {
+      switch (status) {
+        case InternetConnectionStatus.disconnected:
+          internet = false;
+          Navigator.push(context, SlideUpRoute(const SemInternet()));
+          break;
+        case InternetConnectionStatus.connected:
+          break;
+      }
+    });
+
     if (!kDebugMode) {
       checarUpdate();
     }

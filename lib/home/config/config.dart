@@ -193,11 +193,12 @@ class _ConfigState extends State<Config> {
                   const Divider(),
                   Center(
                     child: Text(
-                      "© ${DateTime.now().year} Danilo Lima",
+                      "© ${DateTime.now().year} oculosdanilo\nTodos os direitos reservados",
                       style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                          fontFamily: "monospace"),
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontFamily: "monospace",
+                      ),
                     ),
                   ),
                 ],
