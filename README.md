@@ -9,4 +9,4 @@ Projeto do antigo Gatopédia (feito em AppInventor) repaginado em Material Desig
 <img src="screenshots/wiki.png" width="250" />
 <img src="screenshots/eu.png" width="250" />
 </div>
-Feito com :heart: por [Danilo Lima](https://github.com/oculosdanilo)https://github.com/oculosdanilo)
+Feito com :heart: por [Danilo Lima](https://github.com/oculosdanilo)
