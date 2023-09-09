@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/main.dart';
 
@@ -241,197 +242,7 @@ class _ComentariosState extends State<Comentarios> {
                                         index -
                                         1] !=
                                 null
-                            ? Card(
-                                margin:
-                                    const EdgeInsets.fromLTRB(15, 10, 15, 5),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 25, 10, 25),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(50),
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              SlideRightAgainRoute(
-                                                PublicProfile(
-                                                  (snapshot?.value
-                                                          as List)[widget.post]
-                                                      ["comentarios"][((snapshot
-                                                                          ?.value
-                                                                      as List)[
-                                                                  widget.post][
-                                                              "comentarios"] as List)
-                                                          .length -
-                                                      index -
-                                                      1]["username"],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          child: Image(
-                                            image: listaTemImagem.contains(
-                                                    (snapshot?.value as List)[widget.post]
-                                                            ["comentarios"][
-                                                        ((snapshot?.value as List)[widget.post]
-                                                                        ["comentarios"]
-                                                                    as List)
-                                                                .length -
-                                                            index -
-                                                            1]["username"])
-                                                ? NetworkImage(
-                                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.webp?alt=media")
-                                                : const AssetImage("lib/assets/user.webp")
-                                                    as ImageProvider,
-                                            width: 50,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 15,
-                                      ),
-                                      Expanded(
-                                        flex: 20,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            InkWell(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  SlideRightAgainRoute(
-                                                    PublicProfile(
-                                                      (snapshot?.value as List)[
-                                                              widget.post][
-                                                          "comentarios"][((snapshot
-                                                                              ?.value
-                                                                          as List)[
-                                                                      widget
-                                                                          .post]
-                                                                  ["comentarios"] as List)
-                                                              .length -
-                                                          index -
-                                                          1]["username"],
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              child: Text(
-                                                "@${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}",
-                                                style: const TextStyle(
-                                                    fontFamily: "Jost",
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15),
-                                                softWrap: true,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["content"]}",
-                                              style: const TextStyle(
-                                                  fontFamily: "Jost",
-                                                  fontSize: 15),
-                                              softWrap: true,
-                                              maxLines: 50,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      "${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}" ==
-                                              username
-                                          ? Ink(
-                                              decoration: ShapeDecoration(
-                                                color:
-                                                    blueScheme.errorContainer,
-                                                shape: const CircleBorder(),
-                                              ),
-                                              child: IconButton(
-                                                icon: const Icon(Icons.delete),
-                                                color: Colors.white,
-                                                onPressed: () {
-                                                  WidgetsBinding.instance
-                                                      .addPostFrameCallback(
-                                                          (timeStamp) {
-                                                    showDialog(
-                                                      barrierDismissible: false,
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          AlertDialog(
-                                                        icon: const Icon(
-                                                          Icons.delete_rounded,
-                                                        ),
-                                                        title: const Text(
-                                                          "Tem certeza que deseja deletar esse comentário?",
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                        content: const Text(
-                                                          "Ele sumirá para sempre! (muito tempo)",
-                                                        ),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    context),
-                                                            child: const Text(
-                                                              "CANCELAR",
-                                                            ),
-                                                          ),
-                                                          ElevatedButton(
-                                                            onPressed: () {
-                                                              _deletarC(((snapshot?.value
-                                                                              as List)[
-                                                                          widget
-                                                                              .post]["comentarios"] as List)
-                                                                      .length -
-                                                                  index -
-                                                                  1);
-                                                              Navigator.pop(
-                                                                  context);
-                                                              Flushbar(
-                                                                message:
-                                                                    "Excluído com sucesso!",
-                                                                duration:
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            3),
-                                                                margin:
-                                                                    const EdgeInsets
-                                                                        .all(20),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            50),
-                                                              ).show(
-                                                                context,
-                                                              );
-                                                            },
-                                                            child: const Text(
-                                                              "OK",
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  });
-                                                },
-                                              ),
-                                            )
-                                          : const Row(),
-                                    ],
-                                  ),
-                                ),
-                              )
+                            ? comentario(context, index)
                             : const Row();
                       },
                       itemCount: (snapshot?.value as List)[widget.post]
@@ -457,6 +268,164 @@ class _ComentariosState extends State<Comentarios> {
                       ],
                     ),
                   ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Card comentario(BuildContext context, int index) {
+    return Card(
+      margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 25, 10, 25),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    SlideRightAgainRoute(
+                      PublicProfile(
+                        (snapshot?.value as List)[widget.post]["comentarios"][
+                            ((snapshot?.value as List)[widget.post]
+                                        ["comentarios"] as List)
+                                    .length -
+                                index -
+                                1]["username"],
+                      ),
+                    ),
+                  );
+                },
+                child: Image(
+                  image: listaTemImagem.contains(
+                          (snapshot?.value as List)[widget.post]["comentarios"][
+                              ((snapshot?.value as List)[widget.post]
+                                          ["comentarios"] as List)
+                                      .length -
+                                  index -
+                                  1]["username"])
+                      ? NetworkImage(
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.webp?alt=media")
+                      : const AssetImage("lib/assets/user.webp")
+                          as ImageProvider,
+                  width: 50,
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+            Expanded(
+              flex: 20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        SlideRightAgainRoute(
+                          PublicProfile(
+                            (snapshot?.value as List)[widget.post]
+                                    ["comentarios"][
+                                ((snapshot?.value as List)[widget.post]
+                                            ["comentarios"] as List)
+                                        .length -
+                                    index -
+                                    1]["username"],
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "@${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}",
+                      style: const TextStyle(
+                          fontFamily: "Jost",
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15),
+                      softWrap: true,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["content"]}",
+                    style: const TextStyle(fontFamily: "Jost", fontSize: 15),
+                    softWrap: true,
+                    maxLines: 50,
+                  )
+                ],
+              ),
+            ),
+            "${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}" ==
+                    username
+                ? Ink(
+                    decoration: ShapeDecoration(
+                      color: blueScheme.errorContainer,
+                      shape: const CircleBorder(),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.delete),
+                      color: Colors.white,
+                      onPressed: () {
+                        showCupertinoDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            icon: const Icon(
+                              Icons.delete_rounded,
+                            ),
+                            title: const Text(
+                              "Tem certeza que deseja deletar esse comentário?",
+                              textAlign: TextAlign.center,
+                            ),
+                            content: const Text(
+                              "Ele sumirá para sempre! (muito tempo)",
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text(
+                                  "CANCELAR",
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  _deletarC(
+                                      ((snapshot?.value as List)[widget.post]
+                                                  ["comentarios"] as List)
+                                              .length -
+                                          index -
+                                          1);
+                                  Navigator.pop(context);
+                                  Flushbar(
+                                    message: "Excluído com sucesso!",
+                                    duration: const Duration(seconds: 3),
+                                    margin: const EdgeInsets.all(20),
+                                    borderRadius: BorderRadius.circular(50),
+                                  ).show(
+                                    context,
+                                  );
+                                },
+                                child: const Text(
+                                  "OK",
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : const Row(),
           ],
         ),
       ),

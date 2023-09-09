@@ -2,6 +2,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/eu/pp_edit.dart';
 import 'package:gatopedia/main.dart';
@@ -25,6 +26,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   bool editMode = false;
   final txtBio = TextEditingController();
+  final focusCoiso = FocusNode();
 
   @override
   void setState(fn) {
@@ -118,17 +120,9 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      physics: const PageScrollPhysics(),
       slivers: [
         SliverAppBar(
-          iconTheme: const IconThemeData(
-            color: Colors.white,
-            shadows: [
-              Shadow(
-                color: Colors.black,
-                blurRadius: 20,
-              ),
-            ],
-          ),
           actions: (temImagem ?? false)
               ? [
                   PopupMenuButton<MenuItensImg>(
@@ -141,76 +135,63 @@ class _ProfileState extends State<Profile> {
                     ),
                     onSelected: (value) async {
                       if (value == MenuItensImg.editar) {
-                        dynamic resposta = await Navigator.push(
+                        var resposta = await Navigator.push(
                           context,
                           SlideRightAgainRoute(const PPEdit()),
                         );
                         if (!mounted) return;
                         if (resposta != null) {
                           if (resposta) {
+                            setState(() {});
                             Flushbar(
                               message: "Atualizada com sucesso!",
                               duration: const Duration(seconds: 2),
                               margin: const EdgeInsets.all(20),
                               borderRadius: BorderRadius.circular(50),
                             ).show(context);
-                          } else {
-                            Flushbar(
-                              message: "Ação cancelada.",
-                              duration: const Duration(seconds: 2),
-                              margin: const EdgeInsets.all(20),
-                              borderRadius: BorderRadius.circular(50),
-                            ).show(context);
                           }
-                        } else {
-                          Flushbar(
-                            message: "Ação cancelada.",
-                            duration: const Duration(seconds: 2),
-                            margin: const EdgeInsets.all(20),
-                            borderRadius: BorderRadius.circular(50),
-                          ).show(context);
                         }
                       } else {
-                        WidgetsBinding.instance.addPostFrameCallback(
-                          (_) {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                icon: const Icon(Icons.delete_rounded),
-                                title: const Text(
-                                  "Tem certeza que deseja remover sua foto de perfil?",
-                                  textAlign: TextAlign.center,
-                                ),
-                                content: const Text(
-                                  "Essa ação é irreversível",
-                                  textAlign: TextAlign.center,
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context, false);
-                                    },
-                                    child: const Text("CANCELAR"),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context, true);
-                                    },
-                                    child: const Text("OK"),
-                                  )
-                                ],
+                        showCupertinoDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            icon: const Icon(Icons.delete_rounded),
+                            title: const Text(
+                              "Tem certeza que deseja remover sua foto de perfil?",
+                              textAlign: TextAlign.center,
+                            ),
+                            content: const Text(
+                              "Essa ação é irreversível",
+                              textAlign: TextAlign.center,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, false);
+                                },
+                                child: const Text("CANCELAR"),
                               ),
-                            ).then((value) {
-                              if (value) {
-                                _apagarImagem(username);
-                                Flushbar(
-                                  message: "Removida com sucesso!",
-                                  duration: const Duration(seconds: 2),
-                                  margin: const EdgeInsets.all(20),
-                                  borderRadius: BorderRadius.circular(50),
-                                ).show(context);
-                              }
-                            });
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context, true);
+                                },
+                                child: const Text("OK"),
+                              )
+                            ],
+                          ),
+                        ).then(
+                          (value) async {
+                            if (value) {
+                              await _apagarImagem(username);
+                              setState(() {});
+                              if (!mounted) return;
+                              Flushbar(
+                                message: "Removida com sucesso!",
+                                duration: const Duration(seconds: 2),
+                                margin: const EdgeInsets.all(20),
+                                borderRadius: BorderRadius.circular(50),
+                              ).show(context);
+                            }
                           },
                         );
                       }
@@ -270,21 +251,7 @@ class _ProfileState extends State<Profile> {
                               margin: const EdgeInsets.all(20),
                               borderRadius: BorderRadius.circular(50),
                             ).show(context);
-                          } else {
-                            Flushbar(
-                              message: "Ação cancelada.",
-                              duration: const Duration(seconds: 2),
-                              margin: const EdgeInsets.all(20),
-                              borderRadius: BorderRadius.circular(50),
-                            ).show(context);
                           }
-                        } else {
-                          Flushbar(
-                            message: "Ação cancelada.",
-                            duration: const Duration(seconds: 2),
-                            margin: const EdgeInsets.all(20),
-                            borderRadius: BorderRadius.circular(50),
-                          ).show(context);
                         }
                       }
                     },
@@ -366,6 +333,7 @@ class _ProfileState extends State<Profile> {
                             maxLength: 400,
                             controller: txtBio,
                             maxLines: 2,
+                            focusNode: focusCoiso,
                             decoration: InputDecoration(
                               hintText: "(vazio)",
                               focusedBorder: OutlineInputBorder(
@@ -443,6 +411,7 @@ class _ProfileState extends State<Profile> {
                                   setState(() {
                                     editMode = true;
                                     txtBio.text = bioText;
+                                    focusCoiso.requestFocus();
                                   });
                                 },
                                 icon: const Icon(Icons.edit_rounded),

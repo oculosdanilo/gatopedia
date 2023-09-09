@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -35,7 +36,9 @@ class _PPEditState extends State<PPEdit> {
     await ref.update(
       {"img": true},
     );
-    setState(() {});
+    CachedNetworkImage.evictFromCache(
+      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
+    );
     if (!mounted) return;
     Navigator.pop(context, true);
   }
@@ -131,124 +134,108 @@ class _PPEditState extends State<PPEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NestedScrollView(
+      body: CustomScrollView(
         physics: const NeverScrollableScrollPhysics(),
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverOverlapAbsorber(
-            handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-            sliver: SliverAppBar.large(
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.close_rounded),
+        slivers: <Widget>[
+          SliverAppBar.large(
+            leading: IconButton(
+              color: Colors.white,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.close_rounded),
+            ),
+            title: Center(
+              child: Text(
+                "Editar foto de perfil",
+                style: TextStyle(
+                  fontFamily: "Jost",
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
-              automaticallyImplyLeading: false,
-              title: const FlexibleSpaceBar(
-                centerTitle: true,
-                title: Text(
-                  "Editar foto de perfil",
-                  style: TextStyle(fontSize: 20),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
+                ),
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: imagemEditada != null
+                            ? Stack(
+                                fit: StackFit.passthrough,
+                                children: [
+                                  Image(
+                                    image: FileImage(imagemEditada!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  Positioned.fill(
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: const BoxDecoration(
+                                        color: Color.fromARGB(155, 0, 0, 0),
+                                      ),
+                                    ),
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(500),
+                                    child: Image(
+                                      image: FileImage(imagemEditada!),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  0,
+                                  10,
+                                  0,
+                                  0,
+                                ),
+                                child: Text(
+                                  "Nenhuma imagem selecionada",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          OutlinedButton(
+                              onPressed: () {
+                                _editarImagem(file);
+                              },
+                              child: const Text("EDITAR")),
+                          ElevatedButton(
+                            onPressed: () {
+                              _salvarPP(imagemEditada!);
+                            },
+                            child: const Text("SALVAR"),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ],
-        body: Builder(
-          builder: (context) {
-            return CustomScrollView(
-              slivers: <Widget>[
-                SliverOverlapInjector(
-                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                    context,
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.onBackground,
-                        ),
-                      ),
-                      width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: double.infinity,
-                              child: imagemEditada != null
-                                  ? Stack(
-                                      fit: StackFit.passthrough,
-                                      children: [
-                                        Image(
-                                          image: FileImage(imagemEditada!),
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Positioned.fill(
-                                          child: Container(
-                                            width: double.infinity,
-                                            decoration: const BoxDecoration(
-                                              color:
-                                                  Color.fromARGB(155, 0, 0, 0),
-                                            ),
-                                          ),
-                                        ),
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(500),
-                                          child: Image(
-                                            image: FileImage(imagemEditada!),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : const Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                        0,
-                                        10,
-                                        0,
-                                        0,
-                                      ),
-                                      child: Text(
-                                        "Nenhuma imagem selecionada",
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                OutlinedButton(
-                                    onPressed: () {
-                                      _editarImagem(file);
-                                    },
-                                    child: const Text("EDITAR")),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    _salvarPP(imagemEditada!);
-                                  },
-                                  child: const Text("SALVAR"),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/home/home.dart';
@@ -61,6 +62,7 @@ class GatoInfoState extends State<GatoInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
+        scrollBehavior: MyBehavior(),
         slivers: [
           SliverAppBar.large(
             iconTheme: const IconThemeData(
@@ -201,41 +203,6 @@ class GatoInfoState extends State<GatoInfo> {
                     icon: const Icon(Icons.send),
                     iconSize: 35,
                   ),
-                  /* FilledButton(
-                    onPressed: () async {
-                      if (txtControllerC.text != "") {
-                        /* var map = <String, String>{};
-                        map['id'] = "${indexClicado + 1}";
-                        map['username'] = username;
-                        map['comentario'] = txtControllerC.text;
-                        final response =
-                            await http.post(_urlCAdd, body: map);
-                  
-                        Flushbar(
-                          message: response.body,
-                          duration: const Duration(seconds: 2),
-                          margin: const EdgeInsets.all(20),
-                          borderRadius: BorderRadius.circular(50),
-                        ).show(context);
-                  
-                        txtControllerC.text = "";
-                        var mapUp = <String, String>{};
-                        int indexMais1 = indexClicado + 1;
-                        mapUp['id'] = "$indexMais1";
-                        final responseUp =
-                            await http.post(_urlCList, body: mapUp);
-                        cLista = jsonDecode(responseUp.body);
-                        cListaTamanho = cLista.length; */
-                        
-                      }
-                    },
-                    child: const Text(
-                      "COMENTAR",
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ), */
                 ],
               ),
             ),
@@ -302,188 +269,7 @@ class _ComentariosState extends State<Comentarios> {
                 if ((snapshot.data!.value as List)[
                         (snapshot.data!.value as List).length - index - 1] !=
                     null) {
-                  return Card(
-                    margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  SlideRightAgainRoute(
-                                    PublicProfile(
-                                        (snapshot.data!.value as List)[
-                                                (snapshot.data!.value as List)
-                                                        .length -
-                                                    index -
-                                                    1]["user"]
-                                            .toString()),
-                                  ),
-                                );
-                              },
-                              child: Image(
-                                image: listaTemImagem.contains(
-                                        (snapshot.data!.value as List)[
-                                                (snapshot.data!.value as List)
-                                                        .length -
-                                                    index -
-                                                    1]["user"]
-                                            .toString())
-                                    ? NetworkImage(
-                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot.data!.value as List)[(snapshot.data!.value as List).length - index - 1]["user"].toString()}.webp?alt=media",
-                                      )
-                                    : const AssetImage("lib/assets/user.webp")
-                                        as ImageProvider,
-                                width: 50,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          Expanded(
-                            flex: 20,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      SlideRightAgainRoute(
-                                        PublicProfile(
-                                          (snapshot.data!.value as List)[
-                                                  (snapshot.data!.value as List)
-                                                          .length -
-                                                      index -
-                                                      1]["user"]
-                                              .toString(),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    (snapshot.data!.value as List)[
-                                            (snapshot.data!.value as List)
-                                                    .length -
-                                                index -
-                                                1]["user"]
-                                        .toString(),
-                                    style: const TextStyle(
-                                      fontFamily: "Jost",
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
-                                    softWrap: true,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  (snapshot.data!.value as List)[
-                                          (snapshot.data!.value as List)
-                                                  .length -
-                                              index -
-                                              1]["content"]
-                                      .toString(),
-                                  style: const TextStyle(
-                                    fontFamily: "Jost",
-                                    fontSize: 15,
-                                  ),
-                                  softWrap: true,
-                                  maxLines: 50,
-                                )
-                              ],
-                            ),
-                          ),
-                          (snapshot.data!.value as List)[
-                                          (snapshot.data!.value as List)
-                                                  .length -
-                                              index -
-                                              1]["user"]
-                                      .toString() ==
-                                  username
-                              ? IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.white,
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStatePropertyAll(
-                                      Theme.of(context)
-                                          .colorScheme
-                                          .errorContainer,
-                                    ),
-                                  ),
-                                  onPressed: () async {
-                                    var dialogo = await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          icon: const Icon(
-                                            Icons.delete_rounded,
-                                          ),
-                                          title: const Text(
-                                            "Tem certeza que deseja deletar esse comentário?",
-                                          ),
-                                          content: const Text(
-                                            "Ele sumirá para sempre! (muito tempo)",
-                                            style: TextStyle(fontSize: 15),
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                context,
-                                                false,
-                                              ),
-                                              child: const Text('CANCELAR'),
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () => Navigator.pop(
-                                                context,
-                                                true,
-                                              ),
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                    if (dialogo) {
-                                      await FirebaseDatabase.instance
-                                          .ref()
-                                          .child(
-                                              "gatos/${widget.gatoInfo.key}/comentarios/${(snapshot.data!.value as List).length - index - 1}")
-                                          .remove();
-                                      setState(() {
-                                        _getData = FirebaseDatabase.instance
-                                            .ref(
-                                                "gatos/${widget.gatoInfo.key}/comentarios")
-                                            .get();
-                                      });
-                                      if (!mounted) return;
-                                      Flushbar(
-                                        message: "Removido com sucesso!",
-                                        duration: const Duration(seconds: 2),
-                                        margin: const EdgeInsets.all(20),
-                                        borderRadius: BorderRadius.circular(50),
-                                      ).show(context);
-                                    }
-                                  },
-                                )
-                              : const Text(""),
-                        ],
-                      ),
-                    ),
-                  );
+                  return comentario(context, snapshot, index);
                 } else {
                   return const Row();
                 }
@@ -493,6 +279,186 @@ class _ComentariosState extends State<Comentarios> {
             return const Center(child: CircularProgressIndicator());
           }
         },
+      ),
+    );
+  }
+
+  Card comentario(
+    BuildContext context,
+    AsyncSnapshot<DataSnapshot> snapshot,
+    int index,
+  ) {
+    return Card(
+      margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    SlideRightAgainRoute(
+                      PublicProfile(
+                        (snapshot.data!.value as List)[
+                                (snapshot.data!.value as List).length -
+                                    index -
+                                    1]["user"]
+                            .toString(),
+                      ),
+                    ),
+                  );
+                },
+                child: Image(
+                  image: listaTemImagem.contains((snapshot.data!.value as List)[
+                              (snapshot.data!.value as List).length -
+                                  index -
+                                  1]["user"]
+                          .toString())
+                      ? NetworkImage(
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot.data!.value as List)[(snapshot.data!.value as List).length - index - 1]["user"].toString()}.webp?alt=media",
+                        )
+                      : const AssetImage("lib/assets/user.webp")
+                          as ImageProvider,
+                  width: 50,
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+            Expanded(
+              flex: 20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        SlideRightAgainRoute(
+                          PublicProfile(
+                            (snapshot.data!.value as List)[
+                                    (snapshot.data!.value as List).length -
+                                        index -
+                                        1]["user"]
+                                .toString(),
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      (snapshot.data!.value as List)[
+                              (snapshot.data!.value as List).length -
+                                  index -
+                                  1]["user"]
+                          .toString(),
+                      style: const TextStyle(
+                        fontFamily: "Jost",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                      softWrap: true,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    (snapshot.data!.value as List)[
+                            (snapshot.data!.value as List).length -
+                                index -
+                                1]["content"]
+                        .toString(),
+                    style: const TextStyle(
+                      fontFamily: "Jost",
+                      fontSize: 15,
+                    ),
+                    softWrap: true,
+                    maxLines: 50,
+                  )
+                ],
+              ),
+            ),
+            (snapshot.data!.value as List)[
+                            (snapshot.data!.value as List).length -
+                                index -
+                                1]["user"]
+                        .toString() ==
+                    username
+                ? IconButton(
+                    icon: const Icon(Icons.delete),
+                    color: Colors.white,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(
+                        blueScheme.errorContainer,
+                      ),
+                    ),
+                    onPressed: () async {
+                      var dialogo = await showCupertinoDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            icon: const Icon(
+                              Icons.delete_rounded,
+                            ),
+                            title: const Text(
+                              "Tem certeza que deseja deletar esse comentário?",
+                            ),
+                            content: const Text(
+                              "Ele sumirá para sempre! (muito tempo)",
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(
+                                  context,
+                                  false,
+                                ),
+                                child: const Text('CANCELAR'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => Navigator.pop(
+                                  context,
+                                  true,
+                                ),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      if (dialogo) {
+                        await FirebaseDatabase.instance
+                            .ref()
+                            .child(
+                                "gatos/${widget.gatoInfo.key}/comentarios/${(snapshot.data!.value as List).length - index - 1}")
+                            .remove();
+                        setState(() {
+                          _getData = FirebaseDatabase.instance
+                              .ref("gatos/${widget.gatoInfo.key}/comentarios")
+                              .get();
+                        });
+                        if (!mounted) return;
+                        Flushbar(
+                          message: "Removido com sucesso!",
+                          duration: const Duration(seconds: 2),
+                          margin: const EdgeInsets.all(20),
+                          borderRadius: BorderRadius.circular(50),
+                        ).show(context);
+                      }
+                    },
+                  )
+                : const Text(""),
+          ],
+        ),
       ),
     );
   }

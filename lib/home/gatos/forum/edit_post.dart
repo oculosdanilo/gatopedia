@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -144,8 +145,7 @@ class _EditPostState extends State<EditPost> {
             ),
             imagem
                 ? badges.Badge(
-                    badgeContent: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
+                    badgeContent: ClipOval(
                       child: Material(
                         child: InkWell(
                           child: const Padding(
@@ -155,45 +155,43 @@ class _EditPostState extends State<EditPost> {
                             ),
                           ),
                           onTap: () {
-                            WidgetsBinding.instance.addPostFrameCallback(
-                              (timeStamp) {
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    icon: const Icon(Icons.delete_rounded),
-                                    title: const Text(
-                                      "Tem certeza que deseja remover a imagem do post?",
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    content: const Text(
-                                      "Essa ação é irreversível",
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context, false);
-                                        },
-                                        child: const Text("CANCELAR"),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context, true);
-                                        },
-                                        child: const Text("OK"),
-                                      )
-                                    ],
+                            showCupertinoDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                icon: const Icon(Icons.delete_rounded),
+                                title: const Text(
+                                  "Tem certeza que deseja remover a imagem do post?",
+                                  textAlign: TextAlign.center,
+                                ),
+                                content: const Text(
+                                  "Essa ação é irreversível",
+                                  textAlign: TextAlign.center,
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: const Text("CANCELAR"),
                                   ),
-                                ).then((value) {
-                                  debugPrint("$value");
-                                  if (value) {
-                                    setState(() {
-                                      imagem = false;
-                                      imagemRemovida = true;
-                                    });
-                                  }
-                                });
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: const Text("OK"),
+                                  )
+                                ],
+                              ),
+                            ).then(
+                              (value) {
+                                debugPrint("$value");
+                                if (value) {
+                                  setState(() {
+                                    imagem = false;
+                                    imagemRemovida = true;
+                                  });
+                                }
                               },
                             );
                           },
@@ -204,7 +202,7 @@ class _EditPostState extends State<EditPost> {
                       onPressed: () {
                         WidgetsBinding.instance.addPostFrameCallback(
                           (timeStamp) {
-                            showDialog(
+                            showCupertinoDialog(
                               barrierDismissible: false,
                               context: context,
                               builder: (context) => AlertDialog(

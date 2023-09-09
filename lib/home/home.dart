@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:gatopedia/home/config/config.dart';
@@ -38,7 +39,7 @@ class HomeState extends State {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        var dialogo = await showDialog(
+        var dialogo = await showCupertinoDialog(
             barrierDismissible: false,
             context: context,
             builder: (context) {
