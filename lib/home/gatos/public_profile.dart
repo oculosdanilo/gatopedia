@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gatopedia/home/eu/profile.dart';
 import 'package:gatopedia/main.dart';
 
-String bioText = "(vazio)";
+String bioText = "carregando...";
 
 class PublicProfile extends StatefulWidget {
   final String username;
@@ -22,21 +22,17 @@ class _PublicProfileState extends State<PublicProfile> {
 
   _pegarUserinfo(username) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("users/");
+    DatabaseReference ref = database.ref("users/$username");
     ref.get().then(
       (value) {
-        if ((value.value as Map)[username] != null) {
-          if ((value.value as Map)[username]["bio"] != null) {
-            setState(() {
-              bioText = (value.value as Map)[username]["bio"];
-              temImagem = ((value.value as Map)[username]["img"] ?? false);
-            });
-          } else {
-            bioText = "(vazio)";
-          }
+        if (value.child("bio").exists) {
+          setState(() {
+            bioText = value.child("bio").value as String;
+          });
         } else {
           bioText = "(vazio)";
         }
+        temImagem = value.child("img").value as bool;
       },
     );
   }
@@ -67,7 +63,6 @@ class _PublicProfileState extends State<PublicProfile> {
               slivers: [
                 SliverAppBar(
                   iconTheme: const IconThemeData(
-                    color: Colors.white,
                     shadows: [
                       Shadow(
                         color: Colors.black,
@@ -75,7 +70,11 @@ class _PublicProfileState extends State<PublicProfile> {
                       ),
                     ],
                   ),
-                  automaticallyImplyLeading: true,
+                  leading: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    color: Colors.white,
+                    icon: const Icon(Icons.arrow_back_rounded),
+                  ),
                   expandedHeight: 400,
                   backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
                   flexibleSpace: FlexibleSpaceBar(
@@ -87,9 +86,11 @@ class _PublicProfileState extends State<PublicProfile> {
                         Image(
                           image: listaTemImagem.contains(widget.username)
                               ? NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.username}.webp?alt=media")
-                              : const AssetImage("lib/assets/user.webp")
-                                  as ImageProvider,
+                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.username}.webp?alt=media",
+                                )
+                              : const AssetImage(
+                                  "lib/assets/user.webp",
+                                ) as ImageProvider,
                           width: 50,
                           fit: BoxFit.cover,
                         ),

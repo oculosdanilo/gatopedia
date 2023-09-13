@@ -7,7 +7,6 @@ import 'package:gatopedia/home/gatos/wiki/wiki.dart';
 
 int tabIndex = 0;
 List<Widget> telasGatos = [const Wiki(), const Forum()];
-late ScrollController scrollController;
 String txtEnviar = "ENVIAR";
 
 class GatoLista extends StatefulWidget {
@@ -17,8 +16,7 @@ class GatoLista extends StatefulWidget {
   State<GatoLista> createState() => _GatoListaState();
 }
 
-class _GatoListaState extends State<GatoLista>
-    with AutomaticKeepAliveClientMixin {
+class _GatoListaState extends State<GatoLista> {
   final miau = AudioPlayer();
   bool isPlaying = false;
 
@@ -29,24 +27,15 @@ class _GatoListaState extends State<GatoLista>
 
   @override
   void initState() {
-    indexAntigo = 0;
-    scrollController = ScrollController();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    scrollController.dispose();
-    super.dispose();
+    indexAntigo = 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return DefaultTabController(
       length: 2,
       child: NestedScrollView(
-        controller: scrollController,
         headerSliverBuilder: (BuildContext context, bool innerCoiso) {
           return [
             SliverAppBar.medium(
@@ -86,6 +75,8 @@ class _GatoListaState extends State<GatoLista>
             SliverPersistentHeader(
               delegate: _SliverAppBarDelegate(
                 TabBar(
+                  tabAlignment: TabAlignment.start,
+                  isScrollable: true,
                   onTap: (index) {
                     setState(() {
                       tabIndex = index;
@@ -125,9 +116,6 @@ class _GatoListaState extends State<GatoLista>
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
@@ -145,6 +133,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
+      width: double.infinity,
       child: _tabBar,
     );
   }

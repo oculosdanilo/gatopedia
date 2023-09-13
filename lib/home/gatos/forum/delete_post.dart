@@ -7,7 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:gatopedia/main.dart';
 
 class DeletePost extends StatefulWidget {
-  final dynamic post;
+  final int post;
 
   const DeletePost(this.post, {super.key});
 

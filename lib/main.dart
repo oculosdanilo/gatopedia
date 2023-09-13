@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ DataSnapshot? snapshot;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   SystemChrome.setPreferredOrientations(
     [DeviceOrientation.portraitUp],
   );
@@ -75,12 +77,14 @@ class _AppState extends State<App> {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: App.themeNotifier,
       builder: (_, ThemeMode currentMode, __) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: temaLight(context),
-          darkTheme: temaDark(),
-          themeMode: currentMode,
-          home: const Gatopedia(),
+        return KeyboardSizeProvider(
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: temaLight(context),
+            darkTheme: temaDark(),
+            themeMode: currentMode,
+            home: const Gatopedia(),
+          ),
         );
       },
     );
@@ -248,7 +252,6 @@ class _GatopediaState extends State<Gatopedia>
     super.initState();
     pegarImagens();
     _play();
-
     InternetConnectionChecker().onStatusChange.listen((status) {
       switch (status) {
         case InternetConnectionStatus.disconnected:
@@ -259,14 +262,13 @@ class _GatopediaState extends State<Gatopedia>
           break;
       }
     });
-
     if (!kDebugMode) {
       checarUpdate();
     }
   }
 
-  void _play() {
-    miau.setAsset("lib/assets/meow.mp3");
+  void _play() async {
+    await miau.setAsset("lib/assets/meow.mp3");
     miau.play();
   }
 

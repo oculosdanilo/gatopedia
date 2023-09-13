@@ -1,7 +1,7 @@
 name: gatopedia
 description: Uma enciclopédia de gatos!
 publish_to: "none"
-version: 1.5.2+14
+version: 2.0.0+15
 
 environment:
   sdk: ">=3.0.0-218.1.beta <4.0.0"
@@ -31,6 +31,8 @@ dependencies:
   image_cropper: ^3.0.2
   flutter_image_compress: ^2.0.1
   flutter_markdown: ^0.6.15
+  flutter_expandable_fab: ^2.0.0
+  flutter_keyboard_size: ^1.0.1
 
 dev_dependencies:
   flutter_test:

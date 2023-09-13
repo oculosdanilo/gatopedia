@@ -41,7 +41,7 @@ class _ImagePostState extends State<ImagePost> {
 
   @override
   void initState() {
-    _pegaImagem();
+    /* _pegaImagem(); */
     super.initState();
   }
 
@@ -62,9 +62,11 @@ class _ImagePostState extends State<ImagePost> {
                   });
                   Navigator.pop(context);
                 },
-                icon: const Icon(Icons.close_rounded),
+                icon: Icon(
+                  Icons.close_rounded,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
-              automaticallyImplyLeading: false,
               title: FlexibleSpaceBar(
                 centerTitle: true,
                 title: Text(

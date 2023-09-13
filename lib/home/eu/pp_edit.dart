@@ -140,9 +140,7 @@ class _PPEditState extends State<PPEdit> {
           SliverAppBar.large(
             leading: IconButton(
               color: Colors.white,
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.close_rounded),
             ),
             title: Center(
@@ -188,8 +186,7 @@ class _PPEditState extends State<PPEdit> {
                                       ),
                                     ),
                                   ),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(500),
+                                  ClipOval(
                                     child: Image(
                                       image: FileImage(imagemEditada!),
                                       fit: BoxFit.cover,

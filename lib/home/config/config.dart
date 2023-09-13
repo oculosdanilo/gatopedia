@@ -55,7 +55,7 @@ class _ConfigState extends State<Config> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      scrollBehavior: MyBehavior(),
+      physics: const NeverScrollableScrollPhysics(),
       slivers: [
         SliverAppBar.medium(
           automaticallyImplyLeading: false,
