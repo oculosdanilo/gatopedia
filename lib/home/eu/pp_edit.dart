@@ -51,7 +51,6 @@ class _PPEditState extends State<PPEdit> {
     if (!mounted) return;
     if (result != null) {
       file = File(result.files.single.path!);
-
       CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: file!.path,
         aspectRatioPresets: [
@@ -100,12 +99,6 @@ class _PPEditState extends State<PPEdit> {
             activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
             statusBarColor: Theme.of(context).colorScheme.primary,
             lockAspectRatio: true,
-          ),
-          IOSUiSettings(
-            title: 'Cropper',
-          ),
-          WebUiSettings(
-            context: context,
           ),
         ],
       );
@@ -214,10 +207,11 @@ class _PPEditState extends State<PPEdit> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           OutlinedButton(
-                              onPressed: () {
-                                _editarImagem(file);
-                              },
-                              child: const Text("EDITAR")),
+                            onPressed: () {
+                              _editarImagem(file);
+                            },
+                            child: const Text("EDITAR"),
+                          ),
                           ElevatedButton(
                             onPressed: () {
                               _salvarPP(imagemEditada!);

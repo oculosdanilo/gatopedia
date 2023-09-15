@@ -6,7 +6,10 @@ import 'package:gatopedia/home/gatos/forum/forum.dart';
 import 'package:gatopedia/home/gatos/wiki/wiki.dart';
 
 int tabIndex = 0;
-List<Widget> telasGatos = [const Wiki(), const Forum()];
+List<Widget> telasGatos = [
+  const Wiki(),
+  const Forum(),
+];
 String txtEnviar = "ENVIAR";
 
 class GatoLista extends StatefulWidget {
@@ -87,7 +90,8 @@ class _GatoListaState extends State<GatoLista> {
                     fontSize: 19,
                   ),
                   labelColor: Theme.of(context).colorScheme.onPrimary,
-                  unselectedLabelColor: Theme.of(context).colorScheme.outline,
+                  unselectedLabelColor:
+                      Theme.of(context).colorScheme.onPrimary.withOpacity(0.5),
                   indicatorColor: Theme.of(context).colorScheme.onPrimary,
                   tabs: const [
                     InkWell(

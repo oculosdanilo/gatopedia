@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -17,7 +18,7 @@ bool imagemSelecionada = false;
 bool imagem = false;
 
 class EditPost extends StatefulWidget {
-  final dynamic post;
+  final String post;
 
   const EditPost(this.post, {super.key});
 
@@ -50,7 +51,7 @@ class _EditPostState extends State<EditPost> {
     }
   }
 
-  _editar(post) async {
+  _editar(String post) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$post");
     debugPrint("$imagemRemovida");
@@ -62,6 +63,9 @@ class _EditPostState extends State<EditPost> {
       Reference refI = FirebaseStorage.instance.ref("posts/$post.webp");
       await refI.putFile(imagemFile ?? File(""));
     }
+    CachedNetworkImage.evictFromCache(
+      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$post.webp?alt=media",
+    );
     ref.update(
       {
         "content": txtEdit.text,
@@ -72,7 +76,10 @@ class _EditPostState extends State<EditPost> {
 
   @override
   void initState() {
-    txtEdit.text = (snapshot?.value as List)[widget.post]["content"];
+    CachedNetworkImage.evictFromCache(
+      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.post}.webp?alt=media",
+    );
+    txtEdit.text = snapshot?.child("${widget.post}/content").value as String;
     imagemRemovida = false;
     super.initState();
   }
@@ -94,7 +101,7 @@ class _EditPostState extends State<EditPost> {
         ),
         ElevatedButton(
           onPressed: () async {
-            if ((snapshot?.value as List)[widget.post]["content"] !=
+            if (snapshot?.child("${widget.post}/content").value !=
                     txtEdit.text ||
                 imagemRemovida ||
                 imagemSelecionada) {
@@ -198,52 +205,6 @@ class _EditPostState extends State<EditPost> {
                         ),
                       ),
                     ),
-                    /* IconButton(
-                      onPressed: () {
-                        WidgetsBinding.instance.addPostFrameCallback(
-                          (timeStamp) {
-                            showCupertinoDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                icon: const Icon(Icons.delete_rounded),
-                                title: const Text(
-                                  "Tem certeza que deseja remover a imagem do post?",
-                                  textAlign: TextAlign.center,
-                                ),
-                                content: const Text(
-                                  "Essa ação é irreversível",
-                                  textAlign: TextAlign.center,
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context, false);
-                                    },
-                                    child: const Text("CANCELAR"),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context, true);
-                                    },
-                                    child: const Text("OK"),
-                                  )
-                                ],
-                              ),
-                            ).then((value) {
-                              debugPrint("$value");
-                              if (value) {
-                                setState(() {
-                                  widget.imagem = false;
-                                  imagemRemovida = true;
-                                });
-                              }
-                            });
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.close_rounded),
-                    ), */
                     badgeStyle: badges.BadgeStyle(
                       padding: const EdgeInsets.all(1),
                       badgeColor: dark ? Colors.grey[800]! : Colors.grey[400]!,
@@ -253,7 +214,7 @@ class _EditPostState extends State<EditPost> {
                             width: 200,
                             fit: BoxFit.cover,
                             image: FileImage(
-                              imagemFile ?? File(""),
+                              imagemFile!,
                             ),
                           )
                         : FadeInImage(
@@ -263,7 +224,7 @@ class _EditPostState extends State<EditPost> {
                             fadeOutDuration: const Duration(milliseconds: 300),
                             placeholder:
                                 const AssetImage('lib/assets/loading.gif'),
-                            image: NetworkImage(
+                            image: CachedNetworkImageProvider(
                               "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.post}.webp?alt=media",
                             ),
                           ),

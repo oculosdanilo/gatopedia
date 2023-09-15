@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:photo_view/photo_view.dart';
 
 class Imagem extends StatefulWidget {
   final String imagemUrl;
@@ -12,43 +14,47 @@ class Imagem extends StatefulWidget {
 class _ImagemState extends State<Imagem> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Center(
-              child: InteractiveViewer(
-                child: CachedNetworkImage(
-                  key: UniqueKey(),
-                  imageUrl: widget.imagemUrl,
-                  height: double.infinity,
-                  width: double.infinity,
-                  fit: BoxFit.fitWidth,
-                ),
-              ),
+      body: Stack(
+        children: [
+          PhotoView(
+            imageProvider: CachedNetworkImageProvider(
+              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.imagemUrl}.webp?alt=media",
             ),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: Material(
-                  color: Colors.black,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: const Icon(
-                        Icons.close_rounded,
-                        color: Colors.white,
-                      ),
+            heroAttributes: PhotoViewHeroAttributes(
+              tag: widget.imagemUrl,
+              transitionOnUserGestures: true,
+            ),
+            minScale: PhotoViewComputedScale.contained,
+            maxScale: 1.0,
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              5,
+              MediaQuery.of(context).padding.top + 5,
+              0,
+              0,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Material(
+                color: Colors.black,
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: InkWell(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(
+                      Icons.close_rounded,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

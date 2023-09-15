@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'dart:async';
 import 'dart:io';
 
@@ -13,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gatopedia/home/gatos/forum/image_post.dart';
+import 'package:gatopedia/home/gatos/forum/imagem.dart';
 import 'package:gatopedia/home/gatos/forum/text_post.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
@@ -199,72 +198,128 @@ class _ForumState extends State<Forum> {
 
   @override
   Widget build(BuildContext context) {
-    return StretchingOverscrollIndicator(
-      axisDirection: AxisDirection.down,
-      child: Scaffold(
-        floatingActionButton: ExpandableFab(
-          key: fagKey,
-          distance: 70,
-          overlayStyle: ExpandableFabOverlayStyle(
-            blur: 4,
+    return Scaffold(
+      floatingActionButton: ExpandableFab(
+        key: fagKey,
+        distance: 70,
+        overlayStyle: ExpandableFabOverlayStyle(
+          blur: 4,
+        ),
+        openButtonBuilder: RotateFloatingActionButtonBuilder(
+          child: const Icon(Icons.edit_rounded),
+        ),
+        closeButtonBuilder: RotateFloatingActionButtonBuilder(
+          child: const Icon(Icons.close_rounded),
+          fabSize: ExpandableFabSize.small,
+        ),
+        type: ExpandableFabType.up,
+        children: [
+          FloatingActionButton.extended(
+            heroTag: null,
+            onPressed: () async {
+              final state = fagKey.currentState;
+              if (state != null) {
+                state.toggle();
+              }
+              await showModalBottomSheet(
+                context: context,
+                showDragHandle: true,
+                builder: (ctx) {
+                  return const TextPost();
+                },
+              );
+              txtPost.text = "";
+            },
+            label: const Text("Texto"),
+            icon: const Icon(Icons.text_fields_rounded),
           ),
-          openButtonBuilder: RotateFloatingActionButtonBuilder(
-            child: const Icon(Icons.edit_rounded),
-          ),
-          closeButtonBuilder: RotateFloatingActionButtonBuilder(
-            child: const Icon(Icons.close_rounded),
-            fabSize: ExpandableFabSize.small,
-          ),
-          type: ExpandableFabType.up,
-          children: [
-            FloatingActionButton.extended(
-              onPressed: () async {
+          OpenContainer(
+            onClosed: (data) {
+              if (postado) {
                 final state = fagKey.currentState;
                 if (state != null) {
                   state.toggle();
                 }
-                await showModalBottomSheet(
-                  context: context,
-                  showDragHandle: true,
-                  builder: (ctx) {
-                    return TextPost();
-                  },
+                Flushbar(
+                  message: "Postando...",
+                  duration: const Duration(seconds: 5),
+                  margin: const EdgeInsets.all(20),
+                  borderRadius: BorderRadius.circular(50),
+                ).show(context);
+                CachedNetworkImage.evictFromCache(
+                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshot?.children.last.key ?? 0}") + 1}.webp?alt=media",
                 );
-                txtPost.text = "";
-              },
-              label: const Text("Texto"),
-              icon: const Icon(Icons.text_fields_rounded),
+                _postarImagem(
+                  int.parse("${snapshot?.children.last.key ?? 0}") + 1,
+                  "img",
+                );
+              }
+            },
+            transitionDuration: const Duration(milliseconds: 400),
+            closedElevation: 5,
+            openColor: Theme.of(context).colorScheme.background,
+            openBuilder: (context, action) => const ImagePost("image"),
+            closedColor: Theme.of(context).colorScheme.primaryContainer,
+            closedShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            OpenContainer(
-              transitionDuration: Duration(seconds: 5),
-              closedElevation: 5,
-              openColor: Theme.of(context).colorScheme.background,
-              openBuilder: (context, action) => ImagePost("image"),
-              closedColor: Theme.of(context).colorScheme.primaryContainer,
-              closedShape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              closedBuilder: (context, action) => FloatingActionButton.extended(
-                onPressed: () => action.call(),
-                elevation: 0,
-                label: const Text("Imagem"),
-                icon: const Icon(Icons.image_rounded),
-              ),
+            closedBuilder: (context, action) => FloatingActionButton.extended(
+              heroTag: null,
+              onPressed: () => action.call(),
+              elevation: 0,
+              label: const Text("Imagem"),
+              icon: const Icon(Icons.image_rounded),
             ),
-            FloatingActionButton.extended(
-              onPressed: () {},
+          ),
+          OpenContainer(
+            onClosed: (data) {
+              if (postado) {
+                final state = fagKey.currentState;
+                if (state != null) {
+                  state.toggle();
+                }
+                Flushbar(
+                  message: "Postando...",
+                  duration: const Duration(seconds: 5),
+                  margin: const EdgeInsets.all(20),
+                  borderRadius: BorderRadius.circular(50),
+                ).show(context);
+                CachedNetworkImage.evictFromCache(
+                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshot?.children.last.key ?? 0}") + 1}.webp?alt=media",
+                );
+                _postarImagem(
+                  int.parse("${snapshot?.children.last.key ?? 0}") + 1,
+                  "gif",
+                );
+              }
+            },
+            transitionDuration: const Duration(milliseconds: 400),
+            closedElevation: 5,
+            openColor: Theme.of(context).colorScheme.background,
+            openBuilder: (context, action) => const ImagePost("gif"),
+            closedColor: Theme.of(context).colorScheme.primaryContainer,
+            closedShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            closedBuilder: (context, action) => FloatingActionButton.extended(
+              heroTag: null,
+              onPressed: () => action.call(),
+              elevation: 0,
               label: const Text("GIF"),
               icon: const Icon(Icons.gif_rounded),
             ),
-          ],
-        ),
-        floatingActionButtonLocation: ExpandableFab.location,
-        body: Container(
-          margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Stack(
-            children: [
-              (snapshot?.exists ?? false)
-                  ? ListView.builder(
+          ),
+        ],
+      ),
+      floatingActionButtonLocation: ExpandableFab.location,
+      body: Container(
+        margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+        child: Stack(
+          children: [
+            (snapshot?.exists ?? false)
+                ? StretchingOverscrollIndicator(
+                    axisDirection: AxisDirection.down,
+                    child: ListView.builder(
                       shrinkWrap: true,
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
@@ -279,10 +334,10 @@ class _ForumState extends State<Forum> {
                       itemCount: (snapshot?.exists ?? false)
                           ? (int.parse("${snapshot?.children.last.key}") + 1)
                           : 0,
-                    )
-                  : const Center(child: CircularProgressIndicator()),
-            ],
-          ),
+                    ),
+                  )
+                : const Center(child: CircularProgressIndicator()),
+          ],
         ),
       ),
     );
@@ -448,18 +503,32 @@ class _ForumState extends State<Forum> {
                                   borderRadius: BorderRadius.circular(10),
                                   child: AspectRatio(
                                     aspectRatio: 1,
-                                    child: FadeInImage(
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      fadeInDuration:
-                                          const Duration(milliseconds: 150),
-                                      fadeOutDuration:
-                                          const Duration(milliseconds: 150),
-                                      placeholder: const AssetImage(
-                                        'lib/assets/loading.gif',
+                                    child: InkWell(
+                                      onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (ctx) => Imagem(
+                                            "${int.parse(snapshot!.children.last.key!) - index}",
+                                          ),
+                                        ),
                                       ),
-                                      image: CachedNetworkImageProvider(
-                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse(snapshot?.children.last.key ?? "0") - index}.webp?alt=media",
+                                      child: Hero(
+                                        tag:
+                                            "${int.parse(snapshot!.children.last.key!) - index}",
+                                        child: FadeInImage(
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          fadeInDuration:
+                                              const Duration(milliseconds: 150),
+                                          fadeOutDuration:
+                                              const Duration(milliseconds: 150),
+                                          placeholder: const AssetImage(
+                                            'lib/assets/loading.gif',
+                                          ),
+                                          image: CachedNetworkImageProvider(
+                                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse(snapshot!.children.last.key!) - index}.webp?alt=media",
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -585,7 +654,8 @@ class _ForumState extends State<Forum> {
                                 index]["img"] !=
                         null;
                     return EditPost(
-                      (int.parse(snapshot?.children.last.key ?? "0") - index),
+                      (int.parse(snapshot?.children.last.key ?? "0") - index)
+                          .toString(),
                     );
                   },
                 ).then((value) {
@@ -613,39 +683,6 @@ class _ForumState extends State<Forum> {
               ),
             )
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class PhotoHero extends StatelessWidget {
-  const PhotoHero({
-    Key? key,
-    required this.photo,
-    required this.onTap,
-    required this.width,
-  }) : super(key: key);
-
-  final String photo;
-  final VoidCallback onTap;
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      child: Hero(
-        tag: photo,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Image.asset(
-              photo,
-              fit: BoxFit.contain,
-            ),
-          ),
         ),
       ),
     );

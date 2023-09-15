@@ -6,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
+import 'package:gatopedia/home/config/config.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
@@ -274,6 +275,9 @@ class _GatopediaState extends State<Gatopedia>
 
   @override
   Widget build(BuildContext context) {
+    dark
+        ? SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light)
+        : SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -316,10 +320,7 @@ class _GatopediaState extends State<Gatopedia>
                 const SizedBox(
                   height: 60,
                 ),
-                const SizedBox(
-                  width: 300,
-                ),
-                const FormApp()
+                const FormApp(),
               ],
             ),
           ),

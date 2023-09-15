@@ -32,7 +32,7 @@ class _PublicProfileState extends State<PublicProfile> {
         } else {
           bioText = "(vazio)";
         }
-        temImagem = value.child("img").value as bool;
+        temImagem = value.child("img").exists;
       },
     );
   }
