@@ -6,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
+import 'package:gatopedia/firebase_options.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
@@ -33,13 +34,12 @@ DataSnapshot? snapshot;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   SystemChrome.setPreferredOrientations(
     [DeviceOrientation.portraitUp],
   );
   final SharedPreferences pref = await SharedPreferences.getInstance();
-  if (pref.getBool("dark") ??
-      PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
+  if (pref.getBool("dark") ?? PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
     runApp(const App(ThemeMode.dark));
   } else {
     runApp(const App(ThemeMode.light));
@@ -191,8 +191,7 @@ class Gatopedia extends StatefulWidget {
   }
 }
 
-class _GatopediaState extends State<Gatopedia>
-    with SingleTickerProviderStateMixin {
+class _GatopediaState extends State<Gatopedia> with SingleTickerProviderStateMixin {
   final miau = AudioPlayer();
   String appName = "";
   String packageName = "";
@@ -292,8 +291,7 @@ class _GatopediaState extends State<Gatopedia>
                   tween: Tween<double>(begin: 0.0, end: 1.0),
                   curve: Curves.easeIn,
                   duration: const Duration(seconds: 1),
-                  builder:
-                      (BuildContext context, double opacity, Widget? child) {
+                  builder: (BuildContext context, double opacity, Widget? child) {
                     return Opacity(
                       opacity: opacity,
                       child: const Image(

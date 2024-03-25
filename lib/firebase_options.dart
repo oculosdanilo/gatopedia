@@ -53,7 +53,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBMpE-z_zpBeF3MYTJCqozKKjNYs66JFkI',
+    apiKey: 'AIzaSyAVO2zhHew6EuDr3yNPvUK0PdVOgWo8p_g',
     appId: '1:906400327488:android:667de87715d89fd291fca5',
     messagingSenderId: '906400327488',
     projectId: 'fluttergatopedia',
