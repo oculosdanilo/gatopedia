@@ -34,6 +34,7 @@ dependencies:
   flutter_expandable_fab: ^2.0.0
   flutter_keyboard_size: ^1.0.1
   photo_view: ^0.14.0
+  material_symbols_icons: ^4.2719.3
 
 dev_dependencies:
   flutter_test:
