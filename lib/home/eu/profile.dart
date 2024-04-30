@@ -33,6 +33,7 @@ enum MenuItensSemImg { adicionar }
 
 class Profile extends StatefulWidget {
   final bool botaoVoltar;
+
   const Profile(this.botaoVoltar, {super.key});
 
   @override
@@ -214,13 +215,13 @@ class _ProfileState extends State<Profile> {
                     ).then(
                       (value) async {
                         if (value ?? false) {
-                          await _apagarImagem(username);
+                          await _apagarImagem(username!);
                           setState(() {
                             CachedNetworkImage.evictFromCache(
                               "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
                             );
                           });
-                          if (!mounted) return;
+                          if (!context.mounted) return;
                           Flushbar(
                             message: "Removida com sucesso!",
                             duration: const Duration(seconds: 2),
@@ -334,14 +335,14 @@ class _ProfileState extends State<Profile> {
             temImagem ?? false
                 ? FadeInImage(
                     fadeInDuration: const Duration(milliseconds: 100),
-                    placeholder: const AssetImage("lib/assets/user.webp"),
+                    placeholder: const AssetImage("assets/user.webp"),
                     image: CachedNetworkImageProvider(
                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
                     ),
                     fit: BoxFit.cover,
                   )
                 : Image.asset(
-                    "lib/assets/user.webp",
+                    "assets/user.webp",
                     fit: BoxFit.cover,
                   ),
             const DecoratedBox(

@@ -79,6 +79,7 @@ android {
       signingConfig signingConfigs.debug
     }
   }
+    namespace 'io.oculosdanilo.gatopedia'
 
 }
 

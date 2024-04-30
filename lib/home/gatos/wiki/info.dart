@@ -12,6 +12,7 @@ late Future<DataSnapshot> _getData;
 
 class GatoInfo extends StatefulWidget {
   final DataSnapshot gatoInfo;
+
   const GatoInfo(this.gatoInfo, {super.key});
 
   @override
@@ -96,7 +97,7 @@ class GatoInfoState extends State<GatoInfo> {
                       imageUrl: widget.gatoInfo.child("img").value.toString(),
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Image.asset(
-                        "lib/assets/loading.gif",
+                        "assets/loading.gif",
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -249,6 +250,7 @@ class GatoInfoState extends State<GatoInfo> {
 
 class Comentarios extends StatefulWidget {
   final DataSnapshot gatoInfo;
+
   const Comentarios(this.gatoInfo, {super.key});
 
   @override
@@ -335,8 +337,7 @@ class _ComentariosState extends State<Comentarios> {
                       ? NetworkImage(
                           "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot.data!.value as List)[(snapshot.data!.value as List).length - index - 1]["user"].toString()}.webp?alt=media",
                         )
-                      : const AssetImage("lib/assets/user.webp")
-                          as ImageProvider,
+                      : const AssetImage("assets/user.webp") as ImageProvider,
                   width: 50,
                 ),
               ),

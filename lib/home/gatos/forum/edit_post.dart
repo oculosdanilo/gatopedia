@@ -222,8 +222,7 @@ class _EditPostState extends State<EditPost> {
                             width: 200,
                             fadeInDuration: const Duration(milliseconds: 300),
                             fadeOutDuration: const Duration(milliseconds: 300),
-                            placeholder:
-                                const AssetImage('lib/assets/loading.gif'),
+                            placeholder: const AssetImage('assets/loading.gif'),
                             image: CachedNetworkImageProvider(
                               "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.post}.webp?alt=media",
                             ),

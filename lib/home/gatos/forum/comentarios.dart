@@ -113,7 +113,7 @@ class _ComentariosState extends State<Comentarios> {
                                 as List)[widget.post]["username"])
                             ? NetworkImage(
                                 "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["username"]}.webp?alt=media")
-                            : const AssetImage("lib/assets/user.webp")
+                            : const AssetImage("assets/user.webp")
                                 as ImageProvider,
                         width: 30,
                       ),
@@ -310,8 +310,7 @@ class _ComentariosState extends State<Comentarios> {
                                   1]["username"])
                       ? NetworkImage(
                           "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.webp?alt=media")
-                      : const AssetImage("lib/assets/user.webp")
-                          as ImageProvider,
+                      : const AssetImage("assets/user.webp") as ImageProvider,
                   width: 50,
                 ),
               ),

@@ -391,14 +391,14 @@ class _ForumState extends State<Forum> {
                                   fadeInDuration:
                                       const Duration(milliseconds: 100),
                                   placeholder:
-                                      const AssetImage("lib/assets/user.webp"),
+                                      const AssetImage("assets/user.webp"),
                                   image: NetworkImage(
                                     "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postSS.child("username").value}.webp?alt=media",
                                   ),
                                   fit: BoxFit.cover,
                                 )
                               : Image.asset(
-                                  "lib/assets/user.webp",
+                                  "assets/user.webp",
                                   fit: BoxFit.cover,
                                 ),
                         ),
@@ -523,7 +523,7 @@ class _ForumState extends State<Forum> {
                                           fadeOutDuration:
                                               const Duration(milliseconds: 150),
                                           placeholder: const AssetImage(
-                                            'lib/assets/loading.gif',
+                                            'assets/loading.gif',
                                           ),
                                           image: CachedNetworkImageProvider(
                                             "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse(snapshot!.children.last.key!) - index}.webp?alt=media",

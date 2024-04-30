@@ -43,20 +43,23 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - lib/assets/
+    - assets/
   fonts:
     - family: Jost
       fonts:
-        - asset: lib/assets/jost.ttf
+        - asset: assets/jost.ttf
 
 flutter_native_splash:
   color: "#fffbff"
-  image: lib/assets/icon.png
-  branding: lib/assets/createdby-dark.png
-  image_dark: lib/assets/icon.png
+  branding: assets/createdby-light.png
+
   color_dark: "#1c1c1c"
-  branding_dark: lib/assets/icon.png
+  branding_dark: assets/createdby-dark.png
   android_12:
-    image: lib/assets/icon.png
-    color: "#1c1c1c"
-    branding: lib/assets/createdby-dark.png
+    color: "#fffbff"
+    branding: assets/createdby-light-12.png
+
+    color_dark: "#1c1c1c"
+    branding_dark: assets/createdby-dark-12.png
+
+  ios: false

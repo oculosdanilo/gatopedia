@@ -24,7 +24,7 @@ class _GatoListaState extends State<GatoLista> {
   bool isPlaying = false;
 
   void _play() {
-    miau.setAsset("lib/assets/meow.mp3");
+    miau.setAsset("assets/meow.mp3");
     miau.play();
   }
 
@@ -129,6 +129,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get minExtent => _tabBar.preferredSize.height;
+
   @override
   double get maxExtent => _tabBar.preferredSize.height;
 

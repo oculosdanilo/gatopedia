@@ -82,14 +82,14 @@ class _TextPostState extends State<TextPost> {
                                 fadeInDuration:
                                     const Duration(milliseconds: 100),
                                 placeholder:
-                                    const AssetImage("lib/assets/user.webp"),
+                                    const AssetImage("assets/user.webp"),
                                 image: NetworkImage(
                                   "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
                                 ),
                                 fit: BoxFit.cover,
                               )
                             : Image.asset(
-                                "lib/assets/user.webp",
+                                "assets/user.webp",
                                 fit: BoxFit.cover,
                               ),
                       ),

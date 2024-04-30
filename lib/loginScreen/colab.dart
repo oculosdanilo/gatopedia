@@ -101,7 +101,7 @@ class ColaboradoresState extends State<Colaboradores> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: const Image(
-                            image: AssetImage('lib/assets/danilo.jpg'),
+                            image: AssetImage('assets/danilo.jpg'),
                             width: 130,
                           ),
                         ),
@@ -154,7 +154,7 @@ class ColaboradoresState extends State<Colaboradores> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: const Image(
-                            image: AssetImage('lib/assets/lucca.png'),
+                            image: AssetImage('assets/lucca.png'),
                             width: 130,
                           ),
                         ),

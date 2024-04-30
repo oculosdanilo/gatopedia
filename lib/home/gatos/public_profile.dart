@@ -7,7 +7,9 @@ String bioText = "carregando...";
 
 class PublicProfile extends StatefulWidget {
   final String username;
+
   const PublicProfile(this.username, {super.key});
+
   @override
   State<PublicProfile> createState() => _PublicProfileState();
 }
@@ -89,7 +91,7 @@ class _PublicProfileState extends State<PublicProfile> {
                                   "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.username}.webp?alt=media",
                                 )
                               : const AssetImage(
-                                  "lib/assets/user.webp",
+                                  "assets/user.webp",
                                 ) as ImageProvider,
                           width: 50,
                           fit: BoxFit.cover,

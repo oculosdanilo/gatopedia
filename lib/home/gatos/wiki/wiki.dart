@@ -120,7 +120,7 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
                                                   .toString(),
                                               placeholder: (context, url) =>
                                                   Image.asset(
-                                                "lib/assets/loading.gif",
+                                                "assets/loading.gif",
                                               ),
                                               fadeInDuration: const Duration(
                                                   milliseconds: 150),

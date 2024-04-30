@@ -4,22 +4,23 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:gatopedia/firebase_options.dart';
 import 'package:gatopedia/home/config/config.dart';
+import 'package:gatopedia/index.dart';
+import 'package:gatopedia/loginScreen/login/form.dart';
+import 'package:gatopedia/loginScreen/seminternet.dart';
+import 'package:gatopedia/update.dart';
+import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gatopedia/loginScreen/seminternet.dart';
-import 'package:gatopedia/loginScreen/login/form.dart';
-import 'package:gatopedia/update.dart';
 
 List listaTemImagem = [];
-late String username;
+String? username;
 bool internet = true;
 ColorScheme blueScheme = ColorScheme.fromSeed(
   seedColor: const Color(0xff000080),
@@ -39,10 +40,11 @@ void main() async {
     [DeviceOrientation.portraitUp],
   );
   final SharedPreferences pref = await SharedPreferences.getInstance();
-  if (pref.getBool("dark") ?? PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
-    runApp(const App(ThemeMode.dark));
+  if (pref.getBool("dark") ??
+      PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
+    runApp(const App(ThemeMode.dark, Index()));
   } else {
-    runApp(const App(ThemeMode.light));
+    runApp(const App(ThemeMode.light, Index()));
   }
 }
 
@@ -60,7 +62,9 @@ class MyBehavior extends ScrollBehavior {
 class App extends StatefulWidget {
   static late final ValueNotifier<ThemeMode> themeNotifier;
   final ThemeMode temaInicial;
-  const App(this.temaInicial, {super.key});
+  final Widget inicio;
+
+  const App(this.temaInicial, this.inicio, {super.key});
 
   @override
   State<App> createState() => _AppState();
@@ -81,17 +85,17 @@ class _AppState extends State<App> {
         return KeyboardSizeProvider(
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: temaLight(context),
+            theme: temaLight(),
             darkTheme: temaDark(),
             themeMode: currentMode,
-            home: const Gatopedia(),
+            home: widget.inicio,
           ),
         );
       },
     );
   }
 
-  ThemeData temaLight(BuildContext context) {
+  ThemeData temaLight() {
     return ThemeData(
       navigationBarTheme: NavigationBarThemeData(
         indicatorColor: blueSchemeL.primary,
@@ -183,7 +187,9 @@ class _AppState extends State<App> {
 }
 
 class Gatopedia extends StatefulWidget {
-  const Gatopedia({super.key});
+  final Widget inicio;
+
+  const Gatopedia(this.inicio, {super.key});
 
   @override
   State<Gatopedia> createState() {
@@ -191,7 +197,8 @@ class Gatopedia extends StatefulWidget {
   }
 }
 
-class _GatopediaState extends State<Gatopedia> with SingleTickerProviderStateMixin {
+class _GatopediaState extends State<Gatopedia>
+    with SingleTickerProviderStateMixin {
   final miau = AudioPlayer();
   String appName = "";
   String packageName = "";
@@ -268,7 +275,7 @@ class _GatopediaState extends State<Gatopedia> with SingleTickerProviderStateMix
   }
 
   void _play() async {
-    await miau.setAsset("lib/assets/meow.mp3");
+    await miau.setAsset("assets/meow.mp3");
     miau.play();
   }
 
@@ -291,11 +298,12 @@ class _GatopediaState extends State<Gatopedia> with SingleTickerProviderStateMix
                   tween: Tween<double>(begin: 0.0, end: 1.0),
                   curve: Curves.easeIn,
                   duration: const Duration(seconds: 1),
-                  builder: (BuildContext context, double opacity, Widget? child) {
+                  builder:
+                      (BuildContext context, double opacity, Widget? child) {
                     return Opacity(
                       opacity: opacity,
                       child: const Image(
-                        image: AssetImage('lib/assets/icon.png'),
+                        image: AssetImage('assets/icon old.png'),
                         width: 270,
                       ),
                     );
@@ -330,6 +338,7 @@ class _GatopediaState extends State<Gatopedia> with SingleTickerProviderStateMix
 
 class SlideUpRoute extends PageRouteBuilder {
   final Widget page;
+
   SlideUpRoute(this.page)
       : super(
           reverseTransitionDuration: const Duration(milliseconds: 500),

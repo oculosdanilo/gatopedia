@@ -8,12 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:gatopedia/loginScreen/login/autenticar.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
-
-import '../../main.dart';
-import '../colab.dart';
-import '../../firebase_options.dart';
-import '../../home/home.dart';
-import '../../update.dart';
+import 'package:gatopedia/main.dart';
+import 'package:gatopedia/loginScreen/colab.dart';
+import 'package:gatopedia/firebase_options.dart';
+import 'package:gatopedia/home/home.dart';
+import 'package:gatopedia/update.dart';
 
 class FormApp extends StatefulWidget {
   const FormApp({super.key});
@@ -43,7 +42,6 @@ class FormAppState extends State<FormApp> {
       ),
     );
     Map<String, dynamic> versaoAtt = jsonDecode(response.body);
-    debugPrint(versaoAtt["tag_name"]);
     if (version != versaoAtt["tag_name"]) {
       Navigator.push(
         context,
@@ -67,7 +65,7 @@ class FormAppState extends State<FormApp> {
       // Create the SelectionScreen in the next step.
       SlideRightRoute(const Home()),
     );
-    if (!mounted) return;
+    if (!context.mounted) return;
     mudarCor(Theme.of(context).colorScheme.primary);
   }
 
@@ -248,7 +246,7 @@ class FormAppState extends State<FormApp> {
                               txtControllerLogin.text,
                               txtControllerSenha.text,
                             );
-                            if (!mounted) return;
+                            if (!context.mounted) return;
                             if (!resposta.$1) {
                               Flushbar(
                                 duration: const Duration(seconds: 10),
@@ -392,6 +390,7 @@ class FormAppState extends State<FormApp> {
 
 class SlideRightRoute extends PageRouteBuilder {
   final Widget page;
+
   SlideRightRoute(this.page)
       : super(
           reverseTransitionDuration: const Duration(milliseconds: 500),
