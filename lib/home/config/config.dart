@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:gatopedia/home/home.dart';
+import 'package:gatopedia/main.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../main.dart';
 
 final Uri _urlGatopediaGit =
     Uri.parse('https://github.com/oculosdanilo/gatopedia');
@@ -19,6 +18,7 @@ bool dark = App.themeNotifier.value == ThemeMode.dark ? true : false;
 
 class Config extends StatefulWidget {
   const Config({super.key});
+
   @override
   State<Config> createState() => _ConfigState();
 }

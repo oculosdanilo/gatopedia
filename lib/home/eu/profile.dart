@@ -6,8 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/eu/pp_edit.dart';
-import 'package:gatopedia/main.dart';
 import 'package:gatopedia/home/home.dart';
+import 'package:gatopedia/main.dart';
 
 String bioText = "carregando...";
 bool? temImagem;
@@ -168,7 +168,7 @@ class _ProfileState extends State<Profile> {
                       context,
                       SlideRightAgainRoute(const PPEdit()),
                     );
-                    if (!mounted) return;
+                    if (!context.mounted) return;
                     if (resposta != null) {
                       if (resposta) {
                         setState(() {
@@ -279,7 +279,7 @@ class _ProfileState extends State<Profile> {
                       context,
                       SlideRightAgainRoute(const PPEdit()),
                     );
-                    if (!mounted) return;
+                    if (!context.mounted) return;
                     if (resposta != null) {
                       if (resposta) {
                         Flushbar(

@@ -198,7 +198,7 @@ class GatoInfoState extends State<GatoInfo> {
                                             "gatos/${widget.gatoInfo.key}/comentarios")
                                         .get();
                                   });
-                                  if (!mounted) return;
+                                  if (!context.mounted) return;
                                   Flushbar(
                                     message: "Postado com sucesso!",
                                     duration: const Duration(seconds: 2),
@@ -461,7 +461,7 @@ class _ComentariosState extends State<Comentarios> {
                               .ref("gatos/${widget.gatoInfo.key}/comentarios")
                               .get();
                         });
-                        if (!mounted) return;
+                        if (!context.mounted) return;
                         Flushbar(
                           message: "Removido com sucesso!",
                           duration: const Duration(seconds: 2),

@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -9,15 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:gatopedia/firebase_options.dart';
-import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/index.dart';
-import 'package:gatopedia/loginScreen/login/form.dart';
-import 'package:gatopedia/loginScreen/seminternet.dart';
-import 'package:gatopedia/update.dart';
-import 'package:http/http.dart' as http;
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 List listaTemImagem = [];
@@ -97,23 +87,19 @@ class _AppState extends State<App> {
     );
   }
 
+  ThemeData temaBase(ThemeMode mode) {
+    return ThemeData(
+      colorScheme: mode == ThemeMode.dark ? blueScheme : blueSchemeL,
+    );
+  }
+
   ThemeData temaLight() {
     return ThemeData(
       navigationBarTheme: NavigationBarThemeData(
         indicatorColor: blueSchemeL.primary,
       ),
       appBarTheme: AppBarTheme(backgroundColor: blueSchemeL.primary),
-      snackBarTheme: const SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-      ),
       inputDecorationTheme: InputDecorationTheme(
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            width: 2,
-            color: blueScheme.outline,
-          ),
-        ),
         focusedBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(50)),
           borderSide: BorderSide(
@@ -135,10 +121,21 @@ class _AppState extends State<App> {
             color: blueSchemeL.error,
           ),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(
+            width: 2,
+            color: blueScheme.outline,
+          ),
+        ),
       ),
       brightness: Brightness.light,
+      snackBarTheme: const SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+      ),
       colorSchemeSeed: const Color(0xff000080),
       useMaterial3: true,
+      textTheme: GoogleFonts.jostTextTheme(temaBase(ThemeMode.light).textTheme),
     );
   }
 
@@ -148,17 +145,7 @@ class _AppState extends State<App> {
         indicatorColor: blueScheme.primary,
       ),
       appBarTheme: AppBarTheme(backgroundColor: blueScheme.background),
-      snackBarTheme: const SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-      ),
       inputDecorationTheme: InputDecorationTheme(
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            width: 2,
-            color: blueScheme.outline,
-          ),
-        ),
         focusedBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(50)),
           borderSide: BorderSide(
@@ -180,160 +167,21 @@ class _AppState extends State<App> {
             color: blueScheme.error,
           ),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(
+            width: 2,
+            color: blueScheme.outline,
+          ),
+        ),
       ),
       brightness: Brightness.dark,
+      snackBarTheme: const SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+      ),
       colorSchemeSeed: const Color(0xff000080),
       useMaterial3: true,
-    );
-  }
-}
-
-class Gatopedia extends StatefulWidget {
-  final Widget inicio;
-
-  const Gatopedia(this.inicio, {super.key});
-
-  @override
-  State<Gatopedia> createState() {
-    return _GatopediaState();
-  }
-}
-
-class _GatopediaState extends State<Gatopedia>
-    with SingleTickerProviderStateMixin {
-  final miau = AudioPlayer();
-  String appName = "";
-  String packageName = "";
-  String version = "";
-  String buildNumber = "";
-
-  pegarImagens() async {
-    await Firebase.initializeApp();
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("users/");
-    DataSnapshot userinfo = await ref.get();
-    int i = 0;
-    while (i < userinfo.children.length) {
-      if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
-        setState(() {
-          listaTemImagem.add(
-            "${(userinfo.children.map((i) => i)).toList()[i].key}",
-          );
-        });
-      }
-      i++;
-    }
-  }
-
-  checarUpdate() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    appName = packageInfo.appName;
-    packageName = packageInfo.packageName;
-    version = packageInfo.version;
-    buildNumber = packageInfo.buildNumber;
-
-    final response = await http.get(
-      Uri.parse(
-        "https://api.github.com/repos/oculosdanilo/gatopedia/releases/latest",
-      ),
-    );
-    Map<String, dynamic> versaoAtt = jsonDecode(response.body);
-    debugPrint(versaoAtt["tag_name"]);
-    if (!mounted) return;
-    if (version != versaoAtt["tag_name"]) {
-      Navigator.push(
-        context,
-        SlideRightRoute(
-          Update(
-            versaoAtt["tag_name"],
-            versaoAtt["body"],
-          ),
-        ),
-      );
-    } else {
-      debugPrint("atualizado");
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    pegarImagens();
-    _play();
-    InternetConnectionChecker().onStatusChange.listen((status) {
-      switch (status) {
-        case InternetConnectionStatus.disconnected:
-          internet = false;
-          Navigator.push(context, SlideUpRoute(const SemInternet()));
-          break;
-        case InternetConnectionStatus.connected:
-          break;
-      }
-    });
-    if (!kDebugMode) {
-      checarUpdate();
-    }
-  }
-
-  void _play() async {
-    await miau.setAsset("assets/meow.mp3");
-    miau.play();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    dark
-        ? SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light)
-        : SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-    return GestureDetector(
-      onTap: () {
-        FocusManager.instance.primaryFocus?.unfocus();
-      },
-      child: Scaffold(
-        body: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: 0.0, end: 1.0),
-                  curve: Curves.easeIn,
-                  duration: const Duration(seconds: 1),
-                  builder:
-                      (BuildContext context, double opacity, Widget? child) {
-                    return Opacity(
-                      opacity: opacity,
-                      child: const Image(
-                        image: AssetImage('assets/icon old.png'),
-                        width: 270,
-                      ),
-                    );
-                  },
-                ),
-                AnimatedTextKit(
-                  animatedTexts: [
-                    TyperAnimatedText(
-                      'Gatopédia!',
-                      textStyle: const TextStyle(
-                        fontSize: 35,
-                        fontFamily: "Jost",
-                        fontWeight: FontWeight.bold,
-                      ),
-                      speed: const Duration(milliseconds: 70),
-                    ),
-                  ],
-                  totalRepeatCount: 1,
-                ),
-                const SizedBox(
-                  height: 60,
-                ),
-                const FormApp(),
-              ],
-            ),
-          ),
-        ),
-      ),
+      textTheme: GoogleFonts.jostTextTheme(temaBase(ThemeMode.dark).textTheme),
     );
   }
 }
