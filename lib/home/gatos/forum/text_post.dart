@@ -134,7 +134,7 @@ class _TextPostState extends State<TextPost> {
                           onPressed: () {
                             if (txtPost.text != "") {
                               _postar(
-                                int.parse("${snapshot?.children.last.key ?? 0}") + 1,
+                                int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
                               );
                               Flushbar(
                                 message: "Postado com sucesso!",

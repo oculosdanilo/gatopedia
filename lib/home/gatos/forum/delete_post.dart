@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:gatopedia/main.dart';
 
 class DeletePost extends StatefulWidget {
@@ -19,8 +19,7 @@ class _DeletePostState extends State<DeletePost> {
   _deletar(int postN) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$postN");
-    debugPrint("post/$postN");
-    if ((snapshot?.value as List)[postN]["img"] != null) {
+    if (snapshotForum!.child("$postN/img").value != null) {
       Reference refI = FirebaseStorage.instance.ref("posts/$postN.webp");
       Uint8List? lista = await refI.getData();
       if (lista?.isNotEmpty ?? false) {

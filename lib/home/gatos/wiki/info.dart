@@ -137,6 +137,9 @@ class GatoInfoState extends State<GatoInfo> {
                               flex: 7,
                               child: TextField(
                                 controller: txtControllerC,
+                                decoration: const InputDecoration(
+                                  hintText: "Comentar...",
+                                ),
                               ),
                             ),
                             const SizedBox(

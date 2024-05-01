@@ -1,14 +1,17 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
+import 'dart:async';
+
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/home/gatos/public_profile.dart';
+import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
 
-import '../../home.dart';
-import '../public_profile.dart';
-
 class Comentarios extends StatefulWidget {
-  final int post;
+  final DataSnapshot post;
 
   const Comentarios(this.post, {super.key});
 
@@ -21,30 +24,27 @@ class _ComentariosState extends State<Comentarios> {
   String pedaco2 = "";
   bool flag = true;
   final txtComment = TextEditingController();
+  late StreamSubscription<DatabaseEvent> _sub;
 
-  _firebasePegar() async {
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("posts");
-    snapshot = await ref.get();
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  late DataSnapshot postAtual = widget.post;
 
   _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
-    ref.onValue.listen((event) {
-      _firebasePegar();
+    _sub = ref.onValue.listen((event) {
+      if (mounted) {
+        setState(() {
+          snapshotForum = event.snapshot;
+          postAtual = event.snapshot.child("${postAtual.key}");
+        });
+      }
     });
   }
 
   _postarC() async {
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("posts/${widget.post}/comentarios");
+    DatabaseReference ref = postAtual.child("comentarios").ref;
     await ref.update({
-      "${(snapshot?.value as List)[widget.post]["comentarios"] != null ? ((snapshot?.value as List)[widget.post]["comentarios"] as List).length : 1}":
-          {
+      "${postAtual.child("comentarios").value != null ? postAtual.child("comentarios").children.length : 1}": {
         "username": username,
         "content": txtComment.text,
       },
@@ -52,9 +52,8 @@ class _ComentariosState extends State<Comentarios> {
   }
 
   _deletarC(comment) {
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("posts/${widget.post}/comentarios");
-    ref.update({"$comment": null});
+    DatabaseReference ref = postAtual.child("comentarios/$comment").ref;
+    ref.remove();
   }
 
   _maisDe2Linhas(String text) {
@@ -70,8 +69,14 @@ class _ComentariosState extends State<Comentarios> {
 
   @override
   void initState() {
-    _atualizar();
     super.initState();
+    _atualizar();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _sub.cancel();
   }
 
   @override
@@ -101,15 +106,13 @@ class _ComentariosState extends State<Comentarios> {
                         Navigator.push(
                           context,
                           SlideRightAgainRoute(
-                            PublicProfile(
-                              (snapshot?.value as List)[widget.post]["username"],
-                            ),
+                            PublicProfile(postAtual.child("username").value as String),
                           ),
                         );
                       },
                       child: Image(
                         image: NetworkImage(
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["username"]}.webp?alt=media"),
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postAtual.child("username").value}.webp?alt=media"),
                         width: 30,
                       ),
                     ),
@@ -127,14 +130,12 @@ class _ComentariosState extends State<Comentarios> {
                             Navigator.push(
                               context,
                               SlideRightAgainRoute(
-                                PublicProfile(
-                                  (snapshot?.value as List)[widget.post]["username"],
-                                ),
+                                PublicProfile(postAtual.child("username").value as String),
                               ),
                             );
                           },
                           child: Text(
-                            "@${(snapshot?.value as List)[widget.post]["username"]}",
+                            "@${postAtual.child("username").value}",
                             style: const TextStyle(
                               fontFamily: "Jost",
                               fontWeight: FontWeight.bold,
@@ -147,9 +148,7 @@ class _ComentariosState extends State<Comentarios> {
                           height: 5,
                         ),
                         Text(
-                          _maisDe2Linhas(
-                            (snapshot?.value as List)[widget.post]["content"],
-                          )
+                          _maisDe2Linhas(postAtual.child("content").value as String)
                               ? flag
                                   ? "$pedaco1..."
                                   : pedaco1 + pedaco2
@@ -170,7 +169,7 @@ class _ComentariosState extends State<Comentarios> {
                               });
                             },
                             child: Text(
-                              _maisDe2Linhas((snapshot?.value as List)[widget.post]["content"])
+                              _maisDe2Linhas(postAtual.child("content").value as String)
                                   ? flag
                                       ? "mostrar mais"
                                       : "mostrar menos"
@@ -189,7 +188,7 @@ class _ComentariosState extends State<Comentarios> {
             ),
             const Divider(),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -197,14 +196,19 @@ class _ComentariosState extends State<Comentarios> {
                     flex: 7,
                     child: TextField(
                       controller: txtComment,
+                      decoration: const InputDecoration(
+                        hintText: "Comentar...",
+                      ),
                     ),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                   Flexible(
-                    flex: 5,
-                    child: FilledButton(
+                    flex: 2,
+                    child: IconButton.filled(
+                      icon: const Icon(Icons.send),
+                      iconSize: 35,
                       onPressed: () async {
                         _postarC();
                         txtComment.text = "";
@@ -215,27 +219,26 @@ class _ComentariosState extends State<Comentarios> {
                           borderRadius: BorderRadius.circular(50),
                         ).show(context);
                       },
-                      child: const Text("COMENTAR"),
                     ),
                   )
                 ],
               ),
             ),
-            ((snapshot?.value as List)[widget.post]["comentarios"] as List).length > 2
+            postAtual.child("comentarios").children.length > 2
                 ? Expanded(
                     child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return ((snapshot?.value as List)[widget.post]["comentarios"] as List)[
-                                    ((snapshot?.value as List)[widget.post]["comentarios"] as List).length -
-                                        index -
-                                        1] !=
-                                null
-                            ? comentario(context, index)
-                            : const Row();
-                      },
-                      itemCount: (snapshot?.value as List)[widget.post]["comentarios"] != null
-                          ? ((snapshot?.value as List)[widget.post]["comentarios"] as List).length - 2
-                          : 0,
+                      itemCount: postAtual.child("comentarios").children.length,
+                      itemBuilder: (c, i) => postAtual
+                                  .child("comentarios/${postAtual.child("comentarios").children.length - i}/username")
+                                  .value !=
+                              null
+                          ? comentario(context, postAtual.child("comentarios").children.length - i)
+                          : const SizedBox(),
+                      /*children: postAtual
+                          .child("comentarios")
+                          .children
+                          .map((e) => e.child("username").value == null ? Text("data") : const SizedBox())
+                          .toList(),*/
                     ),
                   )
                 : const SizedBox(
@@ -268,21 +271,15 @@ class _ComentariosState extends State<Comentarios> {
             ClipRRect(
               borderRadius: BorderRadius.circular(50),
               child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    SlideRightAgainRoute(
-                      PublicProfile(
-                        (snapshot?.value as List)[widget.post]["comentarios"]
-                                [((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]
-                            ["username"],
-                      ),
-                    ),
-                  );
-                },
+                onTap: () => Navigator.push(
+                  context,
+                  SlideRightAgainRoute(
+                    PublicProfile(postAtual.child("comentarios/$index/username").value as String),
+                  ),
+                ),
                 child: Image(
                   image: NetworkImage(
-                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.webp?alt=media"),
+                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postAtual.child("comentarios/$index/username").value}.webp?alt=media"),
                   width: 50,
                 ),
               ),
@@ -304,15 +301,13 @@ class _ComentariosState extends State<Comentarios> {
                         context,
                         SlideRightAgainRoute(
                           PublicProfile(
-                            (snapshot?.value as List)[widget.post]["comentarios"]
-                                    [((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]
-                                ["username"],
+                            postAtual.child("comentarios/$index/username").value as String,
                           ),
                         ),
                       );
                     },
                     child: Text(
-                      "@${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}",
+                      "@${postAtual.child("comentarios/$index/username").value}",
                       style: const TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 15),
                       softWrap: true,
                     ),
@@ -321,7 +316,7 @@ class _ComentariosState extends State<Comentarios> {
                     height: 10,
                   ),
                   Text(
-                    "${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["content"]}",
+                    "${postAtual.child("comentarios/$index/content").value}",
                     style: const TextStyle(fontFamily: "Jost", fontSize: 15),
                     softWrap: true,
                     maxLines: 50,
@@ -329,8 +324,7 @@ class _ComentariosState extends State<Comentarios> {
                 ],
               ),
             ),
-            "${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}" ==
-                    username
+            "${postAtual.child("comentarios/$index/username").value}" == username
                 ? Ink(
                     decoration: ShapeDecoration(
                       color: blueScheme.errorContainer,
@@ -363,9 +357,7 @@ class _ComentariosState extends State<Comentarios> {
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  _deletarC(((snapshot?.value as List)[widget.post]["comentarios"] as List).length -
-                                      index -
-                                      1);
+                                  _deletarC(index);
                                   Navigator.pop(context);
                                   Flushbar(
                                     message: "Excluído com sucesso!",
@@ -386,7 +378,7 @@ class _ComentariosState extends State<Comentarios> {
                       },
                     ),
                   )
-                : const Row(),
+                : const SizedBox(),
           ],
         ),
       ),

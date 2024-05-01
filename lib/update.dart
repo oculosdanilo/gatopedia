@@ -9,6 +9,7 @@ late OtaEvent currentEvent;
 class Update extends StatefulWidget {
   final String versao;
   final String desc;
+
   const Update(this.versao, this.desc, {super.key});
 
   @override
@@ -27,7 +28,6 @@ class _UpdateState extends State<Update> {
           setState(() {
             currentEvent = event;
           });
-          debugPrint(currentEvent.value);
         },
       );
     } catch (e) {

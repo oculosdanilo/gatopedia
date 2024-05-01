@@ -41,8 +41,7 @@ void main() async {
     [DeviceOrientation.portraitUp],
   );
   final SharedPreferences pref = await SharedPreferences.getInstance();
-  if (pref.getBool("dark") ??
-      PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
+  if (pref.getBool("dark") ?? PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
     runApp(const App(ThemeMode.dark));
   } else {
     runApp(const App(ThemeMode.light));
@@ -195,8 +194,7 @@ class Gatopedia extends StatefulWidget {
   }
 }
 
-class _GatopediaState extends State<Gatopedia>
-    with SingleTickerProviderStateMixin {
+class _GatopediaState extends State<Gatopedia> with SingleTickerProviderStateMixin {
   final miau = AudioPlayer();
   String appName = "";
   String packageName = "";
@@ -235,7 +233,6 @@ class _GatopediaState extends State<Gatopedia>
       ),
     );
     Map<String, dynamic> versaoAtt = jsonDecode(response.body);
-    debugPrint(versaoAtt["tag_name"]);
     if (!mounted) return;
     if (version != versaoAtt["tag_name"]) {
       Navigator.push(
@@ -247,8 +244,6 @@ class _GatopediaState extends State<Gatopedia>
           ),
         ),
       );
-    } else {
-      debugPrint("atualizado");
     }
   }
 
@@ -296,8 +291,7 @@ class _GatopediaState extends State<Gatopedia>
                   tween: Tween<double>(begin: 0.0, end: 1.0),
                   curve: Curves.easeIn,
                   duration: const Duration(seconds: 1),
-                  builder:
-                      (BuildContext context, double opacity, Widget? child) {
+                  builder: (BuildContext context, double opacity, Widget? child) {
                     return Opacity(
                       opacity: opacity,
                       child: const Image(

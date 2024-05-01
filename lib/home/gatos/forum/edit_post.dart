@@ -1,16 +1,16 @@
 import 'dart:io';
 
+import 'package:badges/badges.dart' as badges;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:badges/badges.dart' as badges;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/main.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:gatopedia/home/config/config.dart';
 
 bool imagemRemovida = false;
 File? imagemFile;
@@ -54,7 +54,6 @@ class _EditPostState extends State<EditPost> {
   _editar(String post) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$post");
-    debugPrint("$imagemRemovida");
     DataSnapshot dataSnapshot = await ref.get();
     if ((dataSnapshot.value as Map)["img"] != null && imagemRemovida) {
       Reference refI = FirebaseStorage.instance.ref("posts/$post.webp");
@@ -79,7 +78,7 @@ class _EditPostState extends State<EditPost> {
     CachedNetworkImage.evictFromCache(
       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.post}.webp?alt=media",
     );
-    txtEdit.text = snapshot?.child("${widget.post}/content").value as String;
+    txtEdit.text = snapshotForum!.child("${widget.post}/content").value as String;
     imagemRemovida = false;
     super.initState();
   }
@@ -101,8 +100,7 @@ class _EditPostState extends State<EditPost> {
         ),
         ElevatedButton(
           onPressed: () async {
-            if (snapshot?.child("${widget.post}/content").value !=
-                    txtEdit.text ||
+            if (snapshotForum!.child("${widget.post}/content").value != txtEdit.text ||
                 imagemRemovida ||
                 imagemSelecionada) {
               _editar(widget.post);
@@ -192,7 +190,6 @@ class _EditPostState extends State<EditPost> {
                               ),
                             ).then(
                               (value) {
-                                debugPrint("$value");
                                 if (value) {
                                   setState(() {
                                     imagem = false;

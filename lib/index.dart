@@ -72,8 +72,6 @@ class _IndexState extends State<Index> {
           ),
         ),
       );
-    } else {
-      debugPrint("atualizado");
     }
   }
 

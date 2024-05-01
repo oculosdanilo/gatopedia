@@ -22,7 +22,7 @@ ColorScheme blueSchemeL = ColorScheme.fromSeed(
   brightness: Brightness.light,
 );
 dynamic mensagem;
-DataSnapshot? snapshot;
+DataSnapshot? snapshotForum;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -19,6 +19,7 @@ import 'package:gatopedia/home/gatos/forum/text_post.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:path_provider/path_provider.dart';
 
 bool postado = false;
@@ -50,7 +51,7 @@ class _ForumState extends State<Forum> {
     DatabaseReference ref = database.ref("posts");
     _sub = ref.onValue.listen((event) {
       setState(() {
-        snapshot = event.snapshot;
+        snapshotForum = event.snapshot;
       });
     });
   }
@@ -136,8 +137,8 @@ class _ForumState extends State<Forum> {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$post/likes");
     ref.update({
-      "lenght": int.parse(snapshot!.child("$post/likes/lenght").value.toString()) + 1,
-      "users": "${snapshot!.child("$post/likes/users").value}$username,"
+      "lenght": int.parse(snapshotForum!.child("$post/likes/lenght").value.toString()) + 1,
+      "users": "${snapshotForum!.child("$post/likes/users").value},$username,"
     });
   }
 
@@ -146,9 +147,9 @@ class _ForumState extends State<Forum> {
     DatabaseReference ref = database.ref("posts/$post/likes");
     ref.update(
       {
-        "lenght": (snapshot?.value as List)[post]["likes"]["lenght"] - 1,
-        "users": (snapshot?.value as List)[post]["likes"]["users"].toString().replaceAll(
-              "$username,",
+        "lenght": (snapshotForum!.value as List)[post]["likes"]["lenght"] - 1,
+        "users": (snapshotForum!.value as List)[post]["likes"]["users"].toString().replaceAll(
+              ",$username,",
               "",
             ),
       },
@@ -157,14 +158,14 @@ class _ForumState extends State<Forum> {
 
   @override
   void initState() {
-    _atualizar();
     super.initState();
+    _atualizar();
   }
 
   @override
   void dispose() {
-    _sub.cancel();
     super.dispose();
+    _sub.cancel();
   }
 
   @override
@@ -218,10 +219,10 @@ class _ForumState extends State<Forum> {
                   borderRadius: BorderRadius.circular(50),
                 ).show(context);
                 CachedNetworkImage.evictFromCache(
-                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshot?.children.last.key ?? 0}") + 1}.webp?alt=media",
+                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media",
                 );
                 _postarImagem(
-                  int.parse("${snapshot?.children.last.key ?? 0}") + 1,
+                  int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
                   "img",
                 );
               }
@@ -256,10 +257,10 @@ class _ForumState extends State<Forum> {
                   borderRadius: BorderRadius.circular(50),
                 ).show(context);
                 CachedNetworkImage.evictFromCache(
-                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshot?.children.last.key ?? 0}") + 1}.webp?alt=media",
+                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media",
                 );
                 _postarImagem(
-                  int.parse("${snapshot?.children.last.key ?? 0}") + 1,
+                  int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
                   "gif",
                 );
               }
@@ -287,22 +288,25 @@ class _ForumState extends State<Forum> {
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: Stack(
           children: [
-            (snapshot?.exists ?? false)
+            snapshotForum != null
                 ? StretchingOverscrollIndicator(
                     axisDirection: AxisDirection.down,
-                    child: ListView.builder(
+                    child: ListView(
                       shrinkWrap: true,
                       physics: const AlwaysScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return snapshot!
+                      children: snapshotForum!.children
+                          .map((e) => e.value != null ? post(context, int.parse(e.key!)) : const SizedBox())
+                          .toList(),
+                      /*itemBuilder: (context, index) {
+                        return snapshotForum!
                                 .child(
-                                  "${int.parse(snapshot?.children.last.key ?? '0') - index}",
+                                  "${int.parse(snapshotForum!.children.last.key ?? '0') - index}",
                                 )
                                 .exists
                             ? post(context, index)
-                            : const Row();
+                            : const SizedBox();
                       },
-                      itemCount: (snapshot?.exists ?? false) ? (int.parse("${snapshot?.children.last.key}") + 1) : 0,
+                      itemCount: snapshotForum!.exists ? (int.parse("${snapshotForum!.children.last.key}") + 1) : 0,*/
                     ),
                   )
                 : const Center(child: CircularProgressIndicator()),
@@ -313,10 +317,11 @@ class _ForumState extends State<Forum> {
   }
 
   Container post(BuildContext context, int index) {
-    final DataSnapshot postSS = snapshot!.child("${int.parse(snapshot?.children.last.key ?? "0") - index}");
+    final DataSnapshot postSS = snapshotForum!.child("${int.parse(snapshotForum!.children.last.key ?? "0") - index}");
     return Container(
       transform: Matrix4.translationValues(0, -20, 0),
       child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
             10,
@@ -445,55 +450,52 @@ class _ForumState extends State<Forum> {
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        postSS.child("img").value != null
-                            ? Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  0,
-                                  10,
-                                  10,
-                                  10,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: AspectRatio(
-                                    aspectRatio: 1,
-                                    child: InkWell(
-                                      onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (ctx) => Imagem(
-                                            "${int.parse(snapshot!.children.last.key!) - index}",
-                                          ),
-                                        ),
-                                      ),
-                                      child: Hero(
-                                        tag: "${int.parse(snapshot!.children.last.key!) - index}",
-                                        child: FadeInImage(
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          fadeInDuration: const Duration(milliseconds: 150),
-                                          fadeOutDuration: const Duration(milliseconds: 150),
-                                          placeholder: const AssetImage(
-                                            'assets/loading.gif',
-                                          ),
-                                          image: CachedNetworkImageProvider(
-                                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse(snapshot!.children.last.key!) - index}.webp?alt=media",
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : const SizedBox(),
                       ],
                     ),
                   )
                 ],
               ),
+              postSS.child("img").value != null
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        0,
+                        10,
+                        10,
+                        10,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(25),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (ctx) => Imagem(
+                                  "${int.parse(snapshotForum!.children.last.key!) - index}",
+                                ),
+                              ),
+                            ),
+                            child: Hero(
+                              tag: "${int.parse(snapshotForum!.children.last.key!) - index}",
+                              child: FadeInImage(
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                fadeInDuration: const Duration(milliseconds: 150),
+                                fadeOutDuration: const Duration(milliseconds: 150),
+                                placeholder: const AssetImage(
+                                  'assets/loading.gif',
+                                ),
+                                image: CachedNetworkImageProvider(
+                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse(snapshotForum!.children.last.key!) - index}.webp?alt=media",
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : const SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -518,9 +520,7 @@ class _ForumState extends State<Forum> {
                         ),
                       ),
                     ),
-                    openBuilder: (context, action) => Comentarios(
-                      int.parse(postSS.key!),
-                    ),
+                    openBuilder: (context, action) => Comentarios(postSS),
                   ),
                   Align(
                     alignment: Alignment.centerRight,
@@ -538,17 +538,17 @@ class _ForumState extends State<Forum> {
                         ),
                       ),
                       onPressed: () {
-                        if (!postSS.child("likes").child("users").value.toString().split(",").contains(username)) {
+                        if (!postSS.child("likes").child("users").value.toString().contains(",$username,")) {
                           _like(int.parse(postSS.key!));
                         } else {
                           _unlike(int.parse(postSS.key!));
                         }
                       },
                       icon: Icon(
-                        postSS.child("likes").child("users").value.toString().split(",").contains(username)
+                        postSS.child("likes").child("users").value.toString().contains(",$username,")
                             ? Icons.thumb_up_alt
                             : Icons.thumb_up_alt_outlined,
-                        color: postSS.child("likes").child("users").value.toString().split(",").contains(username)
+                        color: postSS.child("likes").child("users").value.toString().contains(",$username,")
                             ? Theme.of(context).colorScheme.primary
                             : Theme.of(context).colorScheme.onBackground,
                       ),
@@ -586,9 +586,10 @@ class _ForumState extends State<Forum> {
                   context: context,
                   builder: (context) {
                     imagem =
-                        (snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["img"] != null;
+                        snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - index}/img").value !=
+                            null;
                     return EditPost(
-                      (int.parse(snapshot?.children.last.key ?? "0") - index).toString(),
+                      (int.parse(snapshotForum!.children.last.key ?? "0") - index).toString(),
                     );
                   },
                 ).then((value) {
@@ -602,7 +603,13 @@ class _ForumState extends State<Forum> {
                   }
                 });
               },
-              child: const Text("Editar"),
+              child: const Row(
+                children: [
+                  Icon(Symbols.edit_rounded),
+                  SizedBox(width: 10),
+                  Text("Editar"),
+                ],
+              ),
             ),
             PopupMenuItem(
               onTap: () => showCupertinoDialog(
@@ -611,8 +618,12 @@ class _ForumState extends State<Forum> {
                   int.parse(postSS.key!),
                 ),
               ),
-              child: const Text(
-                "Deletar",
+              child: Row(
+                children: [
+                  Icon(Symbols.delete_rounded, color: Theme.of(context).colorScheme.error),
+                  const SizedBox(width: 10),
+                  Text("Deletar", style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                ],
               ),
             )
           ],
