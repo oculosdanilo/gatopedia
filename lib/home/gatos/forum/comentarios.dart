@@ -102,19 +102,14 @@ class _ComentariosState extends State<Comentarios> {
                           context,
                           SlideRightAgainRoute(
                             PublicProfile(
-                              (snapshot?.value as List)[widget.post]
-                                  ["username"],
+                              (snapshot?.value as List)[widget.post]["username"],
                             ),
                           ),
                         );
                       },
                       child: Image(
-                        image: listaTemImagem.contains((snapshot?.value
-                                as List)[widget.post]["username"])
-                            ? NetworkImage(
-                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["username"]}.webp?alt=media")
-                            : const AssetImage("assets/user.webp")
-                                as ImageProvider,
+                        image: NetworkImage(
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["username"]}.webp?alt=media"),
                         width: 30,
                       ),
                     ),
@@ -133,8 +128,7 @@ class _ComentariosState extends State<Comentarios> {
                               context,
                               SlideRightAgainRoute(
                                 PublicProfile(
-                                  (snapshot?.value as List)[widget.post]
-                                      ["username"],
+                                  (snapshot?.value as List)[widget.post]["username"],
                                 ),
                               ),
                             );
@@ -176,8 +170,7 @@ class _ComentariosState extends State<Comentarios> {
                               });
                             },
                             child: Text(
-                              _maisDe2Linhas((snapshot?.value
-                                      as List)[widget.post]["content"])
+                              _maisDe2Linhas((snapshot?.value as List)[widget.post]["content"])
                                   ? flag
                                       ? "mostrar mais"
                                       : "mostrar menos"
@@ -228,30 +221,20 @@ class _ComentariosState extends State<Comentarios> {
                 ],
               ),
             ),
-            ((snapshot?.value as List)[widget.post]["comentarios"] as List)
-                        .length >
-                    2
+            ((snapshot?.value as List)[widget.post]["comentarios"] as List).length > 2
                 ? Expanded(
                     child: ListView.builder(
                       itemBuilder: (context, index) {
-                        return ((snapshot?.value as List)[widget.post]
-                                        ["comentarios"] as List)[
-                                    ((snapshot?.value as List)[widget.post]
-                                                ["comentarios"] as List)
-                                            .length -
+                        return ((snapshot?.value as List)[widget.post]["comentarios"] as List)[
+                                    ((snapshot?.value as List)[widget.post]["comentarios"] as List).length -
                                         index -
                                         1] !=
                                 null
                             ? comentario(context, index)
                             : const Row();
                       },
-                      itemCount: (snapshot?.value as List)[widget.post]
-                                  ["comentarios"] !=
-                              null
-                          ? ((snapshot?.value as List)[widget.post]
-                                      ["comentarios"] as List)
-                                  .length -
-                              2
+                      itemCount: (snapshot?.value as List)[widget.post]["comentarios"] != null
+                          ? ((snapshot?.value as List)[widget.post]["comentarios"] as List).length - 2
                           : 0,
                     ),
                   )
@@ -290,27 +273,16 @@ class _ComentariosState extends State<Comentarios> {
                     context,
                     SlideRightAgainRoute(
                       PublicProfile(
-                        (snapshot?.value as List)[widget.post]["comentarios"][
-                            ((snapshot?.value as List)[widget.post]
-                                        ["comentarios"] as List)
-                                    .length -
-                                index -
-                                1]["username"],
+                        (snapshot?.value as List)[widget.post]["comentarios"]
+                                [((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]
+                            ["username"],
                       ),
                     ),
                   );
                 },
                 child: Image(
-                  image: listaTemImagem.contains(
-                          (snapshot?.value as List)[widget.post]["comentarios"][
-                              ((snapshot?.value as List)[widget.post]
-                                          ["comentarios"] as List)
-                                      .length -
-                                  index -
-                                  1]["username"])
-                      ? NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.webp?alt=media")
-                      : const AssetImage("assets/user.webp") as ImageProvider,
+                  image: NetworkImage(
+                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}.webp?alt=media"),
                   width: 50,
                 ),
               ),
@@ -332,23 +304,16 @@ class _ComentariosState extends State<Comentarios> {
                         context,
                         SlideRightAgainRoute(
                           PublicProfile(
-                            (snapshot?.value as List)[widget.post]
-                                    ["comentarios"][
-                                ((snapshot?.value as List)[widget.post]
-                                            ["comentarios"] as List)
-                                        .length -
-                                    index -
-                                    1]["username"],
+                            (snapshot?.value as List)[widget.post]["comentarios"]
+                                    [((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]
+                                ["username"],
                           ),
                         ),
                       );
                     },
                     child: Text(
                       "@${(snapshot?.value as List)[widget.post]["comentarios"][((snapshot?.value as List)[widget.post]["comentarios"] as List).length - index - 1]["username"]}",
-                      style: const TextStyle(
-                          fontFamily: "Jost",
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15),
+                      style: const TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 15),
                       softWrap: true,
                     ),
                   ),
@@ -398,12 +363,9 @@ class _ComentariosState extends State<Comentarios> {
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  _deletarC(
-                                      ((snapshot?.value as List)[widget.post]
-                                                  ["comentarios"] as List)
-                                              .length -
-                                          index -
-                                          1);
+                                  _deletarC(((snapshot?.value as List)[widget.post]["comentarios"] as List).length -
+                                      index -
+                                      1);
                                   Navigator.pop(context);
                                   Flushbar(
                                     message: "Excluído com sucesso!",

@@ -1,6 +1,5 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:gatopedia/home/eu/pp_edit.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 String bioText = "carregando...";
 bool? temImagem;
@@ -61,33 +61,6 @@ class _ProfileState extends State<Profile> {
     await refS.delete();
   }
 
-  pegarImagens() async {
-    await Firebase.initializeApp();
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("users/");
-    DataSnapshot userinfo = await ref.get();
-    int i = 0;
-    while (i < userinfo.children.length) {
-      if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
-        if (!listaTemImagem
-            .contains("${(userinfo.children.map((i) => i)).toList()[i].key}")) {
-          setState(() {
-            listaTemImagem.add(
-              "${(userinfo.children.map((i) => i)).toList()[i].key}",
-            );
-          });
-        }
-      } else {
-        setState(() {
-          listaTemImagem.remove(
-            "${(userinfo.children.map((i) => i)).toList()[i].key}",
-          );
-        });
-      }
-      i++;
-    }
-  }
-
   _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users");
@@ -100,8 +73,7 @@ class _ProfileState extends State<Profile> {
         bioText = "(vazio)";
       }
       setState(
-        () => temImagem =
-            ((event.snapshot.value as Map)[username]["img"] ?? false),
+        () => temImagem = ((event.snapshot.value as Map)[username]["img"] ?? false),
       );
     });
   }
@@ -114,7 +86,6 @@ class _ProfileState extends State<Profile> {
 
   @override
   void initState() {
-    pegarImagens();
     indexAntigo = 1;
     _atualizar();
     temImagem = false;
@@ -137,7 +108,6 @@ class _ProfileState extends State<Profile> {
                   "Bio",
                   style: TextStyle(
                     fontSize: 15,
-                    fontFamily: "Jost",
                     color: Colors.grey[700]!,
                   ),
                 ),
@@ -236,8 +206,7 @@ class _ProfileState extends State<Profile> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<MenuItensImg>>[
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItensImg>>[
                   const PopupMenuItem(
                     value: MenuItensImg.editar,
                     child: Row(
@@ -292,8 +261,7 @@ class _ProfileState extends State<Profile> {
                     }
                   }
                 },
-                itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<MenuItensSemImg>>[
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItensSemImg>>[
                   const PopupMenuItem(
                     value: MenuItensSemImg.adicionar,
                     child: Row(
@@ -328,7 +296,7 @@ class _ProfileState extends State<Profile> {
       backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
-        title: Text("@$username"),
+        title: Text("@$username", style: GoogleFonts.jost()),
         background: Stack(
           fit: StackFit.expand,
           children: [

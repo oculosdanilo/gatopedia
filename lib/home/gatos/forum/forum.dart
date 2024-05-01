@@ -10,16 +10,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:gatopedia/home/gatos/forum/image_post.dart';
-import 'package:gatopedia/home/gatos/forum/imagem.dart';
-import 'package:gatopedia/home/gatos/forum/text_post.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:gatopedia/home/gatos/public_profile.dart';
-import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/home/gatos/forum/comentarios.dart';
 import 'package:gatopedia/home/gatos/forum/delete_post.dart';
 import 'package:gatopedia/home/gatos/forum/edit_post.dart';
+import 'package:gatopedia/home/gatos/forum/image_post.dart';
+import 'package:gatopedia/home/gatos/forum/imagem.dart';
+import 'package:gatopedia/home/gatos/forum/text_post.dart';
+import 'package:gatopedia/home/gatos/public_profile.dart';
+import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
+import 'package:path_provider/path_provider.dart';
 
 bool postado = false;
 String imgUrl = "";
@@ -136,8 +136,7 @@ class _ForumState extends State<Forum> {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$post/likes");
     ref.update({
-      "lenght":
-          int.parse(snapshot!.child("$post/likes/lenght").value.toString()) + 1,
+      "lenght": int.parse(snapshot!.child("$post/likes/lenght").value.toString()) + 1,
       "users": "${snapshot!.child("$post/likes/users").value}$username,"
     });
   }
@@ -148,9 +147,7 @@ class _ForumState extends State<Forum> {
     ref.update(
       {
         "lenght": (snapshot?.value as List)[post]["likes"]["lenght"] - 1,
-        "users": (snapshot?.value as List)[post]["likes"]["users"]
-            .toString()
-            .replaceAll(
+        "users": (snapshot?.value as List)[post]["likes"]["users"].toString().replaceAll(
               "$username,",
               "",
             ),
@@ -158,34 +155,8 @@ class _ForumState extends State<Forum> {
     );
   }
 
-  _pegarImagens() async {
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("users/");
-    DataSnapshot userinfo = await ref.get();
-    int i = 0;
-    while (i < userinfo.children.length) {
-      if ((userinfo.children.toList()[i].value as Map)["img"] != null) {
-        if (!listaTemImagem.contains("${userinfo.child(i.toString()).key}")) {
-          setState(() {
-            listaTemImagem.add(
-              "${userinfo.child(i.toString()).key}",
-            );
-          });
-        }
-      } else {
-        setState(() {
-          listaTemImagem.remove(
-            "${userinfo.child(i.toString()).key}",
-          );
-        });
-      }
-      i++;
-    }
-  }
-
   @override
   void initState() {
-    _pegarImagens();
     _atualizar();
     super.initState();
   }
@@ -331,9 +302,7 @@ class _ForumState extends State<Forum> {
                             ? post(context, index)
                             : const Row();
                       },
-                      itemCount: (snapshot?.exists ?? false)
-                          ? (int.parse("${snapshot?.children.last.key}") + 1)
-                          : 0,
+                      itemCount: (snapshot?.exists ?? false) ? (int.parse("${snapshot?.children.last.key}") + 1) : 0,
                     ),
                   )
                 : const Center(child: CircularProgressIndicator()),
@@ -344,8 +313,7 @@ class _ForumState extends State<Forum> {
   }
 
   Container post(BuildContext context, int index) {
-    final DataSnapshot postSS = snapshot!
-        .child("${int.parse(snapshot?.children.last.key ?? "0") - index}");
+    final DataSnapshot postSS = snapshot!.child("${int.parse(snapshot?.children.last.key ?? "0") - index}");
     return Container(
       transform: Matrix4.translationValues(0, -20, 0),
       child: Card(
@@ -384,23 +352,17 @@ class _ForumState extends State<Forum> {
                               ),
                             );
                           },
-                          child: listaTemImagem.contains(
-                            postSS.child("username").value,
-                          )
-                              ? FadeInImage(
-                                  fadeInDuration:
-                                      const Duration(milliseconds: 100),
-                                  placeholder:
-                                      const AssetImage("assets/user.webp"),
-                                  image: NetworkImage(
-                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postSS.child("username").value}.webp?alt=media",
-                                  ),
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.asset(
-                                  "assets/user.webp",
-                                  fit: BoxFit.cover,
-                                ),
+                          child: FadeInImage(
+                            fadeInDuration: const Duration(milliseconds: 100),
+                            placeholder: const AssetImage("assets/user.webp"),
+                            image: NetworkImage(
+                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postSS.child("username").value}.webp?alt=media",
+                            ),
+                            imageErrorBuilder: (c, obj, stacktrace) {
+                              return Image.asset("assets/user.webp", fit: BoxFit.cover);
+                            },
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
@@ -422,10 +384,7 @@ class _ForumState extends State<Forum> {
                                     context,
                                     SlideRightAgainRoute(
                                       PublicProfile(
-                                        postSS
-                                            .child("username")
-                                            .value
-                                            .toString(),
+                                        postSS.child("username").value.toString(),
                                       ),
                                     ),
                                   );
@@ -441,9 +400,7 @@ class _ForumState extends State<Forum> {
                                 ),
                               ),
                             ),
-                            username == postSS.child("username").value
-                                ? opcoes(index, postSS)
-                                : const SizedBox(),
+                            username == postSS.child("username").value ? opcoes(index, postSS) : const SizedBox(),
                           ],
                         ),
                         const SizedBox(
@@ -513,15 +470,12 @@ class _ForumState extends State<Forum> {
                                         ),
                                       ),
                                       child: Hero(
-                                        tag:
-                                            "${int.parse(snapshot!.children.last.key!) - index}",
+                                        tag: "${int.parse(snapshot!.children.last.key!) - index}",
                                         child: FadeInImage(
                                           fit: BoxFit.cover,
                                           width: double.infinity,
-                                          fadeInDuration:
-                                              const Duration(milliseconds: 150),
-                                          fadeOutDuration:
-                                              const Duration(milliseconds: 150),
+                                          fadeInDuration: const Duration(milliseconds: 150),
+                                          fadeOutDuration: const Duration(milliseconds: 150),
                                           placeholder: const AssetImage(
                                             'assets/loading.gif',
                                           ),
@@ -584,35 +538,17 @@ class _ForumState extends State<Forum> {
                         ),
                       ),
                       onPressed: () {
-                        if (!postSS
-                            .child("likes")
-                            .child("users")
-                            .value
-                            .toString()
-                            .split(",")
-                            .contains(username)) {
+                        if (!postSS.child("likes").child("users").value.toString().split(",").contains(username)) {
                           _like(int.parse(postSS.key!));
                         } else {
                           _unlike(int.parse(postSS.key!));
                         }
                       },
                       icon: Icon(
-                        postSS
-                                .child("likes")
-                                .child("users")
-                                .value
-                                .toString()
-                                .split(",")
-                                .contains(username)
+                        postSS.child("likes").child("users").value.toString().split(",").contains(username)
                             ? Icons.thumb_up_alt
                             : Icons.thumb_up_alt_outlined,
-                        color: postSS
-                                .child("likes")
-                                .child("users")
-                                .value
-                                .toString()
-                                .split(",")
-                                .contains(username)
+                        color: postSS.child("likes").child("users").value.toString().split(",").contains(username)
                             ? Theme.of(context).colorScheme.primary
                             : Theme.of(context).colorScheme.onBackground,
                       ),
@@ -649,13 +585,10 @@ class _ForumState extends State<Forum> {
                   barrierDismissible: false,
                   context: context,
                   builder: (context) {
-                    imagem = (snapshot?.value as List)[
-                            int.parse(snapshot?.children.last.key ?? "0") -
-                                index]["img"] !=
-                        null;
+                    imagem =
+                        (snapshot?.value as List)[int.parse(snapshot?.children.last.key ?? "0") - index]["img"] != null;
                     return EditPost(
-                      (int.parse(snapshot?.children.last.key ?? "0") - index)
-                          .toString(),
+                      (int.parse(snapshot?.children.last.key ?? "0") - index).toString(),
                     );
                   },
                 ).then((value) {

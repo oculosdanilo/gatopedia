@@ -1,32 +1,48 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:gatopedia/loginScreen/login/form.dart';
+import 'package:gatopedia/main.dart';
 
-Future<(bool, String?)> autenticar(
+Future<dynamic> autenticar(
   String usernameDigitado,
   String senhaDigitada,
+  Entrada modo,
 ) async {
-  DatabaseReference ref = FirebaseDatabase.instance.ref(
-    "users/${usernameDigitado.toLowerCase()}",
-  );
+  if (modo == Entrada.login) {
+    return entrar(usernameDigitado, senhaDigitada);
+  } else {
+    return cadastrar(usernameDigitado, senhaDigitada);
+  }
+}
+
+Future<dynamic> entrar(String usernameDigitado, String senhaDigitada) async {
+  DatabaseReference ref = FirebaseDatabase.instance.ref("users/${usernameDigitado.toLowerCase()}");
   final snapshot = await ref.get();
   if (snapshot.exists) {
-    final senha = String.fromCharCodes(
-      base64Decode(snapshot.child("senha").value.toString()),
-    );
-    if (senhaDigitada == senha) {
-      return (true, null);
+    String senhaDB = String.fromCharCodes(base64Decode(snapshot.child("senha").value as String));
+    if (senhaDB == senhaDigitada) {
+      username = usernameDigitado;
+      return true;
     } else {
-      return (false, "Senha incorreta: usuário já existe!");
+      return "Senha incorreta :/";
     }
   } else {
-    await ref.update({
+    return "Usuário não existe :/";
+  }
+}
+
+Future<dynamic> cadastrar(String usernameDigitado, String senhaDigitada) async {
+  DatabaseReference ref = FirebaseDatabase.instance.ref("users/${usernameDigitado.toLowerCase()}");
+  final snapshot = await ref.get();
+  if (!snapshot.exists) {
+    ref.set({
       "senha": base64Encode(utf8.encode(senhaDigitada)),
       "bio": "(vazio)",
     });
-    return (
-      false,
-      "Cadastrado com sucesso! Entre as credenciais novamente para entrar"
-    );
+    return true;
+  } else {
+    return "Usuário já existe :/";
   }
 }

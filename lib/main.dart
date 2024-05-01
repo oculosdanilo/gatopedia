@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:gatopedia/firebase_options.dart';
+import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/index.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-List listaTemImagem = [];
 String? username;
 bool internet = true;
 ColorScheme blueScheme = ColorScheme.fromSeed(
@@ -32,11 +32,12 @@ void main() async {
     [DeviceOrientation.portraitUp],
   );
   final SharedPreferences pref = await SharedPreferences.getInstance();
-  if (pref.getBool("dark") ??
-      PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
-    runApp(const App(ThemeMode.dark, Index()));
+  final salvo = pref.getString("username") != null;
+  if (salvo) username = pref.getString("username");
+  if (pref.getBool("dark") ?? PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
+    runApp(App(ThemeMode.dark, !salvo ? const Index() : const Home()));
   } else {
-    runApp(const App(ThemeMode.light, Index()));
+    runApp(App(ThemeMode.light, !salvo ? const Index() : const Home()));
   }
 }
 

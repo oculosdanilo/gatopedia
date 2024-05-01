@@ -1,12 +1,19 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'dart:convert';
 
+import 'package:another_flushbar/flushbar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/config/config.dart';
+import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/loginScreen/colab.dart';
 import 'package:gatopedia/loginScreen/login/form.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/update.dart';
+import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Index extends StatefulWidget {
   const Index({super.key});
@@ -20,16 +27,22 @@ class _IndexState extends State<Index> {
   bool animText = false;
   final miau = AudioPlayer();
 
+  late final scW = MediaQuery.of(context).size.width;
+  late final scH = MediaQuery.of(context).size.height;
+
   @override
   void initState() {
     super.initState();
+    if (!kDebugMode) {
+      checarUpdate(context);
+    }
     miau.setAsset("assets/meow.mp3").then((value) {
       miau.play();
       Future.delayed(value!, () {
         setState(() {
           animImg = true;
         });
-        Future.delayed(Duration(milliseconds: 500), () {
+        Future.delayed(const Duration(milliseconds: 500), () {
           setState(() {
             animText = true;
           });
@@ -38,10 +51,37 @@ class _IndexState extends State<Index> {
     });
   }
 
+  checarUpdate(context) async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    String version = packageInfo.version;
+
+    final response = await http.get(
+      Uri.parse(
+        "https://api.github.com/repos/oculosdanilo/gatopedia/releases/latest",
+      ),
+    );
+    Map<String, dynamic> versaoAtt = jsonDecode(response.body);
+    if (version != versaoAtt["tag_name"]) {
+      Navigator.push(
+        context,
+        SlideRightRoute(
+          Update(
+            versaoAtt["tag_name"],
+            versaoAtt["body"],
+          ),
+        ),
+      );
+    } else {
+      debugPrint("atualizado");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
         actions: [
           PopupMenuButton(
             shape: RoundedRectangleBorder(
@@ -52,10 +92,10 @@ class _IndexState extends State<Index> {
                 onTap: () async {
                   await Navigator.push(
                     context,
-                    SlideUpRoute(Colaboradores()),
+                    SlideUpRoute(const Colaboradores()),
                   );
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(Symbols.people_rounded),
                     SizedBox(width: 15),
@@ -66,9 +106,9 @@ class _IndexState extends State<Index> {
               PopupMenuItem(
                 onTap: () => Navigator.push(
                   context,
-                  SlideUpRoute(Scaffold(body: Config(true))),
+                  SlideUpRoute(const Scaffold(body: Config(true))),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(Symbols.settings_rounded),
                     SizedBox(width: 15),
@@ -83,15 +123,15 @@ class _IndexState extends State<Index> {
       body: Stack(
         children: [
           Positioned(
-            width: MediaQuery.of(context).size.width,
-            top: MediaQuery.of(context).size.height * 0.1 + 250,
+            width: scW,
+            top: scH * 0.05 + 250,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 AnimatedOpacity(
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   opacity: animText ? 1 : 0,
-                  child: Text(
+                  child: const Text(
                     "Gatopédia!",
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -100,54 +140,85 @@ class _IndexState extends State<Index> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 75,
                 ),
                 AnimatedOpacity(
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                   opacity: animText ? 1 : 0,
-                  curve: Interval(0.5, 1),
+                  curve: const Interval(0.5, 1),
                   child: FilledButton(
+                    onPressed: () async {
+                      (
+                        // $1: credenciais corretas, $2: lembrar de mim
+                        bool,
+                        bool
+                      ) info = await showModalBottomSheet<(bool, bool)>(
+                            showDragHandle: true,
+                            isScrollControlled: true,
+                            context: context,
+                            builder: (c) => Padding(
+                              padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
+                              child: const FormApp(Entrada.login),
+                            ),
+                          ) ??
+                          (false, false);
+                      if (info.$1) {
+                        if (info.$2) {
+                          SharedPreferences sp = await SharedPreferences.getInstance();
+                          await sp.setString("username", username ?? "");
+                        }
+                        if (!context.mounted) return;
+                        Navigator.pushReplacement(context, SlideRightRoute(const Home()));
+                      }
+                    },
+                    style: ButtonStyle(
+                      fixedSize: MaterialStatePropertyAll(
+                        Size(scW * 0.7, 50),
+                      ),
+                    ),
+                    child: const Text(
+                      "Entrar",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 400),
+                  opacity: animText ? 1 : 0,
+                  curve: const Interval(0.5, 1),
+                  child: OutlinedButton(
                     onPressed: () async {
                       bool info = await showModalBottomSheet<bool>(
                             showDragHandle: true,
                             isScrollControlled: true,
                             context: context,
                             builder: (c) => Padding(
-                              padding: EdgeInsets.only(
-                                  bottom: MediaQuery.of(c).viewInsets.bottom),
-                              child: FormApp(),
+                              padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
+                              child: const FormApp(Entrada.cadastro),
                             ),
                           ) ??
                           false;
-                      if (info) {}
+                      if (info) {
+                        if (!context.mounted) return;
+                        Flushbar(
+                          message: "Cadastrado com sucesso! Agora entre com as mesmas credenciais",
+                          duration: const Duration(seconds: 10),
+                          margin: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                          borderRadius: BorderRadius.circular(50),
+                        ).show(context);
+                      }
                     },
                     style: ButtonStyle(
                       fixedSize: MaterialStatePropertyAll(
-                        Size(MediaQuery.of(context).size.width * 0.7, 50),
+                        Size(scW * 0.7, 50),
                       ),
                     ),
-                    child: Text(
-                      "Entrar",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                AnimatedOpacity(
-                  duration: Duration(milliseconds: 400),
-                  opacity: animText ? 1 : 0,
-                  curve: Interval(0.5, 1),
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      fixedSize: MaterialStatePropertyAll(
-                        Size(MediaQuery.of(context).size.width * 0.7, 50),
-                      ),
-                    ),
-                    child: Text(
+                    child: const Text(
                       "Cadastrar",
                       style: TextStyle(fontSize: 20),
                     ),
@@ -158,11 +229,9 @@ class _IndexState extends State<Index> {
           ),
           AnimatedPositioned(
             curve: Curves.ease,
-            duration: Duration(milliseconds: 500),
-            left: (MediaQuery.of(context).size.width / 2) - 125,
-            top: animImg
-                ? MediaQuery.of(context).size.height * 0.1
-                : (MediaQuery.of(context).size.height / 2) - 125,
+            duration: const Duration(milliseconds: 500),
+            left: (scW / 2) - 125,
+            top: animImg ? scH * 0.05 : (scH / 2) - 250,
             child: ClipOval(
               child: Image.asset(
                 "assets/icon.png",

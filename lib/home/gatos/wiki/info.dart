@@ -1,6 +1,5 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,38 +23,9 @@ class GatoInfo extends StatefulWidget {
 class GatoInfoState extends State<GatoInfo> {
   final txtControllerC = TextEditingController();
 
-  pegarImagens() async {
-    await Firebase.initializeApp();
-    DatabaseReference ref = FirebaseDatabase.instance.ref("users/");
-    DataSnapshot userinfo = await ref.get();
-    int i = 0;
-    while (i < userinfo.children.length) {
-      if (((userinfo.children).toList()[i].value as Map)["img"] != null) {
-        if (!listaTemImagem
-            .contains("${(userinfo.children.map((i) => i)).toList()[i].key}")) {
-          setState(() {
-            listaTemImagem.add(
-              "${(userinfo.children.map((i) => i)).toList()[i].key}",
-            );
-          });
-        }
-      } else {
-        setState(() {
-          listaTemImagem.remove(
-            "${(userinfo.children.map((i) => i)).toList()[i].key}",
-          );
-        });
-      }
-      i++;
-    }
-  }
-
   @override
   void initState() {
-    pegarImagens();
-    _getData = FirebaseDatabase.instance
-        .ref("gatos/${widget.gatoInfo.key}/comentarios")
-        .get();
+    _getData = FirebaseDatabase.instance.ref("gatos/${widget.gatoInfo.key}/comentarios").get();
     super.initState();
   }
 
@@ -89,12 +59,12 @@ class GatoInfoState extends State<GatoInfo> {
                     fontFamily: "Jost",
                   ),
                 ),
-                centerTitle: true,
                 background: Stack(
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
-                      imageUrl: widget.gatoInfo.child("img").value.toString(),
+                      imageUrl:
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${widget.gatoInfo.child("img").value.toString().split("&")[0]}.webp?alt=media",
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Image.asset(
                         "assets/loading.gif",
@@ -139,13 +109,8 @@ class GatoInfoState extends State<GatoInfo> {
                               height: 15,
                             ),
                             Text(
-                              widget.gatoInfo
-                                  .child("descricao")
-                                  .value
-                                  .toString()
-                                  .replaceAll("\\n", "\n"),
+                              widget.gatoInfo.child("descricao").value.toString().replaceAll("\\n", "\n"),
                               style: const TextStyle(
-                                fontFamily: "Jost",
                                 fontSize: 20,
                               ),
                               textAlign: TextAlign.center,
@@ -157,7 +122,6 @@ class GatoInfoState extends State<GatoInfo> {
                               "COMENTÁRIOS",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontFamily: "Jost",
                                 fontSize: 25,
                               ),
                             ),
@@ -193,10 +157,8 @@ class GatoInfoState extends State<GatoInfo> {
                                     });
                                   });
                                   setState(() {
-                                    _getData = FirebaseDatabase.instance
-                                        .ref(
-                                            "gatos/${widget.gatoInfo.key}/comentarios")
-                                        .get();
+                                    _getData =
+                                        FirebaseDatabase.instance.ref("gatos/${widget.gatoInfo.key}/comentarios").get();
                                   });
                                   if (!context.mounted) return;
                                   Flushbar(
@@ -260,10 +222,7 @@ class Comentarios extends StatefulWidget {
 class _ComentariosState extends State<Comentarios> {
   @override
   void initState() {
-    _getData = FirebaseDatabase.instance
-        .ref()
-        .child("gatos/${widget.gatoInfo.key}/comentarios")
-        .get();
+    _getData = FirebaseDatabase.instance.ref().child("gatos/${widget.gatoInfo.key}/comentarios").get();
     super.initState();
   }
 
@@ -272,25 +231,19 @@ class _ComentariosState extends State<Comentarios> {
     return FutureBuilder<DataSnapshot>(
       future: _getData,
       builder: (context, snapshot) {
-        if (snapshot.hasData &&
-            snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
           final comentarioSS = snapshot.data!;
-          return ListView.builder(
+          return ListView(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: int.parse(comentarioSS.children.last.key!) - 1,
-            itemBuilder: (context, index) {
-              if (comentarioSS
-                      .child(
-                        "${(snapshot.data!.value as List).length - index - 1}",
-                      )
-                      .value !=
-                  null) {
-                return comentario(context, snapshot, index);
-              } else {
-                return const Row();
-              }
-            },
+            reverse: true,
+            children: comentarioSS.children
+                .map<Widget>(
+                  (e) => e.value != "null"
+                      ? comentario(context, e, comentarioSS.children.toList().indexOf(e))
+                      : const SizedBox(),
+                )
+                .toList(),
           );
         } else {
           return const Center(child: CircularProgressIndicator());
@@ -299,9 +252,24 @@ class _ComentariosState extends State<Comentarios> {
     );
   }
 
+  Widget comentarioTeste(BuildContext context, DataSnapshot snapshot, int index) {
+    return Text(snapshot.value.toString());
+  }
+
+  /*if (comentarioSS
+      .child(
+  "${(snapshot.data!.value as List).length - index - 1}",
+  )
+      .value !=
+  null) {
+  return comentario(context, snapshot, index);
+  } else {
+  return const Row();
+  }*/
+
   Card comentario(
     BuildContext context,
-    AsyncSnapshot<DataSnapshot> snapshot,
+    DataSnapshot snapshot,
     int index,
   ) {
     return Card(
@@ -311,33 +279,25 @@ class _ComentariosState extends State<Comentarios> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(50),
+            ClipOval(
               child: InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
                     SlideRightAgainRoute(
                       PublicProfile(
-                        (snapshot.data!.value as List)[
-                                (snapshot.data!.value as List).length -
-                                    index -
-                                    1]["user"]
-                            .toString(),
+                        snapshot.child("user").value.toString(),
                       ),
                     ),
                   );
                 },
                 child: Image(
-                  image: listaTemImagem.contains((snapshot.data!.value as List)[
-                              (snapshot.data!.value as List).length -
-                                  index -
-                                  1]["user"]
-                          .toString())
-                      ? NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${(snapshot.data!.value as List)[(snapshot.data!.value as List).length - index - 1]["user"].toString()}.webp?alt=media",
-                        )
-                      : const AssetImage("assets/user.webp") as ImageProvider,
+                  image: NetworkImage(
+                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${snapshot.child("user").value.toString()}.webp?alt=media",
+                  ),
+                  errorBuilder: (c, obj, stacktrace) {
+                    return Image.asset("assets/user.webp", width: 50);
+                  },
                   width: 50,
                 ),
               ),
@@ -359,21 +319,13 @@ class _ComentariosState extends State<Comentarios> {
                         context,
                         SlideRightAgainRoute(
                           PublicProfile(
-                            (snapshot.data!.value as List)[
-                                    (snapshot.data!.value as List).length -
-                                        index -
-                                        1]["user"]
-                                .toString(),
+                            snapshot.child("user").value.toString(),
                           ),
                         ),
                       );
                     },
                     child: Text(
-                      (snapshot.data!.value as List)[
-                              (snapshot.data!.value as List).length -
-                                  index -
-                                  1]["user"]
-                          .toString(),
+                      snapshot.child("user").value.toString(),
                       style: const TextStyle(
                         fontFamily: "Jost",
                         fontWeight: FontWeight.bold,
@@ -386,11 +338,7 @@ class _ComentariosState extends State<Comentarios> {
                     height: 10,
                   ),
                   Text(
-                    (snapshot.data!.value as List)[
-                            (snapshot.data!.value as List).length -
-                                index -
-                                1]["content"]
-                        .toString(),
+                    snapshot.child("content").value.toString(),
                     style: const TextStyle(
                       fontFamily: "Jost",
                       fontSize: 15,
@@ -401,12 +349,7 @@ class _ComentariosState extends State<Comentarios> {
                 ],
               ),
             ),
-            (snapshot.data!.value as List)[
-                            (snapshot.data!.value as List).length -
-                                index -
-                                1]["user"]
-                        .toString() ==
-                    username
+            snapshot.child("user").value.toString() == username
                 ? IconButton(
                     icon: const Icon(Icons.delete),
                     color: Colors.white,
@@ -453,13 +396,10 @@ class _ComentariosState extends State<Comentarios> {
                       if (dialogo) {
                         await FirebaseDatabase.instance
                             .ref()
-                            .child(
-                                "gatos/${widget.gatoInfo.key}/comentarios/${(snapshot.data!.value as List).length - index - 1}")
+                            .child("gatos/${widget.gatoInfo.key}/comentarios/${snapshot.key}")
                             .remove();
                         setState(() {
-                          _getData = FirebaseDatabase.instance
-                              .ref("gatos/${widget.gatoInfo.key}/comentarios")
-                              .get();
+                          _getData = FirebaseDatabase.instance.ref("gatos/${widget.gatoInfo.key}/comentarios").get();
                         });
                         if (!context.mounted) return;
                         Flushbar(

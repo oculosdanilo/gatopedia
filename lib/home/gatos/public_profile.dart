@@ -86,13 +86,9 @@ class _PublicProfileState extends State<PublicProfile> {
                       fit: StackFit.expand,
                       children: [
                         Image(
-                          image: listaTemImagem.contains(widget.username)
-                              ? NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.username}.webp?alt=media",
-                                )
-                              : const AssetImage(
-                                  "assets/user.webp",
-                                ) as ImageProvider,
+                          image: NetworkImage(
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.username}.webp?alt=media",
+                          ),
                           width: 50,
                           fit: BoxFit.cover,
                         ),
@@ -120,10 +116,7 @@ class _PublicProfileState extends State<PublicProfile> {
                       children: [
                         Text(
                           "Bio",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: "Jost",
-                              color: Colors.grey[700]!),
+                          style: TextStyle(fontSize: 15, fontFamily: "Jost", color: Colors.grey[700]!),
                         ),
                         SelectableText(
                           bioText,

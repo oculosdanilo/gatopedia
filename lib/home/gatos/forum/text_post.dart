@@ -35,8 +35,9 @@ class _TextPostState extends State<TextPost> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (poppou) async {
         if (txtPost.text != "") {
           final resposta = await showDialog<bool>(
             context: context,
@@ -58,9 +59,10 @@ class _TextPostState extends State<TextPost> {
               ],
             ),
           );
-          return resposta ?? false;
+          if (!context.mounted) return;
+          if (resposta ?? false) Navigator.pop(context);
         } else {
-          return true;
+          Navigator.pop(context);
         }
       },
       child: Padding(
@@ -77,21 +79,14 @@ class _TextPostState extends State<TextPost> {
                       child: SizedBox(
                         width: 50,
                         height: 50,
-                        child: listaTemImagem.contains(username)
-                            ? FadeInImage(
-                                fadeInDuration:
-                                    const Duration(milliseconds: 100),
-                                placeholder:
-                                    const AssetImage("assets/user.webp"),
-                                image: NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
-                                ),
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset(
-                                "assets/user.webp",
-                                fit: BoxFit.cover,
-                              ),
+                        child: FadeInImage(
+                          fadeInDuration: const Duration(milliseconds: 100),
+                          placeholder: const AssetImage("assets/user.webp"),
+                          image: NetworkImage(
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
+                          ),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -139,9 +134,7 @@ class _TextPostState extends State<TextPost> {
                           onPressed: () {
                             if (txtPost.text != "") {
                               _postar(
-                                int.parse(
-                                        "${snapshot?.children.last.key ?? 0}") +
-                                    1,
+                                int.parse("${snapshot?.children.last.key ?? 0}") + 1,
                               );
                               Flushbar(
                                 message: "Postado com sucesso!",

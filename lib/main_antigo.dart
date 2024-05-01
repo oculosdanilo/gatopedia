@@ -1,3 +1,5 @@
+// ignore_for_file: type=lint
+
 import 'dart:convert';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -322,7 +324,6 @@ class _GatopediaState extends State<Gatopedia>
                 const SizedBox(
                   height: 60,
                 ),
-                const FormApp(),
               ],
             ),
           ),

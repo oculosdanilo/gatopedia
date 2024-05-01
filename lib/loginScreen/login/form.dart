@@ -1,19 +1,15 @@
-import 'dart:convert';
-
 import 'package:another_flushbar/flushbar.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gatopedia/firebase_options.dart';
-import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/loginScreen/login/autenticar.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/update.dart';
-import 'package:http/http.dart' as http;
-import 'package:package_info_plus/package_info_plus.dart';
+
+enum Entrada { login, cadastro }
 
 class FormApp extends StatefulWidget {
-  const FormApp({super.key});
+  final Entrada modo;
+
+  const FormApp(this.modo, {super.key});
 
   @override
   FormAppState createState() => FormAppState();
@@ -23,55 +19,15 @@ class FormAppState extends State<FormApp> {
   final _formKey = GlobalKey<FormState>();
   final txtControllerLogin = TextEditingController();
   final txtControllerSenha = TextEditingController();
+  bool inputLembrar = false;
   int txtFieldLenght = 0;
   Color? counterColor;
   bool conectando = false;
   bool esconderSenha = true;
   Icon iconeOlho = const Icon(Icons.visibility_rounded);
 
-  checarUpdate(context) async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    String version = packageInfo.version;
-
-    final response = await http.get(
-      Uri.parse(
-        "https://api.github.com/repos/oculosdanilo/gatopedia/releases/latest",
-      ),
-    );
-    Map<String, dynamic> versaoAtt = jsonDecode(response.body);
-    if (version != versaoAtt["tag_name"]) {
-      Navigator.push(
-        context,
-        SlideRightRoute(
-          Update(
-            versaoAtt["tag_name"],
-            versaoAtt["body"],
-          ),
-        ),
-      );
-    } else {
-      debugPrint("atualizado");
-    }
-  }
-
-  Future<void> _navegarAtt(BuildContext context) async {
-    // Navigator.push returns a Future that completes after calling
-    // Navigator.pop on the Selection Screen.
-    await Navigator.push(
-      context,
-      // Create the SelectionScreen in the next step.
-      SlideRightRoute(const Home()),
-    );
-    if (!context.mounted) return;
-    mudarCor(Theme.of(context).colorScheme.primary);
-  }
-
-  _firebaseStart() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  }
+  late final scW = MediaQuery.of(context).size.width;
+  late final scH = MediaQuery.of(context).size.height;
 
   mudarCor(cor) {
     setState(() {
@@ -94,12 +50,6 @@ class FormAppState extends State<FormApp> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _firebaseStart();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
@@ -108,7 +58,7 @@ class FormAppState extends State<FormApp> {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              width: 300,
+              width: scW * 0.8,
               child: TextFormField(
                 maxLength: 25,
                 textInputAction: TextInputAction.next,
@@ -123,10 +73,7 @@ class FormAppState extends State<FormApp> {
                       mudarCor(Theme.of(context).colorScheme.onBackground);
                     }
                   });
-                  if (_formKey.currentState!.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
-                  }
+                  _formKey.currentState!.validate();
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -143,8 +90,7 @@ class FormAppState extends State<FormApp> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  prefixIconColor: MaterialStateColor.resolveWith(
-                      (Set<MaterialState> states) {
+                  prefixIconColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
                     if (states.contains(MaterialState.error)) {
                       return Theme.of(context).colorScheme.error;
                     }
@@ -183,7 +129,7 @@ class FormAppState extends State<FormApp> {
               height: 20,
             ),
             SizedBox(
-              width: 300,
+              width: scW * 0.8,
               height: 65,
               child: TextFormField(
                 textInputAction: TextInputAction.done,
@@ -195,11 +141,12 @@ class FormAppState extends State<FormApp> {
                   prefix: const SizedBox(
                     width: 10,
                   ),
-                  suffix: IconButton(
-                    onPressed: () {
-                      mostrarSenha();
-                    },
-                    icon: iconeOlho,
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: IconButton(
+                      onPressed: () => mostrarSenha(),
+                      icon: iconeOlho,
+                    ),
                   ),
                   label: const Text(
                     "Senha",
@@ -208,94 +155,112 @@ class FormAppState extends State<FormApp> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 27,
-            ),
+            widget.modo == Entrada.login ? const SizedBox(height: 17) : const SizedBox(),
+            widget.modo == Entrada.login
+                ? Row(
+                    children: [
+                      SizedBox(width: scW * 0.07),
+                      Checkbox(
+                        value: inputLembrar,
+                        onChanged: (valor) => setState(() => inputLembrar = !inputLembrar),
+                      ),
+                      InkWell(
+                        onTap: () => setState(() => inputLembrar = !inputLembrar),
+                        splashFactory: NoSplash.splashFactory,
+                        splashColor: Colors.transparent,
+                        child: const Text(
+                          "Lembre-se de mim!",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      )
+                    ],
+                  )
+                : const SizedBox(),
+            const SizedBox(height: 27),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FilledButton(
-                  onPressed: !conectando
-                      ? () async {
-                          // Validate returns true if the form is valid, or false otherwise.
-                          if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              conectando = true;
-                            });
-                            Flushbar(
-                              message: "Conectando...",
-                              duration: const Duration(seconds: 3),
-                              margin: const EdgeInsets.all(20),
-                              borderRadius: BorderRadius.circular(50),
-                            ).show(context);
-                            TextInput.finishAutofillContext();
-                            (bool, String?) resposta = await autenticar(
-                              txtControllerLogin.text,
-                              txtControllerSenha.text,
-                            );
-                            if (!context.mounted) return;
-                            if (!resposta.$1) {
-                              Flushbar(
-                                duration: const Duration(seconds: 10),
-                                margin: const EdgeInsets.all(20),
-                                borderRadius: BorderRadius.circular(50),
-                                backgroundColor:
-                                    (resposta.$2?.contains("incorreta") ??
-                                            false)
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .errorContainer
-                                        : const Color(0xFF303030),
-                                messageText: (resposta.$2
-                                            ?.contains("incorreta") ??
-                                        false)
-                                    ? Row(
-                                        children: [
-                                          Icon(
-                                            Icons.error_rounded,
-                                            color: blueScheme.onErrorContainer,
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            resposta.$2 ?? "",
-                                            style: TextStyle(
-                                              color:
-                                                  blueScheme.onErrorContainer,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Text(resposta.$2 ?? ""),
-                              ).show(context);
-                              if (!(resposta.$2?.contains("incorreta") ??
-                                  false)) {
-                                txtControllerLogin.text = "";
-                                txtControllerSenha.text = "";
-                              }
-                            } else {
-                              setState(() {
-                                username =
-                                    txtControllerLogin.text.toLowerCase();
-                              });
-                              _navegarAtt(context);
-                            }
-                            setState(() {
-                              conectando = false;
-                            });
-                          }
-                        }
-                      : null,
-                  child: const Text(
-                    "Cadastrar/Entrar",
-                    style: TextStyle(fontSize: 18),
-                  ),
+                OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancelar", style: TextStyle(fontSize: 18)),
                 ),
+                const SizedBox(width: 10),
+                botaoLogin(context),
+                SizedBox(width: scW * 0.1),
               ],
             ),
+            const SizedBox(height: 40),
           ],
         ),
+      ),
+    );
+  }
+
+  FilledButton botaoLogin(BuildContext context) {
+    return FilledButton(
+      onPressed: !conectando
+          ? () async {
+              // Validate returns true if the form is valid, or false otherwise.
+              if (_formKey.currentState!.validate()) {
+                Flushbar flushbar = Flushbar(
+                  message: "Conectando...",
+                  duration: const Duration(seconds: 3),
+                  margin: const EdgeInsets.all(20),
+                  borderRadius: BorderRadius.circular(50),
+                );
+                setState(() {
+                  conectando = true;
+                });
+                flushbar.show(context);
+                TextInput.finishAutofillContext();
+                var retorno = await autenticar(
+                  txtControllerLogin.text,
+                  txtControllerSenha.text,
+                  widget.modo,
+                );
+                if (!context.mounted) return;
+                if (retorno is String) {
+                  Flushbar(
+                    duration: const Duration(seconds: 5),
+                    margin: const EdgeInsets.all(20),
+                    borderRadius: BorderRadius.circular(50),
+                    messageText: Row(
+                      children: [
+                        Icon(
+                          Icons.error_rounded,
+                          color: blueScheme.onErrorContainer,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          retorno,
+                          style: TextStyle(
+                            color: blueScheme.onErrorContainer,
+                          ),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: blueScheme.errorContainer,
+                  ).show(context);
+                  setState(() {
+                    conectando = false;
+                  });
+                } else {
+                  setState(() {
+                    conectando = false;
+                    txtControllerSenha.text = "";
+                    txtControllerLogin.text = "";
+                  });
+                  flushbar.dismiss();
+                  Navigator.pop(context, (true, inputLembrar));
+                }
+              }
+            }
+          : null,
+      child: Text(
+        widget.modo == Entrada.login ? "Entrar" : "Cadastrar",
+        style: const TextStyle(fontSize: 18),
       ),
     );
   }
