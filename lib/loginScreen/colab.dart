@@ -49,7 +49,6 @@ class ColaboradoresState extends State<Colaboradores> {
             ),
             actions: [
               PopupMenuButton<MenuItens>(
-                color: Theme.of(context).colorScheme.onPrimary,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 itemBuilder: (BuildContext context) =>

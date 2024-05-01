@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/loginScreen/colab.dart';
+import 'package:gatopedia/loginScreen/login/form.dart';
 import 'package:gatopedia/main.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -40,11 +41,50 @@ class _IndexState extends State<Index> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          PopupMenuButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem(
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    SlideUpRoute(Colaboradores()),
+                  );
+                },
+                child: Row(
+                  children: [
+                    Icon(Symbols.people_rounded),
+                    SizedBox(width: 15),
+                    Text("Colaboradores"),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                onTap: () => Navigator.push(
+                  context,
+                  SlideUpRoute(Scaffold(body: Config(true))),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Symbols.settings_rounded),
+                    SizedBox(width: 15),
+                    Text("Configurações"),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           Positioned(
             width: MediaQuery.of(context).size.width,
-            top: 400,
+            top: MediaQuery.of(context).size.height * 0.1 + 250,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -68,7 +108,20 @@ class _IndexState extends State<Index> {
                   opacity: animText ? 1 : 0,
                   curve: Interval(0.5, 1),
                   child: FilledButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      bool info = await showModalBottomSheet<bool>(
+                            showDragHandle: true,
+                            isScrollControlled: true,
+                            context: context,
+                            builder: (c) => Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(c).viewInsets.bottom),
+                              child: FormApp(),
+                            ),
+                          ) ??
+                          false;
+                      if (info) {}
+                    },
                     style: ButtonStyle(
                       fixedSize: MaterialStatePropertyAll(
                         Size(MediaQuery.of(context).size.width * 0.7, 50),
@@ -100,18 +153,6 @@ class _IndexState extends State<Index> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                AnimatedOpacity(
-                  duration: Duration(milliseconds: 500),
-                  opacity: animText ? 1 : 0,
-                  curve: Interval(0.5, 1),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: Row(),
-                  ),
-                ),
               ],
             ),
           ),
@@ -119,7 +160,9 @@ class _IndexState extends State<Index> {
             curve: Curves.ease,
             duration: Duration(milliseconds: 500),
             left: (MediaQuery.of(context).size.width / 2) - 125,
-            top: animImg ? 150 : (MediaQuery.of(context).size.height / 2) - 125,
+            top: animImg
+                ? MediaQuery.of(context).size.height * 0.1
+                : (MediaQuery.of(context).size.height / 2) - 125,
             child: ClipOval(
               child: Image.asset(
                 "assets/icon.png",
@@ -127,47 +170,15 @@ class _IndexState extends State<Index> {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: PopupMenuButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                itemBuilder: (BuildContext context) => [
-                  PopupMenuItem(
-                    onTap: () => Navigator.push(
-                      context,
-                      SlideUpRoute(Colaboradores()),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Symbols.people_rounded),
-                        SizedBox(width: 15),
-                        Text("Colaboradores"),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    onTap: () => Navigator.push(
-                      context,
-                      SlideUpRoute(Scaffold(body: Config())),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Symbols.settings_rounded),
-                        SizedBox(width: 15),
-                        Text("Configurações"),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );
   }
+}
+
+class LoginInfo {
+  final String username;
+  final String senha;
+
+  LoginInfo({required this.username, required this.senha});
 }

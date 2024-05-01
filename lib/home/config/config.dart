@@ -17,7 +17,9 @@ String buildNumber = "";
 bool dark = App.themeNotifier.value == ThemeMode.dark ? true : false;
 
 class Config extends StatefulWidget {
-  const Config({super.key});
+  final bool voltar;
+
+  const Config(this.voltar, {super.key});
 
   @override
   State<Config> createState() => _ConfigState();
@@ -57,18 +59,19 @@ class _ConfigState extends State<Config> {
     return CustomScrollView(
       physics: const NeverScrollableScrollPhysics(),
       slivers: [
-        SliverAppBar.medium(
-          automaticallyImplyLeading: false,
-          backgroundColor: Theme.of(context).colorScheme.background,
-          flexibleSpace: FlexibleSpaceBar(
-            title: Text(
-              "Configurações",
-              style: TextStyle(
-                fontFamily: "Jost",
-                color: Theme.of(context).colorScheme.onBackground,
+        SliverAppBar.large(
+          automaticallyImplyLeading: widget.voltar,
+          title: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Configurações",
+                style: TextStyle(
+                  fontFamily: "Jost",
+                  fontSize: 40,
+                ),
               ),
-            ),
-            centerTitle: true,
+            ],
           ),
         ),
         SliverToBoxAdapter(

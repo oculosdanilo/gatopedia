@@ -2,17 +2,15 @@ import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gatopedia/loginScreen/login/autenticar.dart';
-import 'package:http/http.dart' as http;
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:gatopedia/main.dart';
-import 'package:gatopedia/loginScreen/colab.dart';
 import 'package:gatopedia/firebase_options.dart';
 import 'package:gatopedia/home/home.dart';
+import 'package:gatopedia/loginScreen/login/autenticar.dart';
+import 'package:gatopedia/main.dart';
 import 'package:gatopedia/update.dart';
+import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 
 class FormApp extends StatefulWidget {
   const FormApp({super.key});
@@ -107,6 +105,7 @@ class FormAppState extends State<FormApp> {
       key: _formKey,
       child: AutofillGroup(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
               width: 300,
@@ -213,20 +212,8 @@ class FormAppState extends State<FormApp> {
               height: 27,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    SystemNavigator.pop();
-                  },
-                  child: const Text(
-                    "Sair",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-                const SizedBox(
-                  width: 15,
-                ),
                 FilledButton(
                   onPressed: !conectando
                       ? () async {
@@ -297,65 +284,6 @@ class FormAppState extends State<FormApp> {
                             setState(() {
                               conectando = false;
                             });
-                            /* Flushbar(
-                        message: "Conectando...",
-                        duration: const Duration(seconds: 10),
-                        margin: const EdgeInsets.all(20),
-                        borderRadius: BorderRadius.circular(50),
-                      ).show(context);
-                      final response = await http.post(_urlLogin, body: map);
-                      if (!response.body.contains("true")) {
-                        Flushbar(
-                          message: response.body,
-                          duration: const Duration(seconds: 5),
-                          margin: const EdgeInsets.all(20),
-                          flushbarStyle: FlushbarStyle.FLOATING,
-                          borderRadius: BorderRadius.circular(50),
-                        ).show(context);
-                        txtControllerLogin.text = "";
-                        txtControllerSenha.text = "";
-                        mudarTextoDoBotao();
-                      } else {
-                        var mapAuth = <String, String>{};
-                        mapAuth['login'] = txtControllerLogin.text;
-                        final responseAuth =
-                            await http.post(_urlLoginAuth, body: mapAuth);
-                        if (jsonDecode(responseAuth.body)[0]["SENHA"] ==
-                            txtControllerSenha.text) {
-                          username = txtControllerLogin.text;
-                          final responseList = await http.post(_urlGatoList);
-                          gatoLista = jsonDecode(responseList.body);
-                          save();
-                          mudarTextoDoBotao();
-                          _firebaseStart();
-                          _navegarAtt(context);
-                        } else {
-                          Flushbar(
-                            flushbarStyle: FlushbarStyle.FLOATING,
-                            margin: const EdgeInsets.all(20),
-                            messageText: Row(
-                              children: [
-                                Icon(
-                                  Icons.error_rounded,
-                                  color: blueScheme.onErrorContainer,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "Senha incorreta: usuário já existe!",
-                                  style: TextStyle(
-                                    color: blueScheme.onErrorContainer,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            duration: const Duration(seconds: 5),
-                            borderRadius: BorderRadius.circular(50),
-                            backgroundColor: blueScheme.errorContainer,
-                          ).show(context);
-                        }
-                      } */
                           }
                         }
                       : null,
@@ -365,21 +293,6 @@ class FormAppState extends State<FormApp> {
                   ),
                 ),
               ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            OutlinedButton.icon(
-              onPressed: () {
-                Navigator.push(context, SlideUpRoute(const Colaboradores()));
-              },
-              onLongPress: () async {
-                if (kDebugMode) {
-                  checarUpdate(context);
-                }
-              },
-              label: const Text("COLABORADORES"),
-              icon: const Icon(Icons.people_alt_rounded),
             ),
           ],
         ),

@@ -73,7 +73,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: App.themeNotifier,
-      builder: (_, ThemeMode currentMode, __) {
+      builder: (c, currentMode, w) {
         return KeyboardSizeProvider(
           child: MaterialApp(
             debugShowCheckedModeBanner: false,

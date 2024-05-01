@@ -3,11 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:gatopedia/home/config/config.dart';
-import 'package:gatopedia/home/gatos/gatos.dart';
 import 'package:gatopedia/home/eu/profile.dart';
+import 'package:gatopedia/home/gatos/gatos.dart';
 import 'package:gatopedia/main.dart';
 
-List<Widget> telasHome = const [GatoLista(), Profile(false), Config()];
+List<Widget> telasHome = const [GatoLista(), Profile(false), Config(false)];
 int indexAntigo = 0;
 
 class Home extends StatefulWidget {
@@ -149,6 +149,7 @@ class HomeState extends State {
 
 class SlideRightAgainRoute extends PageRouteBuilder {
   final Widget page;
+
   SlideRightAgainRoute(this.page)
       : super(
           reverseTransitionDuration: const Duration(milliseconds: 500),
