@@ -50,6 +50,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/splash/
   fonts:
     - family: Jost
       fonts:
@@ -57,15 +58,16 @@ flutter:
 
 flutter_native_splash:
   color: "#fffbff"
-  branding: assets/createdby-light.png
+  branding: assets/splash/createdby-light.png
 
   color_dark: "#1c1c1c"
-  branding_dark: assets/createdby-dark.png
+  branding_dark: assets/splash/createdby-dark.png
   android_12:
+    image: assets/splash/splash.xml
     color: "#fffbff"
-    branding: assets/createdby-light-12.png
+    branding: assets/splash/createdby-light-12.png
 
     color_dark: "#1c1c1c"
-    branding_dark: assets/createdby-dark-12.png
+    branding_dark: assets/splash/createdby-dark-12.png
 
   ios: false
