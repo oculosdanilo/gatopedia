@@ -8,46 +8,46 @@
       android:viewportHeight="432">
       <group android:name="_R_G">
         <group
-          android:name="_R_G_L_3_G"
+          android:name="_R_G_L_2_G"
           android:translateX="216"
           android:translateY="216">
           <path
-            android:name="_R_G_L_3_G_D_0_P_0"
+            android:name="_R_G_L_2_G_D_0_P_0"
             android:fillAlpha="1"
             android:fillColor="#9e9e9e"
             android:fillType="nonZero"
             android:pathData=" M0 -98 C54.09,-98 98,-54.09 98,0 C98,54.09 54.09,98 0,98 C-54.09,98 -98,54.09 -98,0 C-98,-54.09 -54.09,-98 0,-98c " />
         </group>
         <group
-          android:name="_R_G_L_2_G"
+          android:name="_R_G_L_1_G"
           android:scaleX="0.25"
           android:scaleY="0"
           android:translateX="216"
           android:translateY="216">
           <path
-            android:name="_R_G_L_2_G_D_0_P_0"
+            android:name="_R_G_L_1_G_D_0_P_0"
             android:fillAlpha="1"
             android:fillColor="#000080"
             android:fillType="nonZero"
             android:pathData=" M0 -98 C54.09,-98 98,-54.09 98,0 C98,54.09 54.09,98 0,98 C-54.09,98 -98,54.09 -98,0 C-98,-54.09 -54.09,-98 0,-98c " />
         </group>
         <group
-          android:name="_R_G_L_1_G_T_1"
+          android:name="_R_G_L_0_G_T_1"
           android:scaleX="0.38"
           android:scaleY="0"
           android:translateX="216"
           android:translateY="382">
           <group
-            android:name="_R_G_L_1_G"
+            android:name="_R_G_L_0_G"
             android:translateX="-167.5"
             android:translateY="-216.5">
             <group
-              android:name="_R_G_L_1_G_L_0_G"
+              android:name="_R_G_L_0_G_L_0_G"
               android:scaleY="0"
               android:translateX="-7.641999999999996"
               android:translateY="-30.52600000000001">
               <path
-                android:name="_R_G_L_1_G_L_0_G_D_0_P_0"
+                android:name="_R_G_L_0_G_L_0_G_D_0_P_0"
                 android:fillAlpha="1"
                 android:fillColor="#ff9922"
                 android:fillType="nonZero"
@@ -55,23 +55,11 @@
             </group>
           </group>
         </group>
-        <group
-          android:name="_R_G_L_0_G"
-          android:scaleY="0"
-          android:translateX="216"
-          android:translateY="216">
-          <path
-            android:name="_R_G_L_0_G_D_0_P_0"
-            android:fillAlpha="1"
-            android:fillColor="#9e9e9e"
-            android:fillType="nonZero"
-            android:pathData=" M0 -98 C54.09,-98 98,-54.09 98,0 C98,54.09 54.09,98 0,98 C-54.09,98 -98,54.09 -98,0 C-98,-54.09 -54.09,-98 0,-98c " />
-        </group>
       </group>
       <group android:name="time_group" />
     </vector>
   </aapt:attr>
-  <target android:name="_R_G_L_3_G">
+  <target android:name="_R_G_L_2_G">
     <aapt:attr name="android:animation">
       <set android:ordering="together">
         <objectAnimator
@@ -84,7 +72,7 @@
       </set>
     </aapt:attr>
   </target>
-  <target android:name="_R_G_L_3_G">
+  <target android:name="_R_G_L_2_G">
     <aapt:attr name="android:animation">
       <set android:ordering="together">
         <objectAnimator
@@ -97,7 +85,7 @@
       </set>
     </aapt:attr>
   </target>
-  <target android:name="_R_G_L_2_G">
+  <target android:name="_R_G_L_1_G">
     <aapt:attr name="android:animation">
       <set android:ordering="together">
         <objectAnimator
@@ -147,7 +135,7 @@
       </set>
     </aapt:attr>
   </target>
-  <target android:name="_R_G_L_2_G">
+  <target android:name="_R_G_L_1_G">
     <aapt:attr name="android:animation">
       <set android:ordering="together">
         <objectAnimator
@@ -160,7 +148,7 @@
       </set>
     </aapt:attr>
   </target>
-  <target android:name="_R_G_L_1_G_L_0_G">
+  <target android:name="_R_G_L_0_G_L_0_G">
     <aapt:attr name="android:animation">
       <set android:ordering="together">
         <objectAnimator
@@ -173,7 +161,7 @@
       </set>
     </aapt:attr>
   </target>
-  <target android:name="_R_G_L_1_G_T_1">
+  <target android:name="_R_G_L_0_G_T_1">
     <aapt:attr name="android:animation">
       <set android:ordering="together">
         <objectAnimator
@@ -201,7 +189,7 @@
       </set>
     </aapt:attr>
   </target>
-  <target android:name="_R_G_L_1_G_T_1">
+  <target android:name="_R_G_L_0_G_T_1">
     <aapt:attr name="android:animation">
       <set android:ordering="together">
         <objectAnimator
@@ -210,19 +198,6 @@
           android:startOffset="50"
           android:valueFrom="0"
           android:valueTo="0.38"
-          android:valueType="floatType" />
-      </set>
-    </aapt:attr>
-  </target>
-  <target android:name="_R_G_L_0_G">
-    <aapt:attr name="android:animation">
-      <set android:ordering="together">
-        <objectAnimator
-          android:duration="0"
-          android:propertyName="scaleY"
-          android:startOffset="50"
-          android:valueFrom="0"
-          android:valueTo="1"
           android:valueType="floatType" />
       </set>
     </aapt:attr>

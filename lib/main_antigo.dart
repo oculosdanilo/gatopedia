@@ -1,5 +1,3 @@
-// ignore_for_file: type=lint
-
 import 'dart:convert';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -12,10 +10,8 @@ import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:gatopedia/firebase_options.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/loginScreen/login/form.dart';
-import 'package:gatopedia/loginScreen/seminternet.dart';
 import 'package:gatopedia/update.dart';
 import 'package:http/http.dart' as http;
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -252,16 +248,6 @@ class _GatopediaState extends State<Gatopedia> with SingleTickerProviderStateMix
     super.initState();
     pegarImagens();
     _play();
-    InternetConnectionChecker().onStatusChange.listen((status) {
-      switch (status) {
-        case InternetConnectionStatus.disconnected:
-          internet = false;
-          Navigator.push(context, SlideUpRoute(const SemInternet()));
-          break;
-        case InternetConnectionStatus.connected:
-          break;
-      }
-    });
     if (!kDebugMode) {
       checarUpdate();
     }

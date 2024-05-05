@@ -7,6 +7,7 @@ import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/loginScreen/colab.dart';
 import 'package:gatopedia/loginScreen/login/form.dart';
+import 'package:gatopedia/loginScreen/seminternet.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/update.dart';
 import 'package:http/http.dart' as http;
@@ -33,6 +34,9 @@ class _IndexState extends State<Index> {
   @override
   void initState() {
     super.initState();
+    connecteo.connectionStream.listen((internet) {
+      if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
+    });
     if (!kDebugMode) {
       checarUpdate(context);
     }

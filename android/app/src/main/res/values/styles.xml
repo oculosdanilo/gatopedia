@@ -3,10 +3,10 @@
   <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is off -->
   <style name="LaunchTheme" parent="Theme.SplashScreen">
     <item name="windowSplashScreenBackground">
-      @color/gatoSplash
+      @color/gato_splash
     </item>
     <item name="windowSplashScreenAnimatedIcon">
-      @drawable/launch_background
+      @drawable/data
     </item>
   </style>
   <!-- Theme applied to the Android Window as soon as the process has started.

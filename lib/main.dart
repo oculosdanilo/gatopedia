@@ -1,3 +1,4 @@
+import 'package:connecteo/connecteo.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -23,6 +24,8 @@ ColorScheme blueSchemeL = ColorScheme.fromSeed(
 );
 dynamic mensagem;
 DataSnapshot? snapshotForum;
+
+final connecteo = ConnectionChecker();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -200,13 +203,9 @@ class SlideUpRoute extends PageRouteBuilder {
             Animation<double> secondaryAnimation,
           ) =>
               page,
-          transitionsBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-            Widget child,
-          ) =>
-              SlideTransition(
+          transitionsBuilder:
+              (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) =>
+                  SlideTransition(
             position: Tween<Offset>(
               begin: const Offset(0, 1),
               end: Offset.zero,
