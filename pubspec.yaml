@@ -57,13 +57,13 @@ flutter:
         - asset: assets/jost.ttf
 
 flutter_native_splash:
+  image: assets/splash/icon.png
   color: "#fffbff"
   branding: assets/splash/createdby-light.png
 
   color_dark: "#1c1c1c"
   branding_dark: assets/splash/createdby-dark.png
   android_12:
-    image: assets/splash/splash.xml
     color: "#fffbff"
     branding: assets/splash/createdby-light-12.png
 
