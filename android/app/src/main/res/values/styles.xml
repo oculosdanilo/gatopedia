@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is off -->
   <style name="LaunchTheme" parent="Theme.SplashScreen">
     <item name="windowSplashScreenBackground">
       @color/gato_splash
     </item>
     <item name="windowSplashScreenAnimatedIcon">
-      @drawable/data
+      @drawable/news_avd_v02
     </item>
+    <item name="windowSplashScreenAnimationDuration">3000</item>
+    <item name="android:windowSplashScreenBehavior">icon_preferred</item>
   </style>
   <!-- Theme applied to the Android Window as soon as the process has started.
        This theme determines the color of the Android Window while your
