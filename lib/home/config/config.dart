@@ -119,7 +119,7 @@ class _ConfigState extends State<Config> {
 
     Future.delayed(Duration.zero, () async {
       await FirebaseDatabase.instance.ref("users/$username").remove();
-      username = "";
+      username = null;
       final pref = await SharedPreferences.getInstance();
       if (pref.containsKey("username")) {
         await pref.remove("username");
