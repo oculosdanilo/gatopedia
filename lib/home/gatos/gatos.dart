@@ -100,7 +100,7 @@ class _GatoListaState extends State<GatoLista> {
                       false;
                   if (dialogo) {
                     final sp = await SharedPreferences.getInstance();
-                    if (sp.getString("username") != null) await sp.remove("username");
+                    if (sp.containsKey("username")) await sp.remove("username");
                     if (!context.mounted) return;
                     Navigator.pop(context);
                     Navigator.push(context, MaterialPageRoute(builder: (c) => const Index()));

@@ -114,6 +114,9 @@ class _ComentariosState extends State<Comentarios> {
                         image: NetworkImage(
                             "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postAtual.child("username").value}.webp?alt=media"),
                         width: 30,
+                        errorBuilder: (c, obj, stacktrace) {
+                          return Image.asset("assets/user.webp", width: 30);
+                        },
                       ),
                     ),
                   ),
@@ -281,6 +284,9 @@ class _ComentariosState extends State<Comentarios> {
                   image: NetworkImage(
                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postAtual.child("comentarios/$index/username").value}.webp?alt=media"),
                   width: 50,
+                  errorBuilder: (c, obj, stacktrace) {
+                    return Image.asset("assets/user.webp", width: 50);
+                  },
                 ),
               ),
             ),

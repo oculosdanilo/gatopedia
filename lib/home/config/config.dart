@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:gatopedia/home/home.dart';
+import 'package:gatopedia/index.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -80,20 +81,23 @@ class _ConfigState extends State<Config> {
     return senhaDigitada == userSenha;
   }
 
-  _deletarConta() async {
+  _deletarConta(BuildContext context) async {
     final posts = await FirebaseDatabase.instance.ref("posts").get();
     for (final post in posts.children) {
-      if (post.child("username").value == username) {
-        debugPrint(post.value.toString());
-      }
-
       final comentarios = post.child("comentarios").value as List;
       if (comentarios.length > 2) {
         for (final comentario in comentarios) {
           if ((comentario ?? {"username": ""})["username"] == username) {
-            debugPrint(comentario.value.toString());
+            final refRemoveComm =
+                FirebaseDatabase.instance.ref("posts/${post.key}/comentarios/${comentarios.indexOf(comentario)}");
+            await refRemoveComm.remove();
           }
         }
+      }
+
+      if (post.child("username").value == username) {
+        final refRemove = FirebaseDatabase.instance.ref("posts/${post.key}");
+        await refRemove.remove();
       }
     }
 
@@ -104,12 +108,26 @@ class _ConfigState extends State<Config> {
         for (final comentario in comentarios) {
           if (comentario != "null") {
             if (comentario["user"] == username) {
-              debugPrint(comentario.value.toString());
+              final refRemove =
+                  FirebaseDatabase.instance.ref("gatos/${gato.key}/comentarios/${comentarios.indexOf(comentario)}");
+              await refRemove.remove();
             }
           }
         }
       }
     }
+
+    Future.delayed(Duration.zero, () async {
+      await FirebaseDatabase.instance.ref("users/$username").remove();
+      username = "";
+      final pref = await SharedPreferences.getInstance();
+      if (pref.containsKey("username")) {
+        await pref.remove("username");
+      }
+
+      if (!context.mounted) return;
+      Navigator.pop(context, true);
+    });
   }
 
   @override
@@ -175,7 +193,7 @@ class _ConfigState extends State<Config> {
                 !widget.voltar
                     ? ListTile(
                         onTap: () async {
-                          showCupertinoDialog(
+                          final dialogo = await showCupertinoDialog<bool>(
                             barrierDismissible: true,
                             context: context,
                             builder: (c) => Theme(
@@ -189,85 +207,14 @@ class _ConfigState extends State<Config> {
                                 ),
                               ),
                               child: StatefulBuilder(builder: (context, setStateB) {
-                                return AlertDialog(
-                                  title: Text("Sentirei saudades :,("),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Quando sua conta for deletada, suas postagens e comentários também serão removidos da plataforma.\n",
-                                      ),
-                                      Text("Para continuar, insira abaixo sua senha:", textAlign: TextAlign.start),
-                                      SizedBox(
-                                        width: scW * 0.8,
-                                        height: 65,
-                                        child: TextFormField(
-                                          textInputAction: TextInputAction.done,
-                                          autofillHints: const [AutofillHints.password],
-                                          controller: txtControllerSenha,
-                                          obscureText: esconderSenha,
-                                          keyboardType: TextInputType.visiblePassword,
-                                          decoration: InputDecoration(
-                                            prefix: const SizedBox(width: 10),
-                                            suffixIcon: Padding(
-                                              padding: const EdgeInsets.only(right: 10),
-                                              child: IconButton(
-                                                onPressed: () => mostrarSenha(setStateB),
-                                                icon: iconeOlho,
-                                              ),
-                                            ),
-                                            label: Text("Senha", style: GoogleFonts.jost()),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    OutlinedButton(onPressed: () => Navigator.pop(context), child: Text("CANCELAR")),
-                                    FilledButton(
-                                      onPressed: !conectando
-                                          ? () async {
-                                              setStateB(() {
-                                                conectando = true;
-                                              });
-                                              final senhaCorreta = await _autenticarSenha(txtControllerSenha.text);
-                                              if (!context.mounted) return;
-                                              if (senhaCorreta) {
-                                                await _deletarConta();
-                                                setStateB(() {
-                                                  conectando = false;
-                                                });
-                                              } else {
-                                                Flushbar(
-                                                  duration: const Duration(seconds: 5),
-                                                  margin: const EdgeInsets.all(20),
-                                                  borderRadius: BorderRadius.circular(50),
-                                                  messageText: Row(
-                                                    children: [
-                                                      Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
-                                                      const SizedBox(width: 10),
-                                                      Text(
-                                                        "Senha incorreta :/",
-                                                        style: TextStyle(color: blueScheme.onErrorContainer),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  backgroundColor: blueScheme.errorContainer,
-                                                ).show(context);
-                                                setStateB(() {
-                                                  conectando = false;
-                                                });
-                                              }
-                                            }
-                                          : null,
-                                      child: Text("APAGAR MINHA CONTA"),
-                                    ),
-                                  ],
-                                );
+                                return alertaDeletar(setStateB, context);
                               }),
                             ),
                           );
+                          if (!context.mounted) return;
+                          if (dialogo != null) {
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => Index()));
+                          }
                         },
                         title: const Text("Deletar conta"),
                         subtitle: const Text("Remove seu perfil e seu conteúdo na plataforma"),
@@ -318,6 +265,82 @@ class _ConfigState extends State<Config> {
             ),
           ),
         )
+      ],
+    );
+  }
+
+  AlertDialog alertaDeletar(StateSetter setStateB, BuildContext context) {
+    return AlertDialog(
+      title: Text("Sentirei saudades :,("),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Quando sua conta for deletada, suas postagens e comentários também serão removidos da plataforma.\n",
+          ),
+          Text("Para continuar, insira abaixo sua senha:", textAlign: TextAlign.start),
+          SizedBox(
+            width: scW * 0.8,
+            height: 65,
+            child: TextFormField(
+              textInputAction: TextInputAction.done,
+              autofillHints: const [AutofillHints.password],
+              controller: txtControllerSenha,
+              obscureText: esconderSenha,
+              keyboardType: TextInputType.visiblePassword,
+              decoration: InputDecoration(
+                prefix: const SizedBox(width: 10),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: IconButton(
+                    onPressed: () => mostrarSenha(setStateB),
+                    icon: iconeOlho,
+                  ),
+                ),
+                label: Text("Senha", style: GoogleFonts.jost()),
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        OutlinedButton(onPressed: () => Navigator.pop(context), child: Text("CANCELAR")),
+        FilledButton(
+          onPressed: !conectando
+              ? () async {
+                  setStateB(() {
+                    conectando = true;
+                  });
+                  final senhaCorreta = await _autenticarSenha(txtControllerSenha.text);
+                  if (!context.mounted) return;
+                  if (senhaCorreta) {
+                    await _deletarConta(context);
+                    setStateB(() {
+                      conectando = false;
+                    });
+                  } else {
+                    Flushbar(
+                      duration: const Duration(seconds: 5),
+                      margin: const EdgeInsets.all(20),
+                      borderRadius: BorderRadius.circular(50),
+                      messageText: Row(
+                        children: [
+                          Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
+                          const SizedBox(width: 10),
+                          Text("Senha incorreta :/", style: TextStyle(color: blueScheme.onErrorContainer)),
+                        ],
+                      ),
+                      backgroundColor: blueScheme.errorContainer,
+                    ).show(context);
+                    setStateB(() {
+                      conectando = false;
+                    });
+                  }
+                }
+              : null,
+          child: Text("APAGAR MINHA CONTA"),
+        ),
       ],
     );
   }

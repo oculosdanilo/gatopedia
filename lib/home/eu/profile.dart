@@ -351,13 +351,15 @@ class _ProfileState extends State<Profile> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             TextButton.icon(
-              onPressed: () {
-                setState(() {
-                  editMode = true;
-                  txtBio.text = bioText;
-                  focusCoiso.requestFocus();
-                });
-              },
+              onPressed: bioText != "carregando..."
+                  ? () {
+                      setState(() {
+                        editMode = true;
+                        txtBio.text = bioText;
+                        focusCoiso.requestFocus();
+                      });
+                    }
+                  : null,
               icon: const Icon(Icons.edit_rounded),
               label: const Text("Editar bio"),
             ),
