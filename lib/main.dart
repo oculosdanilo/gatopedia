@@ -91,12 +91,6 @@ class _AppState extends State<App> {
     );
   }
 
-  ThemeData temaBase(ThemeMode mode) {
-    return ThemeData(
-      colorScheme: mode == ThemeMode.dark ? blueScheme : blueSchemeL,
-    );
-  }
-
   ThemeData temaLight() {
     return ThemeData(
       navigationBarTheme: NavigationBarThemeData(
@@ -188,6 +182,12 @@ class _AppState extends State<App> {
       textTheme: GoogleFonts.jostTextTheme(temaBase(ThemeMode.dark).textTheme),
     );
   }
+}
+
+ThemeData temaBase(ThemeMode mode) {
+  return ThemeData(
+    colorScheme: mode == ThemeMode.dark ? blueScheme : blueSchemeL,
+  );
 }
 
 class SlideUpRoute extends PageRouteBuilder {

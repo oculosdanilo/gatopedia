@@ -1,5 +1,9 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
+
+import 'package:another_flushbar/flushbar.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -29,6 +33,26 @@ class Config extends StatefulWidget {
 }
 
 class _ConfigState extends State<Config> {
+  late final scW = MediaQuery.of(context).size.width;
+  bool esconderSenha = true;
+  Icon iconeOlho = const Icon(Icons.visibility_rounded);
+  final txtControllerSenha = TextEditingController();
+  bool conectando = false;
+
+  mostrarSenha(setState) {
+    if (esconderSenha) {
+      setState(() {
+        esconderSenha = false;
+        iconeOlho = const Icon(Icons.visibility_off_rounded);
+      });
+    } else {
+      setState(() {
+        esconderSenha = true;
+        iconeOlho = const Icon(Icons.visibility_rounded);
+      });
+    }
+  }
+
   _pegarVersao() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
@@ -48,6 +72,44 @@ class _ConfigState extends State<Config> {
   _saveLight() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool("dark", false);
+  }
+
+  Future<bool> _autenticarSenha(senhaDigitada) async {
+    final ref = FirebaseDatabase.instance.ref("users/$username/senha");
+    final userSenha = utf8.decode(base64Decode((await ref.get()).value as String));
+    return senhaDigitada == userSenha;
+  }
+
+  _deletarConta() async {
+    final posts = await FirebaseDatabase.instance.ref("posts").get();
+    for (final post in posts.children) {
+      if (post.child("username").value == username) {
+        debugPrint(post.value.toString());
+      }
+
+      final comentarios = post.child("comentarios").value as List;
+      if (comentarios.length > 2) {
+        for (final comentario in comentarios) {
+          if ((comentario ?? {"username": ""})["username"] == username) {
+            debugPrint(comentario.value.toString());
+          }
+        }
+      }
+    }
+
+    final wiki = await FirebaseDatabase.instance.ref("gatos").get();
+    for (final gato in wiki.children) {
+      final comentarios = gato.child("comentarios").value as List;
+      if (comentarios.length > 2) {
+        for (final comentario in comentarios) {
+          if (comentario != "null") {
+            if (comentario["user"] == username) {
+              debugPrint(comentario.value.toString());
+            }
+          }
+        }
+      }
+    }
   }
 
   @override
@@ -110,30 +172,111 @@ class _ConfigState extends State<Config> {
                     });
                   },
                 ),
-                ListTile(
-                  onTap: () async {
-                    showCupertinoDialog(
-                      context: context,
-                      builder: (c) => Theme(
-                        data: ThemeData.from(
-                          colorScheme: ColorScheme.fromSeed(
-                            seedColor: Color(0xffff0000),
-                            brightness: dark ? Brightness.dark : Brightness.light,
-                          ),
-                        ),
-                        child: AlertDialog(
-                          title: Text("Tem certeza"),
-                        ),
-                      ),
-                    );
-                  },
-                  title: Text("Deletar conta"),
-                  subtitle: Text("Remove seu perfil e seu conteúdo na plataforma"),
-                  leading: Icon(Symbols.delete_rounded),
-                  iconColor: Theme.of(context).colorScheme.error,
-                  titleTextStyle: GoogleFonts.jost(color: Theme.of(context).colorScheme.error, fontSize: 20),
-                  subtitleTextStyle: GoogleFonts.jost(color: Theme.of(context).colorScheme.error),
-                ),
+                !widget.voltar
+                    ? ListTile(
+                        onTap: () async {
+                          showCupertinoDialog(
+                            barrierDismissible: true,
+                            context: context,
+                            builder: (c) => Theme(
+                              data: ThemeData.from(
+                                textTheme: GoogleFonts.jostTextTheme(
+                                  temaBase(dark ? ThemeMode.dark : ThemeMode.light).textTheme,
+                                ),
+                                colorScheme: ColorScheme.fromSeed(
+                                  seedColor: const Color(0xffff0000),
+                                  brightness: dark ? Brightness.dark : Brightness.light,
+                                ),
+                              ),
+                              child: StatefulBuilder(builder: (context, setStateB) {
+                                return AlertDialog(
+                                  title: Text("Sentirei saudades :,("),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Quando sua conta for deletada, suas postagens e comentários também serão removidos da plataforma.\n",
+                                      ),
+                                      Text("Para continuar, insira abaixo sua senha:", textAlign: TextAlign.start),
+                                      SizedBox(
+                                        width: scW * 0.8,
+                                        height: 65,
+                                        child: TextFormField(
+                                          textInputAction: TextInputAction.done,
+                                          autofillHints: const [AutofillHints.password],
+                                          controller: txtControllerSenha,
+                                          obscureText: esconderSenha,
+                                          keyboardType: TextInputType.visiblePassword,
+                                          decoration: InputDecoration(
+                                            prefix: const SizedBox(width: 10),
+                                            suffixIcon: Padding(
+                                              padding: const EdgeInsets.only(right: 10),
+                                              child: IconButton(
+                                                onPressed: () => mostrarSenha(setStateB),
+                                                icon: iconeOlho,
+                                              ),
+                                            ),
+                                            label: Text("Senha", style: GoogleFonts.jost()),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    OutlinedButton(onPressed: () => Navigator.pop(context), child: Text("CANCELAR")),
+                                    FilledButton(
+                                      onPressed: !conectando
+                                          ? () async {
+                                              setStateB(() {
+                                                conectando = true;
+                                              });
+                                              final senhaCorreta = await _autenticarSenha(txtControllerSenha.text);
+                                              if (!context.mounted) return;
+                                              if (senhaCorreta) {
+                                                await _deletarConta();
+                                                setStateB(() {
+                                                  conectando = false;
+                                                });
+                                              } else {
+                                                Flushbar(
+                                                  duration: const Duration(seconds: 5),
+                                                  margin: const EdgeInsets.all(20),
+                                                  borderRadius: BorderRadius.circular(50),
+                                                  messageText: Row(
+                                                    children: [
+                                                      Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
+                                                      const SizedBox(width: 10),
+                                                      Text(
+                                                        "Senha incorreta :/",
+                                                        style: TextStyle(color: blueScheme.onErrorContainer),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  backgroundColor: blueScheme.errorContainer,
+                                                ).show(context);
+                                                setStateB(() {
+                                                  conectando = false;
+                                                });
+                                              }
+                                            }
+                                          : null,
+                                      child: Text("APAGAR MINHA CONTA"),
+                                    ),
+                                  ],
+                                );
+                              }),
+                            ),
+                          );
+                        },
+                        title: const Text("Deletar conta"),
+                        subtitle: const Text("Remove seu perfil e seu conteúdo na plataforma"),
+                        leading: const Icon(Symbols.delete_rounded),
+                        iconColor: Theme.of(context).colorScheme.error,
+                        titleTextStyle: GoogleFonts.jost(color: Theme.of(context).colorScheme.error, fontSize: 20),
+                        subtitleTextStyle: GoogleFonts.jost(color: Theme.of(context).colorScheme.error),
+                      )
+                    : const SizedBox(),
                 const Divider(),
                 Container(
                   margin: const EdgeInsets.all(15),

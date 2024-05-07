@@ -226,19 +226,9 @@ class FormAppState extends State<FormApp> {
                     borderRadius: BorderRadius.circular(50),
                     messageText: Row(
                       children: [
-                        Icon(
-                          Icons.error_rounded,
-                          color: blueScheme.onErrorContainer,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          retorno,
-                          style: TextStyle(
-                            color: blueScheme.onErrorContainer,
-                          ),
-                        ),
+                        Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
+                        const SizedBox(width: 10),
+                        Text(retorno, style: TextStyle(color: blueScheme.onErrorContainer)),
                       ],
                     ),
                     backgroundColor: blueScheme.errorContainer,

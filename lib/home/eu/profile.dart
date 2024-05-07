@@ -295,7 +295,6 @@ class _ProfileState extends State<Profile> {
       expandedHeight: 400,
       backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       flexibleSpace: FlexibleSpaceBar(
-        centerTitle: true,
         title: Text("@$username", style: GoogleFonts.jost()),
         background: Stack(
           fit: StackFit.expand,
@@ -307,6 +306,9 @@ class _ProfileState extends State<Profile> {
                     image: CachedNetworkImageProvider(
                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
                     ),
+                    imageErrorBuilder: (context, obj, stck) {
+                      return Image.asset("assets/user.webp", fit: BoxFit.cover);
+                    },
                     fit: BoxFit.cover,
                   )
                 : Image.asset(
