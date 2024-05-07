@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
@@ -10,22 +9,7 @@
     android:name="${applicationName}"
     android:enableOnBackInvokedCallback="true"
     android:icon="@mipmap/ic_launcher"
-    android:label="Gatopédia!"
-    android:usesCleartextTraffic="true"
-    tools:targetApi="tiramisu">
-    <provider
-      android:name="sk.fourq.otaupdate.OtaUpdateFileProvider"
-      android:authorities="${applicationId}.ota_update_provider"
-      android:exported="false"
-      android:grantUriPermissions="true">
-      <meta-data
-        android:name="android.support.FILE_PROVIDER_PATHS"
-        android:resource="@xml/filepaths" />
-    </provider>
-
-    <activity
-      android:name="com.yalantis.ucrop.UCropActivity"
-      android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+    android:label="Gatopédia!">
     <activity
       android:name=".MainActivity"
       android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
@@ -39,6 +23,19 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
+    <provider
+      android:name="sk.fourq.otaupdate.OtaUpdateFileProvider"
+      android:authorities="${applicationId}.ota_update_provider"
+      android:exported="false"
+      android:grantUriPermissions="true">
+      <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/filepaths" />
+    </provider>
+
+    <activity
+      android:name="com.yalantis.ucrop.UCropActivity"
+      android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
     <meta-data
       android:name="flutterEmbedding"
