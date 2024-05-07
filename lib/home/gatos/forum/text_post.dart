@@ -85,6 +85,9 @@ class _TextPostState extends State<TextPost> {
                           image: NetworkImage(
                             "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
                           ),
+                          imageErrorBuilder: (c, obj, stacktrace) {
+                            return Image.asset("assets/user.webp", fit: BoxFit.cover);
+                          },
                           fit: BoxFit.cover,
                         ),
                       ),

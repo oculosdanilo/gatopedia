@@ -119,7 +119,7 @@ class FormAppState extends State<FormApp> {
                     Icons.alternate_email_rounded,
                   ),
                   label: const Text(
-                    "Login",
+                    "Nome de usuário",
                     style: TextStyle(fontFamily: "Jost"),
                   ),
                 ),
@@ -247,13 +247,15 @@ class FormAppState extends State<FormApp> {
                     conectando = false;
                   });
                 } else {
+                  flushbar.dismiss();
                   setState(() {
                     conectando = false;
                     txtControllerSenha.text = "";
                     txtControllerLogin.text = "";
                   });
-                  flushbar.dismiss();
-                  Navigator.pop(context, (true, inputLembrar));
+                  Future.delayed(Duration.zero, () {
+                    Navigator.pop(context, widget.modo == Entrada.login ? (true, inputLembrar) : true);
+                  });
                 }
               }
             }

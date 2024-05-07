@@ -34,45 +34,55 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: paginaSelecionada,
-        onDestinationSelected: (index) {
+    return PopScope(
+      canPop: paginaSelecionada == 0,
+      onPopInvoked: (poppou) {
+        if (!poppou) {
           setState(() {
-            dark = App.themeNotifier.value == ThemeMode.dark;
-            paginaSelecionada = index;
-            tabIndex = 0;
+            paginaSelecionada = 0;
           });
-        },
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-        destinations: <NavigationDestination>[
-          NavigationDestination(
-            icon: const Icon(Ionicons.paw_outline),
-            selectedIcon: Icon(Ionicons.paw, color: Theme.of(context).colorScheme.onPrimary),
-            label: "Gatos",
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.person_outlined),
-            selectedIcon: Icon(Icons.person, color: Theme.of(context).colorScheme.onPrimary),
-            label: "Eu",
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings, color: Theme.of(context).colorScheme.onPrimary),
-            label: "Configurações",
-          )
-        ],
-      ),
-      body: PageTransitionSwitcher(
-        reverse: paginaSelecionada < indexAntigo,
-        transitionBuilder: (child, animation, secondAnimation) => SharedAxisTransition(
-          animation: animation,
-          secondaryAnimation: secondAnimation,
-          transitionType: SharedAxisTransitionType.horizontal,
-          child: child,
+        }
+      },
+      child: Scaffold(
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: paginaSelecionada,
+          onDestinationSelected: (index) {
+            setState(() {
+              dark = App.themeNotifier.value == ThemeMode.dark;
+              paginaSelecionada = index;
+              tabIndex = 0;
+            });
+          },
+          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+          destinations: <NavigationDestination>[
+            NavigationDestination(
+              icon: const Icon(Ionicons.paw_outline),
+              selectedIcon: Icon(Ionicons.paw, color: Theme.of(context).colorScheme.onPrimary),
+              label: "Gatos",
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.person_outlined),
+              selectedIcon: Icon(Icons.person, color: Theme.of(context).colorScheme.onPrimary),
+              label: "Eu",
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.settings_outlined),
+              selectedIcon: Icon(Icons.settings, color: Theme.of(context).colorScheme.onPrimary),
+              label: "Configurações",
+            )
+          ],
         ),
-        duration: const Duration(milliseconds: 200),
-        child: telasHome[paginaSelecionada],
+        body: PageTransitionSwitcher(
+          reverse: paginaSelecionada < indexAntigo,
+          transitionBuilder: (child, animation, secondAnimation) => SharedAxisTransition(
+            animation: animation,
+            secondaryAnimation: secondAnimation,
+            transitionType: SharedAxisTransitionType.horizontal,
+            child: child,
+          ),
+          duration: const Duration(milliseconds: 200),
+          child: telasHome[paginaSelecionada],
+        ),
       ),
     );
   }

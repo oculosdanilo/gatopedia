@@ -15,7 +15,7 @@ class Wiki extends StatefulWidget {
   State<Wiki> createState() => _WikiState();
 }
 
-class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
+class _WikiState extends State<Wiki> {
   @override
   void initState() {
     if (!pegouInfo) {
@@ -27,7 +27,6 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return StretchingOverscrollIndicator(
       axisDirection: AxisDirection.down,
       child: FutureBuilder<DataSnapshot>(
@@ -37,9 +36,10 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
             return Stack(
               children: [
                 Positioned.fill(
-                  top: -20,
+                  top: -40,
                   child: ListView(
                     shrinkWrap: true,
+                    controller: ScrollController(),
                     children: snapshot.data!.children
                         .map<Widget>(
                           (e) => gatoCard(e, snapshot, context),
@@ -135,7 +135,4 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

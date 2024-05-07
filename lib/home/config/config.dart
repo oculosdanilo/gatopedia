@@ -1,15 +1,18 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final Uri _urlGatopediaGit =
-    Uri.parse('https://github.com/oculosdanilo/gatopedia');
-final Uri _urlGatopediaGitLatest =
-    Uri.parse('https://github.com/oculosdanilo/gatopedia/releases');
+final Uri _urlGatopediaGit = Uri.parse('https://github.com/oculosdanilo/gatopedia');
+final Uri _urlGatopediaGitLatest = Uri.parse('https://github.com/oculosdanilo/gatopedia/releases');
 String appName = "";
 String packageName = "";
 String version = "";
@@ -86,10 +89,7 @@ class _ConfigState extends State<Config> {
                   secondary: const Icon(Icons.dark_mode_rounded),
                   title: const Text(
                     "Modo escuro",
-                    style: TextStyle(
-                      fontFamily: "Jost",
-                      fontSize: 20,
-                    ),
+                    style: TextStyle(fontSize: 20),
                   ),
                   subtitle: const Text(
                     "Lindo como gatos pretos!",
@@ -110,6 +110,30 @@ class _ConfigState extends State<Config> {
                     });
                   },
                 ),
+                ListTile(
+                  onTap: () async {
+                    showCupertinoDialog(
+                      context: context,
+                      builder: (c) => Theme(
+                        data: ThemeData.from(
+                          colorScheme: ColorScheme.fromSeed(
+                            seedColor: Color(0xffff0000),
+                            brightness: dark ? Brightness.dark : Brightness.light,
+                          ),
+                        ),
+                        child: AlertDialog(
+                          title: Text("Tem certeza"),
+                        ),
+                      ),
+                    );
+                  },
+                  title: Text("Deletar conta"),
+                  subtitle: Text("Remove seu perfil e seu conteúdo na plataforma"),
+                  leading: Icon(Symbols.delete_rounded),
+                  iconColor: Theme.of(context).colorScheme.error,
+                  titleTextStyle: GoogleFonts.jost(color: Theme.of(context).colorScheme.error, fontSize: 20),
+                  subtitleTextStyle: GoogleFonts.jost(color: Theme.of(context).colorScheme.error),
+                ),
                 const Divider(),
                 Container(
                   margin: const EdgeInsets.all(15),
@@ -122,12 +146,8 @@ class _ConfigState extends State<Config> {
                         "Sobre o aplicativo",
                         style: TextStyle(fontFamily: "Jost", fontSize: 25),
                       ),
-                      Text(
-                        packageName,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                      Text(
-                        "Versão: $version ($buildNumber)",
+                      SelectableText(
+                        "$packageName\nVersão: $version ($buildNumber)",
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ],

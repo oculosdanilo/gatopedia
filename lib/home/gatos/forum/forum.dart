@@ -293,9 +293,12 @@ class _ForumState extends State<Forum> {
                     axisDirection: AxisDirection.down,
                     child: ListView(
                       shrinkWrap: true,
+                      controller: ScrollController(),
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: snapshotForum!.children
                           .map((e) => e.value != null ? post(context, int.parse(e.key!)) : const SizedBox())
+                          .toList()
+                          .reversed
                           .toList(),
                       /*itemBuilder: (context, index) {
                         return snapshotForum!
@@ -317,7 +320,7 @@ class _ForumState extends State<Forum> {
   }
 
   Container post(BuildContext context, int index) {
-    final DataSnapshot postSS = snapshotForum!.child("${int.parse(snapshotForum!.children.last.key ?? "0") - index}");
+    final DataSnapshot postSS = snapshotForum!.child("$index");
     return Container(
       transform: Matrix4.translationValues(0, -20, 0),
       child: Card(
@@ -468,16 +471,18 @@ class _ForumState extends State<Forum> {
                         child: AspectRatio(
                           aspectRatio: 1,
                           child: InkWell(
+                            splashColor: Colors.transparent,
+                            splashFactory: NoSplash.splashFactory,
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (ctx) => Imagem(
-                                  "${int.parse(snapshotForum!.children.last.key!) - index}",
+                                  "$index",
                                 ),
                               ),
                             ),
                             child: Hero(
-                              tag: "${int.parse(snapshotForum!.children.last.key!) - index}",
+                              tag: "$index",
                               child: FadeInImage(
                                 fit: BoxFit.cover,
                                 width: double.infinity,
@@ -487,7 +492,7 @@ class _ForumState extends State<Forum> {
                                   'assets/loading.gif',
                                 ),
                                 image: CachedNetworkImageProvider(
-                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse(snapshotForum!.children.last.key!) - index}.webp?alt=media",
+                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$index.webp?alt=media",
                                 ),
                               ),
                             ),
