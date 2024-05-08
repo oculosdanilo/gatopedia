@@ -38,9 +38,9 @@ void main() async {
   final salvo = pref.getString("username") != null;
   if (salvo) username = pref.getString("username");
   if (pref.getBool("dark") ?? PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
-    runApp(App(ThemeMode.dark, !salvo ? const Index() : const Home()));
+    runApp(App(ThemeMode.dark, !salvo ? const Index(true) : const Home()));
   } else {
-    runApp(App(ThemeMode.light, !salvo ? const Index() : const Home()));
+    runApp(App(ThemeMode.light, !salvo ? const Index(true) : const Home()));
   }
 }
 

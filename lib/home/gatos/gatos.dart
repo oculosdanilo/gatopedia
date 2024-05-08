@@ -104,7 +104,7 @@ class _GatoListaState extends State<GatoLista> {
                     if (!context.mounted) return;
                     username = null;
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (c) => const Index()));
+                    Navigator.push(context, MaterialPageRoute(builder: (c) => const Index(false)));
                   }
                 },
                 icon: Transform.rotate(

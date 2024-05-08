@@ -213,7 +213,7 @@ class _ConfigState extends State<Config> {
                           );
                           if (!context.mounted) return;
                           if (dialogo != null) {
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => Index()));
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => Index(false)));
                           }
                         },
                         title: const Text("Deletar conta"),

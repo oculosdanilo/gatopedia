@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
@@ -10,6 +12,7 @@ import 'package:gatopedia/loginScreen/login/form.dart';
 import 'package:gatopedia/loginScreen/seminternet.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/update.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -17,7 +20,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Index extends StatefulWidget {
-  const Index({super.key});
+  final bool tocar;
+
+  const Index(this.tocar, {super.key});
 
   @override
   State<Index> createState() => _IndexState();
@@ -27,6 +32,9 @@ class _IndexState extends State<Index> {
   bool animImg = false;
   bool animText = false;
   final miau = AudioPlayer();
+
+  Offset? pos;
+  bool acabou = false;
 
   late final scW = MediaQuery.of(context).size.width;
   late final scH = MediaQuery.of(context).size.height;
@@ -40,9 +48,22 @@ class _IndexState extends State<Index> {
     if (!kDebugMode) {
       checarUpdate(context);
     }
-    miau.setAsset("assets/meow.mp3").then((value) {
-      miau.play();
-      Future.delayed(value!, () {
+    if (widget.tocar) {
+      miau.setAsset("assets/meow.mp3").then((value) {
+        miau.play();
+        Future.delayed(value!, () {
+          setState(() {
+            animImg = true;
+          });
+          Future.delayed(const Duration(milliseconds: 500), () {
+            setState(() {
+              animText = true;
+            });
+          });
+        });
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           animImg = true;
         });
@@ -52,7 +73,7 @@ class _IndexState extends State<Index> {
           });
         });
       });
-    });
+    }
   }
 
   checarUpdate(context) async {
@@ -79,49 +100,122 @@ class _IndexState extends State<Index> {
     }
   }
 
+  AppBar appBarAlt() {
+    return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      leading: IconButton(
+        onPressed: () {
+          setState(() {
+            pos = null;
+          });
+        },
+        icon: Icon(Symbols.arrow_back),
+      ),
+      actions: [
+        PopupMenuButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem(
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  SlideUpRoute(const Colaboradores()),
+                );
+              },
+              child: const Row(
+                children: [
+                  Icon(Symbols.people_rounded),
+                  SizedBox(width: 15),
+                  Text("Colaboradores"),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              onTap: () => Navigator.push(
+                context,
+                SlideUpRoute(const Scaffold(body: Config(true))),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Symbols.settings_rounded),
+                  SizedBox(width: 15),
+                  Text("Configurações"),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  bool full = false;
+
+  AppBar appBar(bool acabou) {
+    return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      automaticallyImplyLeading: acabou,
+      leading: AnimatedOpacity(
+        opacity: full ? 1 : 0,
+        duration: Duration(milliseconds: 250),
+        child: IconButton(
+          onPressed: full
+              ? () {
+                  setState(() {
+                    pos = null;
+                  });
+                  Navigator.pushReplacement(context, CustomNavRoute(builder: (c) => Index(false)));
+                }
+              : null,
+          icon: Icon(Symbols.arrow_back),
+        ),
+      ),
+      actions: [
+        PopupMenuButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem(
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  SlideUpRoute(const Colaboradores()),
+                );
+              },
+              child: const Row(
+                children: [
+                  Icon(Symbols.people_rounded),
+                  SizedBox(width: 15),
+                  Text("Colaboradores"),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              onTap: () => Navigator.push(
+                context,
+                SlideUpRoute(const Scaffold(body: Config(true))),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Symbols.settings_rounded),
+                  SizedBox(width: 15),
+                  Text("Configurações"),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        actions: [
-          PopupMenuButton(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            itemBuilder: (BuildContext context) => [
-              PopupMenuItem(
-                onTap: () async {
-                  await Navigator.push(
-                    context,
-                    SlideUpRoute(const Colaboradores()),
-                  );
-                },
-                child: const Row(
-                  children: [
-                    Icon(Symbols.people_rounded),
-                    SizedBox(width: 15),
-                    Text("Colaboradores"),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                onTap: () => Navigator.push(
-                  context,
-                  SlideUpRoute(const Scaffold(body: Config(true))),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Symbols.settings_rounded),
-                    SizedBox(width: 15),
-                    Text("Configurações"),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+      appBar: appBar(acabou),
       body: Stack(
         children: [
           Positioned(
@@ -142,9 +236,7 @@ class _IndexState extends State<Index> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 75,
-                ),
+                const SizedBox(height: 75),
                 AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
                   opacity: animText ? 1 : 0,
@@ -171,7 +263,7 @@ class _IndexState extends State<Index> {
                           await sp.setString("username", username ?? "");
                         }
                         if (!context.mounted) return;
-                        Navigator.pushReplacement(context, SlideRightRoute(const Home()));
+                        Navigator.pushReplacement(context, SlideUpRoute(const Home()));
                       }
                     },
                     style: ButtonStyle(
@@ -185,9 +277,7 @@ class _IndexState extends State<Index> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 AnimatedOpacity(
                   duration: const Duration(milliseconds: 400),
                   opacity: animText ? 1 : 0,
@@ -215,11 +305,7 @@ class _IndexState extends State<Index> {
                         ).show(context);
                       }
                     },
-                    style: ButtonStyle(
-                      fixedSize: MaterialStatePropertyAll(
-                        Size(scW * 0.7, 50),
-                      ),
-                    ),
+                    style: ButtonStyle(fixedSize: MaterialStatePropertyAll(Size(scW * 0.7, 50))),
                     child: const Text(
                       "Cadastrar",
                       style: TextStyle(fontSize: 20),
@@ -241,15 +327,144 @@ class _IndexState extends State<Index> {
               ),
             ),
           ),
+          SemConta(
+            animText,
+            scH,
+            () {
+              Future.delayed(Duration(milliseconds: 250), () {
+                setState(() {
+                  full = true;
+                });
+              });
+            },
+            full,
+            pos: pos,
+            acabou: acabou,
+          ),
+          AnimatedPositioned(
+            duration: Duration.zero,
+            top: full
+                ? 0
+                : pos == null
+                    ? scH
+                    : pos!.dy,
+            width: scW,
+            child: Container(
+              height: scH,
+              width: scW,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class LoginInfo {
-  final String username;
-  final String senha;
+//ignore: must_be_immutable
+class SemConta extends StatefulWidget {
+  final bool animText;
+  final double scH;
+  final Function() notifyParent;
+  final bool full;
+  Offset? pos;
+  bool acabou;
 
-  LoginInfo({required this.username, required this.senha});
+  SemConta(
+    this.animText,
+    this.scH,
+    this.notifyParent,
+    this.full, {
+    required this.pos,
+    required this.acabou,
+    super.key,
+  });
+
+  @override
+  State<SemConta> createState() => _SemContaState();
+}
+
+class _SemContaState extends State<SemConta> {
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedPositioned(
+      duration: widget.acabou ? Duration(milliseconds: 300) : Duration.zero,
+      curve: Curves.ease,
+      left: 0,
+      right: 0,
+      bottom: widget.pos == null ? -widget.scH : -widget.pos!.dy,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 600),
+        opacity: widget.animText ? 1 : 0,
+        curve: const Interval(0.5, 1),
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              widget.pos = Offset(0, 0);
+              widget.acabou = true;
+            });
+            widget.notifyParent();
+          },
+          onHorizontalDragStart: (detalhes) {
+            setState(() {
+              widget.acabou = false;
+            });
+          },
+          onHorizontalDragUpdate: (detalhes) {
+            setState(() {
+              widget.pos = detalhes.globalPosition;
+            });
+          },
+          onHorizontalDragDown: (detalhes) {
+            setState(() {
+              widget.pos = detalhes.globalPosition;
+              widget.acabou = true;
+            });
+          },
+          onHorizontalDragEnd: (detalhes) {
+            if ((widget.pos?.dy ?? 0) > ((widget.scH / 4) * 3)) {
+              setState(() {
+                widget.pos = null;
+                widget.acabou = true;
+              });
+            } else {
+              setState(() {
+                widget.pos = Offset(0, 0);
+                widget.acabou = true;
+              });
+              widget.notifyParent();
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 30),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              color: Theme.of(context).colorScheme.surfaceVariant,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 10),
+                Center(child: Icon(Symbols.keyboard_double_arrow_up_rounded)),
+                Text("Entrar sem conta", style: GoogleFonts.jost(fontSize: 20)),
+                SizedBox(height: 10 + widget.scH),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomNavRoute<T> extends MaterialPageRoute<T> {
+  CustomNavRoute({required super.builder});
+
+  @override
+  Widget buildTransitions(
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    return FadeTransition(opacity: animation, child: child);
+  }
 }
