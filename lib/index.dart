@@ -34,7 +34,6 @@ class _IndexState extends State<Index> {
   final miau = AudioPlayer();
 
   Offset? pos;
-  bool acabou = false;
 
   late final scW = MediaQuery.of(context).size.width;
   late final scH = MediaQuery.of(context).size.height;
@@ -42,6 +41,7 @@ class _IndexState extends State<Index> {
   @override
   void initState() {
     super.initState();
+    full = false;
     connecteo.connectionStream.listen((internet) {
       if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
     });
@@ -100,63 +100,19 @@ class _IndexState extends State<Index> {
     }
   }
 
-  AppBar appBarAlt() {
-    return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      leading: IconButton(
-        onPressed: () {
-          setState(() {
-            pos = null;
-          });
-        },
-        icon: Icon(Symbols.arrow_back),
-      ),
-      actions: [
-        PopupMenuButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          itemBuilder: (BuildContext context) => [
-            PopupMenuItem(
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  SlideUpRoute(const Colaboradores()),
-                );
-              },
-              child: const Row(
-                children: [
-                  Icon(Symbols.people_rounded),
-                  SizedBox(width: 15),
-                  Text("Colaboradores"),
-                ],
-              ),
-            ),
-            PopupMenuItem(
-              onTap: () => Navigator.push(
-                context,
-                SlideUpRoute(const Scaffold(body: Config(true))),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Symbols.settings_rounded),
-                  SizedBox(width: 15),
-                  Text("Configurações"),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   bool full = false;
 
-  AppBar appBar(bool acabou) {
+  AppBar appBar() {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.background,
-      automaticallyImplyLeading: acabou,
+      flexibleSpace: FlexibleSpaceBar(
+        background: AnimatedContainer(
+          duration: Duration(milliseconds: 150),
+          decoration: BoxDecoration(
+            color: full ? Theme.of(context).colorScheme.surfaceVariant : Theme.of(context).colorScheme.background,
+          ),
+        ),
+      ),
       leading: AnimatedOpacity(
         opacity: full ? 1 : 0,
         duration: Duration(milliseconds: 250),
@@ -214,150 +170,157 @@ class _IndexState extends State<Index> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar(acabou),
-      body: Stack(
-        children: [
-          Positioned(
-            width: scW,
-            top: scH * 0.05 + 250,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: animText ? 1 : 0,
-                  child: const Text(
-                    "Gatopédia!",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 75),
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300),
-                  opacity: animText ? 1 : 0,
-                  curve: const Interval(0.5, 1),
-                  child: FilledButton(
-                    onPressed: () async {
-                      (
-                        // $1: credenciais corretas, $2: lembrar de mim
-                        bool,
-                        bool
-                      ) info = await showModalBottomSheet<(bool, bool)>(
-                            showDragHandle: true,
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (c) => Padding(
-                              padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
-                              child: const FormApp(Entrada.login),
-                            ),
-                          ) ??
-                          (false, false);
-                      if (info.$1) {
-                        if (info.$2) {
-                          SharedPreferences sp = await SharedPreferences.getInstance();
-                          await sp.setString("username", username ?? "");
-                        }
-                        if (!context.mounted) return;
-                        Navigator.pushReplacement(context, SlideUpRoute(const Home()));
-                      }
-                    },
-                    style: ButtonStyle(
-                      fixedSize: MaterialStatePropertyAll(
-                        Size(scW * 0.7, 50),
+    return PopScope(
+      canPop: !full,
+      onPopInvoked: (poppou) {
+        if (!poppou) {
+          setState(() {
+            pos = null;
+          });
+          Navigator.pushReplacement(context, CustomNavRoute(builder: (c) => Index(false)));
+        }
+      },
+      child: Scaffold(
+        appBar: appBar(),
+        body: Stack(
+          children: [
+            Positioned(
+              width: scW,
+              top: scH * 0.05 + 250,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: animText ? 1 : 0,
+                    child: const Text(
+                      "Gatopédia!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    child: const Text(
-                      "Entrar",
-                      style: TextStyle(fontSize: 20),
+                  ),
+                  const SizedBox(height: 75),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 300),
+                    opacity: animText ? 1 : 0,
+                    curve: const Interval(0.5, 1),
+                    child: FilledButton(
+                      onPressed: () async {
+                        (
+                          // $1: credenciais corretas, $2: lembrar de mim
+                          bool,
+                          bool
+                        ) info = await showModalBottomSheet<(bool, bool)>(
+                              showDragHandle: true,
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (c) => Padding(
+                                padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
+                                child: const FormApp(Entrada.login),
+                              ),
+                            ) ??
+                            (false, false);
+                        if (info.$1) {
+                          if (info.$2) {
+                            SharedPreferences sp = await SharedPreferences.getInstance();
+                            await sp.setString("username", username ?? "");
+                          }
+                          if (!context.mounted) return;
+                          Navigator.pushReplacement(context, SlideUpRoute(const Home()));
+                        }
+                      },
+                      style: ButtonStyle(
+                        fixedSize: MaterialStatePropertyAll(
+                          Size(scW * 0.7, 50),
+                        ),
+                      ),
+                      child: const Text(
+                        "Entrar",
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 400),
-                  opacity: animText ? 1 : 0,
-                  curve: const Interval(0.5, 1),
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      bool info = await showModalBottomSheet<bool>(
-                            showDragHandle: true,
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (c) => Padding(
-                              padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
-                              child: const FormApp(Entrada.cadastro),
-                            ),
-                          ) ??
-                          false;
-                      if (info) {
-                        if (!context.mounted) return;
-                        Flushbar(
-                          message: "Cadastrado com sucesso! Agora entre com as mesmas credenciais",
-                          duration: const Duration(seconds: 10),
-                          margin: const EdgeInsets.all(20),
-                          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                          borderRadius: BorderRadius.circular(50),
-                        ).show(context);
-                      }
-                    },
-                    style: ButtonStyle(fixedSize: MaterialStatePropertyAll(Size(scW * 0.7, 50))),
-                    child: const Text(
-                      "Cadastrar",
-                      style: TextStyle(fontSize: 20),
+                  const SizedBox(height: 20),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 400),
+                    opacity: animText ? 1 : 0,
+                    curve: const Interval(0.5, 1),
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        bool info = await showModalBottomSheet<bool>(
+                              showDragHandle: true,
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (c) => Padding(
+                                padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
+                                child: const FormApp(Entrada.cadastro),
+                              ),
+                            ) ??
+                            false;
+                        if (info) {
+                          if (!context.mounted) return;
+                          Flushbar(
+                            message: "Cadastrado com sucesso! Agora entre com as mesmas credenciais",
+                            duration: const Duration(seconds: 10),
+                            margin: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                            borderRadius: BorderRadius.circular(50),
+                          ).show(context);
+                        }
+                      },
+                      style: ButtonStyle(fixedSize: MaterialStatePropertyAll(Size(scW * 0.7, 50))),
+                      child: const Text(
+                        "Cadastrar",
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          AnimatedPositioned(
-            curve: Curves.ease,
-            duration: const Duration(milliseconds: 500),
-            left: (scW / 2) - 125,
-            top: animImg ? scH * 0.05 : (scH / 2) - 250,
-            child: ClipOval(
-              child: Image.asset(
-                "assets/icon.png",
-                width: 250,
+                ],
               ),
             ),
-          ),
-          SemConta(
-            animText,
-            scH,
-            () {
-              Future.delayed(Duration(milliseconds: 250), () {
+            AnimatedPositioned(
+              curve: Curves.ease,
+              duration: const Duration(milliseconds: 500),
+              left: (scW / 2) - 125,
+              top: animImg ? scH * 0.05 : (scH / 2) - 250,
+              child: ClipOval(
+                child: Image.asset(
+                  "assets/icon.png",
+                  width: 250,
+                ),
+              ),
+            ),
+            SemConta(
+              animText,
+              scH,
+              () {
                 setState(() {
                   full = true;
                 });
-              });
-            },
-            full,
-            pos: pos,
-            acabou: acabou,
-          ),
-          AnimatedPositioned(
-            duration: Duration.zero,
-            top: full
-                ? 0
-                : pos == null
-                    ? scH
-                    : pos!.dy,
-            width: scW,
-            child: Container(
-              height: scH,
+              },
+              pos,
+            ),
+            AnimatedPositioned(
+              duration: Duration(milliseconds: 500),
+              top: full
+                  ? 0
+                  : pos == null
+                      ? scH
+                      : pos!.dy,
               width: scW,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant,
+              child: Container(
+                height: scH,
+                width: scW,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -368,17 +331,13 @@ class SemConta extends StatefulWidget {
   final bool animText;
   final double scH;
   final Function() notifyParent;
-  final bool full;
   Offset? pos;
-  bool acabou;
 
   SemConta(
     this.animText,
     this.scH,
     this.notifyParent,
-    this.full, {
-    required this.pos,
-    required this.acabou,
+    this.pos, {
     super.key,
   });
 
@@ -387,10 +346,13 @@ class SemConta extends StatefulWidget {
 }
 
 class _SemContaState extends State<SemConta> {
+  bool acabou = true;
+  late bool fullLocal = false;
+
   @override
   Widget build(BuildContext context) {
     return AnimatedPositioned(
-      duration: widget.acabou ? Duration(milliseconds: 300) : Duration.zero,
+      duration: acabou ? Duration(milliseconds: 300) : Duration.zero,
       curve: Curves.ease,
       left: 0,
       right: 0,
@@ -402,46 +364,58 @@ class _SemContaState extends State<SemConta> {
         child: GestureDetector(
           onTap: () {
             setState(() {
-              widget.pos = Offset(0, 0);
-              widget.acabou = true;
+              acabou = true;
+              widget.pos = Offset.zero;
+              fullLocal = true;
             });
+            /*widget.alterarPos(Offset.zero);*/
             widget.notifyParent();
           },
           onHorizontalDragStart: (detalhes) {
             setState(() {
-              widget.acabou = false;
+              acabou = false;
             });
           },
           onHorizontalDragUpdate: (detalhes) {
             setState(() {
               widget.pos = detalhes.globalPosition;
             });
+            /*widget.alterarPos(detalhes.globalPosition);*/
           },
           onHorizontalDragDown: (detalhes) {
             setState(() {
+              acabou = true;
               widget.pos = detalhes.globalPosition;
-              widget.acabou = true;
             });
+            /*widget.alterarPos(detalhes.globalPosition);*/
           },
           onHorizontalDragEnd: (detalhes) {
             if ((widget.pos?.dy ?? 0) > ((widget.scH / 4) * 3)) {
               setState(() {
+                acabou = true;
                 widget.pos = null;
-                widget.acabou = true;
               });
+              /*widget.alterarPos(null);*/
             } else {
               setState(() {
-                widget.pos = Offset(0, 0);
-                widget.acabou = true;
+                acabou = true;
+                widget.pos = Offset.zero;
+                fullLocal = true;
               });
+              /*widget.alterarPos(Offset.zero);*/
               widget.notifyParent();
             }
           },
-          child: Container(
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 250),
             padding: EdgeInsets.symmetric(horizontal: 30),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: fullLocal
+                  ? Theme.of(context).colorScheme.surfaceVariant
+                  : !acabou
+                      ? Theme.of(context).colorScheme.surfaceVariant
+                      : Theme.of(context).colorScheme.background,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
