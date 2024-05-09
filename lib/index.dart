@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:convert';
+import 'package:flex_seed_scheme/flex_seed_scheme.dart';
+import 'package:material_color_utilities/scheme/scheme_monochrome.dart';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
@@ -320,6 +322,17 @@ class _IndexState extends State<Index> {
                   decoration: BoxDecoration(
                     color: Colors.black,
                   ),
+                  child: Theme(
+                    data: ThemeData(
+                      colorSchemeSeed: Color(0xffffffff),
+                    ),
+                    child: Center(
+                      child: FilledButton(
+                        onPressed: () {},
+                        child: Text("ata"),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -423,8 +436,8 @@ class _SemContaState extends State<SemConta> {
               decoration: BoxDecoration(
                 gradient: !full && acabouAlt && dark
                     ? LinearGradient(
-                        begin: Alignment(0, -0.7),
-                        end: Alignment.topCenter,
+                        begin: Alignment(0, -0.75),
+                        end: Alignment(0, -0.96),
                         colors: [
                           Colors.black,
                           Theme.of(context).colorScheme.background,
@@ -441,14 +454,16 @@ class _SemContaState extends State<SemConta> {
                     "assets/anim/seta${dark || !acabouAlt ? '' : '-light'}.json",
                     width: 50,
                   )),
-                  Text("Entrar sem conta",
-                      style: GoogleFonts.jost(
-                          fontSize: 20,
-                          color: dark
-                              ? Theme.of(context).colorScheme.onBackground
-                              : !acabouAlt
-                                  ? Colors.white
-                                  : Theme.of(context).colorScheme.onBackground)),
+                  Text(
+                    "Entrar sem conta",
+                    style: GoogleFonts.jost(
+                        fontSize: 20,
+                        color: dark
+                            ? Theme.of(context).colorScheme.onBackground
+                            : !acabouAlt
+                                ? Colors.white
+                                : Theme.of(context).colorScheme.onBackground),
+                  ),
                   SizedBox(height: 20 + widget.scH),
                 ],
               ),
@@ -469,3 +484,21 @@ class CustomNavRoute<T> extends MaterialPageRoute<T> {
     return FadeTransition(opacity: animation, child: child);
   }
 }
+
+ThemeData mono = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme(
+    brightness: Brightness.light,
+    primary: Colors.black,
+    onPrimary: Colors.white,
+    secondary: Colors.white,
+    onSecondary: Colors.black,
+    error: Colors.red,
+    onError: Colors.white,
+    background: Colors.white,
+    onBackground: Colors.black,
+    surface: Colors.white,
+    onSurface: Colors.black,
+  ),
+  textTheme: GoogleFonts.jostTextTheme(),
+);
