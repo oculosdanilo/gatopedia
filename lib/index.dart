@@ -15,9 +15,13 @@ import 'package:gatopedia/update.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+bool full = false;
+Offset? pos;
 
 class Index extends StatefulWidget {
   final bool tocar;
@@ -32,8 +36,6 @@ class _IndexState extends State<Index> {
   bool animImg = false;
   bool animText = false;
   final miau = AudioPlayer();
-
-  Offset? pos;
 
   late final scW = MediaQuery.of(context).size.width;
   late final scH = MediaQuery.of(context).size.height;
@@ -100,16 +102,14 @@ class _IndexState extends State<Index> {
     }
   }
 
-  bool full = false;
-
   AppBar appBar() {
     return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: full ? Colors.black : Theme.of(context).colorScheme.background,
       flexibleSpace: FlexibleSpaceBar(
         background: AnimatedContainer(
           duration: Duration(milliseconds: 150),
           decoration: BoxDecoration(
-            color: full ? Theme.of(context).colorScheme.surfaceVariant : Theme.of(context).colorScheme.background,
+            color: full ? Colors.black : Theme.of(context).colorScheme.background,
           ),
         ),
       ),
@@ -121,11 +121,12 @@ class _IndexState extends State<Index> {
               ? () {
                   setState(() {
                     pos = null;
+                    full = false;
                   });
-                  Navigator.pushReplacement(context, CustomNavRoute(builder: (c) => Index(false)));
                 }
               : null,
           icon: Icon(Symbols.arrow_back),
+          color: Colors.white,
         ),
       ),
       actions: [
@@ -133,6 +134,7 @@ class _IndexState extends State<Index> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
+          iconColor: full ? Colors.white : Theme.of(context).colorScheme.onBackground,
           itemBuilder: (BuildContext context) => [
             PopupMenuItem(
               onTap: () async {
@@ -176,8 +178,8 @@ class _IndexState extends State<Index> {
         if (!poppou) {
           setState(() {
             pos = null;
+            full = false;
           });
-          Navigator.pushReplacement(context, CustomNavRoute(builder: (c) => Index(false)));
         }
       },
       child: Scaffold(
@@ -296,26 +298,28 @@ class _IndexState extends State<Index> {
             SemConta(
               animText,
               scH,
+              scW,
               () {
                 setState(() {
                   full = true;
                 });
               },
-              pos,
             ),
             AnimatedPositioned(
-              duration: Duration(milliseconds: 500),
-              top: full
-                  ? 0
-                  : pos == null
-                      ? scH
-                      : pos!.dy,
+              duration: Duration(milliseconds: 300),
+              curve: const Interval(0.99, 1),
+              top: full ? 0 : scH,
               width: scW,
-              child: Container(
-                height: scH,
-                width: scW,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+              child: AnimatedOpacity(
+                duration: full ? Duration(milliseconds: 500) : Duration.zero,
+                curve: const Interval((500 / 300) * 0.01, 1),
+                opacity: full ? 1 : 0,
+                child: Container(
+                  height: scH,
+                  width: scW,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -326,18 +330,17 @@ class _IndexState extends State<Index> {
   }
 }
 
-//ignore: must_be_immutable
 class SemConta extends StatefulWidget {
   final bool animText;
   final double scH;
+  final double scW;
   final Function() notifyParent;
-  Offset? pos;
 
-  SemConta(
+  const SemConta(
     this.animText,
     this.scH,
-    this.notifyParent,
-    this.pos, {
+    this.scW,
+    this.notifyParent, {
     super.key,
   });
 
@@ -347,7 +350,7 @@ class SemConta extends StatefulWidget {
 
 class _SemContaState extends State<SemConta> {
   bool acabou = true;
-  late bool fullLocal = false;
+  bool acabouAlt = true;
 
   @override
   Widget build(BuildContext context) {
@@ -356,7 +359,11 @@ class _SemContaState extends State<SemConta> {
       curve: Curves.ease,
       left: 0,
       right: 0,
-      bottom: widget.pos == null ? -widget.scH : -widget.pos!.dy,
+      bottom: pos == null
+          ? -widget.scH
+          : !full
+              ? -pos!.dy
+              : 0,
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 600),
         opacity: widget.animText ? 1 : 0,
@@ -365,66 +372,86 @@ class _SemContaState extends State<SemConta> {
           onTap: () {
             setState(() {
               acabou = true;
-              widget.pos = Offset.zero;
-              fullLocal = true;
+              acabouAlt = true;
+              pos = Offset.zero;
             });
-            /*widget.alterarPos(Offset.zero);*/
             widget.notifyParent();
           },
           onHorizontalDragStart: (detalhes) {
             setState(() {
               acabou = false;
+              acabouAlt = false;
             });
           },
           onHorizontalDragUpdate: (detalhes) {
             setState(() {
-              widget.pos = detalhes.globalPosition;
+              pos = detalhes.globalPosition;
             });
-            /*widget.alterarPos(detalhes.globalPosition);*/
           },
           onHorizontalDragDown: (detalhes) {
             setState(() {
+              acabouAlt = false;
               acabou = true;
-              widget.pos = detalhes.globalPosition;
+              pos = detalhes.globalPosition;
             });
-            /*widget.alterarPos(detalhes.globalPosition);*/
           },
           onHorizontalDragEnd: (detalhes) {
-            if ((widget.pos?.dy ?? 0) > ((widget.scH / 4) * 3)) {
+            if ((pos?.dy ?? 0) > ((widget.scH / 4) * 3)) {
               setState(() {
+                acabouAlt = true;
                 acabou = true;
-                widget.pos = null;
+                pos = null;
               });
-              /*widget.alterarPos(null);*/
             } else {
               setState(() {
+                acabouAlt = true;
                 acabou = true;
-                widget.pos = Offset.zero;
-                fullLocal = true;
+                pos = Offset.zero;
               });
-              /*widget.alterarPos(Offset.zero);*/
               widget.notifyParent();
             }
           },
           child: AnimatedContainer(
             duration: Duration(milliseconds: 250),
-            padding: EdgeInsets.symmetric(horizontal: 30),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              color: fullLocal
-                  ? Theme.of(context).colorScheme.surfaceVariant
-                  : !acabou
-                      ? Theme.of(context).colorScheme.surfaceVariant
-                      : Theme.of(context).colorScheme.background,
+              color: full || !acabouAlt ? Colors.black : Theme.of(context).colorScheme.background,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 10),
-                Center(child: Icon(Symbols.keyboard_double_arrow_up_rounded)),
-                Text("Entrar sem conta", style: GoogleFonts.jost(fontSize: 20)),
-                SizedBox(height: 10 + widget.scH),
-              ],
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 250),
+              width: widget.scW,
+              decoration: BoxDecoration(
+                gradient: !full && acabouAlt && dark
+                    ? LinearGradient(
+                        begin: Alignment(0, -0.7),
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black,
+                          Theme.of(context).colorScheme.background,
+                        ],
+                      )
+                    : null,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 10),
+                  Center(
+                      child: Lottie.asset(
+                    "assets/anim/seta${dark || !acabouAlt ? '' : '-light'}.json",
+                    width: 50,
+                  )),
+                  Text("Entrar sem conta",
+                      style: GoogleFonts.jost(
+                          fontSize: 20,
+                          color: dark
+                              ? Theme.of(context).colorScheme.onBackground
+                              : !acabouAlt
+                                  ? Colors.white
+                                  : Theme.of(context).colorScheme.onBackground)),
+                  SizedBox(height: 20 + widget.scH),
+                ],
+              ),
             ),
           ),
         ),
