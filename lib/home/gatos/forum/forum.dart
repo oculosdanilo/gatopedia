@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 import 'dart:io';
 
@@ -10,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/forum/comentarios.dart';
 import 'package:gatopedia/home/gatos/forum/delete_post.dart';
 import 'package:gatopedia/home/gatos/forum/edit_post.dart';
@@ -19,6 +22,8 @@ import 'package:gatopedia/home/gatos/forum/text_post.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grayscale/grayscale.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -171,118 +176,120 @@ class _ForumState extends State<Forum> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: ExpandableFab(
-        key: fagKey,
-        distance: 70,
-        overlayStyle: ExpandableFabOverlayStyle(
-          blur: 4,
-        ),
-        openButtonBuilder: RotateFloatingActionButtonBuilder(
-          child: const Icon(Icons.edit_rounded),
-        ),
-        closeButtonBuilder: RotateFloatingActionButtonBuilder(
-          child: const Icon(Icons.close_rounded),
-          fabSize: ExpandableFabSize.small,
-        ),
-        type: ExpandableFabType.up,
-        children: [
-          FloatingActionButton.extended(
-            heroTag: null,
-            onPressed: () async {
-              final state = fagKey.currentState;
-              if (state != null) {
-                state.toggle();
-              }
-              await showModalBottomSheet(
-                context: context,
-                showDragHandle: true,
-                builder: (ctx) {
-                  return const TextPost();
-                },
-              );
-              txtPost.text = "";
-            },
-            label: const Text("Texto"),
-            icon: const Icon(Icons.text_fields_rounded),
-          ),
-          OpenContainer(
-            onClosed: (data) {
-              if (postado) {
-                final state = fagKey.currentState;
-                if (state != null) {
-                  state.toggle();
-                }
-                Flushbar(
-                  message: "Postando...",
-                  duration: const Duration(seconds: 5),
-                  margin: const EdgeInsets.all(20),
-                  borderRadius: BorderRadius.circular(50),
-                ).show(context);
-                CachedNetworkImage.evictFromCache(
-                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media",
-                );
-                _postarImagem(
-                  int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
-                  "img",
-                );
-              }
-            },
-            transitionDuration: const Duration(milliseconds: 400),
-            closedElevation: 5,
-            openColor: Theme.of(context).colorScheme.background,
-            openBuilder: (context, action) => const ImagePost("image"),
-            closedColor: Theme.of(context).colorScheme.primaryContainer,
-            closedShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            closedBuilder: (context, action) => FloatingActionButton.extended(
-              heroTag: null,
-              onPressed: () => action.call(),
-              elevation: 0,
-              label: const Text("Imagem"),
-              icon: const Icon(Icons.image_rounded),
-            ),
-          ),
-          OpenContainer(
-            onClosed: (data) {
-              if (postado) {
-                final state = fagKey.currentState;
-                if (state != null) {
-                  state.toggle();
-                }
-                Flushbar(
-                  message: "Postando...",
-                  duration: const Duration(seconds: 5),
-                  margin: const EdgeInsets.all(20),
-                  borderRadius: BorderRadius.circular(50),
-                ).show(context);
-                CachedNetworkImage.evictFromCache(
-                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media",
-                );
-                _postarImagem(
-                  int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
-                  "gif",
-                );
-              }
-            },
-            transitionDuration: const Duration(milliseconds: 400),
-            closedElevation: 5,
-            openColor: Theme.of(context).colorScheme.background,
-            openBuilder: (context, action) => const ImagePost("gif"),
-            closedColor: Theme.of(context).colorScheme.primaryContainer,
-            closedShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            closedBuilder: (context, action) => FloatingActionButton.extended(
-              heroTag: null,
-              onPressed: () => action.call(),
-              elevation: 0,
-              label: const Text("GIF"),
-              icon: const Icon(Icons.gif_rounded),
-            ),
-          ),
-        ],
-      ),
+      floatingActionButton: username != null
+          ? ExpandableFab(
+              key: fagKey,
+              distance: 70,
+              overlayStyle: ExpandableFabOverlayStyle(
+                blur: 4,
+              ),
+              openButtonBuilder: RotateFloatingActionButtonBuilder(
+                child: const Icon(Icons.edit_rounded),
+              ),
+              closeButtonBuilder: RotateFloatingActionButtonBuilder(
+                child: const Icon(Icons.close_rounded),
+                fabSize: ExpandableFabSize.small,
+              ),
+              type: ExpandableFabType.up,
+              children: [
+                FloatingActionButton.extended(
+                  heroTag: null,
+                  onPressed: () async {
+                    final state = fagKey.currentState;
+                    if (state != null) {
+                      state.toggle();
+                    }
+                    await showModalBottomSheet(
+                      context: context,
+                      showDragHandle: true,
+                      builder: (ctx) {
+                        return const TextPost();
+                      },
+                    );
+                    txtPost.text = "";
+                  },
+                  label: const Text("Texto"),
+                  icon: const Icon(Icons.text_fields_rounded),
+                ),
+                OpenContainer(
+                  onClosed: (data) {
+                    if (postado) {
+                      final state = fagKey.currentState;
+                      if (state != null) {
+                        state.toggle();
+                      }
+                      Flushbar(
+                        message: "Postando...",
+                        duration: const Duration(seconds: 5),
+                        margin: const EdgeInsets.all(20),
+                        borderRadius: BorderRadius.circular(50),
+                      ).show(context);
+                      CachedNetworkImage.evictFromCache(
+                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media",
+                      );
+                      _postarImagem(
+                        int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
+                        "img",
+                      );
+                    }
+                  },
+                  transitionDuration: const Duration(milliseconds: 400),
+                  closedElevation: 5,
+                  openColor: Theme.of(context).colorScheme.background,
+                  openBuilder: (context, action) => const ImagePost("image"),
+                  closedColor: Theme.of(context).colorScheme.primaryContainer,
+                  closedShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  closedBuilder: (context, action) => FloatingActionButton.extended(
+                    heroTag: null,
+                    onPressed: () => action.call(),
+                    elevation: 0,
+                    label: const Text("Imagem"),
+                    icon: const Icon(Icons.image_rounded),
+                  ),
+                ),
+                OpenContainer(
+                  onClosed: (data) {
+                    if (postado) {
+                      final state = fagKey.currentState;
+                      if (state != null) {
+                        state.toggle();
+                      }
+                      Flushbar(
+                        message: "Postando...",
+                        duration: const Duration(seconds: 5),
+                        margin: const EdgeInsets.all(20),
+                        borderRadius: BorderRadius.circular(50),
+                      ).show(context);
+                      CachedNetworkImage.evictFromCache(
+                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media",
+                      );
+                      _postarImagem(
+                        int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
+                        "gif",
+                      );
+                    }
+                  },
+                  transitionDuration: const Duration(milliseconds: 400),
+                  closedElevation: 5,
+                  openColor: Theme.of(context).colorScheme.background,
+                  openBuilder: (context, action) => const ImagePost("gif"),
+                  closedColor: Theme.of(context).colorScheme.primaryContainer,
+                  closedShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  closedBuilder: (context, action) => FloatingActionButton.extended(
+                    heroTag: null,
+                    onPressed: () => action.call(),
+                    elevation: 0,
+                    label: const Text("GIF"),
+                    icon: const Icon(Icons.gif_rounded),
+                  ),
+                ),
+              ],
+            )
+          : null,
       floatingActionButtonLocation: ExpandableFab.location,
       body: Container(
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -322,7 +329,7 @@ class _ForumState extends State<Forum> {
   Container post(BuildContext context, int index) {
     final DataSnapshot postSS = snapshotForum!.child("$index");
     return Container(
-      transform: Matrix4.translationValues(0, -20, 0),
+      transform: Matrix4.translationValues(0, username != null ? -20 : 0, 0),
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         child: Padding(
@@ -489,7 +496,7 @@ class _ForumState extends State<Forum> {
                                 fadeInDuration: const Duration(milliseconds: 150),
                                 fadeOutDuration: const Duration(milliseconds: 150),
                                 placeholder: const AssetImage(
-                                  'assets/loading.gif',
+                                  'assets/anim/loading.gif',
                                 ),
                                 image: CachedNetworkImageProvider(
                                   "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$index.webp?alt=media",
@@ -505,27 +512,68 @@ class _ForumState extends State<Forum> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   OpenContainer(
-                    closedColor: Theme.of(context).colorScheme.background,
+                    closedColor: username != null
+                        ? Theme.of(context).colorScheme.background
+                        : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).background,
                     closedShape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
                     transitionDuration: const Duration(
                       milliseconds: 300,
                     ),
-                    onClosed: (value) {},
-                    openColor: Theme.of(context).colorScheme.background,
-                    closedBuilder: (context, action) => Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton(
-                        onPressed: () async {
-                          action.call();
-                        },
-                        child: Text(
-                          "Comentários (${postSS.child("comentarios").children.length - 2})",
-                        ),
-                      ),
-                    ),
-                    openBuilder: (context, action) => Comentarios(postSS),
+                    openColor: username != null
+                        ? Theme.of(context).colorScheme.background
+                        : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).background,
+                    closedBuilder: (context, action) => username != null
+                        ? Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton(
+                              onPressed: () async {
+                                action.call();
+                              },
+                              child: Text(
+                                "Comentários (${postSS.child("comentarios").children.length - 2})",
+                              ),
+                            ),
+                          )
+                        : Theme(
+                            data: ThemeData.from(
+                              colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
+                              useMaterial3: true,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: TextButton(
+                                onPressed: () async {
+                                  action.call();
+                                },
+                                style: ButtonStyle(
+                                  shape: MaterialStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(9999),
+                                      side: BorderSide(color: Theme.of(context).colorScheme.outline),
+                                    ),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Comentários (${postSS.child("comentarios").children.length - 2})",
+                                  style: GoogleFonts.jost(
+                                    color: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light)
+                                        .onBackground,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                    openBuilder: (context, action) => username != null
+                        ? Comentarios(postSS)
+                        : Theme(
+                            data: ThemeData.from(
+                              colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
+                              useMaterial3: true,
+                            ),
+                            child: Comentarios(postSS),
+                          ),
                   ),
                   Align(
                     alignment: Alignment.centerRight,
@@ -535,33 +583,34 @@ class _ForumState extends State<Forum> {
                         shadowColor: const MaterialStatePropertyAll(
                           Colors.black,
                         ),
-                        iconColor: MaterialStateProperty.all(
-                          Theme.of(context).colorScheme.onBackground,
-                        ),
                         backgroundColor: MaterialStatePropertyAll(
                           Theme.of(context).colorScheme.background,
                         ),
                       ),
-                      onPressed: () {
-                        if (!postSS.child("likes").child("users").value.toString().contains(",$username,")) {
-                          _like(int.parse(postSS.key!));
-                        } else {
-                          _unlike(int.parse(postSS.key!));
-                        }
-                      },
+                      onPressed: username != null
+                          ? () {
+                              if (!postSS.child("likes").child("users").value.toString().contains(",$username,")) {
+                                _like(int.parse(postSS.key!));
+                              } else {
+                                _unlike(int.parse(postSS.key!));
+                              }
+                            }
+                          : null,
                       icon: Icon(
                         postSS.child("likes").child("users").value.toString().contains(",$username,")
                             ? Icons.thumb_up_alt
                             : Icons.thumb_up_alt_outlined,
-                        color: postSS.child("likes").child("users").value.toString().contains(",$username,")
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.onBackground,
+                        color: username != null
+                            ? postSS.child("likes").child("users").value.toString().contains(",$username,")
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onBackground
+                            : Colors.grey,
                       ),
                       label: Text(
                         "${postSS.child("likes").child("lenght").value}",
                         style: TextStyle(
                           fontSize: 18,
-                          color: Theme.of(context).colorScheme.onBackground,
+                          color: username != null ? Theme.of(context).colorScheme.onBackground : Colors.grey,
                         ),
                       ),
                     ),

@@ -4,6 +4,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/wiki/info.dart';
+import 'package:gatopedia/main.dart';
+import 'package:grayscale/grayscale.dart';
 
 late Future<DataSnapshot> _getData;
 bool pegouInfo = false;
@@ -36,15 +38,22 @@ class _WikiState extends State<Wiki> {
             return Stack(
               children: [
                 Positioned.fill(
-                  top: -40,
+                  top: username != null ? -40 : 0,
                   child: ListView(
                     shrinkWrap: true,
                     controller: ScrollController(),
-                    children: snapshot.data!.children
-                        .map<Widget>(
-                          (e) => gatoCard(e, snapshot, context),
-                        )
-                        .toList(),
+                    children: username != null
+                        ? snapshot.data!.children
+                            .map<Widget>(
+                              (e) => gatoCard(e, snapshot, context),
+                            )
+                            .toList()
+                        : [
+                            ...snapshot.data!.children.map<Widget>(
+                              (e) => gatoCard(e, snapshot, context),
+                            ),
+                            const SizedBox(height: 100),
+                          ],
                   ),
                 ),
               ],
@@ -71,7 +80,13 @@ class _WikiState extends State<Wiki> {
         ),
         transitionType: ContainerTransitionType.fade,
         transitionDuration: const Duration(milliseconds: 500),
-        openBuilder: (context, _) => GatoInfo(e),
+        openBuilder: (context, _) => username != null
+            ? GatoInfo(e)
+            : Theme(
+                data: ThemeData.from(
+                    colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light)),
+                child: GatoInfo(e),
+              ),
         closedElevation: 0,
         tappable: false,
         openColor: Theme.of(context).colorScheme.background,
@@ -97,7 +112,7 @@ class _WikiState extends State<Wiki> {
                         imageUrl:
                             "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${e.child("img").value.toString().split("&")[0]}.webp?alt=media",
                         placeholder: (context, url) => Image.asset(
-                          "assets/loading.gif",
+                          "assets/anim/loading.gif",
                         ),
                         fadeInDuration: const Duration(milliseconds: 150),
                         fadeOutDuration: const Duration(milliseconds: 150),

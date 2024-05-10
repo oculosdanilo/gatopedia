@@ -473,6 +473,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.2.1"
+  grayscale:
+    dependency: "direct main"
+    description:
+      name: grayscale
+      sha256: "6639d2cdd76697e969b72210a85122324364a484ca8d9e7eb24c8f3365c990c5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5+6"
   html:
     dependency: transitive
     description:

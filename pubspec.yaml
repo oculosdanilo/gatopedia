@@ -42,6 +42,7 @@ dependencies:
   connecteo: ^3.0.0
   lottie: ^3.1.0
   flex_seed_scheme: ^1.5.0
+  grayscale: ^0.0.5+6
 
 dev_dependencies:
   flutter_test:

@@ -67,7 +67,7 @@ class GatoInfoState extends State<GatoInfo> {
                           "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${widget.gatoInfo.child("img").value.toString().split("&")[0]}.webp?alt=media",
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Image.asset(
-                        "assets/loading.gif",
+                        "assets/anim/loading.gif",
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -128,57 +128,60 @@ class GatoInfoState extends State<GatoInfo> {
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              flex: 7,
-                              child: TextField(
-                                controller: txtControllerC,
-                                decoration: const InputDecoration(
-                                  hintText: "Comentar...",
-                                ),
+                      username != null
+                          ? Padding(
+                              padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Flexible(
+                                    flex: 7,
+                                    child: TextField(
+                                      controller: txtControllerC,
+                                      decoration: const InputDecoration(
+                                        hintText: "Comentar...",
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  IconButton.filled(
+                                    onPressed: () async {
+                                      FocusManager.instance.primaryFocus?.unfocus();
+                                      if (txtControllerC.text != "") {
+                                        await _getData.then((value) async {
+                                          await value.ref
+                                              .child(
+                                            "${int.parse(value.children.last.key!) + 1}",
+                                          )
+                                              .update({
+                                            "user": username,
+                                            "content": txtControllerC.text,
+                                          });
+                                        });
+                                        setState(() {
+                                          _getData = FirebaseDatabase.instance
+                                              .ref("gatos/${widget.gatoInfo.key}/comentarios")
+                                              .get();
+                                        });
+                                        if (!context.mounted) return;
+                                        Flushbar(
+                                          message: "Postado com sucesso!",
+                                          duration: const Duration(seconds: 2),
+                                          margin: const EdgeInsets.all(20),
+                                          borderRadius: BorderRadius.circular(50),
+                                        ).show(context);
+                                        txtControllerC.text = "";
+                                      }
+                                    },
+                                    icon: const Icon(Icons.send),
+                                    iconSize: 35,
+                                  ),
+                                ],
                               ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            IconButton.filled(
-                              onPressed: () async {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                if (txtControllerC.text != "") {
-                                  await _getData.then((value) async {
-                                    await value.ref
-                                        .child(
-                                      "${int.parse(value.children.last.key!) + 1}",
-                                    )
-                                        .update({
-                                      "user": username,
-                                      "content": txtControllerC.text,
-                                    });
-                                  });
-                                  setState(() {
-                                    _getData =
-                                        FirebaseDatabase.instance.ref("gatos/${widget.gatoInfo.key}/comentarios").get();
-                                  });
-                                  if (!context.mounted) return;
-                                  Flushbar(
-                                    message: "Postado com sucesso!",
-                                    duration: const Duration(seconds: 2),
-                                    margin: const EdgeInsets.all(20),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ).show(context);
-                                  txtControllerC.text = "";
-                                }
-                              },
-                              icon: const Icon(Icons.send),
-                              iconSize: 35,
-                            ),
-                          ],
-                        ),
-                      ),
+                            )
+                          : const SizedBox(),
                       widget.gatoInfo.child("comentarios").children.length > 2
                           ? Comentarios(widget.gatoInfo)
                           : const SliverToBoxAdapter(
@@ -253,10 +256,6 @@ class _ComentariosState extends State<Comentarios> {
         }
       },
     );
-  }
-
-  Widget comentarioTeste(BuildContext context, DataSnapshot snapshot, int index) {
-    return Text(snapshot.value.toString());
   }
 
   /*if (comentarioSS

@@ -1,13 +1,10 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'dart:convert';
-import 'package:flex_seed_scheme/flex_seed_scheme.dart';
-import 'package:material_color_utilities/scheme/scheme_monochrome.dart';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/config/config.dart';
+import 'package:gatopedia/home/gatos/gatos.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/loginScreen/colab.dart';
 import 'package:gatopedia/loginScreen/login/form.dart';
@@ -15,6 +12,7 @@ import 'package:gatopedia/loginScreen/seminternet.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/update.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grayscale/grayscale.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
@@ -109,7 +107,7 @@ class _IndexState extends State<Index> {
       backgroundColor: full ? Colors.black : Theme.of(context).colorScheme.background,
       flexibleSpace: FlexibleSpaceBar(
         background: AnimatedContainer(
-          duration: Duration(milliseconds: 150),
+          duration: const Duration(milliseconds: 150),
           decoration: BoxDecoration(
             color: full ? Colors.black : Theme.of(context).colorScheme.background,
           ),
@@ -117,7 +115,7 @@ class _IndexState extends State<Index> {
       ),
       leading: AnimatedOpacity(
         opacity: full ? 1 : 0,
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         child: IconButton(
           onPressed: full
               ? () {
@@ -127,7 +125,7 @@ class _IndexState extends State<Index> {
                   });
                 }
               : null,
-          icon: Icon(Symbols.arrow_back),
+          icon: const Icon(Symbols.arrow_back),
           color: Colors.white,
         ),
       ),
@@ -308,30 +306,26 @@ class _IndexState extends State<Index> {
               },
             ),
             AnimatedPositioned(
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               curve: const Interval(0.99, 1),
               top: full ? 0 : scH,
               width: scW,
               child: AnimatedOpacity(
-                duration: full ? Duration(milliseconds: 500) : Duration.zero,
+                duration: full ? const Duration(milliseconds: 500) : Duration.zero,
                 curve: const Interval((500 / 300) * 0.01, 1),
                 opacity: full ? 1 : 0,
                 child: Container(
                   height: scH,
                   width: scW,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.black,
                   ),
                   child: Theme(
-                    data: ThemeData(
-                      colorSchemeSeed: Color(0xffffffff),
+                    data: ThemeData.from(
+                      colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
+                      useMaterial3: true,
                     ),
-                    child: Center(
-                      child: FilledButton(
-                        onPressed: () {},
-                        child: Text("ata"),
-                      ),
-                    ),
+                    child: const GatoLista(),
                   ),
                 ),
               ),
@@ -368,7 +362,7 @@ class _SemContaState extends State<SemConta> {
   @override
   Widget build(BuildContext context) {
     return AnimatedPositioned(
-      duration: acabou ? Duration(milliseconds: 300) : Duration.zero,
+      duration: acabou ? const Duration(milliseconds: 300) : Duration.zero,
       curve: Curves.ease,
       left: 0,
       right: 0,
@@ -425,19 +419,19 @@ class _SemContaState extends State<SemConta> {
             }
           },
           child: AnimatedContainer(
-            duration: Duration(milliseconds: 250),
+            duration: const Duration(milliseconds: 250),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               color: full || !acabouAlt ? Colors.black : Theme.of(context).colorScheme.background,
             ),
             child: AnimatedContainer(
-              duration: Duration(milliseconds: 250),
+              duration: const Duration(milliseconds: 250),
               width: widget.scW,
               decoration: BoxDecoration(
                 gradient: !full && acabouAlt && dark
                     ? LinearGradient(
-                        begin: Alignment(0, -0.75),
-                        end: Alignment(0, -0.96),
+                        begin: const Alignment(0, -0.75),
+                        end: const Alignment(0, -0.96),
                         colors: [
                           Colors.black,
                           Theme.of(context).colorScheme.background,
@@ -448,7 +442,7 @@ class _SemContaState extends State<SemConta> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Center(
                       child: Lottie.asset(
                     "assets/anim/seta${dark || !acabouAlt ? '' : '-light'}.json",
@@ -487,7 +481,7 @@ class CustomNavRoute<T> extends MaterialPageRoute<T> {
 
 ThemeData mono = ThemeData(
   useMaterial3: true,
-  colorScheme: ColorScheme(
+  colorScheme: const ColorScheme(
     brightness: Brightness.light,
     primary: Colors.black,
     onPrimary: Colors.white,

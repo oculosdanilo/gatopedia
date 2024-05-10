@@ -190,43 +190,45 @@ class _ComentariosState extends State<Comentarios> {
               ),
             ),
             const Divider(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    flex: 7,
-                    child: TextField(
-                      controller: txtComment,
-                      decoration: const InputDecoration(
-                        hintText: "Comentar...",
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: IconButton.filled(
-                      icon: const Icon(Icons.send),
-                      iconSize: 35,
-                      onPressed: () async {
-                        _postarC();
-                        txtComment.text = "";
-                        Flushbar(
-                          message: "Postado com sucesso!",
-                          duration: const Duration(seconds: 3),
-                          margin: const EdgeInsets.all(20),
-                          borderRadius: BorderRadius.circular(50),
-                        ).show(context);
-                      },
+            username != null
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          flex: 7,
+                          child: TextField(
+                            controller: txtComment,
+                            decoration: const InputDecoration(
+                              hintText: "Comentar...",
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Flexible(
+                          flex: 2,
+                          child: IconButton.filled(
+                            icon: const Icon(Icons.send),
+                            iconSize: 35,
+                            onPressed: () async {
+                              _postarC();
+                              txtComment.text = "";
+                              Flushbar(
+                                message: "Postado com sucesso!",
+                                duration: const Duration(seconds: 3),
+                                margin: const EdgeInsets.all(20),
+                                borderRadius: BorderRadius.circular(50),
+                              ).show(context);
+                            },
+                          ),
+                        )
+                      ],
                     ),
                   )
-                ],
-              ),
-            ),
+                : const SizedBox(),
             postAtual.child("comentarios").children.length > 2
                 ? Expanded(
                     child: ListView.builder(

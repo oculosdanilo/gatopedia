@@ -48,75 +48,79 @@ class _GatoListaState extends State<GatoLista> {
           slivers: [
             SliverAppBar.large(
               floating: false,
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              leading: IconButton(
-                onPressed: () async {
-                  bool dialogo = await showCupertinoDialog<bool>(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "Já vai? ;(",
-                                  style: TextStyle(
-                                    fontFamily: "Jost",
-                                    fontWeight: FontWeight.bold,
+              backgroundColor: username != null ? Theme.of(context).colorScheme.primary : Colors.black,
+              expandedHeight: username == null ? 70 : null,
+              leading: username != null
+                  ? IconButton(
+                      onPressed: () async {
+                        bool dialogo = await showCupertinoDialog<bool>(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "Já vai? ;(",
+                                        style: TextStyle(
+                                          fontFamily: "Jost",
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                )
-                              ],
-                            ),
-                            content: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [Text("Tem certeza que deseja sair?")]),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    dark = App.themeNotifier.value == ThemeMode.dark;
-                                  });
-                                  Navigator.pop(context, false);
-                                },
-                                child: const Text('CANCELAR'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    dark = App.themeNotifier.value == ThemeMode.dark;
-                                  });
-                                  Navigator.pop(context, true);
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      ) ??
-                      false;
-                  if (dialogo) {
-                    final sp = await SharedPreferences.getInstance();
-                    if (sp.containsKey("username")) await sp.remove("username");
-                    if (!context.mounted) return;
-                    username = null;
-                    Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (c) => const Index(false)));
-                  }
-                },
-                icon: Transform.rotate(
-                  angle: math.pi,
-                  child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.onPrimary),
-                ),
-              ),
+                                  content: const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [Text("Tem certeza que deseja sair?")]),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          dark = App.themeNotifier.value == ThemeMode.dark;
+                                        });
+                                        Navigator.pop(context, false);
+                                      },
+                                      child: const Text('CANCELAR'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          dark = App.themeNotifier.value == ThemeMode.dark;
+                                        });
+                                        Navigator.pop(context, true);
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ) ??
+                            false;
+                        if (dialogo) {
+                          final sp = await SharedPreferences.getInstance();
+                          if (sp.containsKey("username")) await sp.remove("username");
+                          if (!context.mounted) return;
+                          username = null;
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (c) => const Index(false)));
+                        }
+                      },
+                      icon: Transform.rotate(
+                        angle: math.pi,
+                        child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.onPrimary),
+                      ),
+                    )
+                  : null,
               flexibleSpace: FlexibleSpaceBar(
                 titlePadding: const EdgeInsets.only(bottom: 60, left: 50),
                 title: Text(
-                  "@$username",
-                  style: GoogleFonts.jost(color: Theme.of(context).colorScheme.onPrimary),
+                  username != null ? "@$username" : "@anônimoshhh",
+                  style: GoogleFonts.jost(
+                      color: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white),
                 ),
                 background: Container(
                   alignment: Alignment.centerRight,
@@ -135,8 +139,8 @@ class _GatoListaState extends State<GatoLista> {
                 isScrollable: true,
                 labelStyle: GoogleFonts.jost(fontSize: 18),
                 unselectedLabelColor: Colors.grey,
-                indicatorColor: Theme.of(context).colorScheme.onPrimary,
-                labelColor: Theme.of(context).colorScheme.onPrimary,
+                indicatorColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
+                labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 tabs: const [Tab(text: "Wiki"), Tab(text: "Forum")],
               ),
             ),
