@@ -356,7 +356,7 @@ class _ComentariosState extends State<Comentarios> {
                     icon: const Icon(Icons.delete),
                     color: Colors.white,
                     style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(
+                      backgroundColor: WidgetStatePropertyAll(
                         blueScheme.errorContainer,
                       ),
                     ),

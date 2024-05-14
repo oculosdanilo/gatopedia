@@ -25,10 +25,8 @@ class ColaboradoresState extends State<Colaboradores> {
         physics: const NeverScrollableScrollPhysics(),
         slivers: [
           SliverAppBar.large(
-            actionsIconTheme:
-                IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-            iconTheme:
-                IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+            actionsIconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+            iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
             title: Row(
               children: [
                 Icon(
@@ -41,18 +39,14 @@ class ColaboradoresState extends State<Colaboradores> {
                 ),
                 Text(
                   "COLABORADORES",
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontFamily: "Jost"),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontFamily: "Jost"),
                 ),
               ],
             ),
             actions: [
               PopupMenuButton<MenuItens>(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<MenuItens>>[
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItens>>[
                   PopupMenuItem(
                     onTap: () {
                       showCupertinoDialog(
@@ -66,7 +60,7 @@ class ColaboradoresState extends State<Colaboradores> {
                       children: [
                         Icon(
                           Icons.info_rounded,
-                          color: Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         const SizedBox(
                           width: 10,
@@ -90,7 +84,7 @@ class ColaboradoresState extends State<Colaboradores> {
             child: Column(
               children: [
                 Card(
-                  surfaceTintColor: Theme.of(context).colorScheme.onBackground,
+                  surfaceTintColor: Theme.of(context).colorScheme.onSurface,
                   margin: const EdgeInsets.all(20),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
@@ -113,10 +107,7 @@ class ColaboradoresState extends State<Colaboradores> {
                             children: [
                               const Text(
                                 "Danilo Lima",
-                                style: TextStyle(
-                                    fontFamily: "Jost",
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25),
+                                style: TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 25),
                               ),
                               const SizedBox(
                                 height: 17,
@@ -143,7 +134,7 @@ class ColaboradoresState extends State<Colaboradores> {
                   ),
                 ),
                 Card(
-                  surfaceTintColor: Theme.of(context).colorScheme.onBackground,
+                  surfaceTintColor: Theme.of(context).colorScheme.onSurface,
                   margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -166,10 +157,7 @@ class ColaboradoresState extends State<Colaboradores> {
                             children: [
                               const Text(
                                 "Juliana Leal \n(Lucca)",
-                                style: TextStyle(
-                                    fontFamily: "Jost",
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25),
+                                style: TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 25),
                               ),
                               const SizedBox(
                                 height: 17,
@@ -215,36 +203,24 @@ class ColaboradoresState extends State<Colaboradores> {
         ),
       ),
       content: RichText(
-        text: TextSpan(
-            style: const TextStyle(fontFamily: "Jost", fontSize: 17),
-            children: [
-              TextSpan(
-                  text: "Produzido com ",
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onBackground)),
-              TextSpan(
-                  text: "Flutter",
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      decoration: TextDecoration.underline),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      _launchUrl(_urlFlutter);
-                    }),
-              TextSpan(
-                  text: " e ",
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onBackground)),
-              TextSpan(
-                  text: "Material You",
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      decoration: TextDecoration.underline),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      _launchUrl(_urlMaterialYou);
-                    })
-            ]),
+        text: TextSpan(style: const TextStyle(fontFamily: "Jost", fontSize: 17), children: [
+          TextSpan(text: "Produzido com ", style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+          TextSpan(
+              text: "Flutter",
+              style: TextStyle(color: Theme.of(context).colorScheme.primary, decoration: TextDecoration.underline),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  _launchUrl(_urlFlutter);
+                }),
+          TextSpan(text: " e ", style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+          TextSpan(
+              text: "Material You",
+              style: TextStyle(color: Theme.of(context).colorScheme.primary, decoration: TextDecoration.underline),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  _launchUrl(_urlMaterialYou);
+                })
+        ]),
       ),
       actions: [
         TextButton(

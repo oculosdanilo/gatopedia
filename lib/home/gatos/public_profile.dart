@@ -78,7 +78,7 @@ class _PublicProfileState extends State<PublicProfile> {
                     icon: const Icon(Icons.arrow_back_rounded),
                   ),
                   expandedHeight: 400,
-                  backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   flexibleSpace: FlexibleSpaceBar(
                     centerTitle: true,
                     title: Text("@${widget.username}"),

@@ -140,7 +140,7 @@ class _AppState extends State<App> {
       navigationBarTheme: NavigationBarThemeData(
         indicatorColor: blueScheme.primary,
       ),
-      appBarTheme: AppBarTheme(backgroundColor: blueScheme.background),
+      appBarTheme: AppBarTheme(backgroundColor: blueScheme.surface),
       snackBarTheme: const SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
       ),

@@ -23,9 +23,7 @@ class _ImagePostState extends State<ImagePost> {
 
   _pegaImagem() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowedExtensions: widget.imageType == "image"
-          ? ['jpeg', 'jpg', 'png', 'webp']
-          : ['gif'],
+      allowedExtensions: widget.imageType == "image" ? ['jpeg', 'jpg', 'png', 'webp'] : ['gif'],
       type: FileType.custom,
     );
     if (result != null) {
@@ -98,9 +96,7 @@ class _ImagePostState extends State<ImagePost> {
             ),
             title: Center(
               child: Text(
-                widget.imageType == "image"
-                    ? "Post com imagem"
-                    : "Post com GIF",
+                widget.imageType == "image" ? "Post com imagem" : "Post com GIF",
                 style: TextStyle(
                   fontFamily: "Jost",
                   color: Theme.of(context).colorScheme.onPrimary,
@@ -115,7 +111,7 @@ class _ImagePostState extends State<ImagePost> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 width: double.infinity,

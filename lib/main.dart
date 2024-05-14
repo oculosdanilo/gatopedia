@@ -142,7 +142,7 @@ class _AppState extends State<App> {
       navigationBarTheme: NavigationBarThemeData(
         indicatorColor: blueScheme.primary,
       ),
-      appBarTheme: AppBarTheme(backgroundColor: blueScheme.background),
+      appBarTheme: AppBarTheme(backgroundColor: blueScheme.surface),
       inputDecorationTheme: InputDecorationTheme(
         focusedBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(50)),

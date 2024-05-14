@@ -118,7 +118,7 @@ class _GatoListaState extends State<GatoLista> {
               flexibleSpace: FlexibleSpaceBar(
                 titlePadding: const EdgeInsets.only(bottom: 60, left: 50),
                 title: Text(
-                  username != null ? "@$username" : "@anônimoshhh",
+                  username != null ? "@$username" : "@shhhanônimo",
                   style: GoogleFonts.jost(
                       color: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white),
                 ),

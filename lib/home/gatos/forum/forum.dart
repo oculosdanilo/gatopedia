@@ -235,7 +235,7 @@ class _ForumState extends State<Forum> {
                   },
                   transitionDuration: const Duration(milliseconds: 400),
                   closedElevation: 5,
-                  openColor: Theme.of(context).colorScheme.background,
+                  openColor: Theme.of(context).colorScheme.surface,
                   openBuilder: (context, action) => const ImagePost("image"),
                   closedColor: Theme.of(context).colorScheme.primaryContainer,
                   closedShape: RoundedRectangleBorder(
@@ -273,7 +273,7 @@ class _ForumState extends State<Forum> {
                   },
                   transitionDuration: const Duration(milliseconds: 400),
                   closedElevation: 5,
-                  openColor: Theme.of(context).colorScheme.background,
+                  openColor: Theme.of(context).colorScheme.surface,
                   openBuilder: (context, action) => const ImagePost("gif"),
                   closedColor: Theme.of(context).colorScheme.primaryContainer,
                   closedShape: RoundedRectangleBorder(
@@ -513,8 +513,8 @@ class _ForumState extends State<Forum> {
                 children: [
                   OpenContainer(
                     closedColor: username != null
-                        ? Theme.of(context).colorScheme.background
-                        : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).background,
+                        ? Theme.of(context).colorScheme.surface
+                        : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).surface,
                     closedShape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
@@ -522,8 +522,8 @@ class _ForumState extends State<Forum> {
                       milliseconds: 300,
                     ),
                     openColor: username != null
-                        ? Theme.of(context).colorScheme.background
-                        : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).background,
+                        ? Theme.of(context).colorScheme.surface
+                        : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).surface,
                     closedBuilder: (context, action) => username != null
                         ? Align(
                             alignment: Alignment.centerLeft,
@@ -548,7 +548,7 @@ class _ForumState extends State<Forum> {
                                   action.call();
                                 },
                                 style: ButtonStyle(
-                                  shape: MaterialStatePropertyAll(
+                                  shape: WidgetStatePropertyAll(
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(9999),
                                       side: BorderSide(color: Theme.of(context).colorScheme.outline),
@@ -559,7 +559,7 @@ class _ForumState extends State<Forum> {
                                   "Comentários (${postSS.child("comentarios").children.length - 2})",
                                   style: GoogleFonts.jost(
                                     color: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light)
-                                        .onBackground,
+                                        .onSurface,
                                   ),
                                 ),
                               ),
@@ -579,13 +579,9 @@ class _ForumState extends State<Forum> {
                     alignment: Alignment.centerRight,
                     child: TextButton.icon(
                       style: ButtonStyle(
-                        elevation: const MaterialStatePropertyAll(1),
-                        shadowColor: const MaterialStatePropertyAll(
-                          Colors.black,
-                        ),
-                        backgroundColor: MaterialStatePropertyAll(
-                          Theme.of(context).colorScheme.background,
-                        ),
+                        elevation: const WidgetStatePropertyAll(1),
+                        shadowColor: const WidgetStatePropertyAll(Colors.black),
+                        backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.surface),
                       ),
                       onPressed: username != null
                           ? () {
@@ -603,14 +599,14 @@ class _ForumState extends State<Forum> {
                         color: username != null
                             ? postSS.child("likes").child("users").value.toString().contains(",$username,")
                                 ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onBackground
+                                : Theme.of(context).colorScheme.onSurface
                             : Colors.grey,
                       ),
                       label: Text(
                         "${postSS.child("likes").child("lenght").value}",
                         style: TextStyle(
                           fontSize: 18,
-                          color: username != null ? Theme.of(context).colorScheme.onBackground : Colors.grey,
+                          color: username != null ? Theme.of(context).colorScheme.onSurface : Colors.grey,
                         ),
                       ),
                     ),

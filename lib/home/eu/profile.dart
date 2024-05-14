@@ -293,7 +293,7 @@ class _ProfileState extends State<Profile> {
         ],
       ),
       expandedHeight: 400,
-      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       flexibleSpace: FlexibleSpaceBar(
         title: Text("@$username", style: GoogleFonts.jost()),
         background: Stack(

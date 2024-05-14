@@ -143,7 +143,7 @@ class _ConfigState extends State<Config> {
       physics: const NeverScrollableScrollPhysics(),
       slivers: [
         SliverAppBar.large(
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           automaticallyImplyLeading: widget.voltar,
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.center,

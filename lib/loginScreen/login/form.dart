@@ -70,7 +70,7 @@ class FormAppState extends State<FormApp> {
                     if (value.length <= 3 || value.length > 25) {
                       mudarCor(Theme.of(context).colorScheme.error);
                     } else {
-                      mudarCor(Theme.of(context).colorScheme.onBackground);
+                      mudarCor(Theme.of(context).colorScheme.onSurface);
                     }
                   });
                   _formKey.currentState!.validate();
@@ -90,11 +90,11 @@ class FormAppState extends State<FormApp> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  prefixIconColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
-                    if (states.contains(MaterialState.error)) {
+                  prefixIconColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+                    if (states.contains(WidgetState.error)) {
                       return Theme.of(context).colorScheme.error;
                     }
-                    if (states.contains(MaterialState.focused)) {
+                    if (states.contains(WidgetState.focused)) {
                       return Theme.of(context).colorScheme.primary;
                     }
                     return blueScheme.outline;

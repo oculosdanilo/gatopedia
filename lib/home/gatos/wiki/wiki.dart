@@ -89,7 +89,7 @@ class _WikiState extends State<Wiki> {
               ),
         closedElevation: 0,
         tappable: false,
-        openColor: Theme.of(context).colorScheme.background,
+        openColor: Theme.of(context).colorScheme.surface,
         closedColor: dark ? const Color(0xff23232a) : const Color(0xfff5f2fb),
         closedBuilder: (
           context,

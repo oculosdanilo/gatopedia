@@ -104,12 +104,12 @@ class _IndexState extends State<Index> {
 
   AppBar appBar() {
     return AppBar(
-      backgroundColor: full ? Colors.black : Theme.of(context).colorScheme.background,
+      backgroundColor: full ? Colors.black : Theme.of(context).colorScheme.surface,
       flexibleSpace: FlexibleSpaceBar(
         background: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           decoration: BoxDecoration(
-            color: full ? Colors.black : Theme.of(context).colorScheme.background,
+            color: full ? Colors.black : Theme.of(context).colorScheme.surface,
           ),
         ),
       ),
@@ -134,7 +134,7 @@ class _IndexState extends State<Index> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          iconColor: full ? Colors.white : Theme.of(context).colorScheme.onBackground,
+          iconColor: full ? Colors.white : Theme.of(context).colorScheme.onSurface,
           itemBuilder: (BuildContext context) => [
             PopupMenuItem(
               onTap: () async {
@@ -235,9 +235,7 @@ class _IndexState extends State<Index> {
                         }
                       },
                       style: ButtonStyle(
-                        fixedSize: MaterialStatePropertyAll(
-                          Size(scW * 0.7, 50),
-                        ),
+                        fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50)),
                       ),
                       child: const Text(
                         "Entrar",
@@ -273,7 +271,7 @@ class _IndexState extends State<Index> {
                           ).show(context);
                         }
                       },
-                      style: ButtonStyle(fixedSize: MaterialStatePropertyAll(Size(scW * 0.7, 50))),
+                      style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
                       child: const Text(
                         "Cadastrar",
                         style: TextStyle(fontSize: 20),
@@ -422,7 +420,7 @@ class _SemContaState extends State<SemConta> {
             duration: const Duration(milliseconds: 250),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-              color: full || !acabouAlt ? Colors.black : Theme.of(context).colorScheme.background,
+              color: full || !acabouAlt ? Colors.black : Theme.of(context).colorScheme.surface,
             ),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 250),
@@ -434,7 +432,7 @@ class _SemContaState extends State<SemConta> {
                         end: const Alignment(0, -0.96),
                         colors: [
                           Colors.black,
-                          Theme.of(context).colorScheme.background,
+                          Theme.of(context).colorScheme.surface,
                         ],
                       )
                     : null,
@@ -453,10 +451,10 @@ class _SemContaState extends State<SemConta> {
                     style: GoogleFonts.jost(
                         fontSize: 20,
                         color: dark
-                            ? Theme.of(context).colorScheme.onBackground
+                            ? Theme.of(context).colorScheme.onSurface
                             : !acabouAlt
                                 ? Colors.white
-                                : Theme.of(context).colorScheme.onBackground),
+                                : Theme.of(context).colorScheme.onSurface),
                   ),
                   SizedBox(height: 20 + widget.scH),
                 ],
@@ -478,21 +476,3 @@ class CustomNavRoute<T> extends MaterialPageRoute<T> {
     return FadeTransition(opacity: animation, child: child);
   }
 }
-
-ThemeData mono = ThemeData(
-  useMaterial3: true,
-  colorScheme: const ColorScheme(
-    brightness: Brightness.light,
-    primary: Colors.black,
-    onPrimary: Colors.white,
-    secondary: Colors.white,
-    onSecondary: Colors.black,
-    error: Colors.red,
-    onError: Colors.white,
-    background: Colors.white,
-    onBackground: Colors.black,
-    surface: Colors.white,
-    onSurface: Colors.black,
-  ),
-  textTheme: GoogleFonts.jostTextTheme(),
-);
