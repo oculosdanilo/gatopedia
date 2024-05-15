@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
@@ -287,19 +286,13 @@ class _GatopediaState extends State<Gatopedia> with SingleTickerProviderStateMix
                     );
                   },
                 ),
-                AnimatedTextKit(
-                  animatedTexts: [
-                    TyperAnimatedText(
-                      'Gatopédia!',
-                      textStyle: const TextStyle(
-                        fontSize: 35,
-                        fontFamily: "Jost",
-                        fontWeight: FontWeight.bold,
-                      ),
-                      speed: const Duration(milliseconds: 70),
-                    ),
-                  ],
-                  totalRepeatCount: 1,
+                const Text(
+                  'Gatopédia!',
+                  style: TextStyle(
+                    fontSize: 35,
+                    fontFamily: "Jost",
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(
                   height: 60,

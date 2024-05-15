@@ -6,6 +6,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
@@ -268,6 +269,9 @@ class _ComentariosState extends State<Comentarios> {
   Card comentario(BuildContext context, int index) {
     return Card(
       margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+      color: username == null && dark
+          ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
+          : Theme.of(context).colorScheme.surfaceContainerLow,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10, 25, 10, 25),
         child: Row(

@@ -10,15 +10,16 @@ import 'package:gatopedia/firebase_options.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/index.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String? username;
 bool internet = true;
-ColorScheme blueScheme = ColorScheme.fromSeed(
+final blueScheme = ColorScheme.fromSeed(
   seedColor: const Color(0xff000080),
   brightness: Brightness.dark,
 );
-ColorScheme blueSchemeL = ColorScheme.fromSeed(
+final blueSchemeL = ColorScheme.fromSeed(
   seedColor: const Color(0xff000080),
   brightness: Brightness.light,
 );

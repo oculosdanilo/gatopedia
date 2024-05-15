@@ -104,14 +104,8 @@ class FormAppState extends State<FormApp> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          "$txtFieldLenght",
-                          style: TextStyle(color: counterColor),
-                        ),
-                        Text(
-                          "/25",
-                          style: TextStyle(color: blueScheme.outline),
-                        )
+                        Text("$txtFieldLenght", style: TextStyle(color: counterColor)),
+                        Text("/25", style: TextStyle(color: blueScheme.outline))
                       ],
                     ),
                   ),

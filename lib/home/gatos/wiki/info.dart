@@ -3,9 +3,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 late Future<DataSnapshot> _getData;
 
@@ -99,28 +101,19 @@ class GatoInfoState extends State<GatoInfo> {
                           children: [
                             Text(
                               widget.gatoInfo.child("resumo").value.toString(),
-                              style: const TextStyle(
-                                fontStyle: FontStyle.italic,
-                                fontSize: 27,
-                              ),
+                              style: GoogleFonts.jost(fontStyle: FontStyle.italic, fontSize: 27),
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+                            const SizedBox(height: 15),
                             Text(
                               widget.gatoInfo.child("descricao").value.toString().replaceAll("\\n", "\n"),
-                              style: const TextStyle(
-                                fontSize: 20,
-                              ),
+                              style: GoogleFonts.jost(fontSize: 20),
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            const Text(
+                            const SizedBox(height: 30),
+                            Text(
                               "COMENTÁRIOS",
-                              style: TextStyle(
+                              style: GoogleFonts.jost(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 25,
                               ),
@@ -184,19 +177,17 @@ class GatoInfoState extends State<GatoInfo> {
                           : const SizedBox(),
                       widget.gatoInfo.child("comentarios").children.length > 2
                           ? Comentarios(widget.gatoInfo)
-                          : const SliverToBoxAdapter(
-                              child: SizedBox(
-                                height: 80,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Nenhum comentário (ainda...)",
-                                      style: TextStyle(fontFamily: "Jost"),
-                                    )
-                                  ],
-                                ),
+                          : const SizedBox(
+                              height: 80,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Nenhum comentário (ainda...)",
+                                    style: TextStyle(fontFamily: "Jost"),
+                                  )
+                                ],
                               ),
                             ),
                     ],
@@ -276,6 +267,9 @@ class _ComentariosState extends State<Comentarios> {
   ) {
     return Card(
       margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+      color: username == null && dark
+          ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
+          : Theme.of(context).colorScheme.surfaceContainerLow,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
         child: Row(

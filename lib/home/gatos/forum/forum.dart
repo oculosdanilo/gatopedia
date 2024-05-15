@@ -332,25 +332,18 @@ class _ForumState extends State<Forum> {
       transform: Matrix4.translationValues(0, username != null ? -20 : 0, 0),
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        color: username == null && dark
+            ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
+            : Theme.of(context).colorScheme.surfaceContainerLow,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            10,
-            10,
-            10,
-            20,
-          ),
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
           child: Column(
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      0,
-                      5,
-                      0,
-                      0,
-                    ),
+                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: SizedBox(
@@ -382,9 +375,7 @@ class _ForumState extends State<Forum> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 15,
-                  ),
+                  const SizedBox(width: 15),
                   Flexible(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,23 +385,13 @@ class _ForumState extends State<Forum> {
                             Expanded(
                               flex: 4,
                               child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    SlideRightAgainRoute(
-                                      PublicProfile(
-                                        postSS.child("username").value.toString(),
-                                      ),
-                                    ),
-                                  );
-                                },
+                                onTap: () => Navigator.push(
+                                  context,
+                                  SlideRightAgainRoute(PublicProfile(postSS.child("username").value.toString())),
+                                ),
                                 child: Text(
                                   postSS.child("username").value.toString(),
-                                  style: const TextStyle(
-                                    fontFamily: "Jost",
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
+                                  style: GoogleFonts.jost(fontWeight: FontWeight.bold, fontSize: 20),
                                   softWrap: true,
                                 ),
                               ),
@@ -418,9 +399,7 @@ class _ForumState extends State<Forum> {
                             username == postSS.child("username").value ? opcoes(index, postSS) : const SizedBox(),
                           ],
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         Text(
                           _maisDe2Linhas(
                             postSS.child("content").value.toString(),
@@ -429,10 +408,7 @@ class _ForumState extends State<Forum> {
                                   ? "$pedaco1..."
                                   : pedaco1 + pedaco2
                               : pedaco1,
-                          style: const TextStyle(
-                            fontFamily: "Jost",
-                            fontSize: 15,
-                          ),
+                          style: GoogleFonts.jost(fontSize: 15),
                           softWrap: true,
                           maxLines: 50,
                         ),
@@ -467,12 +443,7 @@ class _ForumState extends State<Forum> {
               ),
               postSS.child("img").value != null
                   ? Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        0,
-                        10,
-                        10,
-                        10,
-                      ),
+                      padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(25),
                         child: AspectRatio(
@@ -482,11 +453,7 @@ class _ForumState extends State<Forum> {
                             splashFactory: NoSplash.splashFactory,
                             onTap: () => Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (ctx) => Imagem(
-                                  "$index",
-                                ),
-                              ),
+                              MaterialPageRoute(builder: (ctx) => Imagem("$index")),
                             ),
                             child: Hero(
                               tag: "$index",
@@ -547,14 +514,6 @@ class _ForumState extends State<Forum> {
                                 onPressed: () async {
                                   action.call();
                                 },
-                                style: ButtonStyle(
-                                  shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(9999),
-                                      side: BorderSide(color: Theme.of(context).colorScheme.outline),
-                                    ),
-                                  ),
-                                ),
                                 child: Text(
                                   "Comentários (${postSS.child("comentarios").children.length - 2})",
                                   style: GoogleFonts.jost(
@@ -585,7 +544,7 @@ class _ForumState extends State<Forum> {
                       ),
                       onPressed: username != null
                           ? () {
-                              if (!postSS.child("likes").child("users").value.toString().contains(",$username,")) {
+                              if (!postSS.child("likes/users").value.toString().contains(",$username,")) {
                                 _like(int.parse(postSS.key!));
                               } else {
                                 _unlike(int.parse(postSS.key!));
@@ -593,17 +552,17 @@ class _ForumState extends State<Forum> {
                             }
                           : null,
                       icon: Icon(
-                        postSS.child("likes").child("users").value.toString().contains(",$username,")
+                        postSS.child("likes/users").value.toString().contains(",$username,")
                             ? Icons.thumb_up_alt
                             : Icons.thumb_up_alt_outlined,
                         color: username != null
-                            ? postSS.child("likes").child("users").value.toString().contains(",$username,")
+                            ? postSS.child("likes/users").value.toString().contains(",$username,")
                                 ? Theme.of(context).colorScheme.primary
                                 : Theme.of(context).colorScheme.onSurface
                             : Colors.grey,
                       ),
                       label: Text(
-                        "${postSS.child("likes").child("lenght").value}",
+                        "${postSS.child("likes/lenght").value}",
                         style: TextStyle(
                           fontSize: 18,
                           color: username != null ? Theme.of(context).colorScheme.onSurface : Colors.grey,
