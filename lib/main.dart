@@ -10,7 +10,6 @@ import 'package:gatopedia/firebase_options.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/index.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String? username;
