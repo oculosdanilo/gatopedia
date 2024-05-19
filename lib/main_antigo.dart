@@ -5,7 +5,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:gatopedia/firebase_options.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/loginScreen/login/form.dart';
@@ -76,14 +75,12 @@ class _AppState extends State<App> {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: App.themeNotifier,
       builder: (_, ThemeMode currentMode, __) {
-        return KeyboardSizeProvider(
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: temaLight(),
-            darkTheme: temaDark(),
-            themeMode: currentMode,
-            home: const Gatopedia(),
-          ),
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: temaLight(),
+          darkTheme: temaDark(),
+          themeMode: currentMode,
+          home: const Gatopedia(),
         );
       },
     );
