@@ -382,7 +382,7 @@ class _ConfigState extends State<Config> {
               ),
             );
           },
-          icon: const Icon(Icons.public),
+          icon: const Icon(Icons.public_rounded),
           label: const Text(
             "Web",
             style: TextStyle(fontFamily: "Jost"),

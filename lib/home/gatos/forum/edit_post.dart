@@ -89,14 +89,9 @@ class _EditPostState extends State<EditPost> {
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.pop(
-              context,
-              false,
-            );
+            Navigator.pop(context, false);
           },
-          child: const Text(
-            "CANCELAR",
-          ),
+          child: const Text("CANCELAR"),
         ),
         ElevatedButton(
           onPressed: () async {
@@ -110,15 +105,10 @@ class _EditPostState extends State<EditPost> {
               );
             }
           },
-          child: const Text(
-            "OK",
-          ),
+          child: const Text("OK"),
         ),
       ],
-      title: const Text(
-        "Editar post...",
-        textAlign: TextAlign.center,
-      ),
+      title: const Text("Editar post...", textAlign: TextAlign.center),
       icon: const Icon(Icons.edit_rounded),
       content: SingleChildScrollView(
         child: Column(
@@ -130,35 +120,22 @@ class _EditPostState extends State<EditPost> {
               controller: txtEdit,
               decoration: InputDecoration(
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.outline,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             imagem
                 ? badges.Badge(
                     badgeContent: ClipOval(
                       child: Material(
                         child: InkWell(
-                          child: const Padding(
-                            padding: EdgeInsets.all(5),
-                            child: Icon(
-                              Icons.close_rounded,
-                            ),
-                          ),
+                          child: const Padding(padding: EdgeInsets.all(5), child: Icon(Icons.close_rounded)),
                           onTap: () {
                             showCupertinoDialog(
                               barrierDismissible: false,
@@ -208,7 +185,7 @@ class _EditPostState extends State<EditPost> {
                     ),
                     child: imagemSelecionada
                         ? Image(
-                            width: 200,
+                            height: 200,
                             fit: BoxFit.cover,
                             image: FileImage(
                               imagemFile!,
@@ -227,9 +204,7 @@ class _EditPostState extends State<EditPost> {
                   )
                 : TextButton.icon(
                     icon: const Icon(Icons.add_photo_alternate_rounded),
-                    onPressed: () async {
-                      _pegarImagem();
-                    },
+                    onPressed: () async => _pegarImagem(),
                     label: const Text("Adicionar imagem"),
                   ),
           ],

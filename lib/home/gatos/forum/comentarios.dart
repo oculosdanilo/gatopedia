@@ -82,185 +82,192 @@ class _ComentariosState extends State<Comentarios> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.close_rounded),
+    return GestureDetector(
+      onTap: () => setState(() {
+        FocusManager.instance.primaryFocus?.unfocus();
+      }),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.close_rounded),
+          ),
         ),
-      ),
-      body: SizedBox(
-        width: double.infinity,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          SlideRightAgainRoute(
-                            PublicProfile(postAtual.child("username").value as String),
-                          ),
-                        );
-                      },
-                      child: Image(
-                        image: NetworkImage(
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postAtual.child("username").value}.webp?alt=media"),
-                        width: 30,
-                        errorBuilder: (c, obj, stacktrace) {
-                          return Image.asset("assets/user.webp", width: 30);
+        body: SizedBox(
+          width: double.infinity,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            SlideRightAgainRoute(
+                              PublicProfile(postAtual.child("username").value as String),
+                            ),
+                          );
                         },
+                        child: Image(
+                          image: NetworkImage(
+                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postAtual.child("username").value}.webp?alt=media"),
+                          width: 30,
+                          errorBuilder: (c, obj, stacktrace) {
+                            return Image.asset("assets/user.webp", width: 30);
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              SlideRightAgainRoute(
-                                PublicProfile(postAtual.child("username").value as String),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "@${postAtual.child("username").value}",
-                            style: const TextStyle(
-                              fontFamily: "Jost",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                            softWrap: true,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          _maisDe2Linhas(postAtual.child("content").value as String)
-                              ? flag
-                                  ? "$pedaco1..."
-                                  : pedaco1 + pedaco2
-                              : pedaco1,
-                          style: const TextStyle(
-                            fontFamily: "Jost",
-                            fontSize: 15,
-                          ),
-                          softWrap: true,
-                          maxLines: 50,
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: InkWell(
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InkWell(
                             onTap: () {
-                              setState(() {
-                                flag = !flag;
-                              });
+                              Navigator.push(
+                                context,
+                                SlideRightAgainRoute(
+                                  PublicProfile(postAtual.child("username").value as String),
+                                ),
+                              );
                             },
                             child: Text(
-                              _maisDe2Linhas(postAtual.child("content").value as String)
-                                  ? flag
-                                      ? "mostrar mais"
-                                      : "mostrar menos"
-                                  : "",
+                              "@${postAtual.child("username").value}",
                               style: const TextStyle(
-                                color: Colors.grey,
+                                fontFamily: "Jost",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                              softWrap: true,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            _maisDe2Linhas(postAtual.child("content").value as String)
+                                ? flag
+                                    ? "$pedaco1..."
+                                    : pedaco1 + pedaco2
+                                : pedaco1,
+                            style: const TextStyle(
+                              fontFamily: "Jost",
+                              fontSize: 15,
+                            ),
+                            softWrap: true,
+                            maxLines: 50,
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  flag = !flag;
+                                });
+                              },
+                              child: Text(
+                                _maisDe2Linhas(postAtual.child("content").value as String)
+                                    ? flag
+                                        ? "mostrar mais"
+                                        : "mostrar menos"
+                                    : "",
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const Divider(),
-            username != null
-                ? Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          flex: 7,
-                          child: TextField(
-                            controller: txtComment,
-                            decoration: const InputDecoration(
-                              hintText: "Comentar...",
+              const Divider(),
+              username != null
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            flex: 7,
+                            child: TextField(
+                              controller: txtComment,
+                              decoration: const InputDecoration(
+                                hintText: "Comentar...",
+                                prefix: SizedBox(width: 10),
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Flexible(
-                          flex: 2,
-                          child: IconButton.filled(
-                            icon: const Icon(Icons.send),
-                            iconSize: 35,
-                            onPressed: () async {
-                              _postarC();
-                              txtComment.text = "";
-                              Flushbar(
-                                message: "Postado com sucesso!",
-                                duration: const Duration(seconds: 3),
-                                margin: const EdgeInsets.all(20),
-                                borderRadius: BorderRadius.circular(50),
-                              ).show(context);
-                            },
+                          const SizedBox(
+                            width: 10,
                           ),
-                        )
-                      ],
+                          Flexible(
+                            flex: 2,
+                            child: IconButton.filled(
+                              icon: const Icon(Icons.send_rounded),
+                              iconSize: 25,
+                              padding: const EdgeInsets.all(15),
+                              onPressed: () async {
+                                _postarC();
+                                txtComment.text = "";
+                                Flushbar(
+                                  message: "Postado com sucesso!",
+                                  duration: const Duration(seconds: 3),
+                                  margin: const EdgeInsets.all(20),
+                                  borderRadius: BorderRadius.circular(50),
+                                ).show(context);
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : const SizedBox(),
+              postAtual.child("comentarios").children.length > 2
+                  ? Expanded(
+                      child: ListView.builder(
+                        itemCount: postAtual.child("comentarios").children.length,
+                        itemBuilder: (c, i) => postAtual
+                                    .child("comentarios/${postAtual.child("comentarios").children.length - i}/username")
+                                    .value !=
+                                null
+                            ? comentario(context, postAtual.child("comentarios").children.length - i)
+                            : const SizedBox(),
+                        /*children: postAtual
+                            .child("comentarios")
+                            .children
+                            .map((e) => e.child("username").value == null ? Text("data") : const SizedBox())
+                            .toList(),*/
+                      ),
+                    )
+                  : const SizedBox(
+                      height: 80,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Nenhum comentário (ainda...)",
+                            style: TextStyle(fontFamily: "Jost"),
+                          )
+                        ],
+                      ),
                     ),
-                  )
-                : const SizedBox(),
-            postAtual.child("comentarios").children.length > 2
-                ? Expanded(
-                    child: ListView.builder(
-                      itemCount: postAtual.child("comentarios").children.length,
-                      itemBuilder: (c, i) => postAtual
-                                  .child("comentarios/${postAtual.child("comentarios").children.length - i}/username")
-                                  .value !=
-                              null
-                          ? comentario(context, postAtual.child("comentarios").children.length - i)
-                          : const SizedBox(),
-                      /*children: postAtual
-                          .child("comentarios")
-                          .children
-                          .map((e) => e.child("username").value == null ? Text("data") : const SizedBox())
-                          .toList(),*/
-                    ),
-                  )
-                : const SizedBox(
-                    height: 80,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Nenhum comentário (ainda...)",
-                          style: TextStyle(fontFamily: "Jost"),
-                        )
-                      ],
-                    ),
-                  ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -282,31 +289,26 @@ class _ComentariosState extends State<Comentarios> {
               child: InkWell(
                 onTap: () => Navigator.push(
                   context,
-                  SlideRightAgainRoute(
-                    PublicProfile(postAtual.child("comentarios/$index/username").value as String),
-                  ),
+                  SlideRightAgainRoute(PublicProfile(postAtual.child("comentarios/$index/username").value as String)),
                 ),
                 child: Image(
                   image: NetworkImage(
                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postAtual.child("comentarios/$index/username").value}.webp?alt=media"),
                   width: 50,
+                  fit: BoxFit.cover,
                   errorBuilder: (c, obj, stacktrace) {
                     return Image.asset("assets/user.webp", width: 50);
                   },
                 ),
               ),
             ),
-            const SizedBox(
-              width: 15,
-            ),
+            const SizedBox(width: 15),
             Expanded(
               flex: 20,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   InkWell(
                     onTap: () {
                       Navigator.push(
@@ -324,9 +326,7 @@ class _ComentariosState extends State<Comentarios> {
                       softWrap: true,
                     ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Text(
                     "${postAtual.child("comentarios/$index/content").value}",
                     style: const TextStyle(fontFamily: "Jost", fontSize: 15),
@@ -343,22 +343,21 @@ class _ComentariosState extends State<Comentarios> {
                       shape: const CircleBorder(),
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.delete),
+                      icon: const Icon(Icons.delete_rounded),
                       color: Colors.white,
                       onPressed: () {
                         showCupertinoDialog(
                           barrierDismissible: false,
                           context: context,
                           builder: (context) => AlertDialog(
-                            icon: const Icon(
-                              Icons.delete_rounded,
-                            ),
+                            icon: const Icon(Icons.delete_rounded),
                             title: const Text(
                               "Tem certeza que deseja deletar esse comentário?",
                               textAlign: TextAlign.center,
                             ),
-                            content: const Text(
-                              "Ele sumirá para sempre! (muito tempo)",
+                            content: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [Text("Ele sumirá para sempre! (muito tempo)")],
                             ),
                             actions: [
                               TextButton(
@@ -376,13 +375,9 @@ class _ComentariosState extends State<Comentarios> {
                                     duration: const Duration(seconds: 3),
                                     margin: const EdgeInsets.all(20),
                                     borderRadius: BorderRadius.circular(50),
-                                  ).show(
-                                    context,
-                                  );
+                                  ).show(context);
                                 },
-                                child: const Text(
-                                  "OK",
-                                ),
+                                child: const Text("OK"),
                               ),
                             ],
                           ),

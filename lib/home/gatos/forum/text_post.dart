@@ -1,7 +1,6 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:gatopedia/home/gatos/forum/forum.dart';
 import 'package:gatopedia/main.dart';
 
@@ -67,99 +66,93 @@ class _TextPostState extends State<TextPost> {
       },
       child: Padding(
         padding: const EdgeInsets.all(15),
-        child: Consumer<ScreenHeight>(
-          builder: (context, res, child) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipOval(
-                      child: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: FadeInImage(
-                          fadeInDuration: const Duration(milliseconds: 100),
-                          placeholder: const AssetImage("assets/user.webp"),
-                          image: NetworkImage(
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
-                          ),
-                          imageErrorBuilder: (c, obj, stacktrace) {
-                            return Image.asset("assets/user.webp", fit: BoxFit.cover);
-                          },
-                          fit: BoxFit.cover,
-                        ),
+                ClipOval(
+                  child: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: FadeInImage(
+                      fadeInDuration: const Duration(milliseconds: 100),
+                      placeholder: const AssetImage("assets/user.webp"),
+                      image: NetworkImage(
+                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
                       ),
+                      imageErrorBuilder: (c, obj, stacktrace) {
+                        return Image.asset("assets/user.webp", fit: BoxFit.cover);
+                      },
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Flexible(
-                      child: TextField(
-                        controller: txtPost,
-                        maxLength: 400,
-                        decoration: InputDecoration(
-                          hintText: "No que está pensando, $username?",
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.outline,
-                              width: 2,
-                            ),
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                        maxLines: 2,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 const SizedBox(
-                  height: 15,
+                  width: 20,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: FilledButton.icon(
-                          onPressed: () {
-                            if (txtPost.text != "") {
-                              _postar(
-                                int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
-                              );
-                              Flushbar(
-                                message: "Postado com sucesso!",
-                                duration: const Duration(seconds: 3),
-                                margin: const EdgeInsets.all(20),
-                                borderRadius: BorderRadius.circular(50),
-                              ).show(context);
-                            }
-                          },
-                          icon: const Icon(Icons.send_rounded),
-                          label: const Text("ENVIAR"),
+                Flexible(
+                  child: TextField(
+                    controller: txtPost,
+                    maxLength: 400,
+                    decoration: InputDecoration(
+                      hintText: "No que está pensando, $username?",
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.outline,
+                          width: 2,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
                         ),
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: res.keyboardHeight,
+                    maxLines: 2,
+                  ),
                 ),
               ],
-            );
-          },
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: FilledButton.icon(
+                      onPressed: () {
+                        if (txtPost.text != "") {
+                          _postar(
+                            int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
+                          );
+                          Flushbar(
+                            message: "Postado com sucesso!",
+                            duration: const Duration(seconds: 3),
+                            margin: const EdgeInsets.all(20),
+                            borderRadius: BorderRadius.circular(50),
+                          ).show(context);
+                        }
+                      },
+                      icon: const Icon(Icons.send_rounded),
+                      label: const Text("ENVIAR"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom),
+          ],
         ),
       ),
     );

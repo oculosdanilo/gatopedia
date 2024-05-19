@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:async';
 import 'dart:io';
 
@@ -17,7 +15,7 @@ import 'package:gatopedia/home/gatos/forum/comentarios.dart';
 import 'package:gatopedia/home/gatos/forum/delete_post.dart';
 import 'package:gatopedia/home/gatos/forum/edit_post.dart';
 import 'package:gatopedia/home/gatos/forum/image_post.dart';
-import 'package:gatopedia/home/gatos/forum/imagem.dart';
+import 'package:gatopedia/home/gatos/forum/imagem_view.dart';
 import 'package:gatopedia/home/gatos/forum/text_post.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/home/home.dart';
@@ -180,13 +178,9 @@ class _ForumState extends State<Forum> {
           ? ExpandableFab(
               key: fagKey,
               distance: 70,
-              overlayStyle: ExpandableFabOverlayStyle(
-                blur: 4,
-              ),
-              openButtonBuilder: RotateFloatingActionButtonBuilder(
-                child: const Icon(Icons.edit_rounded),
-              ),
-              closeButtonBuilder: RotateFloatingActionButtonBuilder(
+              overlayStyle: ExpandableFabOverlayStyle(blur: 4),
+              openButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.edit_rounded)),
+              closeButtonBuilder: DefaultFloatingActionButtonBuilder(
                 child: const Icon(Icons.close_rounded),
                 fabSize: ExpandableFabSize.small,
               ),
@@ -500,6 +494,7 @@ class _ForumState extends State<Forum> {
                               },
                               child: Text(
                                 "Comentários (${postSS.child("comentarios").children.length - 2})",
+                                style: GoogleFonts.jost(fontSize: 15, fontWeight: FontWeight.bold),
                               ),
                             ),
                           )
@@ -553,8 +548,8 @@ class _ForumState extends State<Forum> {
                           : null,
                       icon: Icon(
                         postSS.child("likes/users").value.toString().contains(",$username,")
-                            ? Icons.thumb_up_alt
-                            : Icons.thumb_up_alt_outlined,
+                            ? Icons.thumb_up_off_alt_rounded
+                            : Icons.thumb_up_off_alt_outlined,
                         color: username != null
                             ? postSS.child("likes/users").value.toString().contains(",$username,")
                                 ? Theme.of(context).colorScheme.primary
@@ -565,7 +560,11 @@ class _ForumState extends State<Forum> {
                         "${postSS.child("likes/lenght").value}",
                         style: TextStyle(
                           fontSize: 18,
-                          color: username != null ? Theme.of(context).colorScheme.onSurface : Colors.grey,
+                          color: username != null
+                              ? postSS.child("likes/users").value.toString().contains(",$username,")
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurface
+                              : Colors.grey,
                         ),
                       ),
                     ),
@@ -594,12 +593,8 @@ class _ForumState extends State<Forum> {
                   barrierDismissible: false,
                   context: context,
                   builder: (context) {
-                    imagem =
-                        snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - index}/img").value !=
-                            null;
-                    return EditPost(
-                      (int.parse(snapshotForum!.children.last.key ?? "0") - index).toString(),
-                    );
+                    imagem = snapshotForum!.child("${int.parse(postSS.key!)}/img").value != null;
+                    return EditPost((int.parse(postSS.key!)).toString());
                   },
                 ).then((value) {
                   if (value) {
@@ -612,26 +607,22 @@ class _ForumState extends State<Forum> {
                   }
                 });
               },
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Symbols.edit_rounded),
-                  SizedBox(width: 10),
-                  Text("Editar"),
+                  const Icon(Symbols.edit_rounded, fill: 1),
+                  const SizedBox(width: 10),
+                  Text("Editar", style: GoogleFonts.jost(fontSize: 15)),
                 ],
               ),
             ),
             PopupMenuItem(
-              onTap: () => showCupertinoDialog(
-                context: context,
-                builder: (context) => DeletePost(
-                  int.parse(postSS.key!),
-                ),
-              ),
+              onTap: () =>
+                  showCupertinoDialog(context: context, builder: (context) => DeletePost(int.parse(postSS.key!))),
               child: Row(
                 children: [
                   Icon(Symbols.delete_rounded, color: Theme.of(context).colorScheme.error),
                   const SizedBox(width: 10),
-                  Text("Deletar", style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                  Text("Deletar", style: GoogleFonts.jost(color: Theme.of(context).colorScheme.error, fontSize: 15)),
                 ],
               ),
             )

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/main.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 import 'forum.dart';
@@ -89,18 +90,12 @@ class _ImagePostState extends State<ImagePost> {
                 });
                 Navigator.pop(context);
               },
-              icon: Icon(
-                Icons.close_rounded,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
+              icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onPrimary),
             ),
             title: Center(
               child: Text(
                 widget.imageType == "image" ? "Post com imagem" : "Post com GIF",
-                style: TextStyle(
-                  fontFamily: "Jost",
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                style: GoogleFonts.jost(color: Theme.of(context).colorScheme.onPrimary),
               ),
             ),
           ),
@@ -135,14 +130,10 @@ class _ImagePostState extends State<ImagePost> {
                         minLines: 1,
                         decoration: InputDecoration(
                           enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                           ),
                         ),
                       ),
@@ -152,17 +143,19 @@ class _ImagePostState extends State<ImagePost> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          ElevatedButton(
-                            onPressed: () async {
-                              final imgEditada = await _editarImagem(file!);
-                              if (imgEditada != null) {
-                                setState(() {
-                                  file = imgEditada;
-                                });
-                              }
-                            },
-                            child: const Text("EDITAR"),
-                          ),
+                          widget.imageType == "image"
+                              ? ElevatedButton(
+                                  onPressed: () async {
+                                    final imgEditada = await _editarImagem(file!);
+                                    if (imgEditada != null) {
+                                      setState(() {
+                                        file = imgEditada;
+                                      });
+                                    }
+                                  },
+                                  child: const Text("EDITAR"),
+                                )
+                              : const SizedBox(),
                           const Expanded(child: SizedBox()),
                           FilledButton.icon(
                             onPressed: () {

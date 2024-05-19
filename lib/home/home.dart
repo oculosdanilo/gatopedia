@@ -61,13 +61,13 @@ class _HomeState extends State<Home> {
               label: "Gatos",
             ),
             NavigationDestination(
-              icon: const Icon(Icons.person_outlined),
-              selectedIcon: Icon(Icons.person, color: Theme.of(context).colorScheme.onPrimary),
+              icon: const Icon(Icons.person_outline_rounded),
+              selectedIcon: Icon(Icons.person_rounded, color: Theme.of(context).colorScheme.onPrimary),
               label: "Eu",
             ),
             NavigationDestination(
               icon: const Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings, color: Theme.of(context).colorScheme.onPrimary),
+              selectedIcon: Icon(Icons.settings_rounded, color: Theme.of(context).colorScheme.onPrimary),
               label: "Configurações",
             )
           ],

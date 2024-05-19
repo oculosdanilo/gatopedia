@@ -32,9 +32,7 @@ class _DeletePostState extends State<DeletePost> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      icon: const Icon(
-        Icons.delete_rounded,
-      ),
+      icon: const Icon(Icons.delete_rounded),
       title: const Text(
         "Tem certeza que deseja deletar esse post?",
         textAlign: TextAlign.center,

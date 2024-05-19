@@ -127,9 +127,7 @@ class _ProfileState extends State<Profile> {
               PopupMenuButton<MenuItensImg>(
                 icon: const Icon(
                   Icons.more_vert_rounded,
-                  shadows: [
-                    Shadow(blurRadius: 10),
-                  ],
+                  shadows: [Shadow(blurRadius: 10)],
                   color: Colors.white,
                 ),
                 onSelected: (value) async {
@@ -234,9 +232,7 @@ class _ProfileState extends State<Profile> {
               PopupMenuButton<MenuItensSemImg>(
                 icon: const Icon(
                   Icons.more_vert_rounded,
-                  shadows: [
-                    Shadow(blurRadius: 10),
-                  ],
+                  shadows: [Shadow(blurRadius: 10)],
                   color: Colors.white,
                 ),
                 shape: RoundedRectangleBorder(

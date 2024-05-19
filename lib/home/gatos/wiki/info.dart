@@ -111,13 +111,7 @@ class GatoInfoState extends State<GatoInfo> {
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 30),
-                            Text(
-                              "COMENTÁRIOS",
-                              style: GoogleFonts.jost(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25,
-                              ),
-                            ),
+                            Text("COMENTÁRIOS", style: GoogleFonts.jost(fontWeight: FontWeight.bold, fontSize: 25)),
                           ],
                         ),
                       ),
@@ -133,12 +127,11 @@ class GatoInfoState extends State<GatoInfo> {
                                       controller: txtControllerC,
                                       decoration: const InputDecoration(
                                         hintText: "Comentar...",
+                                        prefix: SizedBox(width: 10),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
+                                  const SizedBox(width: 10),
                                   IconButton.filled(
                                     onPressed: () async {
                                       FocusManager.instance.primaryFocus?.unfocus();
@@ -168,8 +161,9 @@ class GatoInfoState extends State<GatoInfo> {
                                         txtControllerC.text = "";
                                       }
                                     },
-                                    icon: const Icon(Icons.send),
-                                    iconSize: 35,
+                                    icon: const Icon(Icons.send_rounded),
+                                    iconSize: 25,
+                                    padding: const EdgeInsets.all(15),
                                   ),
                                 ],
                               ),
@@ -295,12 +289,11 @@ class _ComentariosState extends State<Comentarios> {
                     return Image.asset("assets/user.webp", width: 50);
                   },
                   width: 50,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            const SizedBox(
-              width: 15,
-            ),
+            const SizedBox(width: 15),
             Expanded(
               flex: 20,
               child: Column(
@@ -330,9 +323,7 @@ class _ComentariosState extends State<Comentarios> {
                       softWrap: true,
                     ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Text(
                     snapshot.child("content").value.toString(),
                     style: const TextStyle(
