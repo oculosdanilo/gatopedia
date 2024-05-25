@@ -58,7 +58,7 @@ class _PPEditState extends State<PPEdit> {
         ],
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: '✂️Cortando...',
+            toolbarTitle: '\u2702️Cortando...',
             hideBottomControls: true,
             toolbarColor: Theme.of(context).colorScheme.primary,
             toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
@@ -131,10 +131,11 @@ class _PPEditState extends State<PPEdit> {
         physics: const NeverScrollableScrollPhysics(),
         slivers: <Widget>[
           SliverAppBar.large(
+            backgroundColor: Theme.of(context).colorScheme.primary,
             leading: IconButton(
               color: Colors.white,
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.close_rounded),
+              icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onPrimary),
             ),
             title: Center(
               child: Text(

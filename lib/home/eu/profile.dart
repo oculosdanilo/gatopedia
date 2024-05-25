@@ -136,7 +136,7 @@ class _ProfileState extends State<Profile> {
                     showCupertinoDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
-                        icon: const Icon(Icons.delete_rounded),
+                        icon: Icon(Icons.delete_rounded, color: Theme.of(context).colorScheme.error),
                         title: const Text(
                           "Tem certeza que deseja remover sua foto de perfil?",
                           textAlign: TextAlign.center,
@@ -157,10 +157,8 @@ class _ProfileState extends State<Profile> {
                       (value) async {
                         if (value ?? false) {
                           await _apagarImagem(username!);
-                          setState(() {
-                            CachedNetworkImage.evictFromCache(
-                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media");
-                          });
+                          setState(() => CachedNetworkImage.evictFromCache(
+                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media"));
                           if (!context.mounted) return;
                           Flushbar(
                             message: "Removida com sucesso!",

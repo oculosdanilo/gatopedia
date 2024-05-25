@@ -37,13 +37,7 @@ void main() async {
 
 class MyBehavior extends ScrollBehavior {
   @override
-  Widget buildOverscrollIndicator(
-    BuildContext context,
-    Widget child,
-    ScrollableDetails details,
-  ) {
-    return child;
-  }
+  Widget buildOverscrollIndicator(BuildContext context, Widget child, ScrollableDetails details) => child;
 }
 
 class App extends StatefulWidget {
@@ -141,11 +135,7 @@ class _AppState extends State<App> {
   }
 }
 
-ThemeData temaBase(ThemeMode mode) {
-  return ThemeData(
-    colorScheme: mode == ThemeMode.dark ? blueScheme : blueSchemeL,
-  );
-}
+ThemeData temaBase(ThemeMode mode) => ThemeData(colorScheme: mode == ThemeMode.dark ? blueScheme : blueSchemeL);
 
 class SlideUpRoute extends PageRouteBuilder {
   final Widget page;
@@ -167,17 +157,12 @@ class SlideUpRoute extends PageRouteBuilder {
             Widget child,
           ) =>
               SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 1),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(
-                parent: animation,
-                curve: Curves.fastOutSlowIn,
-                reverseCurve: Curves.fastOutSlowIn,
-              ),
-            ),
-            child: child,
-          ),
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 1),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn, reverseCurve: Curves.fastOutSlowIn),
+                  ),
+                  child: child),
         );
 }

@@ -44,8 +44,8 @@ class _TextPostState extends State<TextPost> {
               icon: const Icon(Icons.info_rounded),
               title: const Text("Tem certeza que deseja descartar seu post?"),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancelar")),
-                ElevatedButton(onPressed: () => Navigator.pop(context, true), child: const Text("Descartar")),
+                TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("CANCELAR")),
+                ElevatedButton(onPressed: () => Navigator.pop(context, true), child: const Text("DESCARTAR")),
               ],
             ),
           );

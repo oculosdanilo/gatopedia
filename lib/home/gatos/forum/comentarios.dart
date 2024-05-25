@@ -10,6 +10,7 @@ import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Comentarios extends StatefulWidget {
   final DataSnapshot post;
@@ -104,9 +105,8 @@ class _ComentariosState extends State<Comentarios> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: InkWell(
+                    ClipOval(
+                      child: GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
@@ -125,57 +125,38 @@ class _ComentariosState extends State<Comentarios> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      width: 15,
-                    ),
+                    const SizedBox(width: 15),
                     Expanded(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                SlideRightAgainRoute(
-                                  PublicProfile(postAtual.child("username").value as String),
-                                ),
-                              );
-                            },
+                          GestureDetector(
+                            onTap: () => Navigator.push(
+                              context,
+                              SlideRightAgainRoute(PublicProfile(postAtual.child("username").value as String)),
+                            ),
                             child: Text(
-                              "@${postAtual.child("username").value}",
-                              style: const TextStyle(
-                                fontFamily: "Jost",
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
+                              "${postAtual.child("username").value}",
+                              style: GoogleFonts.jost(fontWeight: FontWeight.w500, fontSize: 20),
                               softWrap: true,
                             ),
                           ),
-                          const SizedBox(
-                            height: 5,
-                          ),
+                          const SizedBox(height: 5),
                           Text(
                             _maisDe2Linhas(postAtual.child("content").value as String)
                                 ? flag
                                     ? "$pedaco1..."
                                     : pedaco1 + pedaco2
                                 : pedaco1,
-                            style: const TextStyle(
-                              fontFamily: "Jost",
-                              fontSize: 15,
-                            ),
+                            style: GoogleFonts.jost(fontSize: 17),
                             softWrap: true,
                             maxLines: 50,
                           ),
                           Align(
                             alignment: Alignment.centerRight,
                             child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  flag = !flag;
-                                });
-                              },
+                              onTap: () => setState(() => flag = !flag),
                               child: Text(
                                 _maisDe2Linhas(postAtual.child("content").value as String)
                                     ? flag
@@ -221,14 +202,16 @@ class _ComentariosState extends State<Comentarios> {
                               iconSize: 25,
                               padding: const EdgeInsets.all(15),
                               onPressed: () async {
-                                _postarC();
-                                txtComment.text = "";
-                                Flushbar(
-                                  message: "Postado com sucesso!",
-                                  duration: const Duration(seconds: 3),
-                                  margin: const EdgeInsets.all(20),
-                                  borderRadius: BorderRadius.circular(50),
-                                ).show(context);
+                                if (txtComment.text != "") {
+                                  _postarC();
+                                  txtComment.text = "";
+                                  Flushbar(
+                                    message: "Postado com sucesso!",
+                                    duration: const Duration(seconds: 3),
+                                    margin: const EdgeInsets.all(20),
+                                    borderRadius: BorderRadius.circular(50),
+                                  ).show(context);
+                                }
                               },
                             ),
                           )
@@ -246,11 +229,6 @@ class _ComentariosState extends State<Comentarios> {
                                 null
                             ? comentario(context, postAtual.child("comentarios").children.length - i)
                             : const SizedBox(),
-                        /*children: postAtual
-                            .child("comentarios")
-                            .children
-                            .map((e) => e.child("username").value == null ? Text("data") : const SizedBox())
-                            .toList(),*/
                       ),
                     )
                   : const SizedBox(
@@ -276,17 +254,18 @@ class _ComentariosState extends State<Comentarios> {
   Card comentario(BuildContext context, int index) {
     return Card(
       margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       color: username == null && dark
           ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
           : Theme.of(context).colorScheme.surfaceContainerLow,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 25, 10, 25),
+        padding: const EdgeInsets.fromLTRB(15, 10, 15, 25),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(50),
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () => Navigator.push(
                   context,
                   SlideRightAgainRoute(PublicProfile(postAtual.child("comentarios/$index/username").value as String)),
@@ -296,9 +275,7 @@ class _ComentariosState extends State<Comentarios> {
                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postAtual.child("comentarios/$index/username").value}.webp?alt=media"),
                   width: 50,
                   fit: BoxFit.cover,
-                  errorBuilder: (c, obj, stacktrace) {
-                    return Image.asset("assets/user.webp", width: 50);
-                  },
+                  errorBuilder: (c, obj, stacktrace) => Image.asset("assets/user.webp", width: 50),
                 ),
               ),
             ),
@@ -308,28 +285,22 @@ class _ComentariosState extends State<Comentarios> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        SlideRightAgainRoute(
-                          PublicProfile(
-                            postAtual.child("comentarios/$index/username").value as String,
-                          ),
-                        ),
-                      );
-                    },
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      SlideRightAgainRoute(
+                          PublicProfile(postAtual.child("comentarios/$index/username").value as String)),
+                    ),
                     child: Text(
-                      "@${postAtual.child("comentarios/$index/username").value}",
-                      style: const TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 15),
+                      "${postAtual.child("comentarios/$index/username").value}",
+                      style: GoogleFonts.jost(fontWeight: FontWeight.w500, fontSize: 20),
                       softWrap: true,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     "${postAtual.child("comentarios/$index/content").value}",
-                    style: const TextStyle(fontFamily: "Jost", fontSize: 15),
+                    style: const TextStyle(fontFamily: "Jost", fontSize: 17),
                     softWrap: true,
                     maxLines: 50,
                   )
@@ -338,10 +309,9 @@ class _ComentariosState extends State<Comentarios> {
             ),
             "${postAtual.child("comentarios/$index/username").value}" == username
                 ? Ink(
-                    decoration: ShapeDecoration(
-                      color: blueScheme.errorContainer,
-                      shape: const CircleBorder(),
-                    ),
+                    width: 50,
+                    height: 50,
+                    decoration: ShapeDecoration(color: blueScheme.errorContainer, shape: const CircleBorder()),
                     child: IconButton(
                       icon: const Icon(Icons.delete_rounded),
                       color: Colors.white,
@@ -350,7 +320,7 @@ class _ComentariosState extends State<Comentarios> {
                           barrierDismissible: false,
                           context: context,
                           builder: (context) => AlertDialog(
-                            icon: const Icon(Icons.delete_rounded),
+                            icon: Icon(Icons.delete_rounded, color: Theme.of(context).colorScheme.error),
                             title: const Text(
                               "Tem certeza que deseja deletar esse comentário?",
                               textAlign: TextAlign.center,

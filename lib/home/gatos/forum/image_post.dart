@@ -51,7 +51,7 @@ class _ImagePostState extends State<ImagePost> {
       ],
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: '✏️Editando...',
+          toolbarTitle: '\u270F️Editando...',
           toolbarColor: Theme.of(context).colorScheme.primary,
           toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
           initAspectRatio: CropAspectRatioPreset.original,
@@ -60,11 +60,7 @@ class _ImagePostState extends State<ImagePost> {
         ),
       ],
     );
-    if (croppedFile != null) {
-      return File(croppedFile.path);
-    } else {
-      return null;
-    }
+    return croppedFile != null ? File(croppedFile.path) : null;
   }
 
   @override

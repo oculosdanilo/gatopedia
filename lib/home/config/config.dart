@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
@@ -16,6 +14,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+final Uri _urlGatopediaWeb = Uri.parse("https://osprojetos.web.app/2023/gatopedia");
 final Uri _urlGatopediaGit = Uri.parse('https://github.com/oculosdanilo/gatopedia');
 final Uri _urlGatopediaGitLatest = Uri.parse('https://github.com/oculosdanilo/gatopedia/releases');
 String appName = "";
@@ -121,9 +120,7 @@ class _ConfigState extends State<Config> {
       await FirebaseDatabase.instance.ref("users/$username").remove();
       username = null;
       final pref = await SharedPreferences.getInstance();
-      if (pref.containsKey("username")) {
-        await pref.remove("username");
-      }
+      if (pref.containsKey("username")) await pref.remove("username");
 
       if (!context.mounted) return;
       Navigator.pop(context, true);
@@ -199,21 +196,23 @@ class _ConfigState extends State<Config> {
                             builder: (c) => Theme(
                               data: ThemeData.from(
                                 textTheme: GoogleFonts.jostTextTheme(
-                                  temaBase(dark ? ThemeMode.dark : ThemeMode.light).textTheme,
-                                ),
+                                    temaBase(dark ? ThemeMode.dark : ThemeMode.light).textTheme),
                                 colorScheme: ColorScheme.fromSeed(
                                   seedColor: const Color(0xffff0000),
                                   brightness: dark ? Brightness.dark : Brightness.light,
                                 ),
                               ),
-                              child: StatefulBuilder(builder: (context, setStateB) {
-                                return alertaDeletar(setStateB, context);
-                              }),
+                              child:
+                                  StatefulBuilder(builder: (context, setStateB) => alertaDeletar(setStateB, context)),
                             ),
                           );
                           if (!context.mounted) return;
                           if (dialogo != null) {
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => Index(false)));
+                            final sp = await SharedPreferences.getInstance();
+                            if (sp.containsKey("username")) await sp.remove("username");
+                            if (!context.mounted) return;
+                            username = null;
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const Index(false)));
                           }
                         },
                         title: const Text("Deletar conta"),
@@ -243,17 +242,12 @@ class _ConfigState extends State<Config> {
                     ],
                   ),
                 ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: botoes(),
-                ),
-                const SizedBox(
-                  height: 17,
-                ),
+                SingleChildScrollView(scrollDirection: Axis.horizontal, child: botoes()),
+                const SizedBox(height: 17),
                 const Divider(),
                 Center(
                   child: Text(
-                    "© ${DateTime.now().year} oculosdanilo\nTodos os direitos reservados",
+                    "\u00a9 ${DateTime.now().year} oculosdanilo\nTodos os direitos reservados",
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.grey,
@@ -271,15 +265,14 @@ class _ConfigState extends State<Config> {
 
   AlertDialog alertaDeletar(StateSetter setStateB, BuildContext context) {
     return AlertDialog(
-      title: Text("Sentirei saudades :,("),
+      title: const Text("Sentirei saudades :,("),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Quando sua conta for deletada, suas postagens e comentários também serão removidos da plataforma.\n",
-          ),
-          Text("Para continuar, insira abaixo sua senha:", textAlign: TextAlign.start),
+          const Text(
+              "Quando sua conta for deletada, suas postagens e comentários também serão removidos da plataforma.\n"),
+          const Text("Para continuar, insira abaixo sua senha:", textAlign: TextAlign.start),
           SizedBox(
             width: scW * 0.8,
             height: 65,
@@ -293,10 +286,7 @@ class _ConfigState extends State<Config> {
                 prefix: const SizedBox(width: 10),
                 suffixIcon: Padding(
                   padding: const EdgeInsets.only(right: 10),
-                  child: IconButton(
-                    onPressed: () => mostrarSenha(setStateB),
-                    icon: iconeOlho,
-                  ),
+                  child: IconButton(onPressed: () => mostrarSenha(setStateB), icon: iconeOlho),
                 ),
                 label: Text("Senha", style: GoogleFonts.jost()),
               ),
@@ -305,7 +295,7 @@ class _ConfigState extends State<Config> {
         ],
       ),
       actions: [
-        OutlinedButton(onPressed: () => Navigator.pop(context), child: Text("CANCELAR")),
+        OutlinedButton(onPressed: () => Navigator.pop(context), child: const Text("CANCELAR")),
         FilledButton(
           onPressed: !conectando
               ? () async {
@@ -339,7 +329,7 @@ class _ConfigState extends State<Config> {
                   }
                 }
               : null,
-          child: Text("APAGAR MINHA CONTA"),
+          child: const Text("APAGAR MINHA CONTA"),
         ),
       ],
     );
@@ -349,44 +339,21 @@ class _ConfigState extends State<Config> {
     return Row(
       children: [
         ElevatedButton.icon(
-          onPressed: () {
-            _launchUrl(_urlGatopediaGit);
-          },
+          onPressed: () => _launchUrl(_urlGatopediaGit),
           icon: const Icon(AntDesign.github),
-          label: const Text(
-            "Repositório",
-            style: TextStyle(fontFamily: "Jost"),
-          ),
+          label: const Text("Repositório"),
         ),
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         ElevatedButton.icon(
-          onPressed: () {
-            _launchUrl(_urlGatopediaGitLatest);
-          },
+          onPressed: () => _launchUrl(_urlGatopediaGitLatest),
           icon: const Icon(AntDesign.github),
-          label: const Text(
-            "Versões",
-            style: TextStyle(fontFamily: "Jost"),
-          ),
+          label: const Text("Versões"),
         ),
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         ElevatedButton.icon(
-          onPressed: () {
-            _launchUrl(
-              Uri.parse(
-                "https://etec199-danilolima.xp3.biz/2023/0318/",
-              ),
-            );
-          },
+          onPressed: () => _launchUrl(_urlGatopediaWeb),
           icon: const Icon(Icons.public_rounded),
-          label: const Text(
-            "Web",
-            style: TextStyle(fontFamily: "Jost"),
-          ),
+          label: const Text("Web", style: TextStyle(fontFamily: "Jost")),
         )
       ],
     );

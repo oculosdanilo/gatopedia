@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gatopedia/loginScreen/login/autenticar.dart';
 import 'package:gatopedia/main.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 enum Entrada { login, cadastro }
 
@@ -109,19 +110,12 @@ class FormAppState extends State<FormApp> {
                       ],
                     ),
                   ),
-                  prefixIcon: const Icon(
-                    Icons.alternate_email_rounded,
-                  ),
-                  label: const Text(
-                    "Nome de usuário",
-                    style: TextStyle(fontFamily: "Jost"),
-                  ),
+                  prefixIcon: const Icon(Icons.alternate_email_rounded),
+                  label: const Text("Nome de usuário"),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             SizedBox(
               width: scW * 0.8,
               height: 65,
@@ -132,20 +126,12 @@ class FormAppState extends State<FormApp> {
                 obscureText: esconderSenha,
                 keyboardType: TextInputType.visiblePassword,
                 decoration: InputDecoration(
-                  prefix: const SizedBox(
-                    width: 10,
-                  ),
+                  prefix: const SizedBox(width: 10),
                   suffixIcon: Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: IconButton(
-                      onPressed: () => mostrarSenha(),
-                      icon: iconeOlho,
-                    ),
+                    padding: const EdgeInsets.only(right: 5),
+                    child: IconButton(onPressed: () => mostrarSenha(), icon: iconeOlho),
                   ),
-                  label: const Text(
-                    "Senha",
-                    style: TextStyle(fontFamily: "Jost"),
-                  ),
+                  label: const Text("Senha"),
                 ),
               ),
             ),
@@ -158,14 +144,9 @@ class FormAppState extends State<FormApp> {
                         value: inputLembrar,
                         onChanged: (valor) => setState(() => inputLembrar = !inputLembrar),
                       ),
-                      InkWell(
+                      GestureDetector(
                         onTap: () => setState(() => inputLembrar = !inputLembrar),
-                        splashFactory: NoSplash.splashFactory,
-                        splashColor: Colors.transparent,
-                        child: const Text(
-                          "Lembre-se de mim!",
-                          style: TextStyle(fontSize: 18),
-                        ),
+                        child: Text("Lembre-se de mim!", style: GoogleFonts.jost(fontSize: 18)),
                       )
                     ],
                   )
@@ -246,7 +227,7 @@ class FormAppState extends State<FormApp> {
           : null,
       child: Text(
         widget.modo == Entrada.login ? "Entrar" : "Cadastrar",
-        style: const TextStyle(fontSize: 18),
+        style: GoogleFonts.jost(fontSize: 18),
       ),
     );
   }
@@ -272,15 +253,14 @@ class SlideRightRoute extends PageRouteBuilder {
             Widget child,
           ) =>
               SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1, 0),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.fastOutSlowIn,
-              reverseCurve: Curves.fastOutSlowIn,
-            )),
-            child: child,
-          ),
+                  position: Tween<Offset>(
+                    begin: const Offset(1, 0),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.fastOutSlowIn,
+                    reverseCurve: Curves.fastOutSlowIn,
+                  )),
+                  child: child),
         );
 }

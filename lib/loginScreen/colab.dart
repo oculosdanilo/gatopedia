@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final Uri _urlFlutter = Uri.parse('https://flutter.dev');
@@ -8,16 +9,18 @@ final Uri _urlMaterialYou = Uri.parse('https://m3.material.io');
 final Uri _urlEmailDanilo = Uri.parse('mailto:danilo.lima124@etec.sp.gov.br');
 final Uri _urlEmailLucca = Uri.parse('mailto:juliana.barros36@etec.sp.gov.br');
 
-class Colaboradores extends StatefulWidget {
-  const Colaboradores({super.key});
+class Asim extends StatelessWidget {
+  const Asim({super.key});
 
   @override
-  ColaboradoresState createState() => ColaboradoresState();
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
 }
 
-enum MenuItens { itemUm }
+class Colaboradores extends StatelessWidget {
+  const Colaboradores({super.key});
 
-class ColaboradoresState extends State<Colaboradores> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,39 +47,15 @@ class ColaboradoresState extends State<Colaboradores> {
               ],
             ),
             actions: [
-              PopupMenuButton<MenuItens>(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItens>>[
-                  PopupMenuItem(
-                    onTap: () {
-                      showCupertinoDialog(
-                        context: context,
-                        builder: (context) {
-                          return alertaSobre(context);
-                        },
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.info_rounded,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "Sobre o projeto",
-                          style: TextStyle(
-                            fontFamily: "Jost",
-                            fontSize: 17,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              )
+              IconButton(
+                icon: const Icon(Symbols.info_rounded, fill: 1),
+                onPressed: () => showCupertinoDialog(
+                  context: context,
+                  builder: (context) {
+                    return alertaSobre(context);
+                  },
+                ),
+              ),
             ],
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
@@ -84,103 +63,67 @@ class ColaboradoresState extends State<Colaboradores> {
             child: Column(
               children: [
                 Card(
-                  surfaceTintColor: Theme.of(context).colorScheme.onSurface,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                   margin: const EdgeInsets.all(20),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: const Image(
-                            image: AssetImage('assets/danilo.jpg'),
-                            width: 130,
-                          ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const ClipRRect(
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
+                        child: Image(image: AssetImage('assets/danilo.jpg'), width: 150),
+                      ),
+                      const SizedBox(width: 17),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Danilo Lima",
+                              style: TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 25),
+                            ),
+                            const SizedBox(height: 10),
+                            const Text("\u2022 Design e programação", style: TextStyle(fontFamily: "Jost")),
+                            const SizedBox(height: 10),
+                            ElevatedButton.icon(
+                              onPressed: () => _launchUrl(_urlEmailDanilo),
+                              icon: const Icon(Icons.mail_rounded),
+                              label: const Text("Email"),
+                            )
+                          ],
                         ),
-                        const SizedBox(
-                          width: 17,
-                        ),
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Danilo Lima",
-                                style: TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 25),
-                              ),
-                              const SizedBox(
-                                height: 17,
-                              ),
-                              const Text(
-                                "\u2022 Design e programação",
-                                style: TextStyle(fontFamily: "Jost"),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  _launchUrl(_urlEmailDanilo);
-                                },
-                                icon: const Icon(Icons.mail_rounded),
-                                label: const Text("Email"),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 Card(
-                  surfaceTintColor: Theme.of(context).colorScheme.onSurface,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                   margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: const Image(
-                            image: AssetImage('assets/lucca.png'),
-                            width: 130,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const ClipRRect(
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
+                        child: Image(image: AssetImage('assets/lucca.png'), width: 150),
+                      ),
+                      const SizedBox(width: 17),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Lucca Leal",
+                            style: TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 25),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 17,
-                        ),
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Juliana Leal \n(Lucca)",
-                                style: TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 25),
-                              ),
-                              const SizedBox(
-                                height: 17,
-                              ),
-                              const Text(
-                                "\u2022 Idealização e pesquisas",
-                                style: TextStyle(fontFamily: "Jost"),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  _launchUrl(_urlEmailLucca);
-                                },
-                                icon: const Icon(Icons.mail_rounded),
-                                label: const Text("Email"),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(height: 10),
+                          const Text("\u2022 Idealização e pesquisas"),
+                          const SizedBox(height: 10),
+                          ElevatedButton.icon(
+                            onPressed: () => _launchUrl(_urlEmailLucca),
+                            icon: const Icon(Icons.mail_rounded),
+                            label: const Text("Email"),
+                          )
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ],

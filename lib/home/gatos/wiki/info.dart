@@ -39,7 +39,7 @@ class GatoInfoState extends State<GatoInfo> {
                   const IconThemeData(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 20)]),
               expandedHeight: 360,
               pinned: true,
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: !dark ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
               flexibleSpace: FlexibleSpaceBar(
                 expandedTitleScale: 2,
                 title: Text(widget.gatoInfo.key ?? "", style: GoogleFonts.jost(color: Colors.white)),
@@ -224,17 +224,6 @@ class _ComentariosState extends State<Comentarios> {
     );
   }
 
-  /*if (comentarioSS
-      .child(
-  "${(snapshot.data!.value as List).length - index - 1}",
-  )
-      .value !=
-  null) {
-  return comentario(context, snapshot, index);
-  } else {
-  return const Row();
-  }*/
-
   Card comentario(
     BuildContext context,
     DataSnapshot snapshot,
@@ -242,16 +231,17 @@ class _ComentariosState extends State<Comentarios> {
   ) {
     return Card(
       margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       color: username == null && dark
           ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
           : Theme.of(context).colorScheme.surfaceContainerLow,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
+        padding: const EdgeInsets.fromLTRB(15, 10, 15, 20),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipOval(
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
@@ -273,8 +263,7 @@ class _ComentariosState extends State<Comentarios> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10),
-                  InkWell(
+                  GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -312,20 +301,14 @@ class _ComentariosState extends State<Comentarios> {
                 ? IconButton(
                     icon: const Icon(Icons.delete),
                     color: Colors.white,
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(
-                        blueScheme.errorContainer,
-                      ),
-                    ),
+                    style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(blueScheme.errorContainer)),
                     onPressed: () async {
                       var dialogo = await showCupertinoDialog(
                         barrierDismissible: false,
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            icon: const Icon(
-                              Icons.delete_rounded,
-                            ),
+                            icon: Icon(Icons.delete_rounded, color: Theme.of(context).colorScheme.error),
                             title: const Text(
                               "Tem certeza que deseja deletar esse comentário?",
                               textAlign: TextAlign.center,
@@ -335,20 +318,8 @@ class _ComentariosState extends State<Comentarios> {
                               children: [Text("Ele sumirá para sempre! (muito tempo)")],
                             ),
                             actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(
-                                  context,
-                                  false,
-                                ),
-                                child: const Text('CANCELAR'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () => Navigator.pop(
-                                  context,
-                                  true,
-                                ),
-                                child: const Text('OK'),
-                              ),
+                              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('CANCELAR')),
+                              ElevatedButton(onPressed: () => Navigator.pop(context, true), child: const Text('OK')),
                             ],
                           );
                         },

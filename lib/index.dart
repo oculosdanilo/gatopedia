@@ -54,25 +54,17 @@ class _IndexState extends State<Index> {
       miau.setAsset("assets/meow.mp3").then((value) {
         miau.play();
         Future.delayed(value!, () {
-          setState(() {
-            animImg = true;
-          });
+          setState(() => animImg = true);
           Future.delayed(const Duration(milliseconds: 500), () {
-            setState(() {
-              animText = true;
-            });
+            setState(() => animText = true);
           });
         });
       });
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          animImg = true;
-        });
+        setState(() => animImg = true);
         Future.delayed(const Duration(milliseconds: 500), () {
-          setState(() {
-            animText = true;
-          });
+          setState(() => animText = true);
         });
       });
     }
@@ -83,21 +75,12 @@ class _IndexState extends State<Index> {
 
     String version = packageInfo.version;
 
-    final response = await http.get(
-      Uri.parse(
-        "https://api.github.com/repos/oculosdanilo/gatopedia/releases/latest",
-      ),
-    );
+    final response = await http.get(Uri.parse("https://api.github.com/repos/oculosdanilo/gatopedia/releases/latest"));
     Map<String, dynamic> versaoAtt = jsonDecode(response.body);
     if (version != versaoAtt["tag_name"]) {
       Navigator.push(
         context,
-        SlideRightRoute(
-          Update(
-            versaoAtt["tag_name"],
-            versaoAtt["body"],
-          ),
-        ),
+        SlideRightRoute(Update(versaoAtt["tag_name"], versaoAtt["body"])),
       );
     }
   }
@@ -108,9 +91,7 @@ class _IndexState extends State<Index> {
       flexibleSpace: FlexibleSpaceBar(
         background: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          decoration: BoxDecoration(
-            color: full ? Colors.black : Theme.of(context).colorScheme.surface,
-          ),
+          decoration: BoxDecoration(color: full ? Colors.black : Theme.of(context).colorScheme.surface),
         ),
       ),
       leading: AnimatedOpacity(
@@ -118,12 +99,10 @@ class _IndexState extends State<Index> {
         duration: const Duration(milliseconds: 250),
         child: IconButton(
           onPressed: full
-              ? () {
-                  setState(() {
+              ? () => setState(() {
                     pos = null;
                     full = false;
-                  });
-                }
+                  })
               : null,
           icon: const Icon(Symbols.arrow_back),
           color: Colors.white,
@@ -131,37 +110,23 @@ class _IndexState extends State<Index> {
       ),
       actions: [
         PopupMenuButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           iconColor: full ? Colors.white : Theme.of(context).colorScheme.onSurface,
           itemBuilder: (BuildContext context) => [
             PopupMenuItem(
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  SlideUpRoute(const Colaboradores()),
-                );
-              },
+              onTap: () async => await Navigator.push(context, SlideUpRoute(const Colaboradores())),
               child: const Row(
                 children: [
-                  Icon(Symbols.people_rounded),
+                  Icon(Symbols.people_rounded, fill: 1),
                   SizedBox(width: 15),
                   Text("Colaboradores"),
                 ],
               ),
             ),
             PopupMenuItem(
-              onTap: () => Navigator.push(
-                context,
-                SlideUpRoute(const Scaffold(body: Config(true))),
-              ),
+              onTap: () => Navigator.push(context, SlideUpRoute(const Scaffold(body: Config(true)))),
               child: const Row(
-                children: [
-                  Icon(Symbols.settings_rounded),
-                  SizedBox(width: 15),
-                  Text("Configurações"),
-                ],
+                children: [Icon(Symbols.settings_rounded, fill: 1), SizedBox(width: 15), Text("Configurações")],
               ),
             ),
           ],
@@ -198,10 +163,7 @@ class _IndexState extends State<Index> {
                     child: const Text(
                       "Gatopédia!",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 50,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(height: 75),
@@ -225,6 +187,7 @@ class _IndexState extends State<Index> {
                               ),
                             ) ??
                             (false, false);
+                        if (!context.mounted) return;
                         if (info.$1) {
                           if (info.$2) {
                             SharedPreferences sp = await SharedPreferences.getInstance();
@@ -234,13 +197,8 @@ class _IndexState extends State<Index> {
                           Navigator.pushReplacement(context, SlideUpRoute(const Home()));
                         }
                       },
-                      style: ButtonStyle(
-                        fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50)),
-                      ),
-                      child: const Text(
-                        "Entrar",
-                        style: TextStyle(fontSize: 20),
-                      ),
+                      style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
+                      child: Text("Entrar", style: GoogleFonts.jost(fontSize: 20)),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -260,8 +218,8 @@ class _IndexState extends State<Index> {
                               ),
                             ) ??
                             false;
+                        if (!context.mounted) return;
                         if (info) {
-                          if (!context.mounted) return;
                           Flushbar(
                             message: "Cadastrado com sucesso! Agora entre com as mesmas credenciais",
                             duration: const Duration(seconds: 10),
@@ -272,10 +230,7 @@ class _IndexState extends State<Index> {
                         }
                       },
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
-                      child: const Text(
-                        "Cadastrar",
-                        style: TextStyle(fontSize: 20),
-                      ),
+                      child: Text("Cadastrar", style: GoogleFonts.jost(fontSize: 20)),
                     ),
                   ),
                 ],
