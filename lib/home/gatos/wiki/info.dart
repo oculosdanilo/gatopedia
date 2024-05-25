@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/home/home.dart';
@@ -24,43 +25,24 @@ class GatoInfo extends StatefulWidget {
 
 class GatoInfoState extends State<GatoInfo> {
   final txtControllerC = TextEditingController();
-
-  @override
-  void initState() {
-    _getData = FirebaseDatabase.instance.ref("gatos/${widget.gatoInfo.key}/comentarios").get();
-    super.initState();
-  }
+  bool mandando = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => setState(() {
-        FocusManager.instance.primaryFocus?.unfocus();
-      }),
+      onTap: () => setState(() => FocusManager.instance.primaryFocus?.unfocus()),
       child: Scaffold(
         body: CustomScrollView(
           slivers: [
             SliverAppBar.large(
-              iconTheme: const IconThemeData(
-                color: Colors.white,
-                shadows: [
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 20,
-                  ),
-                ],
-              ),
+              iconTheme:
+                  const IconThemeData(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 20)]),
               expandedHeight: 360,
               pinned: true,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               flexibleSpace: FlexibleSpaceBar(
                 expandedTitleScale: 2,
-                title: Text(
-                  widget.gatoInfo.key ?? "",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontFamily: "Jost",
-                  ),
-                ),
+                title: Text(widget.gatoInfo.key ?? "", style: GoogleFonts.jost(color: Colors.white)),
                 background: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -68,20 +50,20 @@ class GatoInfoState extends State<GatoInfo> {
                       imageUrl:
                           "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${widget.gatoInfo.child("img").value.toString().split("&")[0]}.webp?alt=media",
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Image.asset(
-                        "assets/anim/loading.gif",
-                        fit: BoxFit.cover,
+                      placeholder: (context, url) => AspectRatio(
+                        aspectRatio: 1 / 1,
+                        child: BlurHash(hash: widget.gatoInfo.child("img").value.toString().split("&")[1]),
                       ),
+                      width: MediaQuery.of(context).size.width,
+                      fadeInDuration: const Duration(milliseconds: 150),
+                      fadeOutDuration: const Duration(milliseconds: 150),
                     ),
                     const DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment(0.0, 0.5),
                           end: Alignment.center,
-                          colors: <Color>[
-                            Color(0x60000000),
-                            Color(0x00000000),
-                          ],
+                          colors: [Color(0x60000000), Color(0x00000000)],
                         ),
                       ),
                     ),
@@ -125,42 +107,44 @@ class GatoInfoState extends State<GatoInfo> {
                                     flex: 7,
                                     child: TextField(
                                       controller: txtControllerC,
-                                      decoration: const InputDecoration(
-                                        hintText: "Comentar...",
-                                        prefix: SizedBox(width: 10),
-                                      ),
+                                      enabled: !mandando,
+                                      decoration:
+                                          const InputDecoration(hintText: "Comentar...", prefix: SizedBox(width: 10)),
                                     ),
                                   ),
                                   const SizedBox(width: 10),
                                   IconButton.filled(
-                                    onPressed: () async {
-                                      FocusManager.instance.primaryFocus?.unfocus();
-                                      if (txtControllerC.text != "") {
-                                        await _getData.then((value) async {
-                                          await value.ref
-                                              .child(
-                                            "${int.parse(value.children.last.key!) + 1}",
-                                          )
-                                              .update({
-                                            "user": username,
-                                            "content": txtControllerC.text,
-                                          });
-                                        });
-                                        setState(() {
-                                          _getData = FirebaseDatabase.instance
-                                              .ref("gatos/${widget.gatoInfo.key}/comentarios")
-                                              .get();
-                                        });
-                                        if (!context.mounted) return;
-                                        Flushbar(
-                                          message: "Postado com sucesso!",
-                                          duration: const Duration(seconds: 2),
-                                          margin: const EdgeInsets.all(20),
-                                          borderRadius: BorderRadius.circular(50),
-                                        ).show(context);
-                                        txtControllerC.text = "";
-                                      }
-                                    },
+                                    onPressed: !mandando
+                                        ? () async {
+                                            FocusManager.instance.primaryFocus?.unfocus();
+                                            if (txtControllerC.text != "") {
+                                              setState(() {
+                                                mandando = true;
+                                              });
+                                              await _getData.then((value) async {
+                                                await value.ref
+                                                    .child("${int.parse(value.children.last.key!) + 1}")
+                                                    .update({"user": username, "content": txtControllerC.text});
+                                              });
+                                              setState(() {
+                                                _getData = FirebaseDatabase.instance
+                                                    .ref("gatos/${widget.gatoInfo.key}/comentarios")
+                                                    .get();
+                                              });
+                                              if (!context.mounted) return;
+                                              Flushbar(
+                                                message: "Postado com sucesso!",
+                                                duration: const Duration(seconds: 2),
+                                                margin: const EdgeInsets.all(20),
+                                                borderRadius: BorderRadius.circular(50),
+                                              ).show(context);
+                                              txtControllerC.text = "";
+                                              setState(() {
+                                                mandando = false;
+                                              });
+                                            }
+                                          }
+                                        : null,
                                     icon: const Icon(Icons.send_rounded),
                                     iconSize: 25,
                                     padding: const EdgeInsets.all(15),
@@ -170,18 +154,16 @@ class GatoInfoState extends State<GatoInfo> {
                             )
                           : const SizedBox(),
                       widget.gatoInfo.child("comentarios").children.length > 2
-                          ? Comentarios(widget.gatoInfo)
+                          ? Transform.translate(
+                              offset: Offset(0, username == null ? -60 : -25),
+                              child: Comentarios(widget.gatoInfo),
+                            )
                           : const SizedBox(
                               height: 80,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Nenhum comentário (ainda...)",
-                                    style: TextStyle(fontFamily: "Jost"),
-                                  )
-                                ],
+                                children: [Text("Nenhum comentário (ainda...)")],
                               ),
                             ),
                     ],
@@ -189,11 +171,7 @@ class GatoInfoState extends State<GatoInfo> {
                 ),
               ],
             ),
-            const SliverToBoxAdapter(
-              child: SizedBox(
-                height: 25,
-              ),
-            )
+            SliverToBoxAdapter(child: SizedBox(height: username != null ? 25 : 0))
           ],
         ),
       ),
@@ -237,7 +215,10 @@ class _ComentariosState extends State<Comentarios> {
                 .toList(),
           );
         } else {
-          return const Center(child: CircularProgressIndicator());
+          return Transform.translate(
+            offset: Offset(0, username == null ? 60 : 50),
+            child: const Center(child: CircularProgressIndicator()),
+          );
         }
       },
     );
@@ -274,20 +255,13 @@ class _ComentariosState extends State<Comentarios> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    SlideRightAgainRoute(
-                      PublicProfile(
-                        snapshot.child("user").value.toString(),
-                      ),
-                    ),
+                    SlideRightAgainRoute(PublicProfile(snapshot.child("user").value.toString())),
                   );
                 },
                 child: Image(
                   image: NetworkImage(
-                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${snapshot.child("user").value.toString()}.webp?alt=media",
-                  ),
-                  errorBuilder: (c, obj, stacktrace) {
-                    return Image.asset("assets/user.webp", width: 50);
-                  },
+                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${snapshot.child("user").value.toString()}.webp?alt=media"),
+                  errorBuilder: (c, obj, stacktrace) => Image.asset("assets/user.webp", width: 50),
                   width: 50,
                   fit: BoxFit.cover,
                 ),
@@ -299,9 +273,7 @@ class _ComentariosState extends State<Comentarios> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   InkWell(
                     onTap: () {
                       Navigator.push(
@@ -356,10 +328,11 @@ class _ComentariosState extends State<Comentarios> {
                             ),
                             title: const Text(
                               "Tem certeza que deseja deletar esse comentário?",
+                              textAlign: TextAlign.center,
                             ),
-                            content: const Text(
-                              "Ele sumirá para sempre! (muito tempo)",
-                              style: TextStyle(fontSize: 15),
+                            content: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [Text("Ele sumirá para sempre! (muito tempo)")],
                             ),
                             actions: [
                               TextButton(

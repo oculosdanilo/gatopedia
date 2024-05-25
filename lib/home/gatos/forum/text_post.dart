@@ -42,19 +42,10 @@ class _TextPostState extends State<TextPost> {
             context: context,
             builder: (context) => AlertDialog(
               icon: const Icon(Icons.info_rounded),
-              title: const Text(
-                "Tem certeza que deseja descartar seu post?",
-              ),
-              content: const Text("Seu rascunho será deletado."),
+              title: const Text("Tem certeza que deseja descartar seu post?"),
               actions: [
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text("Cancelar"),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text("Descartar"),
-                ),
+                TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancelar")),
+                ElevatedButton(onPressed: () => Navigator.pop(context, true), child: const Text("Descartar")),
               ],
             ),
           );
@@ -65,7 +56,7 @@ class _TextPostState extends State<TextPost> {
         }
       },
       child: Padding(
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -80,18 +71,13 @@ class _TextPostState extends State<TextPost> {
                       fadeInDuration: const Duration(milliseconds: 100),
                       placeholder: const AssetImage("assets/user.webp"),
                       image: NetworkImage(
-                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
-                      ),
-                      imageErrorBuilder: (c, obj, stacktrace) {
-                        return Image.asset("assets/user.webp", fit: BoxFit.cover);
-                      },
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media"),
+                      imageErrorBuilder: (c, obj, stacktrace) => Image.asset("assets/user.webp", fit: BoxFit.cover),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: 20,
-                ),
+                const SizedBox(width: 20),
                 Flexible(
                   child: TextField(
                     controller: txtPost,
@@ -99,17 +85,11 @@ class _TextPostState extends State<TextPost> {
                     decoration: InputDecoration(
                       hintText: "No que está pensando, $username?",
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 2,
-                        ),
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.outline,
-                          width: 2,
-                        ),
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2),
                         borderRadius: const BorderRadius.only(
                           topRight: Radius.circular(10),
                           bottomLeft: Radius.circular(10),
@@ -122,9 +102,7 @@ class _TextPostState extends State<TextPost> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
             Row(
               children: [
                 Expanded(
@@ -151,7 +129,7 @@ class _TextPostState extends State<TextPost> {
                 ),
               ],
             ),
-            SizedBox(height: MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom),
+            SizedBox(height: MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom + 11),
           ],
         ),
       ),

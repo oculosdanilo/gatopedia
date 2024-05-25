@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/wiki/info.dart';
 import 'package:gatopedia/main.dart';
@@ -43,15 +44,9 @@ class _WikiState extends State<Wiki> {
                     shrinkWrap: true,
                     controller: ScrollController(),
                     children: username != null
-                        ? snapshot.data!.children
-                            .map<Widget>(
-                              (e) => gatoCard(e, snapshot, context),
-                            )
-                            .toList()
+                        ? snapshot.data!.children.map<Widget>((e) => gatoCard(e, snapshot, context)).toList()
                         : [
-                            ...snapshot.data!.children.map<Widget>(
-                              (e) => gatoCard(e, snapshot, context),
-                            ),
+                            ...snapshot.data!.children.map<Widget>((e) => gatoCard(e, snapshot, context)),
                             const SizedBox(height: 100),
                           ],
                   ),
@@ -116,20 +111,19 @@ class _WikiState extends State<Wiki> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ClipRRect(
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${e.child("img").value.toString().split("&")[0]}.webp?alt=media",
-                    placeholder: (context, url) => Image.asset(
-                      "assets/anim/loading.gif",
-                    ),
-                    fadeInDuration: const Duration(milliseconds: 150),
-                    fadeOutDuration: const Duration(milliseconds: 150),
+                CachedNetworkImage(
+                  imageUrl:
+                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${e.child("img").value.toString().split("&")[0]}.webp?alt=media",
+                  placeholder: (context, url) => AspectRatio(
+                    aspectRatio: 1 / 1,
+                    child: BlurHash(hash: e.child("img").value.toString().split("&")[1]),
                   ),
+                  fadeInDuration: const Duration(milliseconds: 150),
+                  fadeOutDuration: const Duration(milliseconds: 150),
+                  width: 130,
+                  height: 130,
                 ),
-                const SizedBox(
-                  width: 15,
-                ),
+                const SizedBox(width: 15),
                 Flexible(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

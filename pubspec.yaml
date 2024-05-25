@@ -40,6 +40,7 @@ dependencies:
   grayscale: ^0.0.5+7
   material_color_utilities: ^0.8.0
   http: ^1.2.1
+  flutter_blurhash: ^0.8.2
 
 dev_dependencies:
   flutter_lints: ^4.0.0

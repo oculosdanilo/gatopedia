@@ -13,14 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 String? username;
 bool internet = true;
-final blueScheme = ColorScheme.fromSeed(
-  seedColor: const Color(0xff000080),
-  brightness: Brightness.dark,
-);
-final blueSchemeL = ColorScheme.fromSeed(
-  seedColor: const Color(0xff000080),
-  brightness: Brightness.light,
-);
+final blueScheme = ColorScheme.fromSeed(seedColor: const Color(0xff000080), brightness: Brightness.dark);
+final blueSchemeL = ColorScheme.fromSeed(seedColor: const Color(0xff000080), brightness: Brightness.light);
 dynamic mensagem;
 DataSnapshot? snapshotForum;
 
@@ -30,9 +24,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate();
-  SystemChrome.setPreferredOrientations(
-    [DeviceOrientation.portraitUp],
-  );
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   final SharedPreferences pref = await SharedPreferences.getInstance();
   final salvo = pref.getString("username") != null;
   if (salvo) username = pref.getString("username");
@@ -90,44 +82,28 @@ class _AppState extends State<App> {
 
   ThemeData temaLight() {
     return ThemeData(
-      navigationBarTheme: NavigationBarThemeData(
-        indicatorColor: blueSchemeL.primary,
-      ),
+      navigationBarTheme: NavigationBarThemeData(indicatorColor: blueSchemeL.primary),
       appBarTheme: AppBarTheme(backgroundColor: blueSchemeL.primary),
       inputDecorationTheme: InputDecorationTheme(
         focusedBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(50)),
-          borderSide: BorderSide(
-            width: 2,
-            color: Colors.blue[900]!,
-          ),
+          borderSide: BorderSide(width: 2, color: Colors.blue[900]!),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            width: 3,
-            color: blueSchemeL.error,
-          ),
+          borderSide: BorderSide(width: 3, color: blueSchemeL.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(50),
-          borderSide: BorderSide(
-            width: 3,
-            color: blueSchemeL.error,
-          ),
+          borderSide: BorderSide(width: 3, color: blueSchemeL.error),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            width: 2,
-            color: blueScheme.outline,
-          ),
+          borderSide: BorderSide(width: 2, color: blueScheme.outline),
         ),
       ),
       brightness: Brightness.light,
-      snackBarTheme: const SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-      ),
+      snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
       colorSchemeSeed: const Color(0xff000080),
       useMaterial3: true,
       textTheme: GoogleFonts.jostTextTheme(temaBase(ThemeMode.light).textTheme),
@@ -136,44 +112,28 @@ class _AppState extends State<App> {
 
   ThemeData temaDark() {
     return ThemeData(
-      navigationBarTheme: NavigationBarThemeData(
-        indicatorColor: blueScheme.primary,
-      ),
+      navigationBarTheme: NavigationBarThemeData(indicatorColor: blueScheme.primary),
       appBarTheme: AppBarTheme(backgroundColor: blueScheme.surface),
       inputDecorationTheme: InputDecorationTheme(
         focusedBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(50)),
-          borderSide: BorderSide(
-            width: 2,
-            color: blueScheme.primary,
-          ),
+          borderSide: BorderSide(width: 2, color: blueScheme.primary),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            width: 3,
-            color: blueScheme.error,
-          ),
+          borderSide: BorderSide(width: 3, color: blueScheme.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(50),
-          borderSide: BorderSide(
-            width: 3,
-            color: blueScheme.error,
-          ),
+          borderSide: BorderSide(width: 3, color: blueScheme.error),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            width: 2,
-            color: blueScheme.outline,
-          ),
+          borderSide: BorderSide(width: 2, color: blueScheme.outline),
         ),
       ),
       brightness: Brightness.dark,
-      snackBarTheme: const SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-      ),
+      snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
       colorSchemeSeed: const Color(0xff000080),
       useMaterial3: true,
       textTheme: GoogleFonts.jostTextTheme(temaBase(ThemeMode.dark).textTheme),
@@ -200,9 +160,13 @@ class SlideUpRoute extends PageRouteBuilder {
             Animation<double> secondaryAnimation,
           ) =>
               page,
-          transitionsBuilder:
-              (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) =>
-                  SlideTransition(
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              SlideTransition(
             position: Tween<Offset>(
               begin: const Offset(0, 1),
               end: Offset.zero,

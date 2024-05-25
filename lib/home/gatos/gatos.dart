@@ -58,19 +58,11 @@ class _GatoListaState extends State<GatoLista> {
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: const Row(
+                                  title: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        "Já vai? ;(",
-                                        style: TextStyle(
-                                          fontFamily: "Jost",
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
+                                      const SizedBox(width: 10),
+                                      Text("Já vai? ;(", style: GoogleFonts.jost(fontWeight: FontWeight.bold))
                                     ],
                                   ),
                                   content: const Row(

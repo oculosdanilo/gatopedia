@@ -181,24 +181,20 @@ class _ForumState extends State<Forum> {
               overlayStyle: ExpandableFabOverlayStyle(blur: 4),
               openButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.edit_rounded)),
               closeButtonBuilder: DefaultFloatingActionButtonBuilder(
-                child: const Icon(Icons.close_rounded),
-                fabSize: ExpandableFabSize.small,
-              ),
+                  child: const Icon(Icons.close_rounded), fabSize: ExpandableFabSize.small),
               type: ExpandableFabType.up,
               children: [
                 FloatingActionButton.extended(
                   heroTag: null,
                   onPressed: () async {
                     final state = fagKey.currentState;
-                    if (state != null) {
-                      state.toggle();
-                    }
+                    if (state != null) state.toggle();
                     await showModalBottomSheet(
                       context: context,
                       showDragHandle: true,
-                      builder: (ctx) {
-                        return const TextPost();
-                      },
+                      useSafeArea: true,
+                      isScrollControlled: true,
+                      builder: (ctx) => const TextPost(),
                     );
                     txtPost.text = "";
                   },
@@ -209,9 +205,7 @@ class _ForumState extends State<Forum> {
                   onClosed: (data) {
                     if (postado) {
                       final state = fagKey.currentState;
-                      if (state != null) {
-                        state.toggle();
-                      }
+                      if (state != null) state.toggle();
                       Flushbar(
                         message: "Postando...",
                         duration: const Duration(seconds: 5),
@@ -219,12 +213,8 @@ class _ForumState extends State<Forum> {
                         borderRadius: BorderRadius.circular(50),
                       ).show(context);
                       CachedNetworkImage.evictFromCache(
-                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media",
-                      );
-                      _postarImagem(
-                        int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
-                        "img",
-                      );
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
+                      _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "img");
                     }
                   },
                   transitionDuration: const Duration(milliseconds: 400),
@@ -232,9 +222,7 @@ class _ForumState extends State<Forum> {
                   openColor: Theme.of(context).colorScheme.surface,
                   openBuilder: (context, action) => const ImagePost("image"),
                   closedColor: Theme.of(context).colorScheme.primaryContainer,
-                  closedShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   closedBuilder: (context, action) => FloatingActionButton.extended(
                     heroTag: null,
                     onPressed: () => action.call(),
@@ -247,9 +235,7 @@ class _ForumState extends State<Forum> {
                   onClosed: (data) {
                     if (postado) {
                       final state = fagKey.currentState;
-                      if (state != null) {
-                        state.toggle();
-                      }
+                      if (state != null) state.toggle();
                       Flushbar(
                         message: "Postando...",
                         duration: const Duration(seconds: 5),
@@ -257,12 +243,8 @@ class _ForumState extends State<Forum> {
                         borderRadius: BorderRadius.circular(50),
                       ).show(context);
                       CachedNetworkImage.evictFromCache(
-                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media",
-                      );
-                      _postarImagem(
-                        int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
-                        "gif",
-                      );
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
+                      _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "gif");
                     }
                   },
                   transitionDuration: const Duration(milliseconds: 400),
@@ -344,25 +326,17 @@ class _ForumState extends State<Forum> {
                         width: 50,
                         height: 50,
                         child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              SlideRightAgainRoute(
-                                PublicProfile(
-                                  postSS.child("username").value as String,
-                                ),
-                              ),
-                            );
-                          },
+                          onTap: () => Navigator.push(
+                            context,
+                            SlideRightAgainRoute(PublicProfile(postSS.child("username").value as String)),
+                          ),
                           child: FadeInImage(
                             fadeInDuration: const Duration(milliseconds: 100),
                             placeholder: const AssetImage("assets/user.webp"),
                             image: NetworkImage(
-                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postSS.child("username").value}.webp?alt=media",
-                            ),
-                            imageErrorBuilder: (c, obj, stacktrace) {
-                              return Image.asset("assets/user.webp", fit: BoxFit.cover);
-                            },
+                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postSS.child("username").value}.webp?alt=media"),
+                            imageErrorBuilder: (c, obj, stacktrace) =>
+                                Image.asset("assets/user.webp", fit: BoxFit.cover),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -514,6 +488,8 @@ class _ForumState extends State<Forum> {
                                   style: GoogleFonts.jost(
                                     color: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light)
                                         .onSurface,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),

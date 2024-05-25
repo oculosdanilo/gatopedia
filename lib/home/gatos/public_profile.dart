@@ -73,14 +73,7 @@ class _PublicProfileState extends State<PublicProfile> {
                 physics: const NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
-                    iconTheme: const IconThemeData(
-                      shadows: [
-                        Shadow(
-                          color: Colors.black,
-                          blurRadius: 20,
-                        ),
-                      ],
-                    ),
+                    iconTheme: const IconThemeData(shadows: [Shadow(color: Colors.black, blurRadius: 20)]),
                     leading: IconButton(
                       onPressed: () => Navigator.pop(context),
                       color: Colors.white,
@@ -89,18 +82,14 @@ class _PublicProfileState extends State<PublicProfile> {
                     expandedHeight: 400,
                     backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                     flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      title: Text("@${widget.username}", style: GoogleFonts.jost()),
+                      title: Text("@${widget.username}", style: GoogleFonts.jost(color: Colors.white)),
                       background: Stack(
                         fit: StackFit.expand,
                         children: [
                           Image(
                             image: NetworkImage(
-                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.username}.webp?alt=media",
-                            ),
-                            errorBuilder: (c, obj, stacktrace) {
-                              return Image.asset("assets/user.webp", fit: BoxFit.cover);
-                            },
+                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.username}.webp?alt=media"),
+                            errorBuilder: (c, obj, stacktrace) => Image.asset("assets/user.webp", fit: BoxFit.cover),
                             fit: BoxFit.cover,
                           ),
                           const DecoratedBox(
@@ -108,10 +97,7 @@ class _PublicProfileState extends State<PublicProfile> {
                               gradient: LinearGradient(
                                 begin: Alignment(0.0, 0.5),
                                 end: Alignment.center,
-                                colors: <Color>[
-                                  Color(0x60000000),
-                                  Color(0x00000000),
-                                ],
+                                colors: [Color(0x60000000), Color(0x00000000)],
                               ),
                             ),
                           ),
@@ -125,17 +111,8 @@ class _PublicProfileState extends State<PublicProfile> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Bio",
-                            style: TextStyle(fontSize: 15, fontFamily: "Jost", color: Colors.grey[700]!),
-                          ),
-                          SelectableText(
-                            bioText,
-                            style: const TextStyle(
-                              fontFamily: "Jost",
-                              fontSize: 20,
-                            ),
-                          )
+                          Text("Bio", style: TextStyle(fontSize: 15, fontFamily: "Jost", color: Colors.grey[700]!)),
+                          SelectableText(bioText, style: GoogleFonts.jost(fontSize: 20))
                         ],
                       ),
                     ),

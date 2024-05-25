@@ -12,16 +12,8 @@ import 'package:google_fonts/google_fonts.dart';
 String bioText = "carregando...";
 bool? temImagem;
 const _shimmerGradient = LinearGradient(
-  colors: [
-    Color(0xFFEBEBF4),
-    Color(0xFFF4F4F4),
-    Color(0xFFEBEBF4),
-  ],
-  stops: [
-    0.1,
-    0.3,
-    0.4,
-  ],
+  colors: [Color(0xFFEBEBF4), Color(0xFFF4F4F4), Color(0xFFEBEBF4)],
+  stops: [0.1, 0.3, 0.4],
   begin: Alignment(-1.0, -0.3),
   end: Alignment(1.0, 0.3),
   tileMode: TileMode.clamp,
@@ -66,15 +58,11 @@ class _ProfileState extends State<Profile> {
     DatabaseReference ref = database.ref("users");
     ref.onValue.listen((event) {
       if ((event.snapshot.value as Map)[username]["bio"] != null) {
-        setState(() {
-          bioText = (event.snapshot.value as Map)[username]["bio"];
-        });
+        setState(() => bioText = (event.snapshot.value as Map)[username]["bio"]);
       } else {
-        bioText = "(vazio)";
+        setState(() => bioText = "(vazio)");
       }
-      setState(
-        () => temImagem = ((event.snapshot.value as Map)[username]["img"] ?? false),
-      );
+      setState(() => temImagem = ((event.snapshot.value as Map)[username]["img"] ?? false));
     });
   }
 
@@ -86,10 +74,10 @@ class _ProfileState extends State<Profile> {
 
   @override
   void initState() {
-    indexAntigo = 1;
-    _atualizar();
-    temImagem = false;
     super.initState();
+    indexAntigo = 1;
+    temImagem = false;
+    _atualizar();
   }
 
   @override
@@ -106,10 +94,7 @@ class _ProfileState extends State<Profile> {
               children: [
                 Text(
                   "Bio",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.grey[700]!,
-                  ),
+                  style: TextStyle(fontSize: 15, color: Colors.grey[700]!),
                 ),
                 editMode ? editando(context) : estatico()
               ],
@@ -125,11 +110,7 @@ class _ProfileState extends State<Profile> {
       actions: temImagem ?? false
           ? [
               PopupMenuButton<MenuItensImg>(
-                icon: const Icon(
-                  Icons.more_vert_rounded,
-                  shadows: [Shadow(blurRadius: 10)],
-                  color: Colors.white,
-                ),
+                icon: const Icon(Icons.more_vert_rounded, shadows: [Shadow(blurRadius: 10)], color: Colors.white),
                 onSelected: (value) async {
                   if (value == MenuItensImg.editar) {
                     var resposta = await Navigator.push(
@@ -141,8 +122,7 @@ class _ProfileState extends State<Profile> {
                       if (resposta) {
                         setState(() {
                           CachedNetworkImage.evictFromCache(
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
-                          );
+                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media");
                         });
                         Flushbar(
                           message: "Atualizada com sucesso!",
@@ -161,21 +141,14 @@ class _ProfileState extends State<Profile> {
                           "Tem certeza que deseja remover sua foto de perfil?",
                           textAlign: TextAlign.center,
                         ),
-                        content: const Text(
-                          "Essa ação é irreversível",
-                          textAlign: TextAlign.center,
-                        ),
+                        content: const Text("Essa ação é irreversível", textAlign: TextAlign.center),
                         actions: [
                           TextButton(
-                            onPressed: () {
-                              Navigator.pop(context, false);
-                            },
+                            onPressed: () => Navigator.pop(context, false),
                             child: const Text("CANCELAR"),
                           ),
                           ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context, true);
-                            },
+                            onPressed: () => Navigator.pop(context, true),
                             child: const Text("OK"),
                           )
                         ],
@@ -186,8 +159,7 @@ class _ProfileState extends State<Profile> {
                           await _apagarImagem(username!);
                           setState(() {
                             CachedNetworkImage.evictFromCache(
-                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
-                            );
+                                "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media");
                           });
                           if (!context.mounted) return;
                           Flushbar(
@@ -201,27 +173,33 @@ class _ProfileState extends State<Profile> {
                     );
                   }
                 },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItensImg>>[
-                  const PopupMenuItem(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                itemBuilder: (BuildContext context) => [
+                  PopupMenuItem(
                     value: MenuItensImg.editar,
                     child: Row(
                       children: [
-                        Icon(Icons.add_photo_alternate_rounded),
-                        SizedBox(width: 10),
-                        Text("Mudar foto de perfil"),
+                        Icon(
+                          Icons.add_photo_alternate_rounded,
+                          shadows: const [],
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        const SizedBox(width: 10),
+                        const Text("Mudar foto de perfil"),
                       ],
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: MenuItensImg.remover,
                     child: Row(
                       children: [
-                        Icon(Icons.delete_forever_rounded),
-                        SizedBox(width: 10),
-                        Text("Remover foto de perfil"),
+                        Icon(
+                          Icons.delete_forever_rounded,
+                          shadows: const [],
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        const SizedBox(width: 10),
+                        const Text("Remover foto de perfil"),
                       ],
                     ),
                   ),
@@ -235,15 +213,10 @@ class _ProfileState extends State<Profile> {
                   shadows: [Shadow(blurRadius: 10)],
                   color: Colors.white,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 onSelected: (value) async {
                   if (value == MenuItensSemImg.adicionar) {
-                    var resposta = await Navigator.push(
-                      context,
-                      SlideRightAgainRoute(const PPEdit()),
-                    );
+                    var resposta = await Navigator.push(context, SlideRightAgainRoute(const PPEdit()));
                     if (!context.mounted) return;
                     if (resposta != null) {
                       if (resposta) {
@@ -258,13 +231,17 @@ class _ProfileState extends State<Profile> {
                   }
                 },
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItensSemImg>>[
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: MenuItensSemImg.adicionar,
                     child: Row(
                       children: [
-                        Icon(Icons.add_photo_alternate_rounded),
-                        SizedBox(width: 10),
-                        Text("Adicionar foto de perfil"),
+                        Icon(
+                          Icons.add_photo_alternate_rounded,
+                          shadows: const [],
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        const SizedBox(width: 10),
+                        const Text("Adicionar foto de perfil"),
                       ],
                     ),
                   ),
@@ -279,47 +256,33 @@ class _ProfileState extends State<Profile> {
             )
           : null,
       automaticallyImplyLeading: widget.botaoVoltar,
-      iconTheme: const IconThemeData(
-        color: Colors.white,
-        shadows: [
-          Shadow(
-            color: Colors.black,
-            blurRadius: 20,
-          ),
-        ],
-      ),
+      iconTheme: const IconThemeData(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 20)]),
       expandedHeight: 400,
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text("@$username", style: GoogleFonts.jost()),
+        title: Padding(
+          padding: const EdgeInsets.only(left: 15),
+          child: Text("@$username", style: GoogleFonts.jost(color: Colors.white)),
+        ),
         background: Stack(
           fit: StackFit.expand,
           children: [
             temImagem ?? false
                 ? FadeInImage(
                     fadeInDuration: const Duration(milliseconds: 100),
-                    placeholder: const AssetImage("assets/user.webp"),
+                    placeholder: const AssetImage("assets/anim/loading.gif"),
                     image: CachedNetworkImageProvider(
-                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
-                    ),
-                    imageErrorBuilder: (context, obj, stck) {
-                      return Image.asset("assets/user.webp", fit: BoxFit.cover);
-                    },
+                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media"),
+                    imageErrorBuilder: (context, obj, stck) => Image.asset("assets/user.webp", fit: BoxFit.cover),
                     fit: BoxFit.cover,
                   )
-                : Image.asset(
-                    "assets/user.webp",
-                    fit: BoxFit.cover,
-                  ),
+                : Image.asset("assets/user.webp", fit: BoxFit.cover),
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment(0.0, 0.5),
                   end: Alignment.center,
-                  colors: <Color>[
-                    Color(0x60000000),
-                    Color(0x00000000),
-                  ],
+                  colors: [Color(0x60000000), Color(0x00000000)],
                 ),
               ),
             ),
@@ -333,16 +296,8 @@ class _ProfileState extends State<Profile> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SelectableText(
-          bioText,
-          style: const TextStyle(
-            fontFamily: "Jost",
-            fontSize: 20,
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
+        SelectableText(bioText, style: GoogleFonts.jost(fontSize: 20)),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
