@@ -113,17 +113,12 @@ class _ProfileState extends State<Profile> {
                 icon: const Icon(Icons.more_vert_rounded, shadows: [Shadow(blurRadius: 10)], color: Colors.white),
                 onSelected: (value) async {
                   if (value == MenuItensImg.editar) {
-                    var resposta = await Navigator.push(
-                      context,
-                      SlideRightAgainRoute(const PPEdit()),
-                    );
+                    var resposta = await Navigator.push(context, SlideRightAgainRoute(const PPEdit()));
                     if (!context.mounted) return;
                     if (resposta != null) {
                       if (resposta) {
-                        setState(() {
-                          CachedNetworkImage.evictFromCache(
-                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media");
-                        });
+                        setState(() => CachedNetworkImage.evictFromCache(
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media"));
                         Flushbar(
                           message: "Atualizada com sucesso!",
                           duration: const Duration(seconds: 2),
@@ -260,7 +255,7 @@ class _ProfileState extends State<Profile> {
       flexibleSpace: FlexibleSpaceBar(
         title: Padding(
           padding: const EdgeInsets.only(left: 15),
-          child: Text("@$username", style: GoogleFonts.jost(color: Colors.white)),
+          child: Text(username!, style: GoogleFonts.jost(color: Colors.white)),
         ),
         background: Stack(
           fit: StackFit.expand,
