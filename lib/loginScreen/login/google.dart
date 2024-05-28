@@ -1,8 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
+import 'package:another_flushbar/flushbar.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/gatos/forum/imagem_view.dart';
 import 'package:gatopedia/main.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -32,14 +33,10 @@ class _GoogleCadastroState extends State<GoogleCadastro> {
   int txtFieldLenght = 0;
   Color? counterColor;
 
+  bool botaoEnabled = true;
+
   late final scW = MediaQuery.of(context).size.width;
   late final scH = MediaQuery.of(context).size.height;
-
-  mudarCor(cor) {
-    setState(() {
-      counterColor = cor;
-    });
-  }
 
   @override
   void initState() {
@@ -47,6 +44,12 @@ class _GoogleCadastroState extends State<GoogleCadastro> {
     if (widget.conta.displayName != null) {
       txtControllerLogin.text = widget.conta.displayName!;
     }
+  }
+
+  mudarCor(cor) {
+    setState(() {
+      counterColor = cor;
+    });
   }
 
   @override
@@ -64,33 +67,67 @@ class _GoogleCadastroState extends State<GoogleCadastro> {
           children: [
             Row(
               children: [
-                SizedBox(width: 15),
-                OutlinedButton(onPressed: () => Navigator.pop(context, false), child: Text("Cancelar")),
-                Expanded(child: SizedBox()),
-                FilledButton(onPressed: () {}, child: Text("Cadastrar")),
-                SizedBox(width: 15),
+                const SizedBox(width: 20),
+                OutlinedButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text("Cancelar", style: GoogleFonts.jost(fontSize: 18)),
+                ),
+                const Expanded(child: SizedBox()),
+                FilledButton(
+                  onPressed: botaoEnabled
+                      ? () async {
+                          setState(() => botaoEnabled = false);
+
+                          final ref = FirebaseDatabase.instance.ref("users/${txtControllerLogin.text}");
+                          final existeUsername = (await ref.get()).exists;
+                          if (!context.mounted) return;
+                          if (existeUsername) {
+                            Flushbar(
+                              duration: const Duration(seconds: 5),
+                              margin: const EdgeInsets.all(20),
+                              borderRadius: BorderRadius.circular(50),
+                              messageText: Row(
+                                children: [
+                                  Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    "Usuário com esse nome já existe :/",
+                                    style: TextStyle(color: blueScheme.onErrorContainer),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: blueScheme.errorContainer,
+                            ).show(context);
+                          } else {
+                            Navigator.pop(context, txtControllerLogin.text);
+                          }
+                        }
+                      : null,
+                  child: Text("Cadastrar", style: GoogleFonts.jost(fontSize: 18)),
+                ),
+                const SizedBox(width: 20),
               ],
             ),
-            SizedBox(height: 20)
+            const SizedBox(height: 20),
           ],
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 "Quase lá!",
                 style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 width: scW * 0.8,
-                child: Text(
+                child: const Text(
                   "Agora você só precisa escolher uma foto de perfil e um nome de usuário:",
                   style: TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Stack(
                 children: [
                   ClipOval(
@@ -101,11 +138,11 @@ class _GoogleCadastroState extends State<GoogleCadastro> {
                                 tag: "profile",
                                 child: FadeInImage(
                                   image: NetworkImage(widget.conta.photoUrl!),
-                                  fadeInDuration: Duration(milliseconds: 150),
+                                  fadeInDuration: const Duration(milliseconds: 150),
                                   width: 200,
                                   height: 200,
                                   fit: BoxFit.contain,
-                                  placeholder: AssetImage("assets/anim/loading.gif"),
+                                  placeholder: const AssetImage("assets/anim/loading.gif"),
                                 ),
                               ),
                               SizedBox(
@@ -136,13 +173,13 @@ class _GoogleCadastroState extends State<GoogleCadastro> {
                     bottom: 0,
                     child: IconButton.filledTonal(
                       onPressed: () {},
-                      icon: Icon(Symbols.camera_alt_rounded, fill: 1, size: 30),
-                      style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(60, 60))),
+                      icon: const Icon(Symbols.camera_alt_rounded, fill: 1, size: 30),
+                      style: const ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(60, 60))),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               SizedBox(
                 width: scW * 0.8,
                 child: TextFormField(

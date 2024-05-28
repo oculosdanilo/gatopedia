@@ -92,12 +92,8 @@ class FormAppState extends State<FormApp> {
                 },
                 decoration: InputDecoration(
                   prefixIconColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
-                    if (states.contains(WidgetState.error)) {
-                      return Theme.of(context).colorScheme.error;
-                    }
-                    if (states.contains(WidgetState.focused)) {
-                      return Theme.of(context).colorScheme.primary;
-                    }
+                    if (states.contains(WidgetState.error)) return Theme.of(context).colorScheme.error;
+                    if (states.contains(WidgetState.focused)) return Theme.of(context).colorScheme.primary;
                     return blueScheme.outline;
                   }),
                   counter: SizedBox(
@@ -188,11 +184,7 @@ class FormAppState extends State<FormApp> {
                 });
                 flushbar.show(context);
                 TextInput.finishAutofillContext();
-                var retorno = await autenticar(
-                  txtControllerLogin.text,
-                  txtControllerSenha.text,
-                  widget.modo,
-                );
+                var retorno = await autenticar(txtControllerLogin.text, txtControllerSenha.text, widget.modo);
                 if (!context.mounted) return;
                 if (retorno is String) {
                   Flushbar(

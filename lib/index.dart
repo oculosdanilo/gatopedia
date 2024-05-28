@@ -1,6 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -9,11 +12,11 @@ import 'package:gatopedia/home/gatos/gatos.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/loginScreen/colab.dart';
 import 'package:gatopedia/loginScreen/login/form.dart';
-import 'package:gatopedia/loginScreen/login/google.dart';
 import 'package:gatopedia/loginScreen/seminternet.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/update.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grayscale/grayscale.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
@@ -21,6 +24,7 @@ import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gatopedia/loginScreen/login/google.dart';
 
 bool full = false;
 Offset? pos;
@@ -50,29 +54,25 @@ class _IndexState extends State<Index> {
       if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
     });
     if (!kDebugMode) {
-      checarUpdate(context);
+      _checarUpdate(context);
     }
     if (widget.tocar) {
       miau.setAsset("assets/meow.mp3").then((value) {
         miau.play();
         Future.delayed(value!, () {
           setState(() => animImg = true);
-          Future.delayed(const Duration(milliseconds: 500), () {
-            setState(() => animText = true);
-          });
+          Future.delayed(const Duration(milliseconds: 500), () => setState(() => animText = true));
         });
       });
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() => animImg = true);
-        Future.delayed(const Duration(milliseconds: 500), () {
-          setState(() => animText = true);
-        });
+        Future.delayed(const Duration(milliseconds: 500), () => setState(() => animText = true));
       });
     }
   }
 
-  checarUpdate(context) async {
+  _checarUpdate(context) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     String version = packageInfo.version;
@@ -80,10 +80,47 @@ class _IndexState extends State<Index> {
     final response = await http.get(Uri.parse("https://api.github.com/repos/oculosdanilo/gatopedia/releases/latest"));
     Map<String, dynamic> versaoAtt = jsonDecode(response.body);
     if (version != versaoAtt["tag_name"]) {
-      Navigator.push(
-        context,
-        SlideRightRoute(Update(versaoAtt["tag_name"], versaoAtt["body"])),
-      );
+      Navigator.push(context, SlideRightRoute(Update(versaoAtt["tag_name"], versaoAtt["body"])));
+    }
+  }
+
+  Future<dynamic> _existeContaGoogle(GoogleSignInAccount contaG) async {
+    final ref = FirebaseDatabase.instance.ref("users");
+    final contas = await ref.get();
+
+    for (DataSnapshot conta in contas.children) {
+      if (conta.child("google").exists) {
+        if (conta.child("google").value == contaG.id) {
+          return conta.key!;
+        }
+      }
+    }
+    return false;
+  }
+
+  _cadastroGoogle(BuildContext context) async {
+    final conta = await loginGoogle();
+    if (conta != null) {
+      final existeConta = await _existeContaGoogle(conta);
+      if (!context.mounted) return;
+      if (existeConta is String) {
+        username = existeConta;
+        SharedPreferences sp = await SharedPreferences.getInstance();
+        await sp.setString("username", username ?? "");
+        if (!context.mounted) return;
+        Navigator.pushReplacement(context, SlideUpRoute(const Home()));
+      } else {
+        final userCadastrado = await Navigator.push(context, SlideUpRoute(GoogleCadastro(conta))) ?? false;
+        if (userCadastrado is String) {
+          final refUsers = FirebaseDatabase.instance.ref("users");
+          refUsers.update({
+            userCadastrado: {
+              "bio": "(vazio)",
+              "google": conta.id,
+            },
+          });
+        }
+      }
     }
   }
 
@@ -250,13 +287,7 @@ class _IndexState extends State<Index> {
                           const Expanded(child: SizedBox()),
                           OutlinedButton.icon(
                             icon: const Icon(Ionicons.logo_google),
-                            onPressed: () async {
-                              final id = await loginGoogle();
-                              if (!context.mounted) return;
-                              if (id != null) {
-                                Navigator.push(context, SlideUpRoute(GoogleCadastro(id)));
-                              }
-                            },
+                            onPressed: () => _cadastroGoogle(context),
                             style: const ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(50, 45))),
                             label: const Text("Google"),
                           )
