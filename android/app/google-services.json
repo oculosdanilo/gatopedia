@@ -15,7 +15,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "906400327488-6dh8e8rgk64lb6cpa87j358n15k0cs3f.apps.googleusercontent.com",
+          "client_id": "906400327488-o2buro9qu0jmj6k7o0c7ifvuc77sd5bm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.oculosdanilo.gatopedia",
+            "certificate_hash": "ce8451c60395bb054a24388a442cb26b1612c84d"
+          }
+        },
+        {
+          "client_id": "906400327488-q0go8qb6e7j6kq9ua6l9m7tma8th52g5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.oculosdanilo.gatopedia",
+            "certificate_hash": "ee35573bca3cbb97165267e856158e47a087a686"
+          }
+        },
+        {
+          "client_id": "906400327488-7b2rn7c84ocq0loser0k3df6mnvb7h4v.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

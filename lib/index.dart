@@ -1,13 +1,17 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/gatos.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/loginScreen/colab.dart';
 import 'package:gatopedia/loginScreen/login/form.dart';
+import 'package:gatopedia/loginScreen/login/google.dart';
 import 'package:gatopedia/loginScreen/seminternet.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/update.dart';
@@ -201,7 +205,7 @@ class _IndexState extends State<Index> {
                       child: Text("Entrar", style: GoogleFonts.jost(fontSize: 20)),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 400),
                     opacity: animText ? 1 : 0,
@@ -233,6 +237,36 @@ class _IndexState extends State<Index> {
                       child: Text("Cadastrar", style: GoogleFonts.jost(fontSize: 20)),
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 500),
+                    opacity: animText ? 1 : 0,
+                    curve: const Interval(0.5, 1),
+                    child: SizedBox(
+                      width: scW * 0.7,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(width: 5),
+                          Text("Entrar com:", style: GoogleFonts.jost(fontSize: 20)),
+                          Expanded(child: SizedBox()),
+                          OutlinedButton.icon(
+                            icon: Icon(Ionicons.logo_google),
+                            onPressed: () {
+                              loginGoogle();
+                            },
+                            style: ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(50, 45))),
+                            label: Text("Google"),
+                          )
+                          /*IconButton.outlined(
+                            onPressed: () {},
+                            style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(50, 50))),
+                            icon: Icon(Ionicons.logo_google),
+                          ),*/
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -241,23 +275,9 @@ class _IndexState extends State<Index> {
               duration: const Duration(milliseconds: 500),
               left: (scW / 2) - 125,
               top: animImg ? scH * 0.05 : (scH / 2) - 250,
-              child: ClipOval(
-                child: Image.asset(
-                  "assets/icon.png",
-                  width: 250,
-                ),
-              ),
+              child: ClipOval(child: Image.asset("assets/icon.png", width: 250)),
             ),
-            SemConta(
-              animText,
-              scH,
-              scW,
-              () {
-                setState(() {
-                  full = true;
-                });
-              },
-            ),
+            SemConta(animText, scH, scW, () => setState(() => full = true)),
             AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
               curve: const Interval(0.99, 1),
@@ -270,9 +290,7 @@ class _IndexState extends State<Index> {
                 child: Container(
                   height: scH,
                   width: scW,
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                  ),
+                  decoration: const BoxDecoration(color: Colors.black),
                   child: Theme(
                     data: ThemeData.from(
                       colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
@@ -296,13 +314,7 @@ class SemConta extends StatefulWidget {
   final double scW;
   final Function() notifyParent;
 
-  const SemConta(
-    this.animText,
-    this.scH,
-    this.scW,
-    this.notifyParent, {
-    super.key,
-  });
+  const SemConta(this.animText, this.scH, this.scW, this.notifyParent, {super.key});
 
   @override
   State<SemConta> createState() => _SemContaState();
@@ -343,11 +355,7 @@ class _SemContaState extends State<SemConta> {
               acabouAlt = false;
             });
           },
-          onHorizontalDragUpdate: (detalhes) {
-            setState(() {
-              pos = detalhes.globalPosition;
-            });
-          },
+          onHorizontalDragUpdate: (detalhes) => setState(() => pos = detalhes.globalPosition),
           onHorizontalDragDown: (detalhes) {
             setState(() {
               acabouAlt = false;
@@ -385,10 +393,7 @@ class _SemContaState extends State<SemConta> {
                     ? LinearGradient(
                         begin: const Alignment(0, -0.75),
                         end: const Alignment(0, -0.96),
-                        colors: [
-                          Colors.black,
-                          Theme.of(context).colorScheme.surface,
-                        ],
+                        colors: [Colors.black, Theme.of(context).colorScheme.surface],
                       )
                     : null,
               ),
@@ -396,11 +401,7 @@ class _SemContaState extends State<SemConta> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 10),
-                  Center(
-                      child: Lottie.asset(
-                    "assets/anim/seta${dark || !acabouAlt ? '' : '-light'}.json",
-                    width: 50,
-                  )),
+                  Center(child: Lottie.asset("assets/anim/seta${dark || !acabouAlt ? '' : '-light'}.json", width: 50)),
                   Text(
                     "Entrar sem conta",
                     style: GoogleFonts.jost(

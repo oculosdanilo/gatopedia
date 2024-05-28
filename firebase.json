@@ -1,0 +1,22 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "fluttergatopedia",
+          "appId": "1:906400327488:android:667de87715d89fd291fca5",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "fluttergatopedia",
+          "configurations": {
+            "android": "1:906400327488:android:667de87715d89fd291fca5",
+            "web": "1:906400327488:web:32c39cf107be006691fca5"
+          }
+        }
+      }
+    }
+  }
+}
