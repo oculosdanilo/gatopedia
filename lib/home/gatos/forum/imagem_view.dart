@@ -5,8 +5,9 @@ import 'package:photo_view/photo_view.dart';
 
 class Imagem extends StatefulWidget {
   final String imagemUrl;
+  final String hero;
 
-  const Imagem(this.imagemUrl, {super.key});
+  const Imagem(this.imagemUrl, this.hero, {super.key});
 
   @override
   State<Imagem> createState() => _ImagemState();
@@ -21,13 +22,8 @@ class _ImagemState extends State<Imagem> {
       body: Stack(
         children: [
           PhotoView(
-            imageProvider: CachedNetworkImageProvider(
-              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.imagemUrl}.webp?alt=media",
-            ),
-            heroAttributes: PhotoViewHeroAttributes(
-              tag: widget.imagemUrl,
-              transitionOnUserGestures: true,
-            ),
+            imageProvider: CachedNetworkImageProvider(widget.imagemUrl),
+            heroAttributes: PhotoViewHeroAttributes(tag: widget.hero, transitionOnUserGestures: true),
             minScale: PhotoViewComputedScale.contained,
             maxScale: 1.0,
           ),

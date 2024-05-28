@@ -400,7 +400,12 @@ class _ForumState extends State<Forum> {
                                   splashFactory: NoSplash.splashFactory,
                                   onTap: () => Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (ctx) => Imagem("$index")),
+                                    MaterialPageRoute(
+                                      builder: (ctx) => Imagem(
+                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$index.webp?alt=media",
+                                        "$index",
+                                      ),
+                                    ),
                                   ),
                                   child: Hero(
                                     tag: "$index",
@@ -411,8 +416,7 @@ class _ForumState extends State<Forum> {
                                       fadeOutDuration: const Duration(milliseconds: 150),
                                       placeholder: const AssetImage('assets/anim/loading.gif'),
                                       image: CachedNetworkImageProvider(
-                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$index.webp?alt=media",
-                                      ),
+                                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$index.webp?alt=media"),
                                     ),
                                   ),
                                 ),

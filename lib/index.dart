@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
@@ -247,16 +245,20 @@ class _IndexState extends State<Index> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SizedBox(width: 5),
+                          const SizedBox(width: 5),
                           Text("Entrar com:", style: GoogleFonts.jost(fontSize: 20)),
-                          Expanded(child: SizedBox()),
+                          const Expanded(child: SizedBox()),
                           OutlinedButton.icon(
-                            icon: Icon(Ionicons.logo_google),
-                            onPressed: () {
-                              loginGoogle();
+                            icon: const Icon(Ionicons.logo_google),
+                            onPressed: () async {
+                              final id = await loginGoogle();
+                              if (!context.mounted) return;
+                              if (id != null) {
+                                Navigator.push(context, SlideUpRoute(GoogleCadastro(id)));
+                              }
                             },
-                            style: ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(50, 45))),
-                            label: Text("Google"),
+                            style: const ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(50, 45))),
+                            label: const Text("Google"),
                           )
                           /*IconButton.outlined(
                             onPressed: () {},
