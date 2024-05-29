@@ -69,37 +69,42 @@ class _GoogleCadastroState extends State<GoogleCadastro> {
               children: [
                 const SizedBox(width: 20),
                 OutlinedButton(
-                  onPressed: () => Navigator.pop(context, false),
+                  onPressed: () {
+                    GoogleSignIn().signOut();
+                    Navigator.pop(context, false);
+                  },
                   child: Text("Cancelar", style: GoogleFonts.jost(fontSize: 18)),
                 ),
                 const Expanded(child: SizedBox()),
                 FilledButton(
                   onPressed: botaoEnabled
                       ? () async {
-                          setState(() => botaoEnabled = false);
+                          if (_formKey.currentState!.validate()) {
+                            setState(() => botaoEnabled = false);
 
-                          final ref = FirebaseDatabase.instance.ref("users/${txtControllerLogin.text}");
-                          final existeUsername = (await ref.get()).exists;
-                          if (!context.mounted) return;
-                          if (existeUsername) {
-                            Flushbar(
-                              duration: const Duration(seconds: 5),
-                              margin: const EdgeInsets.all(20),
-                              borderRadius: BorderRadius.circular(50),
-                              messageText: Row(
-                                children: [
-                                  Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    "Usuário com esse nome já existe :/",
-                                    style: TextStyle(color: blueScheme.onErrorContainer),
-                                  ),
-                                ],
-                              ),
-                              backgroundColor: blueScheme.errorContainer,
-                            ).show(context);
-                          } else {
-                            Navigator.pop(context, txtControllerLogin.text);
+                            final ref = FirebaseDatabase.instance.ref("users/${txtControllerLogin.text}");
+                            final existeUsername = (await ref.get()).exists;
+                            if (!context.mounted) return;
+                            if (existeUsername) {
+                              Flushbar(
+                                duration: const Duration(seconds: 5),
+                                margin: const EdgeInsets.all(20),
+                                borderRadius: BorderRadius.circular(50),
+                                messageText: Row(
+                                  children: [
+                                    Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      "Usuário com esse nome já existe :/",
+                                      style: TextStyle(color: blueScheme.onErrorContainer),
+                                    ),
+                                  ],
+                                ),
+                                backgroundColor: blueScheme.errorContainer,
+                              ).show(context);
+                            } else {
+                              Navigator.pop(context, txtControllerLogin.text);
+                            }
                           }
                         }
                       : null,

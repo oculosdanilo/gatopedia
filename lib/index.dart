@@ -43,6 +43,8 @@ class _IndexState extends State<Index> {
   bool animText = false;
   final miau = AudioPlayer();
 
+  bool _googleConectando = false;
+
   late final scW = MediaQuery.of(context).size.width;
   late final scH = MediaQuery.of(context).size.height;
 
@@ -99,6 +101,7 @@ class _IndexState extends State<Index> {
   }
 
   _cadastroGoogle(BuildContext context) async {
+    setState(() => _googleConectando = true);
     final conta = await loginGoogle();
     if (conta != null) {
       final existeConta = await _existeContaGoogle(conta);
@@ -107,20 +110,22 @@ class _IndexState extends State<Index> {
         username = existeConta;
         SharedPreferences sp = await SharedPreferences.getInstance();
         await sp.setString("username", username ?? "");
+        setState(() => _googleConectando = false);
         if (!context.mounted) return;
         Navigator.pushReplacement(context, SlideUpRoute(const Home()));
       } else {
         final userCadastrado = await Navigator.push(context, SlideUpRoute(GoogleCadastro(conta))) ?? false;
-        if (userCadastrado is String) {
+        if (userCadastrado is (String, GoogleSignInAccount)) {
           final refUsers = FirebaseDatabase.instance.ref("users");
-          refUsers.update({
-            userCadastrado: {
-              "bio": "(vazio)",
-              "google": conta.id,
-            },
+          await refUsers.update({
+            userCadastrado.$1: {"bio": "(vazio)", "google": conta.id, "img": ""},
           });
+
+          setState(() => _googleConectando = false);
         }
       }
+    } else {
+      setState(() => _googleConectando = false);
     }
   }
 
@@ -211,31 +216,33 @@ class _IndexState extends State<Index> {
                     opacity: animText ? 1 : 0,
                     curve: const Interval(0.5, 1),
                     child: FilledButton(
-                      onPressed: () async {
-                        (
-                          // $1: credenciais corretas, $2: lembrar de mim
-                          bool,
-                          bool
-                        ) info = await showModalBottomSheet<(bool, bool)>(
-                              showDragHandle: true,
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (c) => Padding(
-                                padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
-                                child: const FormApp(Entrada.login),
-                              ),
-                            ) ??
-                            (false, false);
-                        if (!context.mounted) return;
-                        if (info.$1) {
-                          if (info.$2) {
-                            SharedPreferences sp = await SharedPreferences.getInstance();
-                            await sp.setString("username", username ?? "");
-                          }
-                          if (!context.mounted) return;
-                          Navigator.pushReplacement(context, SlideUpRoute(const Home()));
-                        }
-                      },
+                      onPressed: !_googleConectando
+                          ? () async {
+                              (
+                                // $1: credenciais corretas, $2: lembrar de mim
+                                bool,
+                                bool
+                              ) info = await showModalBottomSheet<(bool, bool)>(
+                                    showDragHandle: true,
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (c) => Padding(
+                                      padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
+                                      child: const FormApp(Entrada.login),
+                                    ),
+                                  ) ??
+                                  (false, false);
+                              if (!context.mounted) return;
+                              if (info.$1) {
+                                if (info.$2) {
+                                  SharedPreferences sp = await SharedPreferences.getInstance();
+                                  await sp.setString("username", username ?? "");
+                                }
+                                if (!context.mounted) return;
+                                Navigator.pushReplacement(context, SlideUpRoute(const Home()));
+                              }
+                            }
+                          : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
                       child: Text("Entrar", style: GoogleFonts.jost(fontSize: 20)),
                     ),
@@ -246,28 +253,30 @@ class _IndexState extends State<Index> {
                     opacity: animText ? 1 : 0,
                     curve: const Interval(0.5, 1),
                     child: OutlinedButton(
-                      onPressed: () async {
-                        bool info = await showModalBottomSheet<bool>(
-                              showDragHandle: true,
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (c) => Padding(
-                                padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
-                                child: const FormApp(Entrada.cadastro),
-                              ),
-                            ) ??
-                            false;
-                        if (!context.mounted) return;
-                        if (info) {
-                          Flushbar(
-                            message: "Cadastrado com sucesso! Agora entre com as mesmas credenciais",
-                            duration: const Duration(seconds: 10),
-                            margin: const EdgeInsets.all(20),
-                            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                            borderRadius: BorderRadius.circular(50),
-                          ).show(context);
-                        }
-                      },
+                      onPressed: !_googleConectando
+                          ? () async {
+                              bool info = await showModalBottomSheet<bool>(
+                                    showDragHandle: true,
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (c) => Padding(
+                                      padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
+                                      child: const FormApp(Entrada.cadastro),
+                                    ),
+                                  ) ??
+                                  false;
+                              if (!context.mounted) return;
+                              if (info) {
+                                Flushbar(
+                                  message: "Cadastrado com sucesso! Agora entre com as mesmas credenciais",
+                                  duration: const Duration(seconds: 10),
+                                  margin: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                                  borderRadius: BorderRadius.circular(50),
+                                ).show(context);
+                              }
+                            }
+                          : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
                       child: Text("Cadastrar", style: GoogleFonts.jost(fontSize: 20)),
                     ),
@@ -287,7 +296,7 @@ class _IndexState extends State<Index> {
                           const Expanded(child: SizedBox()),
                           OutlinedButton.icon(
                             icon: const Icon(Ionicons.logo_google),
-                            onPressed: () => _cadastroGoogle(context),
+                            onPressed: !_googleConectando ? () => _cadastroGoogle(context) : null,
                             style: const ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(50, 45))),
                             label: const Text("Google"),
                           )
