@@ -28,7 +28,7 @@ class _ImagemState extends State<Imagem> {
             maxScale: 1.0,
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(5, MediaQuery.of(context).padding.top + 5, 0, 0),
+            padding: EdgeInsets.fromLTRB(10, MediaQuery.of(context).padding.top + 5, 0, 0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(50),
               child: Material(

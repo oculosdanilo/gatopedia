@@ -1,12 +1,9 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/gatos.dart';
 import 'package:gatopedia/home/home.dart';
@@ -19,6 +16,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grayscale/grayscale.dart';
 import 'package:http/http.dart' as http;
+import 'package:icons_plus/icons_plus.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -115,14 +113,11 @@ class _IndexState extends State<Index> {
         Navigator.pushReplacement(context, SlideUpRoute(const Home()));
       } else {
         final userCadastrado = await Navigator.push(context, SlideUpRoute(GoogleCadastro(conta))) ?? false;
-        if (userCadastrado is (String, GoogleSignInAccount)) {
-          final refUsers = FirebaseDatabase.instance.ref("users");
-          await refUsers.update({
-            userCadastrado.$1: {"bio": "(vazio)", "google": conta.id, "img": ""},
-          });
-
-          setState(() => _googleConectando = false);
+        if (!context.mounted) return;
+        if (userCadastrado) {
+          Navigator.pushReplacement(context, SlideRightRoute(const Home()));
         }
+        setState(() => _googleConectando = false);
       }
     } else {
       setState(() => _googleConectando = false);
@@ -295,7 +290,7 @@ class _IndexState extends State<Index> {
                           Text("Entrar com:", style: GoogleFonts.jost(fontSize: 20)),
                           const Expanded(child: SizedBox()),
                           OutlinedButton.icon(
-                            icon: const Icon(Ionicons.logo_google),
+                            icon: const Icon(Bootstrap.google),
                             onPressed: !_googleConectando ? () => _cadastroGoogle(context) : null,
                             style: const ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(50, 45))),
                             label: const Text("Google"),

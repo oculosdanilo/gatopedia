@@ -1,10 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/eu/profile.dart';
 import 'package:gatopedia/home/gatos/gatos.dart';
 import 'package:gatopedia/main.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 List<Widget> telasHome = const [GatoLista(), Profile(false), Config(false)];
 int indexAntigo = 0;
@@ -56,8 +56,8 @@ class _HomeState extends State<Home> {
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           destinations: <NavigationDestination>[
             NavigationDestination(
-              icon: const Icon(Ionicons.paw_outline),
-              selectedIcon: Icon(Ionicons.paw, color: Theme.of(context).colorScheme.onPrimary),
+              icon: const Icon(IonIcons.paw, fill: 0),
+              selectedIcon: Icon(IonIcons.paw, color: Theme.of(context).colorScheme.onPrimary, fill: 1),
               label: "Gatos",
             ),
             NavigationDestination(

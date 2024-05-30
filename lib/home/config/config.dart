@@ -4,11 +4,11 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/index.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -340,13 +340,13 @@ class _ConfigState extends State<Config> {
       children: [
         ElevatedButton.icon(
           onPressed: () => _launchUrl(_urlGatopediaGit),
-          icon: const Icon(AntDesign.github),
+          icon: const Icon(AntDesign.github_fill),
           label: const Text("Repositório"),
         ),
         const SizedBox(width: 10),
         ElevatedButton.icon(
           onPressed: () => _launchUrl(_urlGatopediaGitLatest),
-          icon: const Icon(AntDesign.github),
+          icon: const Icon(AntDesign.github_fill),
           label: const Text("Versões"),
         ),
         const SizedBox(width: 10),

@@ -14,10 +14,6 @@ dependencies:
   path_provider: ^2.1.3
   another_flushbar: ^1.12.30
   package_info_plus: ^8.0.0
-  flutter_vector_icons:
-    git:
-      url: https://github.com/victoreronmosele/flutter-vector-icons.git
-      ref: v3.0.0
   ota_update: ^6.0.0
   animations: ^2.0.11
   shared_preferences: ^2.2.3
@@ -43,6 +39,7 @@ dependencies:
   flutter_blurhash: ^0.8.2
   google_sign_in: ^6.2.1
   firebase_auth: ^4.19.6
+  icons_plus: ^5.0.0
 
 dev_dependencies:
   flutter_lints: ^4.0.0
