@@ -29,8 +29,7 @@ class _ImagemState extends State<Imagem> {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(10, MediaQuery.of(context).padding.top + 5, 0, 0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
+            child: ClipOval(
               child: Material(
                 color: Colors.black,
                 child: Padding(

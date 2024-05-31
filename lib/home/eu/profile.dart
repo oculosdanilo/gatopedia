@@ -11,13 +11,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 String bioText = "carregando...";
 bool? temImagem;
-const _shimmerGradient = LinearGradient(
-  colors: [Color(0xFFEBEBF4), Color(0xFFF4F4F4), Color(0xFFEBEBF4)],
-  stops: [0.1, 0.3, 0.4],
-  begin: Alignment(-1.0, -0.3),
-  end: Alignment(1.0, 0.3),
-  tileMode: TileMode.clamp,
-);
 
 enum MenuItensImg { editar, remover }
 
@@ -36,13 +29,6 @@ class _ProfileState extends State<Profile> {
   bool editMode = false;
   final txtBio = TextEditingController();
   final focusCoiso = FocusNode();
-
-  @override
-  void setState(fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
 
   _apagarImagem(String username) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
@@ -67,8 +53,7 @@ class _ProfileState extends State<Profile> {
   }
 
   _salvarBio(String bio) async {
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("users/$username");
+    final ref = FirebaseDatabase.instance.ref("users/$username");
     await ref.update({"bio": bio});
   }
 
@@ -92,10 +77,7 @@ class _ProfileState extends State<Profile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Bio",
-                  style: TextStyle(fontSize: 15, color: Colors.grey[700]!),
-                ),
+                Text("Bio", style: TextStyle(fontSize: 15, color: Colors.grey[700]!)),
                 editMode ? editando(context) : estatico()
               ],
             ),
@@ -318,14 +300,11 @@ class _ProfileState extends State<Profile> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(
-          height: 10,
-        ),
+        const SizedBox(height: 10),
         TextField(
-          maxLength: 400,
+          maxLength: 255,
           controller: txtBio,
           maxLines: 2,
-          focusNode: focusCoiso,
           decoration: InputDecoration(
             hintText: "(vazio)",
             focusedBorder: OutlineInputBorder(
@@ -344,9 +323,7 @@ class _ProfileState extends State<Profile> {
             ),
           ),
         ),
-        const SizedBox(
-          height: 10,
-        ),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -380,37 +357,6 @@ class _ProfileState extends State<Profile> {
           ],
         ),
       ],
-    );
-  }
-}
-
-class Carregandor extends StatefulWidget {
-  const Carregandor({
-    super.key,
-    required this.isLoading,
-    required this.child,
-  });
-
-  final bool isLoading;
-  final Widget child;
-
-  @override
-  State<Carregandor> createState() => _CarregandorState();
-}
-
-class _CarregandorState extends State<Carregandor> {
-  @override
-  Widget build(BuildContext context) {
-    if (!widget.isLoading) {
-      return widget.child;
-    }
-
-    return ShaderMask(
-      blendMode: BlendMode.srcATop,
-      shaderCallback: (bounds) {
-        return _shimmerGradient.createShader(bounds);
-      },
-      child: widget.child,
     );
   }
 }

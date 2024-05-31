@@ -22,7 +22,7 @@ import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gatopedia/loginScreen/login/google.dart';
+import 'package:gatopedia/loginScreen/login/cadastro.dart';
 
 bool full = false;
 Offset? pos;
@@ -112,7 +112,7 @@ class _IndexState extends State<Index> {
         if (!context.mounted) return;
         Navigator.pushReplacement(context, SlideUpRoute(const Home()));
       } else {
-        final userCadastrado = await Navigator.push(context, SlideUpRoute(GoogleCadastro(conta))) ?? false;
+        final userCadastrado = await Navigator.push(context, SlideUpRoute(NewCadastro(conta))) ?? false;
         if (!context.mounted) return;
         if (userCadastrado) {
           Navigator.pushReplacement(context, SlideRightRoute(const Home()));
@@ -155,11 +155,7 @@ class _IndexState extends State<Index> {
             PopupMenuItem(
               onTap: () async => await Navigator.push(context, SlideUpRoute(const Colaboradores())),
               child: const Row(
-                children: [
-                  Icon(Symbols.people_rounded, fill: 1),
-                  SizedBox(width: 15),
-                  Text("Colaboradores"),
-                ],
+                children: [Icon(Symbols.people_rounded, fill: 1), SizedBox(width: 15), Text("Colaboradores")],
               ),
             ),
             PopupMenuItem(
@@ -294,12 +290,7 @@ class _IndexState extends State<Index> {
                             onPressed: !_googleConectando ? () => _cadastroGoogle(context) : null,
                             style: const ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(50, 45))),
                             label: const Text("Google"),
-                          )
-                          /*IconButton.outlined(
-                            onPressed: () {},
-                            style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(50, 50))),
-                            icon: Icon(Ionicons.logo_google),
-                          ),*/
+                          ),
                         ],
                       ),
                     ),
