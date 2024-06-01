@@ -63,8 +63,7 @@ class _EditPostState extends State<EditPost> {
       await refI.putFile(imagemFile ?? File(""));
     }
     CachedNetworkImage.evictFromCache(
-      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$post.webp?alt=media",
-    );
+        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$post.webp?alt=media");
     ref.update(
       {
         "content": txtEdit.text,

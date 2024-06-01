@@ -1,15 +1,19 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gatopedia/home/gatos/forum/imagem_view.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:photo_view/photo_view.dart';
 
 Future<GoogleSignInAccount?> loginGoogle() async {
   try {
@@ -23,7 +27,7 @@ Future<GoogleSignInAccount?> loginGoogle() async {
 }
 
 class NewCadastro extends StatefulWidget {
-  final GoogleSignInAccount conta;
+  final GoogleSignInAccount? conta;
 
   const NewCadastro(this.conta, {super.key});
 
@@ -50,9 +54,9 @@ class _NewCadastroState extends State<NewCadastro> {
   @override
   void initState() {
     super.initState();
-    if (widget.conta.displayName != null) {
-      txtControllerLogin.text = widget.conta.displayName!;
-      txtFieldLenght = widget.conta.displayName!.length;
+    if (widget.conta?.displayName != null) {
+      txtControllerLogin.text = widget.conta!.displayName!;
+      txtFieldLenght = widget.conta!.displayName!.length;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final box = chaves.currentContext!.findRenderObject() as RenderBox;
@@ -76,7 +80,11 @@ class _NewCadastroState extends State<NewCadastro> {
         onTap: () => setState(() => FocusManager.instance.primaryFocus?.unfocus()),
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
-          appBar: AppBar(automaticallyImplyLeading: false, toolbarHeight: 0),
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            toolbarHeight: 0,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+          ),
           bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -84,12 +92,7 @@ class _NewCadastroState extends State<NewCadastro> {
                 children: [
                   const SizedBox(width: 20),
                   OutlinedButton(
-                    onPressed: botaoEnabled
-                        ? () {
-                            GoogleSignIn().signOut();
-                            Navigator.pop(context, false);
-                          }
-                        : null,
+                    onPressed: botaoEnabled ? () => Navigator.pop(context, false) : null,
                     child: Text("Cancelar", style: GoogleFonts.jost(fontSize: 18)),
                   ),
                   const Expanded(child: SizedBox()),
@@ -122,12 +125,13 @@ class _NewCadastroState extends State<NewCadastro> {
                                 setState(() => botaoEnabled = true);
                               } else {
                                 final refUsers = FirebaseDatabase.instance.ref("users");
-                                final pic = widget.conta.photoUrl;
+                                final pic = widget.conta?.photoUrl;
+
                                 await refUsers.update({
                                   txtControllerLogin.text: {
                                     "bio": "(vazio)",
-                                    "google": widget.conta.id,
-                                    "img": pic?.replaceAll("=s96", "=s1080"),
+                                    "google": widget.conta?.id,
+                                    "img": novaImagem == null ? pic?.replaceAll("=s96", "=s1080") : true,
                                   },
                                 });
                                 setState(() => botaoEnabled = true);
@@ -162,13 +166,15 @@ class _NewCadastroState extends State<NewCadastro> {
                 Stack(
                   children: [
                     ClipOval(
-                      child: widget.conta.photoUrl != null
+                      child: widget.conta?.photoUrl != null || novaImagem != null
                           ? Stack(
                               children: [
                                 Hero(
                                   tag: "profile",
                                   child: FadeInImage(
-                                    image: NetworkImage(widget.conta.photoUrl!.replaceAll("=s96", "=s1080")),
+                                    image: novaImagem == null
+                                        ? NetworkImage(widget.conta!.photoUrl!.replaceAll("=s96", "=s1080"))
+                                        : FileImage(novaImagem!),
                                     fadeInDuration: const Duration(milliseconds: 150),
                                     width: 200,
                                     height: 200,
@@ -187,8 +193,9 @@ class _NewCadastroState extends State<NewCadastro> {
                                       onTap: () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (ctx) =>
-                                              Imagem(widget.conta.photoUrl!.replaceAll("=s96", "=s1080"), "profile"),
+                                          builder: (ctx) => novaImagem == null
+                                              ? Imagem(widget.conta!.photoUrl!.replaceAll("=s96", "=s1080"), "profile")
+                                              : ImagemLocal(novaImagem!, "profile"),
                                         ),
                                       ),
                                     ),
@@ -202,6 +209,19 @@ class _NewCadastroState extends State<NewCadastro> {
                               height: 200,
                             ),
                     ),
+                    novaImagem != null
+                        ? Positioned(
+                            child: IconButton.filledTonal(
+                              onPressed: () => setState(() => novaImagem = null),
+                              icon: Icon(Symbols.delete_rounded, fill: 1),
+                              color: Theme.of(context).colorScheme.onTertiaryContainer,
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    WidgetStatePropertyAll(Theme.of(context).colorScheme.tertiaryContainer),
+                              ),
+                            ),
+                          )
+                        : SizedBox(),
                     Positioned(
                       right: 0,
                       bottom: 0,
@@ -232,30 +252,10 @@ class _NewCadastroState extends State<NewCadastro> {
                                       borderRadius: BorderRadius.circular((valueCurva * -50) + 70),
                                       color: Theme.of(context).colorScheme.secondaryContainer,
                                     ),
-                                    child: Opacity(
-                                      opacity: valueCurva,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Flexible(
-                                            child: IconButton.outlined(
-                                              onPressed: () {},
-                                              icon: Icon(Symbols.camera_alt, fill: 1),
-                                              iconSize: 60,
-                                              style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(120, 120))),
-                                            ),
-                                          ),
-                                          Flexible(
-                                            child: IconButton.outlined(
-                                              onPressed: () {},
-                                              icon: Icon(Symbols.camera_alt, fill: 1),
-                                              iconSize: 60,
-                                              style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(120, 120))),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                    child: AnimatedOpacity(
+                                      duration: Duration(milliseconds: 150),
+                                      opacity: valueCurva >= 0.9 ? 1 : 0,
+                                      child: botoes(valueCurva, context),
                                     ),
                                   ),
                                 ),
@@ -375,6 +375,152 @@ class _NewCadastroState extends State<NewCadastro> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  _pegarImagem(ImageSource modo) async {
+    final ImagePicker picker = ImagePicker();
+
+    final imagem = await picker.pickImage(source: modo);
+    if (!mounted) return;
+    if (imagem != null) {
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: imagem.path,
+        aspectRatioPresets: [CropAspectRatioPreset.square],
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: '\u2702️Cortando...',
+            hideBottomControls: true,
+            toolbarColor: Theme.of(context).colorScheme.primary,
+            toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
+            initAspectRatio: CropAspectRatioPreset.original,
+            activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
+            statusBarColor: Theme.of(context).colorScheme.primary,
+            lockAspectRatio: true,
+          ),
+        ],
+      );
+      if (croppedFile != null) {
+        setState(() {
+          novaImagem = File(croppedFile.path);
+        });
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  Row botoes(double valueCurva, BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        valueCurva >= 0.9
+            ? Flexible(
+                child: OutlinedButton(
+                  onPressed: () async {
+                    if (await _pegarImagem(ImageSource.camera)) {
+                      if (!context.mounted) return;
+                      Navigator.pop(context);
+                    }
+                  },
+                  style: ButtonStyle(
+                    fixedSize: WidgetStatePropertyAll(Size(120, 120)),
+                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Symbols.camera_alt,
+                        fill: 1,
+                        size: 60,
+                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      ),
+                      Text(
+                        "Câmera",
+                        style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : SizedBox(),
+        valueCurva >= 0.9
+            ? Flexible(
+                child: OutlinedButton(
+                  onPressed: () {},
+                  style: ButtonStyle(
+                    fixedSize: WidgetStatePropertyAll(Size(120, 120)),
+                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Symbols.gallery_thumbnail,
+                        fill: 1,
+                        size: 60,
+                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      ),
+                      Text(
+                        "Galeria",
+                        style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : SizedBox(),
+      ],
+    );
+  }
+}
+
+class ImagemLocal extends StatefulWidget {
+  final File imagem;
+  final String hero;
+
+  const ImagemLocal(this.imagem, this.hero, {super.key});
+
+  @override
+  State<ImagemLocal> createState() => _ImagemLocalState();
+}
+
+class _ImagemLocalState extends State<ImagemLocal> {
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          PhotoView(
+            imageProvider: FileImage(widget.imagem),
+            heroAttributes: PhotoViewHeroAttributes(tag: widget.hero, transitionOnUserGestures: true),
+            minScale: PhotoViewComputedScale.contained,
+            maxScale: 1.0,
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(10, MediaQuery.of(context).padding.top + 5, 0, 0),
+            child: ClipOval(
+              child: Material(
+                color: Colors.black,
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: InkWell(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(Icons.close_rounded, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

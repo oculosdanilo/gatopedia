@@ -50,7 +50,7 @@ class _PPEditState extends State<PPEdit> {
     );
     if (!mounted) return;
     if (result != null) {
-      file = File(result.files.single.path!);
+      file = File(result.paths.first!);
       CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: file!.path,
         aspectRatioPresets: [

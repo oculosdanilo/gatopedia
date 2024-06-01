@@ -20,7 +20,6 @@ dependencies:
   firebase_core: ^2.31.0
   firebase_database: ^10.5.5
   firebase_storage: ^11.7.5
-  file_picker: ^8.0.3
   badges: ^3.1.2
   cached_network_image: ^3.3.1
   image_cropper: ^6.0.0
@@ -40,6 +39,8 @@ dependencies:
   google_sign_in: ^6.2.1
   firebase_auth: ^4.19.6
   icons_plus: ^5.0.0
+  file_picker: ^8.0.3
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_lints: ^4.0.0

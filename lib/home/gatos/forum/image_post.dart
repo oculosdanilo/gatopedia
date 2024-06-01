@@ -6,6 +6,7 @@ import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:gatopedia/home/gatos/forum/forum.dart';
+import 'package:image_picker/image_picker.dart';
 
 bool imagemSelecionada = false;
 
@@ -20,6 +21,7 @@ class ImagePost extends StatefulWidget {
 
 class _ImagePostState extends State<ImagePost> {
   final txtLegenda = TextEditingController();
+  final ImagePicker picker = ImagePicker();
 
   _pegaImagem() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -27,7 +29,7 @@ class _ImagePostState extends State<ImagePost> {
       type: FileType.custom,
     );
     if (result != null) {
-      file = File(result.files.single.path!);
+      file = File(result.paths.first!);
       setState(() {
         imagemSelecionada = true;
         imagemTipo = widget.imageType;
