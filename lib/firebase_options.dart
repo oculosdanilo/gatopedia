@@ -20,10 +20,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -65,4 +62,17 @@ class DefaultFirebaseOptions {
     storageBucket: 'fluttergatopedia.appspot.com',
     measurementId: 'G-XD3EN1YDVE',
   );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyC6B0sTrywbcJsVzLGVS02p5kLDp9Anq8c',
+    appId: '1:906400327488:ios:399d5996939260a791fca5',
+    messagingSenderId: '906400327488',
+    projectId: 'fluttergatopedia',
+    databaseURL: 'https://fluttergatopedia-default-rtdb.firebaseio.com',
+    storageBucket: 'fluttergatopedia.appspot.com',
+    androidClientId: '906400327488-o2buro9qu0jmj6k7o0c7ifvuc77sd5bm.apps.googleusercontent.com',
+    iosClientId: '906400327488-enj0r6pn80ho3in3gucp1je1vg9un4nj.apps.googleusercontent.com',
+    iosBundleId: 'io.oculosdanilo.gatopedia',
+  );
+
 }
