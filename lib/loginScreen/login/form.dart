@@ -9,8 +9,9 @@ enum Entrada { login, cadastro }
 
 class FormApp extends StatefulWidget {
   final Entrada modo;
+  final BuildContext modalContext;
 
-  const FormApp(this.modo, {super.key});
+  const FormApp(this.modo, this.modalContext, {super.key});
 
   @override
   FormAppState createState() => FormAppState();
@@ -52,9 +53,9 @@ class FormAppState extends State<FormApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: AutofillGroup(
+    return AutofillGroup(
+      child: Form(
+        key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -210,7 +211,7 @@ class FormAppState extends State<FormApp> {
                     txtControllerSenha.text = "";
                     txtControllerLogin.text = "";
                   });
-                  Future.delayed(Duration.zero, () {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
                     Navigator.pop(context, widget.modo == Entrada.login ? (true, inputLembrar) : true);
                   });
                 }

@@ -50,6 +50,7 @@ class _GatoListaState extends State<GatoLista> {
               floating: false,
               backgroundColor: username != null ? Theme.of(context).colorScheme.primary : Colors.black,
               expandedHeight: username == null ? 70 : null,
+              centerTitle: false,
               leading: username != null
                   ? IconButton(
                       onPressed: () async {

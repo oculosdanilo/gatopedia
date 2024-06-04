@@ -1,8 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/eu/profile.dart';
 import 'package:gatopedia/home/gatos/gatos.dart';
+import 'package:gatopedia/index.dart';
 import 'package:gatopedia/main.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -24,10 +26,14 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    super.initState();
+    if (!iniciou) {
+      FlutterNativeSplash.remove();
+      iniciou = true;
+    }
     setState(() {
       tabIndex = 0;
     });
-    super.initState();
   }
 
   int paginaSelecionada = 0;

@@ -18,10 +18,10 @@ Future<dynamic> autenticar(
 }
 
 Future<dynamic> entrar(String usernameDigitado, String senhaDigitada) async {
-  DatabaseReference ref = FirebaseDatabase.instance.ref("users/${usernameDigitado.toLowerCase()}");
-  final snapshot = await ref.get();
-  if (snapshot.exists) {
-    String senhaDB = String.fromCharCodes(base64Decode(snapshot.child("senha").value as String));
+  final refLocal = FirebaseDatabase.instance.ref("users/${usernameDigitado.toLowerCase()}/");
+  final snapshotLocal = await refLocal.get();
+  if (snapshotLocal.exists) {
+    String senhaDB = String.fromCharCodes(base64.decode(snapshotLocal.child("senha").value.toString()));
     if (senhaDB == senhaDigitada) {
       username = usernameDigitado;
       return true;

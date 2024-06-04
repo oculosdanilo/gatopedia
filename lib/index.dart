@@ -4,6 +4,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/gatos.dart';
 import 'package:gatopedia/home/home.dart';
@@ -26,6 +27,7 @@ import 'package:gatopedia/loginScreen/login/cadastro.dart';
 
 bool full = false;
 Offset? pos;
+bool iniciou = false;
 
 class Index extends StatefulWidget {
   final bool tocar;
@@ -49,6 +51,10 @@ class _IndexState extends State<Index> {
   @override
   void initState() {
     super.initState();
+    if (!iniciou) {
+      FlutterNativeSplash.remove();
+      iniciou = true;
+    }
     full = false;
     connecteo.connectionStream.listen((internet) {
       if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
@@ -219,7 +225,7 @@ class _IndexState extends State<Index> {
                                     context: context,
                                     builder: (c) => Padding(
                                       padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
-                                      child: const FormApp(Entrada.login),
+                                      child: FormApp(Entrada.login, c),
                                     ),
                                   ) ??
                                   (false, false);
@@ -252,7 +258,7 @@ class _IndexState extends State<Index> {
                                     context: context,
                                     builder: (c) => Padding(
                                       padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
-                                      child: const FormApp(Entrada.cadastro),
+                                      child: FormApp(Entrada.cadastro, c),
                                     ),
                                   ) ??
                                   false;
