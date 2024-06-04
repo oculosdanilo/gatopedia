@@ -41,6 +41,8 @@ dependencies:
   icons_plus: ^5.0.0
   file_picker: ^8.0.3
   image_picker: ^1.1.2
+  icons_launcher: ^2.1.7
+  flutter_native_splash: ^2.4.0
 
 dev_dependencies:
   flutter_lints: ^4.0.0
@@ -56,18 +58,22 @@ flutter:
       fonts:
         - asset: assets/jost.ttf
 
+icons_launcher:
+  image_path: "assets/icon.png"
+  platforms:
+    android:
+      enable: false
+    ios:
+      enable: true
+
 flutter_native_splash:
   image: assets/splash/icon.png
-  color: "#fffbff"
+  color: "#fbf8ff"
   branding: assets/splash/createdby-light.png
 
-  color_dark: "#1c1c1c"
+  color_dark: "#131318"
   branding_dark: assets/splash/createdby-dark.png
-  android_12:
-    color: "#fffbff"
-    branding: assets/splash/createdby-light-12.png
 
-    color_dark: "#1c1c1c"
-    branding_dark: assets/splash/createdby-dark-12.png
-
-  ios: false
+  ios: true
+  android: false
+  web: true

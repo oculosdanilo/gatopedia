@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:gatopedia/firebase_options.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/index.dart';
@@ -21,7 +22,8 @@ DataSnapshot? snapshotForum;
 final connecteo = ConnectionChecker();
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
