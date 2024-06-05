@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gatopedia/main.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 File? file, imagemEditada;
@@ -33,29 +33,22 @@ class _PPEditState extends State<PPEdit> {
     await refS.putFile(File(result!.path));
     FirebaseDatabase database = FirebaseDatabase.instance;
     final ref = database.ref("users/$username/");
-    await ref.update(
-      {"img": true},
-    );
+    await ref.update({"img": true});
     CachedNetworkImage.evictFromCache(
-      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media",
-    );
+        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media");
     if (!mounted) return;
     Navigator.pop(context, true);
   }
 
   _pegaImagem() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowedExtensions: ['jpeg', 'jpg', 'png'],
-      type: FileType.custom,
-    );
+    final picker = ImagePicker();
+    XFile? result = await picker.pickImage(source: ImageSource.gallery);
     if (!mounted) return;
     if (result != null) {
-      file = File(result.paths.first!);
+      file = File(result.path);
       CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: file!.path,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-        ],
+        aspectRatioPresets: [CropAspectRatioPreset.square],
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: '\u2702️Cortando...',
@@ -66,6 +59,15 @@ class _PPEditState extends State<PPEdit> {
             activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
             statusBarColor: Theme.of(context).colorScheme.primary,
             lockAspectRatio: true,
+          ),
+          IOSUiSettings(
+            cancelButtonTitle: "Cancelar",
+            doneButtonTitle: "Cortar",
+            title: '\u2702️Cortando...',
+            aspectRatioLockEnabled: true,
+            minimumAspectRatio: 1 / 1,
+            aspectRatioPickerButtonHidden: true,
+            resetAspectRatioEnabled: false,
           ),
         ],
       );
@@ -91,7 +93,7 @@ class _PPEditState extends State<PPEdit> {
         ],
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: '✂️Cortando...',
+            toolbarTitle: '\u2702️Cortando...',
             hideBottomControls: true,
             toolbarColor: Theme.of(context).colorScheme.primary,
             toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
@@ -99,6 +101,15 @@ class _PPEditState extends State<PPEdit> {
             activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
             statusBarColor: Theme.of(context).colorScheme.primary,
             lockAspectRatio: true,
+          ),
+          IOSUiSettings(
+            cancelButtonTitle: "Cancelar",
+            doneButtonTitle: "Cortar",
+            title: '\u2702️Cortando...',
+            aspectRatioLockEnabled: true,
+            minimumAspectRatio: 1 / 1,
+            aspectRatioPickerButtonHidden: true,
+            resetAspectRatioEnabled: false,
           ),
         ],
       );

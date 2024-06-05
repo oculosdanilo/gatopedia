@@ -174,16 +174,9 @@ class FormAppState extends State<FormApp> {
           ? () async {
               // Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
-                Flushbar flushbar = Flushbar(
-                  message: "Conectando...",
-                  duration: const Duration(seconds: 3),
-                  margin: const EdgeInsets.all(20),
-                  borderRadius: BorderRadius.circular(50),
-                );
                 setState(() {
                   conectando = true;
                 });
-                flushbar.show(context);
                 TextInput.finishAutofillContext();
                 var retorno = await autenticar(txtControllerLogin.text, txtControllerSenha.text, widget.modo);
                 if (!context.mounted) return;
@@ -205,15 +198,12 @@ class FormAppState extends State<FormApp> {
                     conectando = false;
                   });
                 } else {
-                  flushbar.dismiss();
                   setState(() {
                     conectando = false;
                     txtControllerSenha.text = "";
                     txtControllerLogin.text = "";
                   });
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Navigator.pop(context, widget.modo == Entrada.login ? (true, inputLembrar) : true);
-                  });
+                  Navigator.pop(context, widget.modo == Entrada.login ? (true, inputLembrar) : true);
                 }
               }
             }

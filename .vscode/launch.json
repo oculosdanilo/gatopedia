@@ -7,8 +7,7 @@
     {
       "name": "gatopedia",
       "request": "launch",
-      "type": "dart",
-      "args": ["--no-enable-impeller"]
+      "type": "dart"
     },
     {
       "name": "gatopedia (profile mode)",

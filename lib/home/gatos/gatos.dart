@@ -110,6 +110,7 @@ class _GatoListaState extends State<GatoLista> {
                   : null,
               flexibleSpace: FlexibleSpaceBar(
                 titlePadding: const EdgeInsets.only(bottom: 60, left: 50),
+                centerTitle: false,
                 title: Text(
                   username != null ? "@$username" : "@shhhanônimo",
                   style: GoogleFonts.jost(

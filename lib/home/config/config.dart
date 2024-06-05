@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/index.dart';
+import 'package:gatopedia/loginScreen/colab.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -142,6 +143,16 @@ class _ConfigState extends State<Config> {
         SliverAppBar.large(
           backgroundColor: Theme.of(context).colorScheme.surface,
           automaticallyImplyLeading: widget.voltar,
+          actions: !widget.voltar
+              ? [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(context, SlideUpRoute(const Colaboradores()));
+                    },
+                    icon: const Icon(Symbols.people, fill: 1),
+                  ),
+                ]
+              : [],
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
