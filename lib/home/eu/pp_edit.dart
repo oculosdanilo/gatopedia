@@ -72,9 +72,7 @@ class _PPEditState extends State<PPEdit> {
         ],
       );
       if (croppedFile != null) {
-        setState(() {
-          imagemEditada = File(croppedFile.path);
-        });
+        setState(() => imagemEditada = File(croppedFile.path));
       } else {
         if (!mounted) return;
         Navigator.pop(context, false);
@@ -88,9 +86,7 @@ class _PPEditState extends State<PPEdit> {
     if (file != null) {
       CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: file.path,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-        ],
+        aspectRatioPresets: [CropAspectRatioPreset.square],
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: '\u2702️Cortando...',
@@ -114,9 +110,7 @@ class _PPEditState extends State<PPEdit> {
         ],
       );
       if (croppedFile != null) {
-        setState(() {
-          imagemEditada = File(croppedFile.path);
-        });
+        setState(() => imagemEditada = File(croppedFile.path));
       } else {
         if (!mounted) return;
         Navigator.pop(context, false);
