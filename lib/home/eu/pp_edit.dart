@@ -55,7 +55,7 @@ class _PPEditState extends State<PPEdit> {
             hideBottomControls: true,
             toolbarColor: Theme.of(context).colorScheme.primary,
             toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
-            initAspectRatio: CropAspectRatioPreset.original,
+            initAspectRatio: CropAspectRatioPreset.square,
             activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
             statusBarColor: Theme.of(context).colorScheme.primary,
             lockAspectRatio: true,
