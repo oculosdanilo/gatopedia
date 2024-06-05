@@ -60,6 +60,15 @@ class _ImagePostState extends State<ImagePost> {
           activeControlsWidgetColor: Theme.of(context).colorScheme.primary,
           statusBarColor: Theme.of(context).colorScheme.primary,
         ),
+        IOSUiSettings(
+          cancelButtonTitle: "Cancelar",
+          doneButtonTitle: "Editar",
+          title: '\u270F️Editando...',
+          aspectRatioLockEnabled: true,
+          minimumAspectRatio: 1 / 1,
+          aspectRatioPickerButtonHidden: true,
+          resetAspectRatioEnabled: false,
+        ),
       ],
     );
     return croppedFile != null ? File(croppedFile.path) : null;
