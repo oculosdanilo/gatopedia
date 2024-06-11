@@ -82,18 +82,18 @@ class GatoInfoState extends State<GatoInfo> {
                         child: Column(
                           children: [
                             Text(
-                              widget.gatoInfo.child("resumo").value.toString(),
-                              style: GoogleFonts.jost(fontStyle: FontStyle.italic, fontSize: 27),
+                              "${widget.gatoInfo.child("resumo").value}",
+                              style: GoogleFonts.jost(fontStyle: FontStyle.italic, fontSize: 28),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 15),
                             Text(
-                              widget.gatoInfo.child("descricao").value.toString().replaceAll("\\n", "\n"),
+                              "${widget.gatoInfo.child("descricao").value}".replaceAll("\\n", "\n"),
                               style: GoogleFonts.jost(fontSize: 20),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 30),
-                            Text("COMENTÁRIOS", style: GoogleFonts.jost(fontWeight: FontWeight.bold, fontSize: 25)),
+                            Text("COMENTÁRIOS", style: GoogleFonts.jost(fontWeight: FontWeight.w500, fontSize: 25)),
                           ],
                         ),
                       ),
@@ -118,9 +118,7 @@ class GatoInfoState extends State<GatoInfo> {
                                         ? () async {
                                             FocusManager.instance.primaryFocus?.unfocus();
                                             if (txtControllerC.text != "") {
-                                              setState(() {
-                                                mandando = true;
-                                              });
+                                              setState(() => mandando = true);
                                               await _getData.then((value) async {
                                                 await value.ref
                                                     .child("${int.parse(value.children.last.key!) + 1}")
@@ -139,9 +137,7 @@ class GatoInfoState extends State<GatoInfo> {
                                                 borderRadius: BorderRadius.circular(50),
                                               ).show(context);
                                               txtControllerC.text = "";
-                                              setState(() {
-                                                mandando = false;
-                                              });
+                                              setState(() => mandando = false);
                                             }
                                           }
                                         : null,
@@ -154,10 +150,7 @@ class GatoInfoState extends State<GatoInfo> {
                             )
                           : const SizedBox(),
                       widget.gatoInfo.child("comentarios").children.length > 2
-                          ? Transform.translate(
-                              offset: Offset(0, username == null ? -60 : -25),
-                              child: Comentarios(widget.gatoInfo),
-                            )
+                          ? Comentarios(widget.gatoInfo)
                           : const SizedBox(
                               height: 80,
                               child: Row(
@@ -191,8 +184,8 @@ class Comentarios extends StatefulWidget {
 class _ComentariosState extends State<Comentarios> {
   @override
   void initState() {
-    _getData = FirebaseDatabase.instance.ref().child("gatos/${widget.gatoInfo.key}/comentarios").get();
     super.initState();
+    _getData = FirebaseDatabase.instance.ref().child("gatos/${widget.gatoInfo.key}/comentarios").get();
   }
 
   @override
@@ -200,7 +193,7 @@ class _ComentariosState extends State<Comentarios> {
     return FutureBuilder<DataSnapshot>(
       future: _getData,
       builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.hasData) {
           final comentarioSS = snapshot.data!;
           return ListView(
             physics: const NeverScrollableScrollPhysics(),
@@ -230,7 +223,7 @@ class _ComentariosState extends State<Comentarios> {
     int index,
   ) {
     return Card(
-      margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+      margin: const EdgeInsets.fromLTRB(15, 5, 15, 5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       color: username == null && dark
           ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
@@ -342,7 +335,7 @@ class _ComentariosState extends State<Comentarios> {
                       }
                     },
                   )
-                : const Text(""),
+                : const SizedBox(),
           ],
         ),
       ),

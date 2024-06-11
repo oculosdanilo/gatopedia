@@ -25,6 +25,7 @@ void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseDatabase.instance.setPersistenceEnabled(true);
   await FirebaseAppCheck.instance.activate();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   final SharedPreferences pref = await SharedPreferences.getInstance();
