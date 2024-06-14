@@ -9,12 +9,11 @@ import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-String bioText = "carregando...";
-bool? temImagem;
-
 enum MenuItensImg { editar, remover }
 
 enum MenuItensSemImg { adicionar }
+
+bool comecou = false;
 
 class Profile extends StatefulWidget {
   final bool botaoVoltar;
@@ -26,9 +25,10 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  String bioText = "carregando...";
+  bool? temImagem;
   bool editMode = false;
   final txtBio = TextEditingController();
-  final focusCoiso = FocusNode();
 
   _apagarImagem(String username) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
@@ -43,12 +43,13 @@ class _ProfileState extends State<Profile> {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users");
     ref.onValue.listen((event) {
-      if ((event.snapshot.value as Map)[username]["bio"] != null) {
-        setState(() => bioText = (event.snapshot.value as Map)[username]["bio"]);
+      final data = event.snapshot;
+      if (data.child("$username/bio").value != null) {
+        setState(() => bioText = "${data.child("$username/bio").value}");
       } else {
         setState(() => bioText = "(vazio)");
       }
-      setState(() => temImagem = ((event.snapshot.value as Map)[username]["img"] ?? false));
+      setState(() => temImagem = (data.child("$username/img").value as bool? ?? false));
     });
   }
 
@@ -62,7 +63,10 @@ class _ProfileState extends State<Profile> {
     super.initState();
     indexAntigo = 1;
     temImagem = false;
-    _atualizar();
+    if (!comecou) {
+      _atualizar();
+      comecou = true;
+    }
   }
 
   @override
@@ -96,11 +100,11 @@ class _ProfileState extends State<Profile> {
                 onSelected: (value) async {
                   if (value == MenuItensImg.editar) {
                     var resposta = await Navigator.push(context, SlideRightAgainRoute(const PPEdit()));
-                    if (!context.mounted) return;
                     if (resposta != null) {
                       if (resposta) {
                         setState(() => CachedNetworkImage.evictFromCache(
                             "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media"));
+                        if (!context.mounted) return;
                         Flushbar(
                           message: "Atualizada com sucesso!",
                           duration: const Duration(seconds: 2),
@@ -282,7 +286,7 @@ class _ProfileState extends State<Profile> {
                       setState(() {
                         editMode = true;
                         txtBio.text = bioText;
-                        focusCoiso.requestFocus();
+                        FocusNode().requestFocus();
                       });
                     }
                   : null,

@@ -21,6 +21,8 @@ class PPEdit extends StatefulWidget {
 }
 
 class _PPEditState extends State<PPEdit> {
+  late bool _botaoEnabled = true;
+
   _salvarPP(File? file) async {
     XFile? result = await FlutterImageCompress.compressAndGetFile(
       file!.absolute.path,
@@ -111,12 +113,9 @@ class _PPEditState extends State<PPEdit> {
       );
       if (croppedFile != null) {
         setState(() => imagemEditada = File(croppedFile.path));
-      } else {
-        if (!mounted) return;
-        Navigator.pop(context, false);
       }
     } else {
-      Navigator.pop(context, false);
+      if (imagemEditada == null) Navigator.pop(context, false);
     }
   }
 
@@ -139,7 +138,7 @@ class _PPEditState extends State<PPEdit> {
             backgroundColor: Theme.of(context).colorScheme.primary,
             leading: IconButton(
               color: Colors.white,
-              onPressed: () => Navigator.pop(context),
+              onPressed: _botaoEnabled ? () => Navigator.pop(context) : null,
               icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onPrimary),
             ),
             title: Center(
@@ -173,56 +172,39 @@ class _PPEditState extends State<PPEdit> {
                             ? Stack(
                                 fit: StackFit.passthrough,
                                 children: [
-                                  Image(
-                                    image: FileImage(imagemEditada!),
-                                    fit: BoxFit.cover,
-                                  ),
+                                  Image(image: FileImage(imagemEditada!), fit: BoxFit.cover),
                                   Positioned.fill(
                                     child: Container(
                                       width: double.infinity,
-                                      decoration: const BoxDecoration(
-                                        color: Color.fromARGB(155, 0, 0, 0),
-                                      ),
+                                      decoration: const BoxDecoration(color: Color.fromARGB(155, 0, 0, 0)),
                                     ),
                                   ),
-                                  ClipOval(
-                                    child: Image(
-                                      image: FileImage(imagemEditada!),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                                  ClipOval(child: Image(image: FileImage(imagemEditada!), fit: BoxFit.cover)),
                                 ],
                               )
                             : const Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  0,
-                                  10,
-                                  0,
-                                  0,
-                                ),
-                                child: Text(
-                                  "Nenhuma imagem selecionada",
-                                  textAlign: TextAlign.center,
-                                ),
+                                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: Text("Nenhuma imagem selecionada", textAlign: TextAlign.center),
                               ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           OutlinedButton(
-                            onPressed: () {
-                              _editarImagem(file);
-                            },
-                            child: const Text("EDITAR"),
+                            onPressed: _botaoEnabled ? () => _editarImagem(file) : null,
+                            child: const Text("Editar"),
                           ),
                           ElevatedButton(
-                            onPressed: () {
-                              _salvarPP(imagemEditada!);
-                            },
-                            child: const Text("SALVAR"),
+                            onPressed: _botaoEnabled
+                                ? () {
+                                    setState(() {
+                                      _botaoEnabled = false;
+                                    });
+                                    _salvarPP(imagemEditada!);
+                                  }
+                                : null,
+                            child: const Text("Salvar"),
                           )
                         ],
                       )

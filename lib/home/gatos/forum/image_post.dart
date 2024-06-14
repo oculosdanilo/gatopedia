@@ -44,13 +44,6 @@ class _ImagePostState extends State<ImagePost> {
   Future<File?> _editarImagem(File img) async {
     CroppedFile? croppedFile = await ImageCropper().cropImage(
       sourcePath: file!.path,
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-        CropAspectRatioPreset.original,
-        CropAspectRatioPreset.ratio16x9,
-        CropAspectRatioPreset.ratio3x2,
-        CropAspectRatioPreset.ratio4x3,
-      ],
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: '\u270F️Editando...',
