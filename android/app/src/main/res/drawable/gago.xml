@@ -53,45 +53,34 @@
   </aapt:attr>
   <target android:name="pata">
     <aapt:attr name="android:animation">
-      <objectAnimator
-        android:duration="800"
-        android:propertyName="translateY"
-        android:startOffset="50"
-        android:valueFrom="200.1"
-        android:valueTo="105.13"
-        android:valueType="floatType" >
-        
-      </objectAnimator>
+      <set>
+        <objectAnimator
+          android:duration="800"
+          android:propertyName="translateY"
+          android:startOffset="50"
+          android:valueFrom="200.1"
+          android:valueTo="105.13"
+          android:valueType="floatType">
+          <aapt:attr name="android:interpolator">
+            <pathInterpolator
+              android:controlX1="0.2"
+              android:controlX2="0.37"
+              android:controlY1="0.71"
+              android:controlY2="0.98" />
+          </aapt:attr>
+        </objectAnimator>
+      </set>
     </aapt:attr>
   </target>
-      <!--<objectAnimator
-        android:duration="800"
-        android:pathData="M 150,250 C 150,250 150,180 150,160"
-        android:propertyName="translateXY"
-        android:propertyXName="translateX"
-        android:propertyYName="translateY"
-        android:startOffset="50">
-        &lt;!&ndash;<aapt:attr name="android:interpolator">
-          <pathInterpolator
-            android:controlX1="0.2"
-            android:controlX2="0.37"
-            android:controlY1="0.71"
-            android:controlY2="0.98" />
-        </aapt:attr>&ndash;&gt;
-        &lt;!&ndash;<aapt:attr name="android:interpolator">
-          <pathInterpolator android:pathData="M 0.0,0.0 c0,0 0,1 1.0,1.0" />
-        </aapt:attr>&ndash;&gt;
-      </objectAnimator>-->
-  
   <target android:name="pataPath">
     <aapt:attr name="android:animation">
-        <objectAnimator
-          android:duration="1"
-          android:propertyName="fillAlpha"
-          android:startOffset="50"
-          android:valueFrom="0"
-          android:valueTo="1"
-          android:valueType="floatType" />
+      <objectAnimator
+        android:duration="1"
+        android:propertyName="fillAlpha"
+        android:startOffset="50"
+        android:valueFrom="0"
+        android:valueTo="1"
+        android:valueType="floatType" />
     </aapt:attr>
   </target>
   <target android:name="Ellipse 1">

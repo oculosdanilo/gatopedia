@@ -3,7 +3,7 @@
   <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is on -->
   <style name="LaunchTheme" parent="Theme.SplashScreen">
     <item name="windowSplashScreenBackground">@color/gato_splash</item>
-    <item name="windowSplashScreenAnimatedIcon">@drawable/splash</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/gago</item>
     <item name="windowSplashScreenAnimationDuration">3000</item>
     <item name="postSplashScreenTheme">@style/NormalTheme</item>
     <item name="android:windowActionBar">false</item>

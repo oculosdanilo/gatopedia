@@ -258,17 +258,6 @@
     <aapt:attr name="android:animation">
       <set android:ordering="together">
         <objectAnimator
-          android:duration="50"
-          android:propertyName="translateY"
-          android:startOffset="0"
-          android:valueFrom="254.5"
-          android:valueTo="254.5"
-          android:valueType="floatType">
-          <aapt:attr name="android:interpolator">
-            <pathInterpolator android:pathData="M 0.0,0.0 c0.08,0.82 0.09,1 1.0,1.0" />
-          </aapt:attr>
-        </objectAnimator>
-        <objectAnimator
           android:duration="950"
           android:propertyName="translateY"
           android:startOffset="50"
