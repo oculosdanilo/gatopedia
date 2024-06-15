@@ -1,0 +1,155 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:aapt="http://schemas.android.com/aapt">
+  <aapt:attr name="android:drawable">
+    <vector
+      android:name="gagopedia"
+      android:width="300dp"
+      android:height="300dp"
+      android:viewportWidth="300"
+      android:viewportHeight="300">
+      <group
+        android:rotation="0"
+        android:scaleX="1"
+        android:scaleY="1"
+        android:translateX="0"
+        android:translateY="0">
+        <path
+          android:name="Ellipse 1"
+          android:fillAlpha="1"
+          android:fillColor="#339e9e9e"
+          android:fillType="nonZero"
+          android:pathData="M 150,50 a 100,100 0 1,0 1,0 Z" />
+      </group>
+      <group
+        android:name="crescer"
+        android:pivotX="150"
+        android:pivotY="150"
+        android:rotation="0"
+        android:scaleX="0.2"
+        android:scaleY="0.2"
+        android:translateX="0"
+        android:translateY="0">
+        <path
+          android:name="Ellipse 2"
+          android:fillAlpha="0"
+          android:fillColor="#ff000080"
+          android:fillType="nonZero"
+          android:pathData="M 150,50 a 100,100 0 1,0 1,0 Z" />
+      </group>
+      <group
+        android:name="pata"
+        android:rotation="0"
+        android:scaleX="1"
+        android:scaleY="1"
+        android:translateX="93.425"
+        android:translateY="105.13">
+        <path
+          android:name="pataPath"
+          android:fillAlpha="0"
+          android:fillColor="#ffFF9922"
+          android:pathData="M13.6298 87.2472L13.4607 86.5699L13.2917 84.3686L13.1226 82.5059L12.6154 79.458L12.2772 77.934L12.1082 76.7487L11.77 75.5633L11.601 74.7167L11.2628 73.7007L10.5865 70.9914L9.74117 68.9594L8.89581 66.5888L8.21953 64.5568L7.54324 63.2021L6.52882 60.8315L5.17625 58.1222L4.16182 56.2595L3.48554 54.9049L2.64018 53.5502L1.79483 51.6876C-1.64295 41.6406 -2.49958 21.3434 21.5761 20.5306C21.5761 9.53366 36.9346 -10.253 56.5223 6.43201H56.6255C76.2131 -10.253 91.5689 9.53366 91.5689 20.5306C115.645 21.3434 114.788 41.6406 111.35 51.6876L110.505 53.5502L109.66 54.9049L108.983 56.2595L107.969 58.1222L106.616 60.8315L105.602 63.2021L104.926 64.5568L104.249 66.5888L103.404 68.9594L102.559 70.9914L101.882 73.7007L101.544 74.7167L101.375 75.5633L101.037 76.7487L100.868 77.934L100.53 79.458L100.022 82.5059L99.8534 84.3686L99.6843 86.5699L99.5152 87.2472V172.905H13.6298V87.2472Z" />
+      </group>
+    </vector>
+  </aapt:attr>
+  <target android:name="pata">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:duration="800"
+        android:propertyName="translateY"
+        android:startOffset="50"
+        android:valueFrom="200.1"
+        android:valueTo="105.13"
+        android:valueType="floatType" >
+        
+      </objectAnimator>
+    </aapt:attr>
+  </target>
+      <!--<objectAnimator
+        android:duration="800"
+        android:pathData="M 150,250 C 150,250 150,180 150,160"
+        android:propertyName="translateXY"
+        android:propertyXName="translateX"
+        android:propertyYName="translateY"
+        android:startOffset="50">
+        &lt;!&ndash;<aapt:attr name="android:interpolator">
+          <pathInterpolator
+            android:controlX1="0.2"
+            android:controlX2="0.37"
+            android:controlY1="0.71"
+            android:controlY2="0.98" />
+        </aapt:attr>&ndash;&gt;
+        &lt;!&ndash;<aapt:attr name="android:interpolator">
+          <pathInterpolator android:pathData="M 0.0,0.0 c0,0 0,1 1.0,1.0" />
+        </aapt:attr>&ndash;&gt;
+      </objectAnimator>-->
+  
+  <target android:name="pataPath">
+    <aapt:attr name="android:animation">
+        <objectAnimator
+          android:duration="1"
+          android:propertyName="fillAlpha"
+          android:startOffset="50"
+          android:valueFrom="0"
+          android:valueTo="1"
+          android:valueType="floatType" />
+    </aapt:attr>
+  </target>
+  <target android:name="Ellipse 1">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:duration="50"
+        android:propertyName="fillColor"
+        android:startOffset="0"
+        android:valueFrom="#009e9e9e"
+        android:valueTo="#339e9e9e"
+        android:valueType="colorType" />
+    </aapt:attr>
+  </target>
+  <target android:name="Ellipse 2">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:duration="1"
+        android:propertyName="fillAlpha"
+        android:startOffset="50"
+        android:valueFrom="0"
+        android:valueTo="1"
+        android:valueType="floatType" />
+    </aapt:attr>
+  </target>
+  <target android:name="crescer">
+    <aapt:attr name="android:animation">
+      <set android:ordering="together">
+        <objectAnimator
+          android:duration="800"
+          android:propertyName="scaleX"
+          android:startOffset="50"
+          android:valueFrom="0.2"
+          android:valueTo="1"
+          android:valueType="floatType">
+          <aapt:attr name="android:interpolator">
+            <pathInterpolator
+              android:controlX1="0.2"
+              android:controlX2="0.37"
+              android:controlY1="0.71"
+              android:controlY2="0.98" />
+          </aapt:attr>
+        </objectAnimator>
+        <objectAnimator
+          android:duration="800"
+          android:propertyName="scaleY"
+          android:startOffset="50"
+          android:valueFrom="0.2"
+          android:valueTo="1"
+          android:valueType="floatType">
+          <aapt:attr name="android:interpolator">
+            <pathInterpolator
+              android:controlX1="0.2"
+              android:controlX2="0.37"
+              android:controlY1="0.71"
+              android:controlY2="0.98" />
+          </aapt:attr>
+        </objectAnimator>
+      </set>
+    </aapt:attr>
+  </target>
+</animated-vector>
