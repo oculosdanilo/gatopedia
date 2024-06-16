@@ -232,7 +232,7 @@ class _NewCadastroState extends State<NewCadastro> {
                             context: context,
                             barrierDismissible: true,
                             barrierLabel: '',
-                            transitionDuration: Duration(milliseconds: 300),
+                            transitionDuration: Duration(milliseconds: 250),
                             transitionBuilder: (context, a1, a2, widget) {
                               final valueCurva = Curves.ease.transform(a1.value);
 
@@ -387,7 +387,7 @@ class _NewCadastroState extends State<NewCadastro> {
     if (imagem != null) {
       CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: imagem.path,
-        aspectRatioPresets: [CropAspectRatioPreset.square],
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: '\u2702️Cortando...',

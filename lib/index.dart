@@ -60,7 +60,7 @@ class _IndexState extends State<Index> {
       if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
     });
     if (!kDebugMode) {
-      _checarUpdate(context);
+      _checarUpdate();
     }
     if (widget.tocar) {
       miau.setAsset("assets/meow.mp3").then((value) {
@@ -78,7 +78,7 @@ class _IndexState extends State<Index> {
     }
   }
 
-  _checarUpdate(context) async {
+  _checarUpdate() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     String version = packageInfo.version;
@@ -86,6 +86,7 @@ class _IndexState extends State<Index> {
     final response = await http.get(Uri.parse("https://api.github.com/repos/oculosdanilo/gatopedia/releases/latest"));
     Map<String, dynamic> versaoAtt = jsonDecode(response.body);
     if (version != versaoAtt["tag_name"]) {
+      if (!mounted) return;
       Navigator.push(context, SlideRightRoute(Update(versaoAtt["tag_name"], versaoAtt["body"])));
     }
   }
