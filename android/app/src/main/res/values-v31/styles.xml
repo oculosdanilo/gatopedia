@@ -6,6 +6,7 @@
     <item name="windowSplashScreenAnimatedIcon">@drawable/gago</item>
     <item name="windowSplashScreenAnimationDuration">2000</item>
     <item name="postSplashScreenTheme">@style/NormalTheme</item>
+    <item name="android:windowSplashScreenBrandingImage">@drawable/createdby</item>
     <item name="android:windowActionBar">false</item>
     <item name="android:windowNoTitle">true</item>
   </style>
