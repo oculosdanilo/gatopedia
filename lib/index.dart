@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -56,10 +55,12 @@ class _IndexState extends State<Index> {
       iniciou = true;
     }
     full = false;
-    connecteo.connectionStream.listen((internet) {
-      if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
-    });
-    if (!kDebugMode) {
+    if (!kIsWeb) {
+      connecteo.connectionStream.listen((internet) {
+        if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
+      });
+    }
+    if (!kDebugMode && !kProfileMode && !kIsWeb) {
       _checarUpdate();
     }
     if (widget.tocar) {
@@ -119,11 +120,7 @@ class _IndexState extends State<Index> {
         if (!context.mounted) return;
         Navigator.pushReplacement(context, SlideUpRoute(const Home()));
       } else {
-        final userCadastrado = await Navigator.push(context, SlideUpRoute(NewCadastro(conta))) ?? false;
-        if (!context.mounted) return;
-        if (userCadastrado) {
-          Navigator.pushReplacement(context, SlideRightRoute(const Home()));
-        }
+        await Navigator.push(context, SlideUpRoute(NewCadastro(conta: conta)));
         setState(() => _googleConectando = false);
       }
     } else {
@@ -226,7 +223,7 @@ class _IndexState extends State<Index> {
                                     context: context,
                                     builder: (c) => Padding(
                                       padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
-                                      child: FormApp(Entrada.login, c),
+                                      child: FormApp(c),
                                     ),
                                   ) ??
                                   (false, false);
@@ -253,26 +250,7 @@ class _IndexState extends State<Index> {
                     child: OutlinedButton(
                       onPressed: !_googleConectando
                           ? () async {
-                              bool info = await showModalBottomSheet<bool>(
-                                    showDragHandle: true,
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (c) => Padding(
-                                      padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
-                                      child: FormApp(Entrada.cadastro, c),
-                                    ),
-                                  ) ??
-                                  false;
-                              if (!context.mounted) return;
-                              if (info) {
-                                Flushbar(
-                                  message: "Cadastrado com sucesso! Agora entre com as mesmas credenciais",
-                                  duration: const Duration(seconds: 10),
-                                  margin: const EdgeInsets.all(20),
-                                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                                  borderRadius: BorderRadius.circular(50),
-                                ).show(context);
-                              }
+                              Navigator.push(context, SlideUpRoute(const NewCadastro()));
                             }
                           : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),

@@ -2,20 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:gatopedia/loginScreen/login/form.dart';
 import 'package:gatopedia/main.dart';
-
-Future<dynamic> autenticar(
-  String usernameDigitado,
-  String senhaDigitada,
-  Entrada modo,
-) async {
-  if (modo == Entrada.login) {
-    return entrar(usernameDigitado, senhaDigitada);
-  } else {
-    return cadastrar(usernameDigitado, senhaDigitada);
-  }
-}
 
 Future<dynamic> entrar(String usernameDigitado, String senhaDigitada) async {
   final refLocal = FirebaseDatabase.instance.ref("users/${usernameDigitado.toLowerCase()}/");

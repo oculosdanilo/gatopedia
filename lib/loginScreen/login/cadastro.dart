@@ -4,9 +4,12 @@ import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gatopedia/home/gatos/forum/imagem_view.dart';
+import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,6 +17,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:gatopedia/loginScreen/login/form.dart';
 
 Future<GoogleSignInAccount?> loginGoogle() async {
   try {
@@ -29,7 +33,7 @@ Future<GoogleSignInAccount?> loginGoogle() async {
 class NewCadastro extends StatefulWidget {
   final GoogleSignInAccount? conta;
 
-  const NewCadastro(this.conta, {super.key});
+  const NewCadastro({this.conta, super.key});
 
   @override
   State<NewCadastro> createState() => _NewCadastroState();
@@ -39,10 +43,13 @@ class _NewCadastroState extends State<NewCadastro> {
   final _formKey = GlobalKey<FormState>();
   final txtControllerLogin = TextEditingController();
   final txtControllerBio = TextEditingController();
+  final txtControllerSenha = TextEditingController();
   int txtFieldLenght = 0;
   Color? counterColor;
   File? novaImagem;
   late Offset posicao;
+  bool esconderSenha = true;
+  Icon iconeOlho = const Icon(Icons.visibility_rounded);
 
   final chaves = GlobalKey();
 
@@ -71,6 +78,20 @@ class _NewCadastroState extends State<NewCadastro> {
     });
   }
 
+  mostrarSenha() {
+    if (esconderSenha) {
+      setState(() {
+        esconderSenha = false;
+        iconeOlho = const Icon(Icons.visibility_off_rounded);
+      });
+    } else {
+      setState(() {
+        esconderSenha = true;
+        iconeOlho = const Icon(Icons.visibility_rounded);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -92,7 +113,7 @@ class _NewCadastroState extends State<NewCadastro> {
                 children: [
                   const SizedBox(width: 20),
                   OutlinedButton(
-                    onPressed: botaoEnabled ? () => Navigator.pop(context, false) : null,
+                    onPressed: botaoEnabled ? () => Navigator.pop(context) : null,
                     child: Text("Cancelar", style: GoogleFonts.jost(fontSize: 18)),
                   ),
                   const Expanded(child: SizedBox()),
@@ -125,18 +146,31 @@ class _NewCadastroState extends State<NewCadastro> {
                                 setState(() => botaoEnabled = true);
                               } else {
                                 final refUsers = FirebaseDatabase.instance.ref("users");
+                                final refUserStorage =
+                                    FirebaseStorage.instance.ref("users/${txtControllerLogin.text}.webp");
                                 final pic = widget.conta?.photoUrl;
 
+                                if (novaImagem != null) {
+                                  XFile? result = await FlutterImageCompress.compressAndGetFile(
+                                    novaImagem!.absolute.path,
+                                    "aa.webp",
+                                    quality: 80,
+                                    format: CompressFormat.webp,
+                                  );
+                                  refUserStorage.putFile(File(result!.path));
+                                }
                                 await refUsers.update({
                                   txtControllerLogin.text: {
-                                    "bio": "(vazio)",
+                                    "bio": txtControllerBio.text != "" ? txtControllerBio.text : "(vazio)",
                                     "google": widget.conta?.id,
+                                    "senha": widget.conta != null ? null : txtControllerSenha.text,
                                     "img": novaImagem == null ? pic?.replaceAll("=s96", "=s1080") : true,
                                   },
                                 });
                                 setState(() => botaoEnabled = true);
                                 if (!context.mounted) return;
-                                Navigator.pop(context, true);
+                                Navigator.pop(context);
+                                Navigator.pushReplacement(context, SlideRightRoute(const Home()));
                               }
                             }
                           }
@@ -150,228 +184,253 @@ class _NewCadastroState extends State<NewCadastro> {
             ],
           ),
           body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("Quase lá!", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-                SizedBox(
-                  width: scW * 0.8,
-                  child: const Text(
-                    "Agora você só precisa escolher uma foto de perfil e um nome de usuário:",
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Quase lá!", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+                  SizedBox(
+                    width: scW * 0.8,
+                    child: const Text(
+                      "Agora você só precisa escolher uma foto de perfil e um nome de usuário:",
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                Stack(
-                  children: [
-                    ClipOval(
-                      child: widget.conta?.photoUrl != null || novaImagem != null
-                          ? Stack(
-                              children: [
-                                Hero(
-                                  tag: "profile",
-                                  child: FadeInImage(
-                                    image: novaImagem == null
-                                        ? NetworkImage(widget.conta!.photoUrl!.replaceAll("=s96", "=s1080"))
-                                        : FileImage(novaImagem!),
-                                    fadeInDuration: const Duration(milliseconds: 150),
+                  const SizedBox(height: 20),
+                  Stack(
+                    children: [
+                      ClipOval(
+                        child: widget.conta?.photoUrl != null || novaImagem != null
+                            ? Stack(
+                                children: [
+                                  SizedBox(
                                     width: 200,
                                     height: 200,
-                                    fit: BoxFit.contain,
-                                    placeholder: const AssetImage("assets/anim/loading.gif"),
+                                    child: Hero(
+                                      tag: "profile",
+                                      child: FadeInImage(
+                                        image: novaImagem == null
+                                            ? NetworkImage(widget.conta!.photoUrl!.replaceAll("=s96", "=s1080"))
+                                            : FileImage(novaImagem!),
+                                        fadeInDuration: const Duration(milliseconds: 150),
+                                        width: 200,
+                                        height: 200,
+                                        fit: BoxFit.contain,
+                                        placeholder: const AssetImage("assets/anim/loading.gif"),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 200,
-                                  height: 200,
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(999),
-                                      splashFactory: InkSparkle.splashFactory,
-                                      onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (ctx) => novaImagem == null
-                                              ? Imagem(widget.conta!.photoUrl!.replaceAll("=s96", "=s1080"), "profile")
-                                              : ImagemLocal(novaImagem!, "profile"),
+                                  SizedBox(
+                                    width: 200,
+                                    height: 200,
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(999),
+                                        splashFactory: InkSparkle.splashFactory,
+                                        onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (ctx) => novaImagem == null
+                                                ? Imagem(
+                                                    widget.conta!.photoUrl!.replaceAll("=s96", "=s1080"), "profile")
+                                                : ImagemLocal(novaImagem!, "profile"),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
+                                ],
+                              )
+                            : Image.asset("assets/user.webp", width: 200, height: 200),
+                      ),
+                      novaImagem != null
+                          ? Positioned(
+                              child: IconButton.filledTonal(
+                                onPressed: () => setState(() => novaImagem = null),
+                                icon: Icon(Symbols.delete_rounded, fill: 1),
+                                color: Theme.of(context).colorScheme.onTertiaryContainer,
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      WidgetStatePropertyAll(Theme.of(context).colorScheme.tertiaryContainer),
                                 ),
-                              ],
-                            )
-                          : Image.asset(
-                              "assets/user.webp",
-                              width: 200,
-                              height: 200,
-                            ),
-                    ),
-                    novaImagem != null
-                        ? Positioned(
-                            child: IconButton.filledTonal(
-                              onPressed: () => setState(() => novaImagem = null),
-                              icon: Icon(Symbols.delete_rounded, fill: 1),
-                              color: Theme.of(context).colorScheme.onTertiaryContainer,
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    WidgetStatePropertyAll(Theme.of(context).colorScheme.tertiaryContainer),
                               ),
-                            ),
-                          )
-                        : SizedBox(),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: IconButton.filledTonal(
-                        key: chaves,
-                        onPressed: () {
-                          showGeneralDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            barrierLabel: '',
-                            transitionDuration: Duration(milliseconds: 250),
-                            transitionBuilder: (context, a1, a2, widget) {
-                              final valueCurva = Curves.ease.transform(a1.value);
+                            )
+                          : SizedBox(),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: IconButton.filledTonal(
+                          key: chaves,
+                          onPressed: () {
+                            showGeneralDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              barrierLabel: '',
+                              transitionDuration: Duration(milliseconds: 250),
+                              transitionBuilder: (context, a1, a2, widget) {
+                                final valueCurva = Curves.ease.transform(a1.value);
 
-                              return Transform.translate(
-                                offset: Offset(
-                                  (valueCurva * -(posicao.dx - (scW / 2))) + (posicao.dx - (scW / 2)),
-                                  (valueCurva * -(posicao.dy - (scH / 2))) + (posicao.dy - (scH / 2)),
-                                ),
-                                child: Dialog(
-                                  insetPadding: EdgeInsets.all(0),
-                                  backgroundColor: Colors.transparent,
-                                  child: Container(
-                                    height: 60 + (120 * valueCurva),
-                                    margin: EdgeInsets.symmetric(horizontal: (scW / 2) - (30 + (150 * valueCurva))),
-                                    clipBehavior: Clip.hardEdge,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular((valueCurva * -50) + 70),
-                                      color: Theme.of(context).colorScheme.secondaryContainer,
-                                    ),
-                                    child: AnimatedOpacity(
-                                      duration: Duration(milliseconds: 150),
-                                      opacity: valueCurva >= 0.9 ? 1 : 0,
-                                      child: botoes(valueCurva, context),
+                                return Transform.translate(
+                                  offset: Offset(
+                                    (valueCurva * -(posicao.dx - (scW / 2))) + (posicao.dx - (scW / 2)),
+                                    (valueCurva * -(posicao.dy - (scH / 2))) + (posicao.dy - (scH / 2)),
+                                  ),
+                                  child: Dialog(
+                                    insetPadding: EdgeInsets.all(0),
+                                    backgroundColor: Colors.transparent,
+                                    child: Container(
+                                      height: 60 + (120 * valueCurva),
+                                      margin: EdgeInsets.symmetric(horizontal: (scW / 2) - (30 + (150 * valueCurva))),
+                                      clipBehavior: Clip.hardEdge,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular((valueCurva * -50) + 70),
+                                        color: Theme.of(context).colorScheme.secondaryContainer,
+                                      ),
+                                      child: AnimatedOpacity(
+                                        duration: Duration(milliseconds: 150),
+                                        opacity: valueCurva >= 0.9 ? 1 : 0,
+                                        child: botoes(valueCurva, context),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
+                                );
+                              },
+                              pageBuilder: (context, a1, a2) => SizedBox(),
+                            );
+                          },
+                          icon: const Icon(Symbols.camera_alt_rounded, fill: 1, size: 30),
+                          style: const ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(60, 60))),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 25),
+                  SizedBox(
+                    width: scW * 0.8,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            maxLength: 25,
+                            textInputAction: TextInputAction.next,
+                            autofillHints: const [AutofillHints.username],
+                            controller: txtControllerLogin,
+                            onChanged: (value) {
+                              setState(() {
+                                txtFieldLenght = value.length;
+                                if (value.length <= 3 || value.length > 25) {
+                                  mudarCor(Theme.of(context).colorScheme.error);
+                                } else {
+                                  mudarCor(Theme.of(context).colorScheme.onSurface);
+                                }
+                              });
+                              _formKey.currentState!.validate();
                             },
-                            pageBuilder: (context, a1, a2) => SizedBox(),
-                          );
-                        },
-                        icon: const Icon(Symbols.camera_alt_rounded, fill: 1, size: 30),
-                        style: const ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(60, 60))),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Obrigatório';
+                              } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
+                                return 'Caractere(s) inválido(s)!';
+                              } else if (value.length <= 3) {
+                                return "Nome muito pequeno!";
+                              } else if (value.contains(RegExp(r'^[0-9]+$'))) {
+                                return "só números? sério?";
+                              } else if (value.length > 25) {
+                                return "Nome de usuário muito grande!";
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              prefixIconColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+                                if (states.contains(WidgetState.error)) return Theme.of(context).colorScheme.error;
+                                if (states.contains(WidgetState.focused)) return Theme.of(context).colorScheme.primary;
+                                return blueScheme.outline;
+                              }),
+                              counter: SizedBox(
+                                width: 50,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text("$txtFieldLenght", style: TextStyle(color: counterColor)),
+                                    Text("/25", style: TextStyle(color: blueScheme.outline)),
+                                  ],
+                                ),
+                              ),
+                              prefixIcon: const Icon(Icons.alternate_email_rounded),
+                              label: const Text("Nome de usuário"),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          widget.conta == null
+                              ? SizedBox(
+                                  width: scW * 0.8,
+                                  height: 65,
+                                  child: TextFormField(
+                                    textInputAction: TextInputAction.done,
+                                    autofillHints: const [AutofillHints.password],
+                                    controller: txtControllerSenha,
+                                    obscureText: esconderSenha,
+                                    keyboardType: TextInputType.visiblePassword,
+                                    decoration: InputDecoration(
+                                      prefix: const SizedBox(width: 10),
+                                      suffixIcon: Padding(
+                                        padding: const EdgeInsets.only(right: 5),
+                                        child: IconButton(onPressed: () => mostrarSenha(), icon: iconeOlho),
+                                      ),
+                                      label: const Text("Senha"),
+                                    ),
+                                  ),
+                                )
+                              : SizedBox(),
+                          SizedBox(height: widget.conta == null ? 10 : 0),
+                          TextFormField(
+                            maxLength: 255,
+                            textInputAction: TextInputAction.next,
+                            controller: txtControllerBio,
+                            onChanged: (value) {
+                              setState(() {
+                                txtFieldLenght = value.length;
+                                if (value.length <= 3 || value.length > 25) {
+                                  mudarCor(Theme.of(context).colorScheme.error);
+                                } else {
+                                  mudarCor(Theme.of(context).colorScheme.onSurface);
+                                }
+                              });
+                              _formKey.currentState!.validate();
+                            },
+                            maxLines: 2,
+                            decoration: InputDecoration(
+                              hintText: "(vazio)",
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              counter: SizedBox(
+                                width: 50,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text("${txtControllerBio.text.length}", style: TextStyle(color: counterColor)),
+                                    Text("/255", style: TextStyle(color: blueScheme.outline)),
+                                  ],
+                                ),
+                              ),
+                              label: const Text("Bio"),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 25),
-                SizedBox(
-                  width: scW * 0.8,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          maxLength: 25,
-                          textInputAction: TextInputAction.next,
-                          autofillHints: const [AutofillHints.username],
-                          controller: txtControllerLogin,
-                          onChanged: (value) {
-                            setState(() {
-                              txtFieldLenght = value.length;
-                              if (value.length <= 3 || value.length > 25) {
-                                mudarCor(Theme.of(context).colorScheme.error);
-                              } else {
-                                mudarCor(Theme.of(context).colorScheme.onSurface);
-                              }
-                            });
-                            _formKey.currentState!.validate();
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Obrigatório';
-                            } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
-                              return 'Caractere(s) inválido(s)!';
-                            } else if (value.length <= 3) {
-                              return "Nome muito pequeno!";
-                            } else if (value.contains(RegExp(r'^[0-9]+$'))) {
-                              return "só números? sério?";
-                            } else if (value.length > 25) {
-                              return "Nome de usuário muito grande!";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            prefixIconColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
-                              if (states.contains(WidgetState.error)) return Theme.of(context).colorScheme.error;
-                              if (states.contains(WidgetState.focused)) return Theme.of(context).colorScheme.primary;
-                              return blueScheme.outline;
-                            }),
-                            counter: SizedBox(
-                              width: 50,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text("$txtFieldLenght", style: TextStyle(color: counterColor)),
-                                  Text("/25", style: TextStyle(color: blueScheme.outline)),
-                                ],
-                              ),
-                            ),
-                            prefixIcon: const Icon(Icons.alternate_email_rounded),
-                            label: const Text("Nome de usuário"),
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          maxLength: 255,
-                          textInputAction: TextInputAction.next,
-                          controller: txtControllerBio,
-                          onChanged: (value) {
-                            setState(() {
-                              txtFieldLenght = value.length;
-                              if (value.length <= 3 || value.length > 25) {
-                                mudarCor(Theme.of(context).colorScheme.error);
-                              } else {
-                                mudarCor(Theme.of(context).colorScheme.onSurface);
-                              }
-                            });
-                            _formKey.currentState!.validate();
-                          },
-                          maxLines: 2,
-                          decoration: InputDecoration(
-                            hintText: "(vazio)",
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            counter: SizedBox(
-                              width: 50,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text("${txtControllerBio.text.length}", style: TextStyle(color: counterColor)),
-                                  Text("/255", style: TextStyle(color: blueScheme.outline)),
-                                ],
-                              ),
-                            ),
-                            label: const Text("Bio"),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -453,7 +512,12 @@ class _NewCadastroState extends State<NewCadastro> {
         valueCurva >= 0.9
             ? Flexible(
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    if (await _pegarImagem(ImageSource.gallery)) {
+                      if (!context.mounted) return;
+                      Navigator.pop(context);
+                    }
+                  },
                   style: ButtonStyle(
                     fixedSize: WidgetStatePropertyAll(Size(120, 120)),
                     shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),

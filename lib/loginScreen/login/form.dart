@@ -5,13 +5,10 @@ import 'package:gatopedia/loginScreen/login/autenticar.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-enum Entrada { login, cadastro }
-
 class FormApp extends StatefulWidget {
-  final Entrada modo;
   final BuildContext modalContext;
 
-  const FormApp(this.modo, this.modalContext, {super.key});
+  const FormApp(this.modalContext, {super.key});
 
   @override
   FormAppState createState() => FormAppState();
@@ -132,22 +129,20 @@ class FormAppState extends State<FormApp> {
                 ),
               ),
             ),
-            widget.modo == Entrada.login ? const SizedBox(height: 17) : const SizedBox(),
-            widget.modo == Entrada.login
-                ? Row(
-                    children: [
-                      SizedBox(width: scW * 0.07),
-                      Checkbox(
-                        value: inputLembrar,
-                        onChanged: (valor) => setState(() => inputLembrar = !inputLembrar),
-                      ),
-                      GestureDetector(
-                        onTap: () => setState(() => inputLembrar = !inputLembrar),
-                        child: Text("Lembre-se de mim!", style: GoogleFonts.jost(fontSize: 18)),
-                      )
-                    ],
-                  )
-                : const SizedBox(),
+            const SizedBox(height: 17),
+            Row(
+              children: [
+                SizedBox(width: scW * 0.07),
+                Checkbox(
+                  value: inputLembrar,
+                  onChanged: (valor) => setState(() => inputLembrar = !inputLembrar),
+                ),
+                GestureDetector(
+                  onTap: () => setState(() => inputLembrar = !inputLembrar),
+                  child: Text("Lembre-se de mim!", style: GoogleFonts.jost(fontSize: 18)),
+                )
+              ],
+            ),
             const SizedBox(height: 27),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -178,7 +173,7 @@ class FormAppState extends State<FormApp> {
                   conectando = true;
                 });
                 TextInput.finishAutofillContext();
-                var retorno = await autenticar(txtControllerLogin.text, txtControllerSenha.text, widget.modo);
+                var retorno = await entrar(txtControllerLogin.text, txtControllerSenha.text);
                 if (!context.mounted) return;
                 if (retorno is String) {
                   Flushbar(
@@ -203,15 +198,12 @@ class FormAppState extends State<FormApp> {
                     txtControllerSenha.text = "";
                     txtControllerLogin.text = "";
                   });
-                  Navigator.pop(context, widget.modo == Entrada.login ? (true, inputLembrar) : true);
+                  Navigator.pop(context, (true, inputLembrar));
                 }
               }
             }
           : null,
-      child: Text(
-        widget.modo == Entrada.login ? "Entrar" : "Cadastrar",
-        style: GoogleFonts.jost(fontSize: 18),
-      ),
+      child: Text("Entrar", style: GoogleFonts.jost(fontSize: 18)),
     );
   }
 }
