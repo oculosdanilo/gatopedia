@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -8,12 +10,18 @@ import 'package:gatopedia/home/eu/pp_edit.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum MenuItensImg { editar, remover }
 
 enum MenuItensSemImg { adicionar }
 
-bool comecou = false;
+late StreamSubscription<DatabaseEvent> atualizarListen;
+
+String bioText = "carregando...";
+bool? temImagem;
+
+String? imagemGoogle;
 
 class Profile extends StatefulWidget {
   final bool botaoVoltar;
@@ -25,10 +33,10 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  String bioText = "carregando...";
-  bool? temImagem;
   bool editMode = false;
   final txtBio = TextEditingController();
+
+  late Future<String?> _pegarImgGoogleVar;
 
   _apagarImagem(String username) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
@@ -39,17 +47,25 @@ class _ProfileState extends State<Profile> {
     await refS.delete();
   }
 
-  _atualizar() {
+  _atualizar() async {
+    final sp = await SharedPreferences.getInstance();
     FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("users");
-    ref.onValue.listen((event) {
+    DatabaseReference ref = database.ref("users/$username");
+    atualizarListen = ref.onValue.listen((event) {
       final data = event.snapshot;
-      if (data.child("$username/bio").value != null) {
-        setState(() => bioText = "${data.child("$username/bio").value}");
+      if (data.child("bio").value != null) {
+        setState(() => bioText = "${data.child("bio").value}");
+        sp.setString("bio", "${data.child("bio").value}");
       } else {
         setState(() => bioText = "(vazio)");
+        sp.setString("bio", "(vazio)");
       }
-      setState(() => temImagem = (data.child("$username/img").value as bool? ?? false));
+      if (data.child("img").value != null) {
+        setState(() => temImagem = true);
+      } else {
+        setState(() => temImagem = false);
+      }
+      sp.setBool("img", (data.child("img").value != null));
     });
   }
 
@@ -58,15 +74,40 @@ class _ProfileState extends State<Profile> {
     await ref.update({"bio": bio});
   }
 
+  _init() async {
+    final sp = await SharedPreferences.getInstance();
+    if (sp.containsKey("bio") && sp.containsKey("img")) {
+      setState(() {
+        bioText = sp.getString("bio")!;
+        temImagem = sp.getBool("img")!;
+      });
+    }
+    _atualizar();
+  }
+
+  Future<String?> _pegarImgGoogle() async {
+    final refUser = FirebaseDatabase.instance.ref("users/$username/img");
+    final imgInfo = await refUser.get();
+    if (imgInfo.exists) {
+      return "${imgInfo.value}";
+    } else {
+      return null;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     indexAntigo = 1;
     temImagem = false;
-    if (!comecou) {
-      _atualizar();
-      comecou = true;
-    }
+    _pegarImgGoogleVar = _pegarImgGoogle();
+    _init();
+  }
+
+  @override
+  void dispose() {
+    atualizarListen.cancel();
+    super.dispose();
   }
 
   @override
@@ -102,8 +143,10 @@ class _ProfileState extends State<Profile> {
                     var resposta = await Navigator.push(context, SlideRightAgainRoute(const PPEdit()));
                     if (resposta != null) {
                       if (resposta) {
-                        setState(() => CachedNetworkImage.evictFromCache(
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media"));
+                        setState(() {
+                          CachedNetworkImage.evictFromCache(
+                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media");
+                        });
                         if (!context.mounted) return;
                         Flushbar(
                           message: "Atualizada com sucesso!",
@@ -247,14 +290,46 @@ class _ProfileState extends State<Profile> {
           fit: StackFit.expand,
           children: [
             temImagem ?? false
-                ? FadeInImage(
-                    fadeInDuration: const Duration(milliseconds: 100),
-                    placeholder: const AssetImage("assets/anim/loading.gif"),
-                    image: CachedNetworkImageProvider(
-                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media"),
-                    imageErrorBuilder: (context, obj, stck) => Image.asset("assets/user.webp", fit: BoxFit.cover),
-                    fit: BoxFit.cover,
-                  )
+                ? imagemGoogle != null
+                    ? Image.network(imagemGoogle!, fit: BoxFit.cover)
+                    : FadeInImage(
+                        fadeInDuration: const Duration(milliseconds: 100),
+                        placeholder: const AssetImage("assets/anim/loading.gif"),
+                        image: CachedNetworkImageProvider(
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media"),
+                        imageErrorBuilder: (context, obj, stck) {
+                          return FutureBuilder<String?>(
+                            future: _pegarImgGoogleVar,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData || snapshot.connectionState == ConnectionState.done) {
+                                if (snapshot.data != null) {
+                                  imagemGoogle = snapshot.data!;
+                                  return FadeInImage(
+                                    fadeInDuration: const Duration(milliseconds: 100),
+                                    placeholder: const AssetImage("assets/anim/loading.gif"),
+                                    image: NetworkImage(snapshot.data!),
+                                    imageErrorBuilder: (context, obj, stck) =>
+                                        Image.asset("assets/user.webp", fit: BoxFit.cover),
+                                    fit: BoxFit.cover,
+                                  );
+                                } else {
+                                  return Image.asset("assets/user.webp", fit: BoxFit.cover);
+                                }
+                              } else {
+                                return Image.asset("assets/anim/loading.gif", fit: BoxFit.cover);
+                              }
+                            },
+                          );
+                        },
+                        /*FadeInImage(
+                      fadeInDuration: const Duration(milliseconds: 100),
+                      placeholder: const AssetImage("assets/anim/loading.gif"),
+                      image: NetworkImage(),
+                      imageErrorBuilder: (context, obj, stck) => Image.asset("assets/user.webp", fit: BoxFit.cover),
+                      fit: BoxFit.cover,
+                    ),*/
+                        fit: BoxFit.cover,
+                      )
                 : Image.asset("assets/user.webp", fit: BoxFit.cover),
             const DecoratedBox(
               decoration: BoxDecoration(

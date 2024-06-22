@@ -4,12 +4,11 @@ import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gatopedia/home/gatos/forum/imagem_view.dart';
 import 'package:gatopedia/home/home.dart';
+import 'package:gatopedia/loginScreen/login/autenticar.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -41,9 +40,11 @@ class NewCadastro extends StatefulWidget {
 
 class _NewCadastroState extends State<NewCadastro> {
   final _formKey = GlobalKey<FormState>();
-  final txtControllerLogin = TextEditingController();
-  final txtControllerBio = TextEditingController();
-  final txtControllerSenha = TextEditingController();
+  final _formUsernameKey = GlobalKey<FormFieldState>();
+  final _formSenhaKey = GlobalKey<FormFieldState>();
+  final _txtControllerLogin = TextEditingController();
+  final _txtControllerBio = TextEditingController();
+  final _txtControllerSenha = TextEditingController();
   int txtFieldLenght = 0;
   Color? counterColor;
   File? novaImagem;
@@ -62,7 +63,7 @@ class _NewCadastroState extends State<NewCadastro> {
   void initState() {
     super.initState();
     if (widget.conta?.displayName != null) {
-      txtControllerLogin.text = widget.conta!.displayName!;
+      _txtControllerLogin.text = widget.conta!.displayName!;
       txtFieldLenght = widget.conta!.displayName!.length;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -95,7 +96,7 @@ class _NewCadastroState extends State<NewCadastro> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
+      canPop: botaoEnabled,
       onPopInvoked: (poppou) => GoogleSignIn().signOut(),
       child: GestureDetector(
         onTap: () => setState(() => FocusManager.instance.primaryFocus?.unfocus()),
@@ -123,7 +124,7 @@ class _NewCadastroState extends State<NewCadastro> {
                             if (_formKey.currentState!.validate()) {
                               setState(() => botaoEnabled = false);
 
-                              final ref = FirebaseDatabase.instance.ref("users/${txtControllerLogin.text}");
+                              final ref = FirebaseDatabase.instance.ref("users/${_txtControllerLogin.text}");
                               final existeUsername = (await ref.get()).exists;
                               if (!context.mounted) return;
                               if (existeUsername) {
@@ -145,29 +146,28 @@ class _NewCadastroState extends State<NewCadastro> {
                                 ).show(context);
                                 setState(() => botaoEnabled = true);
                               } else {
-                                final refUsers = FirebaseDatabase.instance.ref("users");
-                                final refUserStorage =
-                                    FirebaseStorage.instance.ref("users/${txtControllerLogin.text}.webp");
-                                final pic = widget.conta?.photoUrl;
-
-                                if (novaImagem != null) {
-                                  XFile? result = await FlutterImageCompress.compressAndGetFile(
-                                    novaImagem!.absolute.path,
-                                    "aa.webp",
-                                    quality: 80,
-                                    format: CompressFormat.webp,
+                                if (widget.conta == null) {
+                                  await cadastrar(
+                                    _txtControllerLogin.text,
+                                    _txtControllerSenha.text,
+                                    _txtControllerBio.text,
+                                    imagem: novaImagem,
                                   );
-                                  refUserStorage.putFile(File(result!.path));
+                                } else {
+                                  await cadastrarGoogle(
+                                    _txtControllerLogin.text,
+                                    _txtControllerBio.text,
+                                    widget.conta!,
+                                    imagem: novaImagem,
+                                  );
                                 }
-                                await refUsers.update({
-                                  txtControllerLogin.text: {
-                                    "bio": txtControllerBio.text != "" ? txtControllerBio.text : "(vazio)",
-                                    "google": widget.conta?.id,
-                                    "senha": widget.conta != null ? null : txtControllerSenha.text,
-                                    "img": novaImagem == null ? pic?.replaceAll("=s96", "=s1080") : true,
-                                  },
+
+                                setState(() {
+                                  botaoEnabled = true;
+                                  username = _txtControllerLogin.text;
+
+                                  _txtControllerLogin.text = _txtControllerSenha.text = _txtControllerBio.text = "";
                                 });
-                                setState(() => botaoEnabled = true);
                                 if (!context.mounted) return;
                                 Navigator.pop(context);
                                 Navigator.pushReplacement(context, SlideRightRoute(const Home()));
@@ -309,123 +309,140 @@ class _NewCadastroState extends State<NewCadastro> {
                   const SizedBox(height: 25),
                   SizedBox(
                     width: scW * 0.8,
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            maxLength: 25,
-                            textInputAction: TextInputAction.next,
-                            autofillHints: const [AutofillHints.username],
-                            controller: txtControllerLogin,
-                            onChanged: (value) {
-                              setState(() {
-                                txtFieldLenght = value.length;
-                                if (value.length <= 3 || value.length > 25) {
-                                  mudarCor(Theme.of(context).colorScheme.error);
-                                } else {
-                                  mudarCor(Theme.of(context).colorScheme.onSurface);
+                    child: AutofillGroup(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              maxLength: 25,
+                              key: _formUsernameKey,
+                              textInputAction: TextInputAction.next,
+                              autofillHints: const [AutofillHints.username],
+                              controller: _txtControllerLogin,
+                              onChanged: (value) {
+                                setState(() {
+                                  txtFieldLenght = value.length;
+                                  if (value.length <= 3 || value.length > 25) {
+                                    mudarCor(Theme.of(context).colorScheme.error);
+                                  } else {
+                                    mudarCor(Theme.of(context).colorScheme.onSurface);
+                                  }
+                                });
+                                _formUsernameKey.currentState!.validate();
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Obrigatório';
+                                } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
+                                  return 'Caractere(s) inválido(s)!';
+                                } else if (value.length <= 3) {
+                                  return "Nome muito pequeno!";
+                                } else if (value.contains(RegExp(r'^[0-9]+$'))) {
+                                  return "só números? sério?";
+                                } else if (value.length > 25) {
+                                  return "Nome de usuário muito grande!";
                                 }
-                              });
-                              _formKey.currentState!.validate();
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Obrigatório';
-                              } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
-                                return 'Caractere(s) inválido(s)!';
-                              } else if (value.length <= 3) {
-                                return "Nome muito pequeno!";
-                              } else if (value.contains(RegExp(r'^[0-9]+$'))) {
-                                return "só números? sério?";
-                              } else if (value.length > 25) {
-                                return "Nome de usuário muito grande!";
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              prefixIconColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
-                                if (states.contains(WidgetState.error)) return Theme.of(context).colorScheme.error;
-                                if (states.contains(WidgetState.focused)) return Theme.of(context).colorScheme.primary;
-                                return blueScheme.outline;
-                              }),
-                              counter: SizedBox(
-                                width: 50,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text("$txtFieldLenght", style: TextStyle(color: counterColor)),
-                                    Text("/25", style: TextStyle(color: blueScheme.outline)),
-                                  ],
-                                ),
-                              ),
-                              prefixIcon: const Icon(Icons.alternate_email_rounded),
-                              label: const Text("Nome de usuário"),
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          widget.conta == null
-                              ? SizedBox(
-                                  width: scW * 0.8,
-                                  height: 65,
-                                  child: TextFormField(
-                                    textInputAction: TextInputAction.done,
-                                    autofillHints: const [AutofillHints.password],
-                                    controller: txtControllerSenha,
-                                    obscureText: esconderSenha,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    decoration: InputDecoration(
-                                      prefix: const SizedBox(width: 10),
-                                      suffixIcon: Padding(
-                                        padding: const EdgeInsets.only(right: 5),
-                                        child: IconButton(onPressed: () => mostrarSenha(), icon: iconeOlho),
-                                      ),
-                                      label: const Text("Senha"),
-                                    ),
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                prefixIconColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+                                  if (states.contains(WidgetState.error)) return Theme.of(context).colorScheme.error;
+                                  if (states.contains(WidgetState.focused)) {
+                                    return Theme.of(context).colorScheme.primary;
+                                  }
+                                  return blueScheme.outline;
+                                }),
+                                counter: SizedBox(
+                                  width: 50,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text("$txtFieldLenght", style: TextStyle(color: counterColor)),
+                                      Text("/25", style: TextStyle(color: blueScheme.outline)),
+                                    ],
                                   ),
-                                )
-                              : SizedBox(),
-                          SizedBox(height: widget.conta == null ? 10 : 0),
-                          TextFormField(
-                            maxLength: 255,
-                            textInputAction: TextInputAction.next,
-                            controller: txtControllerBio,
-                            onChanged: (value) {
-                              setState(() {
-                                txtFieldLenght = value.length;
-                                if (value.length <= 3 || value.length > 25) {
-                                  mudarCor(Theme.of(context).colorScheme.error);
-                                } else {
-                                  mudarCor(Theme.of(context).colorScheme.onSurface);
-                                }
-                              });
-                              _formKey.currentState!.validate();
-                            },
-                            maxLines: 2,
-                            decoration: InputDecoration(
-                              hintText: "(vazio)",
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              counter: SizedBox(
-                                width: 50,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text("${txtControllerBio.text.length}", style: TextStyle(color: counterColor)),
-                                    Text("/255", style: TextStyle(color: blueScheme.outline)),
-                                  ],
                                 ),
+                                prefixIcon: const Icon(Icons.alternate_email_rounded),
+                                label: const Text("Nome de usuário"),
                               ),
-                              label: const Text("Bio"),
                             ),
-                          ),
-                        ],
+                            SizedBox(height: 10),
+                            widget.conta == null
+                                ? SizedBox(
+                                    width: scW * 0.8,
+                                    child: TextFormField(
+                                      key: _formSenhaKey,
+                                      textInputAction: TextInputAction.next,
+                                      autofillHints: const [AutofillHints.password],
+                                      controller: _txtControllerSenha,
+                                      obscureText: esconderSenha,
+                                      keyboardType: TextInputType.visiblePassword,
+                                      onChanged: (valor) {
+                                        _formSenhaKey.currentState!.validate();
+                                      },
+                                      validator: (valor) {
+                                        if (valor == null || valor.isEmpty) {
+                                          return "Obrigatório";
+                                        } else if (valor.length < 8) {
+                                          return "Senha muito pequena!";
+                                        } else {
+                                          return null;
+                                        }
+                                      },
+                                      decoration: InputDecoration(
+                                        prefix: const SizedBox(width: 10),
+                                        suffixIcon: Padding(
+                                          padding: const EdgeInsets.only(right: 5),
+                                          child: IconButton(onPressed: () => mostrarSenha(), icon: iconeOlho),
+                                        ),
+                                        label: const Text("Senha"),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(),
+                            SizedBox(height: widget.conta == null ? 20 : 0),
+                            TextFormField(
+                              maxLength: 255,
+                              textInputAction: TextInputAction.next,
+                              controller: _txtControllerBio,
+                              onChanged: (value) {
+                                setState(() {
+                                  txtFieldLenght = value.length;
+                                  if (value.length <= 3 || value.length > 25) {
+                                    mudarCor(Theme.of(context).colorScheme.error);
+                                  } else {
+                                    mudarCor(Theme.of(context).colorScheme.onSurface);
+                                  }
+                                });
+                                _formKey.currentState!.validate();
+                              },
+                              maxLines: 2,
+                              decoration: InputDecoration(
+                                hintText: "(vazio)",
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                counter: SizedBox(
+                                  width: 50,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text("${_txtControllerBio.text.length}", style: TextStyle(color: counterColor)),
+                                      Text("/255", style: TextStyle(color: blueScheme.outline)),
+                                    ],
+                                  ),
+                                ),
+                                label: const Text("Bio"),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

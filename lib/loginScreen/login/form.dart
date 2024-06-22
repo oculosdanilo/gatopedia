@@ -1,9 +1,11 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/loginScreen/login/autenticar.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FormApp extends StatefulWidget {
   final BuildContext modalContext;
@@ -169,9 +171,7 @@ class FormAppState extends State<FormApp> {
           ? () async {
               // Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
-                setState(() {
-                  conectando = true;
-                });
+                setState(() => conectando = true);
                 TextInput.finishAutofillContext();
                 var retorno = await entrar(txtControllerLogin.text, txtControllerSenha.text);
                 if (!context.mounted) return;
@@ -195,10 +195,15 @@ class FormAppState extends State<FormApp> {
                 } else {
                   setState(() {
                     conectando = false;
-                    txtControllerSenha.text = "";
-                    txtControllerLogin.text = "";
+                    txtControllerSenha.text = txtControllerLogin.text = "";
                   });
-                  Navigator.pop(context, (true, inputLembrar));
+                  if (inputLembrar) {
+                    SharedPreferences sp = await SharedPreferences.getInstance();
+                    await sp.setString("username", username ?? "");
+                  }
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(context, SlideUpRoute(const Home()));
                 }
               }
             }

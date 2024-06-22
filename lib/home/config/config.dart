@@ -4,6 +4,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/home/eu/profile.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/index.dart';
 import 'package:gatopedia/loginScreen/colab.dart';
@@ -82,6 +83,7 @@ class _ConfigState extends State<Config> {
   }
 
   _deletarConta(BuildContext context) async {
+    // TODO: fazer o coiso de deletar conta do flyvoo https://github.com/journey-etecct/flyvoo-app/blob/master/lib/home/mais/minha_conta/excluir_conta/excluir_conta.dart
     final posts = await FirebaseDatabase.instance.ref("posts").get();
     for (final post in posts.children) {
       final comentarios = post.child("comentarios").value as List;
@@ -106,7 +108,7 @@ class _ConfigState extends State<Config> {
       final comentarios = gato.child("comentarios").value as List;
       if (comentarios.length > 2) {
         for (final comentario in comentarios) {
-          if (comentario != "null") {
+          if (comentario != "null" && comentario != null) {
             if (comentario["user"] == username) {
               final refRemove =
                   FirebaseDatabase.instance.ref("gatos/${gato.key}/comentarios/${comentarios.indexOf(comentario)}");
@@ -118,10 +120,15 @@ class _ConfigState extends State<Config> {
     }
 
     Future.delayed(Duration.zero, () async {
+      await atualizarListen.cancel();
       await FirebaseDatabase.instance.ref("users/$username").remove();
       username = null;
       final pref = await SharedPreferences.getInstance();
       if (pref.containsKey("username")) await pref.remove("username");
+      if (pref.containsKey("img") && pref.containsKey("bio")) {
+        await pref.remove("bio");
+        await pref.remove("img");
+      }
 
       if (!context.mounted) return;
       Navigator.pop(context, true);

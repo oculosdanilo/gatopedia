@@ -191,11 +191,11 @@ class _PPEditState extends State<PPEdit> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          OutlinedButton(
+                          ElevatedButton(
                             onPressed: _botaoEnabled ? () => _editarImagem(file) : null,
                             child: const Text("Editar"),
                           ),
-                          ElevatedButton(
+                          FilledButton(
                             onPressed: _botaoEnabled
                                 ? () {
                                     setState(() {

@@ -106,7 +106,7 @@ class _IndexState extends State<Index> {
     return false;
   }
 
-  _cadastroGoogle(BuildContext context) async {
+  _entrarGoogle(BuildContext context) async {
     setState(() => _googleConectando = true);
     final conta = await loginGoogle();
     if (conta != null) {
@@ -213,29 +213,15 @@ class _IndexState extends State<Index> {
                     child: FilledButton(
                       onPressed: !_googleConectando
                           ? () async {
-                              (
-                                // $1: credenciais corretas, $2: lembrar de mim
-                                bool,
-                                bool
-                              ) info = await showModalBottomSheet<(bool, bool)>(
-                                    showDragHandle: true,
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (c) => Padding(
-                                      padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
-                                      child: FormApp(c),
-                                    ),
-                                  ) ??
-                                  (false, false);
-                              if (!context.mounted) return;
-                              if (info.$1) {
-                                if (info.$2) {
-                                  SharedPreferences sp = await SharedPreferences.getInstance();
-                                  await sp.setString("username", username ?? "");
-                                }
-                                if (!context.mounted) return;
-                                Navigator.pushReplacement(context, SlideUpRoute(const Home()));
-                              }
+                              await showModalBottomSheet(
+                                showDragHandle: true,
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (c) => Padding(
+                                  padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
+                                  child: FormApp(c),
+                                ),
+                              );
                             }
                           : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
@@ -272,7 +258,7 @@ class _IndexState extends State<Index> {
                           const Expanded(child: SizedBox()),
                           OutlinedButton.icon(
                             icon: const Icon(Bootstrap.google),
-                            onPressed: !_googleConectando ? () => _cadastroGoogle(context) : null,
+                            onPressed: !_googleConectando ? () => _entrarGoogle(context) : null,
                             style: const ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(50, 45))),
                             label: const Text("Google"),
                           ),

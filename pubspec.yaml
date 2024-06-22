@@ -65,6 +65,9 @@ icons_launcher:
       enable: false
     ios:
       enable: true
+    web:
+      enable: true
+      favicon_path: "assets/favicon.ico"
 
 flutter_native_splash:
   image: assets/splash/icon.png
