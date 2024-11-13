@@ -22,7 +22,7 @@ dependencies:
   firebase_storage: ^12.0.1
   badges: ^3.1.2
   cached_network_image: ^3.3.1
-  image_cropper: ^7.0.5
+  image_cropper: ^8.0.2
   flutter_image_compress: ^2.3.0
   flutter_markdown: ^0.7.1
   flutter_expandable_fab: ^2.0.0
@@ -33,7 +33,7 @@ dependencies:
   connecteo: ^3.0.0
   lottie: ^3.1.1
   grayscale: ^0.0.5+7
-  material_color_utilities: ^0.8.0
+  material_color_utilities: ^0.11.1
   http: ^1.2.1
   flutter_blurhash: ^0.8.2
   google_sign_in: ^6.2.1
@@ -41,11 +41,11 @@ dependencies:
   icons_plus: ^5.0.0
   file_picker: ^8.0.3
   image_picker: ^1.1.2
-  icons_launcher: ^2.1.7
+  icons_launcher: ^3.0.0
   flutter_native_splash: ^2.4.0
 
 dev_dependencies:
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
