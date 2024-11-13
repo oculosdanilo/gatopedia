@@ -4,6 +4,7 @@ Projeto do antigo Gatopédia (feito em AppInventor) repaginado em Material Desig
 
 ### Capturas de tela:
 
+<!--suppress ALL -->
 <div>
 <img src="screenshots/login.png" width="250" />
 <img src="screenshots/wiki.png" width="250" />
