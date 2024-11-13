@@ -142,33 +142,3 @@ class _AppState extends State<App> {
 }
 
 ThemeData temaBase(ThemeMode mode) => ThemeData(colorScheme: mode == ThemeMode.dark ? blueScheme : blueSchemeL);
-
-class SlideUpRoute extends PageRouteBuilder {
-  final Widget page;
-
-  SlideUpRoute(this.page)
-      : super(
-          reverseTransitionDuration: const Duration(milliseconds: 500),
-          transitionDuration: const Duration(milliseconds: 800),
-          pageBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-          ) =>
-              page,
-          transitionsBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-            Widget child,
-          ) =>
-              SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 1),
-                    end: Offset.zero,
-                  ).animate(
-                    CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn, reverseCurve: Curves.fastOutSlowIn),
-                  ),
-                  child: child),
-        );
-}

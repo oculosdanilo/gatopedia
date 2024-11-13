@@ -1,12 +1,11 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gatopedia/home/gatos/forum/imagem_view.dart';
+import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/home/gatos/forum/view/imagem_view.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/loginScreen/login/autenticar.dart';
 import 'package:gatopedia/main.dart';
@@ -16,7 +15,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:gatopedia/loginScreen/login/form.dart';
 
 Future<GoogleSignInAccount?> loginGoogle() async {
   try {
@@ -97,7 +95,7 @@ class _NewCadastroState extends State<NewCadastro> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: botaoEnabled,
-      onPopInvoked: (poppou) => GoogleSignIn().signOut(),
+      onPopInvokedWithResult: (poppou, result) => GoogleSignIn().signOut(),
       child: GestureDetector(
         onTap: () => setState(() => FocusManager.instance.primaryFocus?.unfocus()),
         child: Scaffold(

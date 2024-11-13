@@ -18,9 +18,14 @@ class Asim extends StatelessWidget {
   }
 }
 
-class Colaboradores extends StatelessWidget {
+class Colaboradores extends StatefulWidget {
   const Colaboradores({super.key});
 
+  @override
+  State<Colaboradores> createState() => _ColaboradoresState();
+}
+
+class _ColaboradoresState extends State<Colaboradores> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,18 +37,9 @@ class Colaboradores extends StatelessWidget {
             iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
             title: Row(
               children: [
-                Icon(
-                  Icons.people_alt_rounded,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  size: 40,
-                ),
-                const SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  "COLABORADORES",
-                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontFamily: "Jost"),
-                ),
+                Icon(Icons.people_alt_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 40),
+                const SizedBox(width: 15),
+                Text("COLABORADORES", style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
               ],
             ),
             actions: [
@@ -51,9 +47,7 @@ class Colaboradores extends StatelessWidget {
                 icon: const Icon(Symbols.info_rounded, fill: 1),
                 onPressed: () => showCupertinoDialog(
                   context: context,
-                  builder: (context) {
-                    return alertaSobre(context);
-                  },
+                  builder: (context) => alertaSobre(context),
                 ),
               ),
             ],
@@ -79,10 +73,10 @@ class Colaboradores extends StatelessWidget {
                           children: [
                             const Text(
                               "Danilo Lima",
-                              style: TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 25),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                             ),
                             const SizedBox(height: 10),
-                            const Text("\u2022 Design e programação", style: TextStyle(fontFamily: "Jost")),
+                            const Text("\u2022 Design e programação"),
                             const SizedBox(height: 10),
                             ElevatedButton.icon(
                               onPressed: () => _launchUrl(_urlEmailDanilo),
@@ -109,10 +103,7 @@ class Colaboradores extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Lucca Leal",
-                            style: TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 25),
-                          ),
+                          const Text("Lucca Leal", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
                           const SizedBox(height: 10),
                           const Text("\u2022 Idealização e pesquisas"),
                           const SizedBox(height: 10),
@@ -134,44 +125,87 @@ class Colaboradores extends StatelessWidget {
     );
   }
 
-  AlertDialog alertaSobre(BuildContext context) {
-    return AlertDialog(
-      icon: const Icon(Icons.info_rounded),
-      title: const Text(
-        "Sobre o projeto",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: "Jost",
-          fontWeight: FontWeight.bold,
+  Color fundoTexto1 = Colors.transparent;
+  Color fundoTexto2 = Colors.transparent;
+
+  Widget alertaSobre(BuildContext context) {
+    return StatefulBuilder(builder: (context, setStateLocal) {
+      return AlertDialog(
+        icon: const Icon(Icons.info_rounded),
+        title: const Text(
+          "Sobre o projeto",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-      ),
-      content: RichText(
-        text: TextSpan(style: const TextStyle(fontFamily: "Jost", fontSize: 17), children: [
-          TextSpan(text: "Produzido com ", style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-          TextSpan(
-              text: "Flutter",
-              style: TextStyle(color: Theme.of(context).colorScheme.primary, decoration: TextDecoration.underline),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  _launchUrl(_urlFlutter);
-                }),
-          TextSpan(text: " e ", style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-          TextSpan(
-              text: "Material You",
-              style: TextStyle(color: Theme.of(context).colorScheme.primary, decoration: TextDecoration.underline),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  _launchUrl(_urlMaterialYou);
-                })
-        ]),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('OK'),
+        content: RichText(
+          text: TextSpan(
+            style: TextStyle(fontSize: 17, color: Theme.of(context).colorScheme.onSurface, fontFamily: "Jost"),
+            children: [
+              TextSpan(text: "Produzido com "),
+              TextSpan(
+                  text: "Flutter",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    decoration: TextDecoration.underline,
+                    backgroundColor: fundoTexto1,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      _launchUrl(_urlFlutter);
+                    }
+                    ..onTapDown = (d) {
+                      setStateLocal(() {
+                        fundoTexto1 = Theme.of(context).colorScheme.primary.withOpacity(0.20);
+                      });
+                    }
+                    ..onTapUp = (d) {
+                      setStateLocal(() {
+                        fundoTexto1 = Colors.transparent;
+                      });
+                    }
+                    ..onTapCancel = () {
+                      setStateLocal(() {
+                        fundoTexto1 = Colors.transparent;
+                      });
+                    }),
+              TextSpan(text: " e "),
+              TextSpan(
+                  text: "Material You",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    decoration: TextDecoration.underline,
+                    backgroundColor: fundoTexto2,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      _launchUrl(_urlMaterialYou);
+                    }
+                    ..onTapDown = (d) {
+                      setStateLocal(() {
+                        fundoTexto2 = Theme.of(context).colorScheme.primary.withOpacity(0.20);
+                      });
+                    }
+                    ..onTapUp = (d) {
+                      setStateLocal(() {
+                        fundoTexto2 = Colors.transparent;
+                      });
+                    }
+                    ..onTapCancel = () {
+                      setStateLocal(() {
+                        fundoTexto2 = Colors.transparent;
+                      });
+                    })
+            ],
+          ),
         ),
-      ],
-    );
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    });
   }
 }
 

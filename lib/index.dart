@@ -24,6 +24,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gatopedia/loginScreen/login/cadastro.dart';
 
+import 'anim/routes.dart';
+
 bool full = false;
 Offset? pos;
 bool iniciou = false;
@@ -57,6 +59,7 @@ class _IndexState extends State<Index> {
     full = false;
     if (!kIsWeb) {
       connecteo.connectionStream.listen((internet) {
+        if (!mounted) return;
         if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
       });
     }
@@ -165,7 +168,7 @@ class _IndexState extends State<Index> {
             PopupMenuItem(
               onTap: () => Navigator.push(context, SlideUpRoute(const Scaffold(body: Config(true)))),
               child: const Row(
-                children: [Icon(Symbols.settings_rounded, fill: 1), SizedBox(width: 15), Text("Configurações")],
+                children: [Icon(Symbols.more_horiz_rounded, fill: 1), SizedBox(width: 15), Text("Mais")],
               ),
             ),
           ],
@@ -178,7 +181,7 @@ class _IndexState extends State<Index> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: !full,
-      onPopInvoked: (poppou) {
+      onPopInvokedWithResult: (poppou, resultado) {
         if (!poppou) {
           setState(() {
             pos = null;
@@ -419,15 +422,5 @@ class _SemContaState extends State<SemConta> {
         ),
       ),
     );
-  }
-}
-
-class CustomNavRoute<T> extends MaterialPageRoute<T> {
-  CustomNavRoute({required super.builder});
-
-  @override
-  Widget buildTransitions(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-    return FadeTransition(opacity: animation, child: child);
   }
 }

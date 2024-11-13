@@ -15,6 +15,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:gatopedia/anim/routes.dart';
 
 final Uri _urlGatopediaWeb = Uri.parse("https://osprojetos.web.app/2023/gatopedia");
 final Uri _urlGatopediaGit = Uri.parse('https://github.com/oculosdanilo/gatopedia');
@@ -165,10 +166,7 @@ class _ConfigState extends State<Config> {
             children: [
               Text(
                 "Configurações",
-                style: TextStyle(
-                  fontFamily: "Jost",
-                  fontSize: 40,
-                ),
+                style: TextStyle(fontSize: 40),
               ),
             ],
           ),
@@ -182,14 +180,8 @@ class _ConfigState extends State<Config> {
               children: [
                 SwitchListTile(
                   secondary: const Icon(Icons.dark_mode_rounded),
-                  title: const Text(
-                    "Modo escuro",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  subtitle: const Text(
-                    "Lindo como gatos pretos!",
-                    style: TextStyle(fontFamily: "Jost"),
-                  ),
+                  title: const Text("Modo escuro", style: TextStyle(fontSize: 20)),
+                  subtitle: const Text("Lindo como gatos pretos!"),
                   value: dark,
                   onChanged: (bool value) {
                     setState(() {

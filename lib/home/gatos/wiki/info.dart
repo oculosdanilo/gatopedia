@@ -4,9 +4,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
-import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 

@@ -138,7 +138,7 @@ class _GatoListaState extends State<GatoLista> {
                 tabAlignment: TabAlignment.start,
                 isScrollable: true,
                 labelStyle: GoogleFonts.jost(fontSize: 18),
-                unselectedLabelColor: Colors.grey,
+                unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.70),
                 indicatorColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 tabs: const [Tab(text: "Wiki"), Tab(text: "Forum")],

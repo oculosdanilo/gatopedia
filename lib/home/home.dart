@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: paginaSelecionada == 0,
-      onPopInvoked: (poppou) {
+      onPopInvokedWithResult: (poppou, resultado) {
         if (!poppou) {
           setState(() {
             paginaSelecionada = 0;
@@ -92,39 +92,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
-
-class SlideRightAgainRoute extends PageRouteBuilder {
-  final Widget page;
-
-  SlideRightAgainRoute(this.page)
-      : super(
-          reverseTransitionDuration: const Duration(milliseconds: 500),
-          transitionDuration: const Duration(milliseconds: 500),
-          pageBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-          ) =>
-              page,
-          transitionsBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-            Widget child,
-          ) =>
-              SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1, 0),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(
-                parent: animation,
-                curve: Curves.fastOutSlowIn,
-                reverseCurve: Curves.fastOutSlowIn,
-              ),
-            ),
-            child: child,
-          ),
-        );
 }

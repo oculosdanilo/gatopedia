@@ -19,6 +19,7 @@ class SemInternetState extends State {
   void initState() {
     super.initState();
     listener = connecteo.connectionStream.listen((internet) {
+      if (!mounted) return;
       if (internet) Navigator.pop(context);
     });
     super.initState();
