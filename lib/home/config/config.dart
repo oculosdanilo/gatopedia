@@ -9,7 +9,6 @@ import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/index.dart';
 import 'package:gatopedia/loginScreen/colab.dart';
 import 'package:gatopedia/main.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -205,8 +204,7 @@ class _ConfigState extends State<Config> {
                             context: context,
                             builder: (c) => Theme(
                               data: ThemeData.from(
-                                textTheme: GoogleFonts.jostTextTheme(
-                                    temaBase(dark ? ThemeMode.dark : ThemeMode.light).textTheme),
+                                textTheme: temaBase(ThemeMode.dark).textTheme.apply(fontFamily: "Jost"),
                                 colorScheme: ColorScheme.fromSeed(
                                   seedColor: const Color(0xffff0000),
                                   brightness: dark ? Brightness.dark : Brightness.light,
@@ -229,8 +227,10 @@ class _ConfigState extends State<Config> {
                         subtitle: const Text("Remove seu perfil e seu conteúdo na plataforma"),
                         leading: const Icon(Symbols.delete_rounded),
                         iconColor: Theme.of(context).colorScheme.error,
-                        titleTextStyle: GoogleFonts.jost(color: Theme.of(context).colorScheme.error, fontSize: 20),
-                        subtitleTextStyle: GoogleFonts.jost(color: Theme.of(context).colorScheme.error),
+                        splashColor: Theme.of(context).colorScheme.onSurface,
+                        titleTextStyle:
+                            TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 20, fontFamily: "Jost"),
+                        subtitleTextStyle: TextStyle(color: Theme.of(context).colorScheme.error, fontFamily: "Jost"),
                       )
                     : const SizedBox(),
                 const Divider(),
@@ -298,7 +298,7 @@ class _ConfigState extends State<Config> {
                   padding: const EdgeInsets.only(right: 10),
                   child: IconButton(onPressed: () => mostrarSenha(setStateB), icon: iconeOlho),
                 ),
-                label: Text("Senha", style: GoogleFonts.jost()),
+                label: Text("Senha"),
               ),
             ),
           ),

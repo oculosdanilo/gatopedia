@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/eu/profile.dart';
 import 'package:gatopedia/main.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:grayscale/grayscale.dart';
 
 String bioText = "carregando...";
@@ -81,7 +80,7 @@ class _PublicProfileState extends State<PublicProfile> {
                     expandedHeight: 400,
                     backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                     flexibleSpace: FlexibleSpaceBar(
-                      title: Text("@${widget.username}", style: GoogleFonts.jost(color: Colors.white)),
+                      title: Text("@${widget.username}", style: TextStyle(color: Colors.white)),
                       background: Stack(
                         fit: StackFit.expand,
                         children: [
@@ -111,7 +110,7 @@ class _PublicProfileState extends State<PublicProfile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text("Bio", style: TextStyle(fontSize: 15, fontFamily: "Jost", color: Colors.grey[700]!)),
-                          SelectableText(bioText, style: GoogleFonts.jost(fontSize: 20))
+                          SelectableText(bioText, style: TextStyle(fontSize: 20))
                         ],
                       ),
                     ),

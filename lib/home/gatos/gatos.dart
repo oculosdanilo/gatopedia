@@ -5,7 +5,6 @@ import 'package:gatopedia/home/gatos/forum/forum.dart';
 import 'package:gatopedia/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,12 +59,10 @@ class _GatoListaState extends State<GatoLista> {
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      const SizedBox(width: 10),
-                                      Text("Já vai? ;(", style: GoogleFonts.jost(fontWeight: FontWeight.bold))
-                                    ],
+                                  title: Text(
+                                    "Já vai? ;(",
+                                    style: TextStyle(fontVariations: [FontVariation("wght", 500)]),
+                                    textAlign: TextAlign.center,
                                   ),
                                   content: const Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -119,8 +116,7 @@ class _GatoListaState extends State<GatoLista> {
                 centerTitle: false,
                 title: Text(
                   username != null ? "@$username" : "@shhhanônimo",
-                  style: GoogleFonts.jost(
-                      color: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white),
+                  style: TextStyle(color: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white),
                 ),
                 background: Container(
                   alignment: Alignment.centerRight,
@@ -137,7 +133,7 @@ class _GatoListaState extends State<GatoLista> {
               bottom: TabBar(
                 tabAlignment: TabAlignment.start,
                 isScrollable: true,
-                labelStyle: GoogleFonts.jost(fontSize: 18),
+                labelStyle: TextStyle(fontSize: 18, fontFamily: "Jost"),
                 unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.70),
                 indicatorColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,

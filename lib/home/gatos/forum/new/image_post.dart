@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/main.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:gatopedia/home/gatos/forum/forum.dart';
 import 'package:image_picker/image_picker.dart';
@@ -96,7 +95,7 @@ class _ImagePostState extends State<ImagePost> {
               title: Center(
                 child: Text(
                   widget.imageType == "image" ? "Post com imagem" : "Post com GIF",
-                  style: GoogleFonts.jost(color: Theme.of(context).colorScheme.onPrimary),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
               ),
             ),

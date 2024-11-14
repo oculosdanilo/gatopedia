@@ -9,7 +9,6 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:gatopedia/firebase_options.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/index.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String? username;
@@ -106,7 +105,7 @@ class _AppState extends State<App> {
       snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
       colorSchemeSeed: const Color(0xff000080),
       useMaterial3: true,
-      textTheme: GoogleFonts.jostTextTheme(temaBase(ThemeMode.light).textTheme),
+      textTheme: temaBase(ThemeMode.light).textTheme.apply(fontFamily: "Jost"),
     );
   }
 
@@ -136,7 +135,7 @@ class _AppState extends State<App> {
       snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
       colorSchemeSeed: const Color(0xff000080),
       useMaterial3: true,
-      textTheme: GoogleFonts.jostTextTheme(temaBase(ThemeMode.dark).textTheme),
+      textTheme: temaBase(ThemeMode.dark).textTheme.apply(fontFamily: "Jost"),
     );
   }
 }

@@ -8,7 +8,6 @@ import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/main.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 late Future<DataSnapshot> _getData;
 
@@ -42,7 +41,7 @@ class GatoInfoState extends State<GatoInfo> {
               backgroundColor: !dark ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
               flexibleSpace: FlexibleSpaceBar(
                 expandedTitleScale: 2,
-                title: Text(widget.gatoInfo.key ?? "", style: GoogleFonts.jost(color: Colors.white)),
+                title: Text(widget.gatoInfo.key ?? "", style: TextStyle(color: Colors.white)),
                 background: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -83,17 +82,17 @@ class GatoInfoState extends State<GatoInfo> {
                           children: [
                             Text(
                               "${widget.gatoInfo.child("resumo").value}",
-                              style: GoogleFonts.jost(fontStyle: FontStyle.italic, fontSize: 28),
+                              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 28),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 15),
                             Text(
                               "${widget.gatoInfo.child("descricao").value}".replaceAll("\\n", "\n"),
-                              style: GoogleFonts.jost(fontSize: 20),
+                              style: TextStyle(fontSize: 20),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 30),
-                            Text("COMENTÁRIOS", style: GoogleFonts.jost(fontWeight: FontWeight.w500, fontSize: 25)),
+                            Text("COMENTÁRIOS", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25)),
                           ],
                         ),
                       ),

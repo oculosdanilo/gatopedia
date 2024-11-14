@@ -5,7 +5,6 @@ import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/loginScreen/login/autenticar.dart';
 import 'package:gatopedia/main.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FormApp extends StatefulWidget {
@@ -142,7 +141,7 @@ class FormAppState extends State<FormApp> {
                 ),
                 GestureDetector(
                   onTap: () => setState(() => inputLembrar = !inputLembrar),
-                  child: Text("Lembre-se de mim!", style: GoogleFonts.jost(fontSize: 18)),
+                  child: Text("Lembre-se de mim!", style: TextStyle(fontSize: 18)),
                 )
               ],
             ),
@@ -209,7 +208,7 @@ class FormAppState extends State<FormApp> {
               }
             }
           : null,
-      child: Text("Entrar", style: GoogleFonts.jost(fontSize: 18)),
+      child: Text("Entrar", style: TextStyle(fontSize: 18)),
     );
   }
 }

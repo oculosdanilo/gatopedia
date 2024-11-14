@@ -13,8 +13,8 @@ import 'package:gatopedia/home/gatos/forum/forum.dart';
 import 'package:gatopedia/home/gatos/forum/view/imagem_view.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/main.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:grayscale/grayscale.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 String _pedaco1 = "";
@@ -28,12 +28,12 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
       Container(
         transform: Matrix4.translationValues(0, username != null ? -20 : 0, 0),
         child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
           color: username == null && dark
               ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
               : Theme.of(context).colorScheme.surfaceContainerLow,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
             child: StreamBuilder<Object>(
               stream: null,
               builder: (context, snapshot) {
@@ -44,7 +44,7 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 5, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(15, 5, 0, 0),
                           child: SizedBox(
                             width: 40,
                             height: 40,
@@ -86,13 +86,12 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontVariations: const [FontVariation("wght", 500.0)],
-                                          fontFamily: "Jost",
                                         ),
                                         softWrap: true,
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: username == postSS.child("username").value ? 35 : 0),
+                                  SizedBox(width: username == postSS.child("username").value ? 35 : 10),
                                 ],
                               ),
                               Text(
@@ -122,11 +121,12 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
                             ],
                           ),
                         ),
+                        const SizedBox(width: 15)
                       ],
                     ),
                     postSS.child("img").value != null
                         ? Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 14),
                             child: AspectRatio(
                               aspectRatio: 1,
                               child: InkWell(
@@ -166,25 +166,39 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
                             closedColor: username != null
                                 ? Theme.of(context).colorScheme.surface
                                 : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).surface,
-                            closedShape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            transitionDuration: const Duration(
-                              milliseconds: 300,
-                            ),
+                            closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                            transitionDuration: const Duration(milliseconds: 300),
                             openColor: username != null
                                 ? Theme.of(context).colorScheme.surface
                                 : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).surface,
                             closedBuilder: (context, action) => username != null
                                 ? Align(
                                     alignment: Alignment.centerLeft,
-                                    child: TextButton(
+                                    child: TextButton.icon(
                                       onPressed: () async {
                                         action.call();
                                       },
-                                      child: Text(
-                                        "Comentários (${postSS.child("comentarios").children.length - 2})",
-                                        style: GoogleFonts.jost(fontSize: 15, fontWeight: FontWeight.bold),
+                                      icon: Icon(AntDesign.comment_outline),
+                                      label: Container(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.primary.withOpacity(0.25),
+                                          borderRadius: BorderRadius.circular(999),
+                                        ),
+                                        constraints: BoxConstraints(minWidth: 21),
+                                        height: 21,
+                                        child: Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                                            child: Text(
+                                              "${postSS.child("comentarios").children.length - 2}",
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontVariations: [FontVariation("wght", 600)],
+                                                color: Theme.of(context).colorScheme.primary,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   )
@@ -201,13 +215,13 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
                                           action.call();
                                         },
                                         child: Text(
-                                          "Comentários (${postSS.child("comentarios").children.length - 2})",
+                                          "Comentários",
                                           style: TextStyle(
                                             color: GrayColorScheme.highContrastGray(
                                                     dark ? Brightness.dark : Brightness.light)
                                                 .onSurface,
                                             fontSize: 15,
-                                            fontWeight: FontWeight.bold,
+                                            fontVariations: [FontVariation("wght", 600)],
                                           ),
                                         ),
                                       ),
@@ -260,6 +274,12 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
                                           ? Theme.of(context).colorScheme.primary
                                           : Theme.of(context).colorScheme.onSurface
                                       : Colors.grey,
+                                  fontVariations: [
+                                    FontVariation(
+                                      "wght",
+                                      postSS.child("likes/users").value.toString().contains(",$username,") ? 600 : 400,
+                                    )
+                                  ],
                                 ),
                               ),
                             ),
@@ -276,7 +296,7 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
       ),
       username == postSS.child("username").value
           ? Positioned(
-              right: 5,
+              right: 15,
               top: 0,
               child: Transform.translate(offset: const Offset(0, -10), child: opcoes(index, postSS)),
             )

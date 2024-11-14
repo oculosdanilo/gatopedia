@@ -10,7 +10,6 @@ import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/home/eu/pp_edit.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/main.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum MenuItensImg { editar, remover }
@@ -285,7 +284,7 @@ class _ProfileState extends State<Profile> {
       flexibleSpace: FlexibleSpaceBar(
         title: Padding(
           padding: const EdgeInsets.only(left: 15),
-          child: Text(username!, style: GoogleFonts.jost(color: Colors.white)),
+          child: Text(username!, style: TextStyle(color: Colors.white)),
         ),
         background: Stack(
           fit: StackFit.expand,
@@ -351,7 +350,7 @@ class _ProfileState extends State<Profile> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SelectableText(bioText, style: GoogleFonts.jost(fontSize: 20)),
+        SelectableText(bioText, style: TextStyle(fontSize: 20)),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,

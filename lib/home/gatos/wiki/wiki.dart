@@ -82,9 +82,7 @@ class _WikiState extends State<Wiki> {
             ? Theme.of(context).colorScheme.surface
             : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).surface,
         closedColor: username != null
-            ? dark
-                ? const Color(0xff23232a)
-                : const Color(0xfff5f2fb)
+            ? Theme.of(context).colorScheme.surfaceContainerLow
             : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).surface,
         closedBuilder: (
           context,

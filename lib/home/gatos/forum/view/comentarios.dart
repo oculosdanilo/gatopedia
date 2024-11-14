@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
-
 import 'dart:async';
 
 import 'package:another_flushbar/flushbar.dart';
@@ -10,7 +8,6 @@ import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/main.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Comentarios extends StatefulWidget {
   final DataSnapshot post;
@@ -138,7 +135,7 @@ class _ComentariosState extends State<Comentarios> {
                             ),
                             child: Text(
                               "${postAtual.child("username").value}",
-                              style: GoogleFonts.jost(fontWeight: FontWeight.w500, fontSize: 20),
+                              style: TextStyle(fontVariations: [FontVariation("wght", 500)], fontSize: 20),
                               softWrap: true,
                             ),
                           ),
@@ -149,7 +146,7 @@ class _ComentariosState extends State<Comentarios> {
                                     ? "$pedaco1..."
                                     : pedaco1 + pedaco2
                                 : pedaco1,
-                            style: GoogleFonts.jost(fontSize: 17),
+                            style: TextStyle(fontSize: 17),
                             softWrap: true,
                             maxLines: 50,
                           ),
@@ -293,14 +290,14 @@ class _ComentariosState extends State<Comentarios> {
                     ),
                     child: Text(
                       "${postAtual.child("comentarios/$index/username").value}",
-                      style: GoogleFonts.jost(fontWeight: FontWeight.w500, fontSize: 20),
+                      style: TextStyle(fontVariations: [FontVariation("wght", 500)], fontSize: 20),
                       softWrap: true,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     "${postAtual.child("comentarios/$index/content").value}",
-                    style: const TextStyle(fontFamily: "Jost", fontSize: 17),
+                    style: const TextStyle(fontSize: 17),
                     softWrap: true,
                     maxLines: 50,
                   )
@@ -332,9 +329,7 @@ class _ComentariosState extends State<Comentarios> {
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
-                                child: const Text(
-                                  "CANCELAR",
-                                ),
+                                child: const Text("CANCELAR"),
                               ),
                               ElevatedButton(
                                 onPressed: () {

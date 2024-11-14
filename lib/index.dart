@@ -12,7 +12,6 @@ import 'package:gatopedia/loginScreen/login/form.dart';
 import 'package:gatopedia/loginScreen/seminternet.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/update.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grayscale/grayscale.dart';
 import 'package:http/http.dart' as http;
@@ -23,8 +22,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gatopedia/loginScreen/login/cadastro.dart';
-
-import 'anim/routes.dart';
+import 'package:gatopedia/anim/routes.dart';
 
 bool full = false;
 Offset? pos;
@@ -228,7 +226,7 @@ class _IndexState extends State<Index> {
                             }
                           : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
-                      child: Text("Entrar", style: GoogleFonts.jost(fontSize: 20)),
+                      child: Text("Entrar", style: TextStyle(fontSize: 20)),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -243,7 +241,7 @@ class _IndexState extends State<Index> {
                             }
                           : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
-                      child: Text("Cadastrar", style: GoogleFonts.jost(fontSize: 20)),
+                      child: Text("Cadastrar", style: TextStyle(fontSize: 20)),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -257,7 +255,7 @@ class _IndexState extends State<Index> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           const SizedBox(width: 5),
-                          Text("Entrar com:", style: GoogleFonts.jost(fontSize: 20)),
+                          Text("Entrar com:", style: TextStyle(fontSize: 20)),
                           const Expanded(child: SizedBox()),
                           OutlinedButton.icon(
                             icon: const Icon(Bootstrap.google),
@@ -406,7 +404,7 @@ class _SemContaState extends State<SemConta> {
                   Center(child: Lottie.asset("assets/anim/seta${dark || !acabouAlt ? '' : '-light'}.json", width: 50)),
                   Text(
                     "Entrar sem conta",
-                    style: GoogleFonts.jost(
+                    style: TextStyle(
                         fontSize: 20,
                         color: dark
                             ? Theme.of(context).colorScheme.onSurface

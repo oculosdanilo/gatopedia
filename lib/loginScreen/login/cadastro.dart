@@ -9,7 +9,6 @@ import 'package:gatopedia/home/gatos/forum/view/imagem_view.dart';
 import 'package:gatopedia/home/home.dart';
 import 'package:gatopedia/loginScreen/login/autenticar.dart';
 import 'package:gatopedia/main.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -113,7 +112,7 @@ class _NewCadastroState extends State<NewCadastro> {
                   const SizedBox(width: 20),
                   OutlinedButton(
                     onPressed: botaoEnabled ? () => Navigator.pop(context) : null,
-                    child: Text("Cancelar", style: GoogleFonts.jost(fontSize: 18)),
+                    child: Text("Cancelar", style: TextStyle(fontSize: 18)),
                   ),
                   const Expanded(child: SizedBox()),
                   FilledButton(
@@ -173,7 +172,7 @@ class _NewCadastroState extends State<NewCadastro> {
                             }
                           }
                         : null,
-                    child: Text("Cadastrar", style: GoogleFonts.jost(fontSize: 18)),
+                    child: Text("Cadastrar", style: TextStyle(fontSize: 18)),
                   ),
                   const SizedBox(width: 20),
                 ],
