@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 final Uri _urlFlutter = Uri.parse('https://flutter.dev');
 final Uri _urlMaterialYou = Uri.parse('https://m3.material.io');
-final Uri _urlEmailDanilo = Uri.parse('mailto:danilo.lima124@etec.sp.gov.br');
+final Uri _urlEmailDanilo = Uri.parse('mailto:danilo.lima67@fatec.sp.gov.br');
 final Uri _urlEmailLucca = Uri.parse('mailto:juliana.barros36@etec.sp.gov.br');
 
 class Asim extends StatelessWidget {

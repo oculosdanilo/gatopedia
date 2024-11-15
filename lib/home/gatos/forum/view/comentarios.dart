@@ -9,16 +9,16 @@ import 'package:gatopedia/home/config/config.dart';
 import 'package:gatopedia/home/gatos/public_profile.dart';
 import 'package:gatopedia/main.dart';
 
-class Comentarios extends StatefulWidget {
+class ComentariosForum extends StatefulWidget {
   final DataSnapshot post;
 
-  const Comentarios(this.post, {super.key});
+  const ComentariosForum(this.post, {super.key});
 
   @override
-  State<Comentarios> createState() => _ComentariosState();
+  State<ComentariosForum> createState() => _ComentariosForumState();
 }
 
-class _ComentariosState extends State<Comentarios> {
+class _ComentariosForumState extends State<ComentariosForum> {
   String pedaco1 = "";
   String pedaco2 = "";
   bool flag = true;
@@ -43,14 +43,14 @@ class _ComentariosState extends State<Comentarios> {
   _postarC() async {
     DatabaseReference ref = postAtual.child("comentarios").ref;
     await ref.update({
-      "${postAtual.child("comentarios").value != null ? postAtual.child("comentarios").children.length : 1}": {
+      "${int.parse(postAtual.child("comentarios").children.last.key!) + 2}": {
         "username": username,
         "content": txtComment.text,
       },
     });
   }
 
-  _deletarC(comment) {
+  _deletarC(int comment) {
     DatabaseReference ref = postAtual.child("comentarios/$comment").ref;
     ref.remove();
   }
@@ -189,9 +189,7 @@ class _ComentariosState extends State<Comentarios> {
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            width: 10,
-                          ),
+                          const SizedBox(width: 10),
                           Flexible(
                             flex: 2,
                             child: IconButton.filled(
@@ -220,12 +218,18 @@ class _ComentariosState extends State<Comentarios> {
                   ? Expanded(
                       child: ListView.builder(
                         itemCount: postAtual.child("comentarios").children.length,
-                        itemBuilder: (c, i) => postAtual
-                                    .child("comentarios/${postAtual.child("comentarios").children.length - i}/username")
-                                    .value !=
-                                null
-                            ? comentario(context, postAtual.child("comentarios").children.length - i)
-                            : const SizedBox(),
+                        itemBuilder: (c, i) {
+                          int index = postAtual.child("comentarios").children.length - i;
+                          return postAtual.child("comentarios/$index/username").value != null
+                              ? comentario(
+                                  context,
+                                  index,
+                                  postAtual.child("comentarios/$index/username").value as String,
+                                  postAtual.child("comentarios/$index/content").value as String,
+                                  _deletarC,
+                                )
+                              : const SizedBox();
+                        },
                       ),
                     )
                   : const SizedBox(
@@ -247,113 +251,113 @@ class _ComentariosState extends State<Comentarios> {
       ),
     );
   }
+}
 
-  Card comentario(BuildContext context, int index) {
-    return Card(
-      margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      color: username == null && dark
-          ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
-          : Theme.of(context).colorScheme.surfaceContainerLow,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(15, 10, 15, 25),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  SlideRightAgainRoute(PublicProfile(postAtual.child("comentarios/$index/username").value as String)),
-                ),
-                child: Image(
-                  image: NetworkImage(
-                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postAtual.child("comentarios/$index/username").value}.webp?alt=media"),
-                  width: 50,
-                  fit: BoxFit.cover,
-                  errorBuilder: (c, obj, stacktrace) => Image.asset("assets/user.webp", width: 50),
-                ),
+Card comentario(
+    BuildContext context, int index, String usernamePost, String contentPost, Function(int index) deletarC) {
+  return Card(
+    margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    color: username == null && dark
+        ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
+        : Theme.of(context).colorScheme.surfaceContainerLow,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(15, 10, 15, 25),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                SlideRightAgainRoute(PublicProfile(usernamePost)),
+              ),
+              child: Image(
+                image: NetworkImage(
+                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$usernamePost.webp?alt=media"),
+                width: 50,
+                fit: BoxFit.cover,
+                errorBuilder: (c, obj, stacktrace) => Image.asset("assets/user.webp", width: 50),
               ),
             ),
-            const SizedBox(width: 15),
-            Expanded(
-              flex: 20,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      SlideRightAgainRoute(
-                          PublicProfile(postAtual.child("comentarios/$index/username").value as String)),
-                    ),
-                    child: Text(
-                      "${postAtual.child("comentarios/$index/username").value}",
-                      style: TextStyle(fontVariations: [FontVariation("wght", 500)], fontSize: 20),
-                      softWrap: true,
-                    ),
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            flex: 20,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    SlideRightAgainRoute(PublicProfile(usernamePost)),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "${postAtual.child("comentarios/$index/content").value}",
-                    style: const TextStyle(fontSize: 17),
+                  child: Text(
+                    usernamePost,
+                    style: TextStyle(fontVariations: [FontVariation("wght", 500)], fontSize: 20),
                     softWrap: true,
-                    maxLines: 50,
-                  )
-                ],
-              ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  contentPost,
+                  style: const TextStyle(fontSize: 17),
+                  softWrap: true,
+                  maxLines: 50,
+                )
+              ],
             ),
-            "${postAtual.child("comentarios/$index/username").value}" == username
-                ? Ink(
-                    width: 50,
-                    height: 50,
-                    decoration: ShapeDecoration(color: blueScheme.errorContainer, shape: const CircleBorder()),
-                    child: IconButton(
-                      icon: const Icon(Icons.delete_rounded),
-                      color: Colors.white,
-                      onPressed: () {
-                        showCupertinoDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            icon: Icon(Icons.delete_rounded, color: Theme.of(context).colorScheme.error),
-                            title: const Text(
-                              "Tem certeza que deseja deletar esse comentário?",
-                              textAlign: TextAlign.center,
-                            ),
-                            content: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Text("Ele sumirá para sempre! (muito tempo)")],
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("CANCELAR"),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  _deletarC(index);
-                                  Navigator.pop(context);
-                                  Flushbar(
-                                    message: "Excluído com sucesso!",
-                                    duration: const Duration(seconds: 3),
-                                    margin: const EdgeInsets.all(20),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ).show(context);
-                                },
-                                child: const Text("OK"),
-                              ),
-                            ],
+          ),
+          usernamePost == username
+              ? Ink(
+                  width: 50,
+                  height: 50,
+                  decoration: ShapeDecoration(color: blueScheme.errorContainer, shape: const CircleBorder()),
+                  child: IconButton(
+                    icon: const Icon(Icons.delete_rounded),
+                    color: Colors.white,
+                    onPressed: () {
+                      showCupertinoDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          icon: Icon(Icons.delete_rounded, color: Theme.of(context).colorScheme.error),
+                          title: const Text(
+                            "Tem certeza que deseja deletar esse comentário?",
+                            textAlign: TextAlign.center,
                           ),
-                        );
-                      },
-                    ),
-                  )
-                : const SizedBox(),
-          ],
-        ),
+                          content: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [Text("Ele sumirá para sempre! (muito tempo)")],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("CANCELAR"),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                deletarC(index);
+                                Navigator.pop(context);
+                                Flushbar(
+                                  message: "Excluído com sucesso!",
+                                  duration: const Duration(seconds: 3),
+                                  margin: const EdgeInsets.all(20),
+                                  borderRadius: BorderRadius.circular(50),
+                                ).show(context);
+                              },
+                              child: const Text("OK"),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                )
+              : const SizedBox(),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }

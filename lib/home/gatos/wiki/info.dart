@@ -1,5 +1,4 @@
 import 'package:another_flushbar/flushbar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +25,9 @@ class GatoInfoState extends State<GatoInfo> {
   final txtControllerC = TextEditingController();
   bool mandando = false;
 
+  late String img = widget.gatoInfo.child("img").value.toString();
+  late String titulo = widget.gatoInfo.key!;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -41,22 +43,34 @@ class GatoInfoState extends State<GatoInfo> {
               backgroundColor: !dark ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
               flexibleSpace: FlexibleSpaceBar(
                 expandedTitleScale: 2,
-                title: Text(widget.gatoInfo.key ?? "", style: TextStyle(color: Colors.white)),
+                title: Text(titulo, style: TextStyle(color: Colors.white)),
                 background: Stack(
                   fit: StackFit.expand,
                   children: [
-                    CachedNetworkImage(
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.width,
+                      child: BlurHash(
+                        hash: img.split("&")[1],
+                        image:
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${img.split("&")[0]}.webp?alt=media",
+                        duration: const Duration(milliseconds: 150),
+                        color: Theme.of(context).colorScheme.surface,
+                        imageFit: BoxFit.cover,
+                      ),
+                    ),
+                    /*CachedNetworkImage(
                       imageUrl:
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${widget.gatoInfo.child("img").value.toString().split("&")[0]}.webp?alt=media",
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${img.split("&")[0]}.webp?alt=media",
                       fit: BoxFit.cover,
                       placeholder: (context, url) => AspectRatio(
                         aspectRatio: 1 / 1,
-                        child: BlurHash(hash: widget.gatoInfo.child("img").value.toString().split("&")[1]),
+                        child: BlurHash(hash: img.split("&")[1]),
                       ),
                       width: MediaQuery.of(context).size.width,
                       fadeInDuration: const Duration(milliseconds: 150),
                       fadeOutDuration: const Duration(milliseconds: 150),
-                    ),
+                    ),*/
                     const DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -149,7 +163,7 @@ class GatoInfoState extends State<GatoInfo> {
                             )
                           : const SizedBox(),
                       widget.gatoInfo.child("comentarios").children.length > 2
-                          ? Comentarios(widget.gatoInfo)
+                          ? ComentariosWiki(widget.gatoInfo)
                           : const SizedBox(
                               height: 80,
                               child: Row(
@@ -171,16 +185,16 @@ class GatoInfoState extends State<GatoInfo> {
   }
 }
 
-class Comentarios extends StatefulWidget {
+class ComentariosWiki extends StatefulWidget {
   final DataSnapshot gatoInfo;
 
-  const Comentarios(this.gatoInfo, {super.key});
+  const ComentariosWiki(this.gatoInfo, {super.key});
 
   @override
-  State<Comentarios> createState() => _ComentariosState();
+  State<ComentariosWiki> createState() => _ComentariosWikiState();
 }
 
-class _ComentariosState extends State<Comentarios> {
+class _ComentariosWikiState extends State<ComentariosWiki> {
   @override
   void initState() {
     super.initState();

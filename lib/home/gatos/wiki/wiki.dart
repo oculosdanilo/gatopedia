@@ -1,5 +1,4 @@
 import 'package:animations/animations.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
@@ -109,7 +108,20 @@ class _WikiState extends State<Wiki> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CachedNetworkImage(
+                SizedBox(
+                  width: 130,
+                  height: 130,
+                  child: BlurHash(
+                    hash: e.child("img").value.toString().split("&")[1],
+                    image:
+                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${e.child("img").value.toString().split("&")[0]}.webp?alt=media",
+                    decodingWidth: 130,
+                    decodingHeight: 130,
+                    duration: const Duration(milliseconds: 150),
+                    color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  ),
+                ),
+                /*CachedNetworkImage(
                   imageUrl:
                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${e.child("img").value.toString().split("&")[0]}.webp?alt=media",
                   placeholder: (context, url) => AspectRatio(
@@ -120,7 +132,7 @@ class _WikiState extends State<Wiki> {
                   fadeOutDuration: const Duration(milliseconds: 150),
                   width: 130,
                   height: 130,
-                ),
+                ),*/
                 const SizedBox(width: 15),
                 Flexible(
                   child: Column(
@@ -129,13 +141,13 @@ class _WikiState extends State<Wiki> {
                       const SizedBox(height: 10),
                       Text(
                         e.key ?? "",
-                        style: const TextStyle(fontFamily: "Jost", fontWeight: FontWeight.bold, fontSize: 25),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                         softWrap: true,
                       ),
                       const SizedBox(height: 10),
                       Text(
                         e.child("resumo").value.toString(),
-                        style: const TextStyle(fontFamily: "Jost", fontSize: 15),
+                        style: const TextStyle(fontSize: 15),
                         softWrap: true,
                         maxLines: 3,
                       )

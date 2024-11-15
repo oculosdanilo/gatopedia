@@ -8,7 +8,7 @@ import 'package:gatopedia/index.dart';
 import 'package:gatopedia/main.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-List<Widget> telasHome = const [GatoLista(), Profile(false), Config(false)];
+List<Widget> telasHome = const [Gatos(), Profile(false), Config(false)];
 int indexAntigo = 0;
 
 class Home extends StatefulWidget {

@@ -56,7 +56,7 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
                                 ),
                                 child: FadeInImage(
                                   fadeInDuration: const Duration(milliseconds: 100),
-                                  placeholder: const AssetImage("assets/user.webp"),
+                                  placeholder: const AssetImage("assets/anim/loading.gif"),
                                   image: NetworkImage(
                                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postSS.child("username").value}.webp?alt=media"),
                                   imageErrorBuilder: (c, obj, stacktrace) =>
@@ -85,7 +85,7 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
                                         "${postSS.child("username").value}",
                                         style: TextStyle(
                                           fontSize: 20,
-                                          fontVariations: const [FontVariation("wght", 500.0)],
+                                          fontVariations: const [FontVariation("wght", 600.0)],
                                         ),
                                         softWrap: true,
                                       ),
@@ -228,14 +228,14 @@ Widget post(BuildContext context, int index, void Function(void Function()) setS
                                     ),
                                   ),
                             openBuilder: (context, action) => username != null
-                                ? Comentarios(postSS)
+                                ? ComentariosForum(postSS)
                                 : Theme(
                                     data: ThemeData.from(
                                       colorScheme:
                                           GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
                                       useMaterial3: true,
                                     ),
-                                    child: Comentarios(postSS),
+                                    child: ComentariosForum(postSS),
                                   ),
                           ),
                           Align(
