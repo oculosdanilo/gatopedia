@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
@@ -17,12 +19,7 @@ class PublicProfile extends StatefulWidget {
 }
 
 class _PublicProfileState extends State<PublicProfile> {
-  @override
-  void setState(fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
+  late StreamSubscription<DatabaseEvent> atualizarListenPublicProfile;
 
   _pegarUserinfo(username) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
@@ -43,7 +40,7 @@ class _PublicProfileState extends State<PublicProfile> {
   _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users");
-    ref.onValue.listen((event) {
+    atualizarListenPublicProfile = ref.onValue.listen((event) {
       _pegarUserinfo(widget.username);
     });
   }
@@ -57,17 +54,23 @@ class _PublicProfileState extends State<PublicProfile> {
   }
 
   @override
+  void dispose() {
+    atualizarListenPublicProfile.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: widget.username == username
-          ? const Profile(true)
-          : Theme(
-              data: username != null
-                  ? Theme.of(context)
-                  : ThemeData.from(
-                      colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
-                    ),
-              child: CustomScrollView(
+    return Theme(
+      data: username != null
+          ? Theme.of(context)
+          : ThemeData.from(
+              colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
+            ),
+      child: Scaffold(
+        body: widget.username == username
+            ? const Profile(true)
+            : CustomScrollView(
                 physics: const NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
@@ -109,7 +112,7 @@ class _PublicProfileState extends State<PublicProfile> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Bio", style: TextStyle(fontSize: 15, fontFamily: "Jost", color: Colors.grey[700]!)),
+                          Text("Bio", style: TextStyle(fontSize: 15, color: Colors.grey[700]!)),
                           SelectableText(bioText, style: TextStyle(fontSize: 20))
                         ],
                       ),
@@ -117,7 +120,7 @@ class _PublicProfileState extends State<PublicProfile> {
                   ),
                 ],
               ),
-            ),
+      ),
     );
   }
 }

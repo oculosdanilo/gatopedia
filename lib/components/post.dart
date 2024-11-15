@@ -11,7 +11,7 @@ import 'package:gatopedia/telas/home/gatos/forum/edit/edit_post.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/forum/view/comentarios.dart';
 import 'package:gatopedia/telas/home/gatos/forum/view/imagem_view.dart';
-import 'package:gatopedia/telas/home/gatos/public_profile.dart';
+import 'package:gatopedia/telas/home/public_profile.dart';
 import 'package:gatopedia/main.dart';
 import 'package:grayscale/grayscale.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -92,15 +92,12 @@ class _PostState extends State<Post> {
                             ),
                           ),
                           const SizedBox(width: 15),
-                          Flexible(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Flexible(
-                                      child: GestureDetector(
+                          postSS.child("content").value.toString() != ""
+                              ? Flexible(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      GestureDetector(
                                         onTap: () => Navigator.push(
                                           context,
                                           SlideRightAgainRoute(PublicProfile("${postSS.child("username").value}")),
@@ -114,43 +111,53 @@ class _PostState extends State<Post> {
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(width: username == postSS.child("username").value ? 58 : 10),
-                                  ],
-                                ),
-                                Text(
-                                  maisDe2Linhas(postSS.child("content").value.toString())
-                                      ? flag
-                                          ? "$pedaco1..."
-                                          : pedaco1 + pedaco2
-                                      : pedaco1,
-                                  style: TextStyle(fontSize: 16),
-                                  softWrap: true,
-                                  maxLines: 50,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    InkWell(
-                                      onTap: () => setState(() => flag = !flag),
-                                      child: maisDe2Linhas(postSS.child("content").value.toString())
-                                          ? Text(
-                                              flag ? "mostrar mais" : "mostrar menos",
-                                              style: const TextStyle(color: Colors.grey),
+                                      Text(
+                                        maisDe2Linhas(postSS.child("content").value.toString())
+                                            ? flag
+                                                ? "$pedaco1..."
+                                                : pedaco1 + pedaco2
+                                            : pedaco1,
+                                        style: TextStyle(fontSize: 16),
+                                        softWrap: true,
+                                        maxLines: 50,
+                                      ),
+                                      maisDe2Linhas(postSS.child("content").value.toString())
+                                          ? Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () => setState(() => flag = !flag),
+                                                  child: Text(
+                                                    flag ? "mostrar mais" : "mostrar menos",
+                                                    style: const TextStyle(color: Colors.grey),
+                                                  ),
+                                                ),
+                                              ],
                                             )
-                                          : const SizedBox(height: 5),
+                                          : const SizedBox(),
+                                    ],
+                                  ),
+                                )
+                              : Expanded(
+                                  child: Container(
+                                    alignment: Alignment.centerLeft,
+                                    height: 45,
+                                    child: Text(
+                                      "${postSS.child("username").value}",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontVariations: const [FontVariation("wght", 600.0)],
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ],
-                            ),
-                          ),
                           SizedBox(width: username == postSS.child("username").value ? 58 : 15)
                         ],
                       ),
                       postSS.child("img").value != null
                           ? Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 14),
+                              padding: const EdgeInsets.fromLTRB(0, 12, 0, 14),
                               child: AspectRatio(
                                 aspectRatio: 1,
                                 child: InkWell(

@@ -52,15 +52,15 @@ class _IndexState extends State<Index> {
     super.initState();
     if (!iniciou) {
       FlutterNativeSplash.remove();
+      if (!kIsWeb) {
+        connecteo.connectionStream.listen((internet) {
+          if (!mounted) return;
+          if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
+        });
+      }
       iniciou = true;
     }
     full = false;
-    if (!kIsWeb) {
-      connecteo.connectionStream.listen((internet) {
-        if (!mounted) return;
-        if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
-      });
-    }
     if (!kDebugMode && !kProfileMode && !kIsWeb) {
       _checarUpdate();
     }
@@ -166,7 +166,7 @@ class _IndexState extends State<Index> {
             PopupMenuItem(
               onTap: () => Navigator.push(context, SlideUpRoute(const Scaffold(body: Config(true)))),
               child: const Row(
-                children: [Icon(Symbols.more_horiz_rounded, fill: 1), SizedBox(width: 15), Text("Mais")],
+                children: [Icon(Symbols.settings_rounded, fill: 1), SizedBox(width: 15), Text("Configurações")],
               ),
             ),
           ],
@@ -296,7 +296,7 @@ class _IndexState extends State<Index> {
                       colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
                       useMaterial3: true,
                     ),
-                    child: const GatoLista(),
+                    child: const Gatos(),
                   ),
                 ),
               ),

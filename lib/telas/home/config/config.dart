@@ -120,7 +120,7 @@ class _ConfigState extends State<Config> {
     }
 
     Future.delayed(Duration.zero, () async {
-      await atualizarListen.cancel();
+      await atualizarListen?.cancel();
       await FirebaseDatabase.instance.ref("users/$username").remove();
       username = null;
       final pref = await SharedPreferences.getInstance();

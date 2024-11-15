@@ -6,6 +6,7 @@ import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/main.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 bool imagemSelecionada = false;
 
@@ -46,23 +47,11 @@ class _ImagePostState extends State<ImagePost> {
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: '\u270F️Editando...',
-          toolbarColor: Theme
-              .of(context)
-              .colorScheme
-              .primary,
-          toolbarWidgetColor: Theme
-              .of(context)
-              .colorScheme
-              .onPrimary,
+          toolbarColor: Theme.of(context).colorScheme.primary,
+          toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
           initAspectRatio: CropAspectRatioPreset.original,
-          activeControlsWidgetColor: Theme
-              .of(context)
-              .colorScheme
-              .primary,
-          statusBarColor: Theme
-              .of(context)
-              .colorScheme
-              .primary,
+          activeControlsWidgetColor: Theme.of(context).colorScheme.primary,
+          statusBarColor: Theme.of(context).colorScheme.primary,
         ),
         IOSUiSettings(
           cancelButtonTitle: "Cancelar",
@@ -93,10 +82,7 @@ class _ImagePostState extends State<ImagePost> {
           scrollBehavior: MyBehavior(),
           slivers: <Widget>[
             SliverAppBar.large(
-              backgroundColor: Theme
-                  .of(context)
-                  .colorScheme
-                  .primary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               leading: IconButton(
                 onPressed: () {
                   setState(() {
@@ -105,18 +91,12 @@ class _ImagePostState extends State<ImagePost> {
                   });
                   Navigator.pop(context);
                 },
-                icon: Icon(Icons.close_rounded, color: Theme
-                    .of(context)
-                    .colorScheme
-                    .onPrimary),
+                icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onPrimary),
               ),
               title: Center(
                 child: Text(
                   widget.imageType == "image" ? "Post com imagem" : "Post com GIF",
-                  style: TextStyle(color: Theme
-                      .of(context)
-                      .colorScheme
-                      .onPrimary),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
               ),
             ),
@@ -127,10 +107,7 @@ class _ImagePostState extends State<ImagePost> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: Theme
-                          .of(context)
-                          .colorScheme
-                          .onSurface,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   width: double.infinity,
@@ -142,9 +119,9 @@ class _ImagePostState extends State<ImagePost> {
                           width: double.infinity,
                           child: imagemSelecionada
                               ? Image(
-                            image: FileImage(file!),
-                            fit: BoxFit.cover,
-                          )
+                                  image: FileImage(file!),
+                                  fit: BoxFit.cover,
+                                )
                               : const Center(child: CircularProgressIndicator()),
                         ),
                         TextField(
@@ -154,49 +131,40 @@ class _ImagePostState extends State<ImagePost> {
                           minLines: 1,
                           decoration: InputDecoration(
                             enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .outline),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
                             ),
                             focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .primary),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             widget.imageType == "image"
-                                ? ElevatedButton(
-                              onPressed: () async {
-                                final imgEditada = await _editarImagem(file!);
-                                if (imgEditada != null) {
-                                  setState(() {
-                                    file = imgEditada;
-                                  });
-                                }
-                              },
-                              child: const Text("EDITAR"),
-                            )
+                                ? ElevatedButton.icon(
+                                    onPressed: () async {
+                                      final imgEditada = await _editarImagem(file!);
+                                      if (imgEditada != null) {
+                                        setState(() {
+                                          file = imgEditada;
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Symbols.tune_rounded),
+                                    label: const Text("EDITAR"),
+                                  )
                                 : const SizedBox(),
                             const Expanded(child: SizedBox()),
                             FilledButton.icon(
                               onPressed: () {
-                                if (txtLegenda.text != "") {
-                                  setState(() {
-                                    postado = true;
-                                    imagemSelecionada = false;
-                                  });
-                                  legenda = txtLegenda.text;
-                                  Navigator.pop(context);
-                                }
+                                setState(() {
+                                  postado = true;
+                                  imagemSelecionada = false;
+                                });
+                                legenda = txtLegenda.text;
+                                Navigator.pop(context);
                               },
                               icon: const Icon(Icons.send_rounded),
                               label: const Text("ENVIAR"),

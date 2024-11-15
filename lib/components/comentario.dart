@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
-import 'package:gatopedia/telas/home/gatos/public_profile.dart';
+import 'package:gatopedia/telas/home/public_profile.dart';
 import 'package:gatopedia/main.dart';
 
 Card comentario(
@@ -15,7 +15,7 @@ Card comentario(
         ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
         : Theme.of(context).colorScheme.surfaceContainerLow,
     child: Padding(
-      padding: const EdgeInsets.fromLTRB(15, 10, 15, 25),
+      padding: const EdgeInsets.all(15),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -47,10 +47,9 @@ Card comentario(
                     softWrap: true,
                   ),
                 ),
-                const SizedBox(height: 10),
                 Text(
                   contentPost,
-                  style: const TextStyle(fontSize: 17),
+                  style: TextStyle(fontSize: 17, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   softWrap: true,
                   maxLines: 50,
                 )
@@ -64,7 +63,7 @@ Card comentario(
                   decoration: ShapeDecoration(color: blueScheme.errorContainer, shape: const CircleBorder()),
                   child: IconButton(
                     icon: const Icon(Icons.delete_rounded),
-                    color: Colors.white,
+                    color: blueScheme.onErrorContainer,
                     onPressed: () {
                       showCupertinoDialog(
                         barrierDismissible: false,

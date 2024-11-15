@@ -49,12 +49,10 @@ class SemInternetState extends State {
               ),
               Text(
                 "Sem internet",
-                style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Jost", fontSize: 30),
+                style: TextStyle(fontVariations: [FontVariation("wght", 600)], fontSize: 30),
               ),
               Text("Aguardando conexão"),
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30),
               CircularProgressIndicator(
                 value: null,
               )

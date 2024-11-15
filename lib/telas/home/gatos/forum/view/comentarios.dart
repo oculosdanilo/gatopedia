@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/components/comentario.dart';
 
-import 'package:gatopedia/telas/home/gatos/public_profile.dart';
+import 'package:gatopedia/telas/home/public_profile.dart';
 import 'package:gatopedia/main.dart';
 
 class ComentariosForum extends StatefulWidget {
@@ -107,9 +107,7 @@ class _ComentariosForumState extends State<ComentariosForum> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            SlideRightAgainRoute(
-                              PublicProfile(postAtual.child("username").value as String),
-                            ),
+                            SlideRightAgainRoute(PublicProfile(postAtual.child("username").value as String)),
                           );
                         },
                         child: Image(

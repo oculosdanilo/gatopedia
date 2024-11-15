@@ -16,7 +16,7 @@ enum MenuItensImg { editar, remover }
 
 enum MenuItensSemImg { adicionar }
 
-late StreamSubscription<DatabaseEvent> atualizarListen;
+StreamSubscription<DatabaseEvent>? atualizarListen;
 
 String bioText = "carregando...";
 bool? temImagem;
@@ -106,7 +106,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   void dispose() {
-    atualizarListen.cancel();
+    atualizarListen?.cancel();
     super.dispose();
   }
 

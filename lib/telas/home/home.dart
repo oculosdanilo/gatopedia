@@ -1,11 +1,14 @@
 import 'package:animations/animations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:gatopedia/telas/index.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/loginScreen/seminternet.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 List<Widget> telasHome = const [Gatos(), Profile(false), Config(false)];
@@ -29,6 +32,12 @@ class _HomeState extends State<Home> {
     super.initState();
     if (!iniciou) {
       FlutterNativeSplash.remove();
+      if (!kIsWeb) {
+        connecteo.connectionStream.listen((internet) {
+          if (!mounted) return;
+          if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
+        });
+      }
       iniciou = true;
     }
     setState(() {

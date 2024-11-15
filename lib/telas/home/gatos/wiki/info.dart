@@ -104,7 +104,10 @@ class GatoInfoState extends State<GatoInfo> {
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 30),
-                            Text("COMENTÁRIOS", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25)),
+                            Text(
+                              "COMENTÁRIOS",
+                              style: TextStyle(fontVariations: [FontVariation("wght", 600)], fontSize: 25),
+                            ),
                           ],
                         ),
                       ),
@@ -175,7 +178,7 @@ class GatoInfoState extends State<GatoInfo> {
                 ),
               ],
             ),
-            SliverToBoxAdapter(child: SizedBox(height: username != null ? 25 : 0))
+            SliverToBoxAdapter(child: SizedBox(height: 25))
           ],
         ),
       ),
@@ -206,18 +209,21 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final comentarioSS = snapshot.data!;
-          return ListView(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            reverse: true,
-            children: comentarioSS.children
-                .map<Widget>(
-                  (e) => e.value != "null"
-                      ? comentario(context, int.parse(e.key!), e.child("user").value as String,
-                          e.child("content").value as String, deletarC)
-                      : const SizedBox(),
-                )
-                .toList(),
+          return Transform.translate(
+            offset: Offset(0, username != null ? -25 : -50),
+            child: ListView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              reverse: true,
+              children: comentarioSS.children
+                  .map<Widget>(
+                    (e) => e.value != "null"
+                        ? comentario(context, int.parse(e.key!), e.child("user").value as String,
+                            e.child("content").value as String, deletarC)
+                        : const SizedBox(),
+                  )
+                  .toList(),
+            ),
           );
         } else {
           return Transform.translate(

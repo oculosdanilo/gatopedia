@@ -11,7 +11,7 @@ import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gatopedia/telas/home/gatos/forum/new/image_post.dart';
 import 'package:gatopedia/telas/home/gatos/forum/new/text_post.dart';
-import 'package:gatopedia/telas/home/gatos/forum/view/post.dart';
+import 'package:gatopedia/components/post.dart';
 import 'package:gatopedia/main.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -46,6 +46,8 @@ class _ForumState extends State<Forum> {
   }
 
   _postarImagem(int post, String filetype) async {
+    CachedNetworkImage.evictFromCache(
+        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$post.webp?alt=media");
     if (filetype == "img") {
       XFile? result = await FlutterImageCompress.compressAndGetFile(
         file!.absolute.path,
@@ -55,60 +57,33 @@ class _ForumState extends State<Forum> {
       );
       File finalFile = File(result!.path);
       await FirebaseStorage.instance.ref("posts/$post.webp").putFile(finalFile);
-      FirebaseDatabase database = FirebaseDatabase.instance;
-      DatabaseReference ref = database.ref("posts");
-      await ref.update({
-        "$post": {
-          "username": username,
-          "content": legenda,
-          "likes": {
-            "lenght": 0,
-            "users": "",
-          },
-          "img": true,
-          "comentarios": [
-            {"a": "a"},
-            {"a": "a"}
-          ]
-        }
-      });
-      if (!mounted) return;
-      Flushbar(
-        message: "Postado com sucesso!",
-        duration: const Duration(seconds: 5),
-        margin: const EdgeInsets.all(20),
-        borderRadius: BorderRadius.circular(50),
-      ).show(context);
     } else {
-      File finalFile = file!;
-      await FirebaseStorage.instance.ref("posts/$post.webp").putFile(finalFile);
-      FirebaseDatabase database = FirebaseDatabase.instance;
-      DatabaseReference ref = database.ref("posts");
-      await ref.update(
-        {
-          "$post": {
-            "username": username,
-            "content": legenda,
-            "likes": {
-              "lenght": 0,
-              "users": "",
-            },
-            "img": true,
-            "comentarios": [
-              {"a": "a"},
-              {"a": "a"}
-            ]
-          }
-        },
-      );
-      if (!mounted) return;
-      Flushbar(
-        message: "Postado com sucesso!",
-        duration: const Duration(seconds: 5),
-        margin: const EdgeInsets.all(20),
-        borderRadius: BorderRadius.circular(50),
-      ).show(context);
+      await FirebaseStorage.instance.ref("posts/$post.webp").putFile(file!);
     }
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("posts");
+    await ref.update({
+      "$post": {
+        "username": username,
+        "content": legenda,
+        "likes": {
+          "lenght": 0,
+          "users": "",
+        },
+        "img": true,
+        "comentarios": [
+          {"a": "a"},
+          {"a": "a"}
+        ]
+      }
+    });
+    if (!mounted) return;
+    Flushbar(
+      message: "Postado com sucesso!",
+      duration: const Duration(seconds: 5),
+      margin: const EdgeInsets.all(20),
+      borderRadius: BorderRadius.circular(50),
+    ).show(context);
   }
 
   _like(int post) {
