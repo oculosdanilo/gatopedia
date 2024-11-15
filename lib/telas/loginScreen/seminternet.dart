@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:gatopedia/telas/main.dart';
+import 'package:gatopedia/main.dart';
 
 class SemInternet extends StatefulWidget {
   const SemInternet({super.key});

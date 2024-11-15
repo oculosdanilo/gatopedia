@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/gatos/public_profile.dart';
-import 'package:gatopedia/telas/main.dart';
+import 'package:gatopedia/main.dart';
 
 Card comentario(
     BuildContext context, int index, String usernamePost, String contentPost, Function(int index) deletarC) {

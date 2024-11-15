@@ -12,7 +12,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gatopedia/telas/home/gatos/forum/new/image_post.dart';
 import 'package:gatopedia/telas/home/gatos/forum/new/text_post.dart';
 import 'package:gatopedia/telas/home/gatos/forum/view/post.dart';
-import 'package:gatopedia/telas/main.dart';
+import 'package:gatopedia/main.dart';
 import 'package:path_provider/path_provider.dart';
 
 bool postado = false;

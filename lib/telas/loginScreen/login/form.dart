@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
-import 'package:gatopedia/telas/main.dart';
+import 'package:gatopedia/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FormApp extends StatefulWidget {

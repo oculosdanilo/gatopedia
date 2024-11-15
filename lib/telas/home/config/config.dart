@@ -8,7 +8,7 @@ import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/index.dart';
 import 'package:gatopedia/telas/loginScreen/colab.dart';
-import 'package:gatopedia/telas/main.dart';
+import 'package:gatopedia/main.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';

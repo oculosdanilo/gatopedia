@@ -8,7 +8,7 @@ import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/telas/home/gatos/forum/view/imagem_view.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
-import 'package:gatopedia/telas/main.dart';
+import 'package:gatopedia/main.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';

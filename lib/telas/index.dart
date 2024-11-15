@@ -11,7 +11,7 @@ import 'package:gatopedia/telas/loginScreen/colab.dart';
 import 'package:gatopedia/telas/loginScreen/login/cadastro.dart';
 import 'package:gatopedia/telas/loginScreen/login/form.dart';
 import 'package:gatopedia/telas/loginScreen/seminternet.dart';
-import 'package:gatopedia/telas/main.dart';
+import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/update.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grayscale/grayscale.dart';

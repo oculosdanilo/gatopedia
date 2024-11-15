@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/components/comentario.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
-import 'package:gatopedia/telas/main.dart';
+import 'package:gatopedia/main.dart';
 
 late Future<DataSnapshot> _getData;
 

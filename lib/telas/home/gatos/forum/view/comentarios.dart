@@ -7,7 +7,7 @@ import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/components/comentario.dart';
 
 import 'package:gatopedia/telas/home/gatos/public_profile.dart';
-import 'package:gatopedia/telas/main.dart';
+import 'package:gatopedia/main.dart';
 
 class ComentariosForum extends StatefulWidget {
   final DataSnapshot post;

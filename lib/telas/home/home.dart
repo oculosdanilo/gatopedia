@@ -5,7 +5,7 @@ import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:gatopedia/telas/index.dart';
-import 'package:gatopedia/telas/main.dart';
+import 'package:gatopedia/main.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 List<Widget> telasHome = const [Gatos(), Profile(false), Config(false)];
