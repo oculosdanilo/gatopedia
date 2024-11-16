@@ -8,6 +8,7 @@ import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/loginScreen/colab.dart';
+import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
 import 'package:gatopedia/telas/loginScreen/login/cadastro.dart';
 import 'package:gatopedia/telas/loginScreen/login/form.dart';
 import 'package:gatopedia/telas/loginScreen/seminternet.dart';

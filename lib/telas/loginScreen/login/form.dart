@@ -80,7 +80,7 @@ class FormAppState extends State<FormApp> {
                   if (value == null || value.isEmpty) {
                     return 'Obrigatório';
                   } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
-                    return 'Caractere(s) inválido(s)!';
+                    return 'Caractere(s) inválido(s)! (espaços e símbolos especiais)';
                   } else if (value.length <= 3) {
                     return "Nome muito pequeno!";
                   } else if (value.contains(RegExp(r'^[0-9]+$'))) {

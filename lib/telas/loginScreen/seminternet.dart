@@ -43,19 +43,14 @@ class SemInternetState extends State {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                Icons.wifi_off_rounded,
-                size: 170,
-              ),
+              Icon(Icons.wifi_off_rounded, size: 170),
               Text(
                 "Sem internet",
                 style: TextStyle(fontVariations: [FontVariation("wght", 600)], fontSize: 30),
               ),
               Text("Aguardando conexão"),
               SizedBox(height: 30),
-              CircularProgressIndicator(
-                value: null,
-              )
+              CircularProgressIndicator(value: null)
             ],
           ),
         ),

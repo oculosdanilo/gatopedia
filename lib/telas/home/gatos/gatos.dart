@@ -6,6 +6,7 @@ import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/main.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -116,6 +117,8 @@ class _GatosState extends State<Gatos> {
                               await sp.remove("img");
                             }
                             if (!context.mounted) return;
+                            iniciouUserGoogle = false;
+                            GoogleSignIn().signOut();
                             username = null;
                             Navigator.pop(context);
                             Navigator.push(context, MaterialPageRoute(builder: (c) => const Index(false)));

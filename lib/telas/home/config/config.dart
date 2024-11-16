@@ -9,6 +9,8 @@ import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/index.dart';
 import 'package:gatopedia/telas/loginScreen/colab.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -24,6 +26,9 @@ String packageName = "";
 String version = "";
 String buildNumber = "";
 bool dark = App.themeNotifier.value == ThemeMode.dark ? true : false;
+
+bool iniciouUserGoogle = false;
+String? userGoogle;
 
 class Config extends StatefulWidget {
   final bool voltar;
@@ -130,15 +135,33 @@ class _ConfigState extends State<Config> {
         await pref.remove("img");
       }
 
+      iniciouUserGoogle = false;
+      GoogleSignIn().signOut();
+
       if (!context.mounted) return;
       Navigator.pop(context, true);
     });
+  }
+
+  _pegarUserGoogle() async {
+    final ref = FirebaseDatabase.instance.ref("users/$username/google");
+    final googleID = await ref.get();
+    if (googleID.exists) {
+      debugPrint(googleID.value as String);
+      setState(() {
+        userGoogle = googleID.value as String;
+      });
+    }
   }
 
   @override
   void initState() {
     indexAntigo = 2;
     _pegarVersao();
+    if (!iniciouUserGoogle) {
+      _pegarUserGoogle();
+      iniciouUserGoogle = true;
+    }
     super.initState();
   }
 
@@ -200,7 +223,7 @@ class _ConfigState extends State<Config> {
                     ? ListTile(
                         onTap: () async {
                           final dialogo = await showCupertinoDialog<bool>(
-                            barrierDismissible: true,
+                            barrierDismissible: false,
                             context: context,
                             builder: (c) => Theme(
                               data: ThemeData.from(
@@ -273,6 +296,10 @@ class _ConfigState extends State<Config> {
     );
   }
 
+  bool botaoGoogleEnabled = true;
+  bool confirmado = false;
+  GoogleSignInAccount? conta;
+
   AlertDialog alertaDeletar(StateSetter setStateB, BuildContext context) {
     return AlertDialog(
       title: const Text("Sentirei saudades :,("),
@@ -282,60 +309,97 @@ class _ConfigState extends State<Config> {
         children: [
           const Text(
               "Quando sua conta for deletada, suas postagens e comentários também serão removidos da plataforma.\n"),
-          const Text("Para continuar, insira abaixo sua senha:", textAlign: TextAlign.start),
-          SizedBox(
-            width: scW * 0.8,
-            height: 65,
-            child: TextFormField(
-              textInputAction: TextInputAction.done,
-              autofillHints: const [AutofillHints.password],
-              controller: txtControllerSenha,
-              obscureText: esconderSenha,
-              keyboardType: TextInputType.visiblePassword,
-              decoration: InputDecoration(
-                prefix: const SizedBox(width: 10),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: IconButton(onPressed: () => mostrarSenha(setStateB), icon: iconeOlho),
+          userGoogle != null
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Para continuar, confirme sua conta do Google abaixo:", textAlign: TextAlign.start),
+                    SizedBox(height: 15),
+                    SizedBox(
+                      width: scW * 0.8,
+                      child: FilledButton.icon(
+                        onPressed: !confirmado
+                            ? () async {
+                                conta = await loginGoogle();
+                                if (conta != null && conta?.id == userGoogle) {
+                                  setStateB(() {
+                                    confirmado = true;
+                                  });
+                                }
+                              }
+                            : () {},
+                        icon: Icon(!confirmado ? AntDesign.google_outline : Symbols.done_rounded),
+                        label: Text(!confirmado ? "Confirmar" : "Confirmado!", style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Para continuar, insira abaixo sua senha:", textAlign: TextAlign.start),
+                    SizedBox(
+                      width: scW * 0.8,
+                      height: 65,
+                      child: TextFormField(
+                        textInputAction: TextInputAction.done,
+                        autofillHints: const [AutofillHints.password],
+                        controller: txtControllerSenha,
+                        obscureText: esconderSenha,
+                        keyboardType: TextInputType.visiblePassword,
+                        decoration: InputDecoration(
+                          prefix: const SizedBox(width: 10),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: IconButton(onPressed: () => mostrarSenha(setStateB), icon: iconeOlho),
+                          ),
+                          label: Text("Senha"),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                label: Text("Senha"),
-              ),
-            ),
-          ),
         ],
       ),
       actions: [
-        OutlinedButton(onPressed: () => Navigator.pop(context), child: const Text("CANCELAR")),
+        OutlinedButton(
+          onPressed: () {
+            Navigator.pop(context);
+            confirmado = false;
+          },
+          child: const Text("CANCELAR"),
+        ),
         FilledButton(
-          onPressed: !conectando
+          onPressed: (userGoogle == null && !conectando) || (userGoogle != null && confirmado && !conectando)
               ? () async {
                   setStateB(() {
                     conectando = true;
                   });
-                  final senhaCorreta = await _autenticarSenha(txtControllerSenha.text);
-                  if (!context.mounted) return;
-                  if (senhaCorreta) {
-                    await _deletarConta(context);
+                  if (userGoogle == null) {
+                    final senhaCorreta = await _autenticarSenha(txtControllerSenha.text);
+                    if (!context.mounted) return;
+                    if (senhaCorreta) {
+                      await _deletarConta(context);
+                    } else {
+                      Flushbar(
+                        duration: const Duration(seconds: 5),
+                        margin: const EdgeInsets.all(20),
+                        borderRadius: BorderRadius.circular(50),
+                        messageText: Row(
+                          children: [
+                            Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
+                            const SizedBox(width: 10),
+                            Text("Senha incorreta :/", style: TextStyle(color: blueScheme.onErrorContainer)),
+                          ],
+                        ),
+                        backgroundColor: blueScheme.errorContainer,
+                      ).show(context);
+                    }
                     setStateB(() {
                       conectando = false;
                     });
                   } else {
-                    Flushbar(
-                      duration: const Duration(seconds: 5),
-                      margin: const EdgeInsets.all(20),
-                      borderRadius: BorderRadius.circular(50),
-                      messageText: Row(
-                        children: [
-                          Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
-                          const SizedBox(width: 10),
-                          Text("Senha incorreta :/", style: TextStyle(color: blueScheme.onErrorContainer)),
-                        ],
-                      ),
-                      backgroundColor: blueScheme.errorContainer,
-                    ).show(context);
-                    setStateB(() {
-                      conectando = false;
-                    });
+                    await _deletarConta(context);
                   }
                 }
               : null,

@@ -217,12 +217,14 @@ class _ComentariosForumState extends State<ComentariosForum> {
                         itemBuilder: (c, i) {
                           int index = postAtual.child("comentarios").children.length - i;
                           return postAtual.child("comentarios/$index/username").value != null
-                              ? comentario(
-                                  context,
+                              ? Comentario(
                                   index,
                                   postAtual.child("comentarios/$index/username").value as String,
                                   postAtual.child("comentarios/$index/content").value as String,
                                   _deletarC,
+                                  key: Key((postAtual.child("comentarios/$index/username").value as String) +
+                                      (postAtual.child("comentarios/$index/content").value as String) +
+                                      index.toString()), /* key pra cada comentario ter sua propria foto certinho */
                                 )
                               : const SizedBox();
                         },

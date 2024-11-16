@@ -15,17 +15,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:photo_view/photo_view.dart';
 
-Future<GoogleSignInAccount?> loginGoogle() async {
-  try {
-    final conta = await GoogleSignIn().signIn();
-
-    return conta;
-  } catch (e) {
-    debugPrint(e.toString());
-    return null;
-  }
-}
-
 class NewCadastro extends StatefulWidget {
   final GoogleSignInAccount? conta;
 
@@ -161,7 +150,7 @@ class _NewCadastroState extends State<NewCadastro> {
 
                                 setState(() {
                                   botaoEnabled = true;
-                                  username = _txtControllerLogin.text;
+                                  username = _txtControllerLogin.text.toLowerCase();
 
                                   _txtControllerLogin.text = _txtControllerSenha.text = _txtControllerBio.text = "";
                                 });
@@ -332,7 +321,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                 if (value == null || value.isEmpty) {
                                   return 'Obrigatório';
                                 } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
-                                  return 'Caractere(s) inválido(s)!';
+                                  return 'Caractere(s) inválido(s)! (espaços ou símbolos)';
                                 } else if (value.length <= 3) {
                                   return "Nome muito pequeno!";
                                 } else if (value.contains(RegExp(r'^[0-9]+$'))) {
@@ -435,7 +424,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                     ],
                                   ),
                                 ),
-                                label: const Text("Bio"),
+                                label: const Text("Bio (opcional)"),
                               ),
                             ),
                           ],

@@ -47,6 +47,16 @@ Future<void> cadastrar(String username, String senha, String bio, {File? imagem}
   });
 }
 
+Future<GoogleSignInAccount?> loginGoogle() async {
+  try {
+    final conta = await GoogleSignIn().signIn();
+
+    return conta;
+  } catch (e) {
+    return null;
+  }
+}
+
 Future<void> cadastrarGoogle(
   String username,
   String bio,

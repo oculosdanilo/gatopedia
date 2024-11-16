@@ -218,8 +218,10 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
               children: comentarioSS.children
                   .map<Widget>(
                     (e) => e.value != "null"
-                        ? comentario(context, int.parse(e.key!), e.child("user").value as String,
-                            e.child("content").value as String, deletarC)
+                        ? Comentario(int.parse(e.key!), e.child("user").value as String,
+                            e.child("content").value as String, deletarC,
+                            key: Key(
+                                "${int.parse(e.key!)}${e.child("user").value as String}${e.child("content").value as String}"))
                         : const SizedBox(),
                   )
                   .toList(),
