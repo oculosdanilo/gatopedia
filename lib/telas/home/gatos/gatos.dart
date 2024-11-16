@@ -162,7 +162,11 @@ class _GatosState extends State<Gatos> {
             margin: const EdgeInsets.fromLTRB(15, kToolbarHeight, 10, 0),
             child: Text(
               username != null ? "@$username" : "@shhhanônimo",
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 28),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontSize: 28,
+                fontVariations: [FontVariation("wght", 500)],
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           )

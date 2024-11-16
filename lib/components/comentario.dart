@@ -95,7 +95,7 @@ class _ComentarioState extends State<Comentario> {
                       SlideRightAgainRoute(PublicProfile(widget.usernamePost)),
                     ),
                     child: Text(
-                      widget.usernamePost,
+                      "@${widget.usernamePost}",
                       style: TextStyle(fontVariations: [FontVariation("wght", 500)], fontSize: 20),
                       softWrap: true,
                     ),

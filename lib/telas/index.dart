@@ -227,7 +227,10 @@ class _IndexState extends State<Index> {
                             }
                           : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
-                      child: Text("Entrar", style: TextStyle(fontSize: 20)),
+                      child: Text(
+                        "Entrar",
+                        style: TextStyle(fontSize: 20, fontVariations: [FontVariation("wght", 500)]),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),

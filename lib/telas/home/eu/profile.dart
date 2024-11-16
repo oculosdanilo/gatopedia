@@ -283,8 +283,11 @@ class _ProfileState extends State<Profile> {
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       flexibleSpace: FlexibleSpaceBar(
         title: Padding(
-          padding: const EdgeInsets.only(left: 15),
-          child: Text(username!, style: TextStyle(color: Colors.white)),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Text(
+            "@$username",
+            style: TextStyle(color: Colors.white, fontVariations: [FontVariation("wght", 500)]),
+          ),
         ),
         background: Stack(
           fit: StackFit.expand,

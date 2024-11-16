@@ -44,6 +44,18 @@ class _PostState extends State<Post> {
     }
   }
 
+  late Future<String?> Function(String usernamePost) _pegarFotoGoogle;
+
+  @override
+  void initState() {
+    super.initState();
+    _pegarFotoGoogle = (String usernamePost) async {
+      final ref = FirebaseDatabase.instance.ref("users/$usernamePost/img");
+      DataSnapshot link = await ref.get();
+      return link.value as String?;
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     DataSnapshot postSS = snapshotForum!.child("${widget.index}");
@@ -79,13 +91,38 @@ class _PostState extends State<Post> {
                                     SlideRightAgainRoute(PublicProfile(postSS.child("username").value as String)),
                                   ),
                                   child: FadeInImage(
-                                    fadeInDuration: const Duration(milliseconds: 100),
-                                    placeholder: const AssetImage("assets/anim/loading.gif"),
                                     image: NetworkImage(
                                         "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${postSS.child("username").value}.webp?alt=media"),
-                                    imageErrorBuilder: (c, obj, stacktrace) =>
-                                        Image.asset("assets/user.webp", fit: BoxFit.cover),
+                                    placeholder: AssetImage("assets/anim/loading.gif"),
+                                    width: 40,
                                     fit: BoxFit.cover,
+                                    imageErrorBuilder: (c, obj, stacktrace) {
+                                      return FutureBuilder(
+                                          future: _pegarFotoGoogle(postSS.child("username").value.toString()),
+                                          builder: (context, snapshotFoto) {
+                                            if (snapshotFoto.connectionState == ConnectionState.done) {
+                                              if (snapshotFoto.hasData) {
+                                                return Image.network(
+                                                  snapshotFoto.data!,
+                                                  width: 40,
+                                                  fit: BoxFit.cover,
+                                                );
+                                              } else {
+                                                return Image.asset(
+                                                  "assets/user.webp",
+                                                  width: 40,
+                                                  fit: BoxFit.cover,
+                                                );
+                                              }
+                                            } else {
+                                              return Image.asset(
+                                                "assets/anim/loading.gif",
+                                                width: 40,
+                                                fit: BoxFit.cover,
+                                              );
+                                            }
+                                          });
+                                    },
                                   ),
                                 ),
                               ),
@@ -103,7 +140,7 @@ class _PostState extends State<Post> {
                                           SlideRightAgainRoute(PublicProfile("${postSS.child("username").value}")),
                                         ),
                                         child: Text(
-                                          "${postSS.child("username").value}",
+                                          "@${postSS.child("username").value}",
                                           style: TextStyle(
                                             fontSize: 20,
                                             fontVariations: const [FontVariation("wght", 600.0)],

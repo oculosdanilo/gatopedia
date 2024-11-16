@@ -34,8 +34,9 @@ class _WikiState extends State<Wiki> {
       child: FutureBuilder<DataSnapshot>(
         future: _getData,
         builder: (context, snapshot) {
+          Widget filho;
           if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-            return ListView(
+            filho = ListView(
               shrinkWrap: true,
               controller: ScrollController(),
               children: username != null
@@ -46,8 +47,13 @@ class _WikiState extends State<Wiki> {
                     ],
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            filho = const Center(child: CircularProgressIndicator());
           }
+
+          return AnimatedSwitcher(
+            duration: Duration(milliseconds: 500),
+            child: filho,
+          );
         },
       ),
     );

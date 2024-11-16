@@ -217,7 +217,15 @@ class _ForumState extends State<Forum> {
         child: snapshotForum != null
             ? StretchingOverscrollIndicator(
                 axisDirection: AxisDirection.down,
-                child: ListView(
+                child: ListView.builder(
+                  itemCount: int.parse(snapshotForum!.children.last.key!),
+                  itemBuilder: (context, i) {
+                    return snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - i}").value != null
+                        ? Post(int.parse("${int.parse(snapshotForum!.children.last.key!) - i}"), _like, _unlike)
+                        : const SizedBox();
+                  },
+                ),
+                /*ListView(
                   shrinkWrap: true,
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: snapshotForum!.children
@@ -225,7 +233,7 @@ class _ForumState extends State<Forum> {
                       .toList()
                       .reversed
                       .toList(),
-                ),
+                ),*/
               )
             : const Center(child: CircularProgressIndicator()),
       ),
