@@ -188,7 +188,7 @@ class _ConfigState extends State<Config> {
             children: [
               Text(
                 "Configurações",
-                style: TextStyle(fontSize: 40),
+                style: TextStyle(fontSize: 40, fontVariations: [FontVariation.weight(500)]),
               ),
             ],
           ),
@@ -233,8 +233,7 @@ class _ConfigState extends State<Config> {
                                   brightness: dark ? Brightness.dark : Brightness.light,
                                 ),
                               ),
-                              child:
-                                  StatefulBuilder(builder: (context, setStateB) => alertaDeletar(setStateB, context)),
+                              child: StatefulBuilder(builder: (context, setStateB) => alertaDeletar(setStateB)),
                             ),
                           );
                           if (!context.mounted) return;
@@ -296,11 +295,10 @@ class _ConfigState extends State<Config> {
     );
   }
 
-  bool botaoGoogleEnabled = true;
   bool confirmado = false;
   GoogleSignInAccount? conta;
 
-  AlertDialog alertaDeletar(StateSetter setStateB, BuildContext context) {
+  AlertDialog alertaDeletar(StateSetter setStateB) {
     return AlertDialog(
       title: const Text("Sentirei saudades :,("),
       content: Column(

@@ -1,20 +1,21 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/telas/home/home.dart';
-import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/index.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gatopedia/telas/index.dart';
-import 'dart:math' as math;
 
 int tabIndex = 0;
-List<Widget> telasGatos = [const Wiki(), const Forum()];
 
 // tela gatos refeito
 class Gatos extends StatefulWidget {
@@ -37,6 +38,9 @@ class _GatosState extends State<Gatos> {
     super.initState();
     indexAntigo = 0;
   }
+
+  final ScrollController _scrollForum = ScrollController();
+  late List<Widget> telasGatos = [const Wiki(), Forum(_scrollForum)];
 
   @override
   Widget build(BuildContext context) {
@@ -68,74 +72,9 @@ class _GatosState extends State<Gatos> {
               AppBar(
                 backgroundColor: Colors.transparent,
                 centerTitle: false,
-                leading: username != null
-                    ? IconButton(
-                        onPressed: () async {
-                          bool dialogo = await showCupertinoDialog<bool>(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                      "Já vai? ;(",
-                                      style: TextStyle(fontVariations: [FontVariation("wght", 500)]),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    content: const Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [Text("Tem certeza que deseja sair?")]),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            dark = App.themeNotifier.value == ThemeMode.dark;
-                                          });
-                                          Navigator.pop(context, false);
-                                        },
-                                        child: const Text('CANCELAR'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            dark = App.themeNotifier.value == ThemeMode.dark;
-                                          });
-                                          Navigator.pop(context, true);
-                                        },
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ) ??
-                              false;
-                          if (dialogo) {
-                            await atualizarListen?.cancel();
-                            final sp = await SharedPreferences.getInstance();
-                            if (sp.containsKey("username")) await sp.remove("username");
-                            if (sp.containsKey("img") && sp.containsKey("bio")) {
-                              await sp.remove("bio");
-                              await sp.remove("img");
-                            }
-                            if (!context.mounted) return;
-                            iniciouUserGoogle = false;
-                            GoogleSignIn().signOut();
-                            username = null;
-                            Navigator.pop(context);
-                            Navigator.push(context, MaterialPageRoute(builder: (c) => const Index(false)));
-                          }
-                        },
-                        icon: Transform.rotate(
-                          angle: math.pi,
-                          child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.errorContainer),
-                        ),
-                      )
-                    : null,
+                leading: username != null ? botaoSair(context) : null,
               ),
               SizedBox(height: kToolbarHeight),
-              /*title: Text(
-                  username != null ? "@$username" : "@shhhanônimo",
-                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 30),
-                ),*/
               TabBar(
                 tabAlignment: TabAlignment.start,
                 isScrollable: true,
@@ -143,7 +82,14 @@ class _GatosState extends State<Gatos> {
                 unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.70),
                 indicatorColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
-                tabs: const [Tab(text: "Wiki"), Tab(text: "Forum")],
+                tabs: const [Tab(text: "Wiki"), Tab(text: "Feed")],
+                onTap: (index) {
+                  if (tabIndex == 1 && index == 1) {
+                    setState(() {
+                      _scrollForum.jumpTo(0.0);
+                    });
+                  }
+                },
               ),
             ],
           ),
@@ -151,7 +97,7 @@ class _GatosState extends State<Gatos> {
             right: 20,
             top: kToolbarHeight / 5,
             child: IconButton(
-              icon: const Icon(Icons.pets_rounded, color: Color(0xffff9922)),
+              icon: const Icon(IonIcons.paw, color: Color(0xffff9922)),
               iconSize: 110,
               onPressed: () async {
                 await _play();
@@ -171,6 +117,72 @@ class _GatosState extends State<Gatos> {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  IconButton botaoSair(BuildContext context) {
+    return IconButton(
+      onPressed: () async {
+        bool dialogo = await showCupertinoDialog<bool>(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  icon: Transform.rotate(
+                    angle: math.pi,
+                    child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.error),
+                  ),
+                  title: Text(
+                    "Já vai? ;(",
+                    style: TextStyle(fontVariations: [FontVariation("wght", 500)]),
+                    textAlign: TextAlign.center,
+                  ),
+                  content: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center, children: [Text("Tem certeza que deseja sair?")]),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          dark = App.themeNotifier.value == ThemeMode.dark;
+                        });
+                        Navigator.pop(context, false);
+                      },
+                      child: const Text('CANCELAR'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          dark = App.themeNotifier.value == ThemeMode.dark;
+                        });
+                        Navigator.pop(context, true);
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            ) ??
+            false;
+        if (dialogo) {
+          await atualizarListen?.cancel();
+          final sp = await SharedPreferences.getInstance();
+          if (sp.containsKey("username")) await sp.remove("username");
+          if (sp.containsKey("img") && sp.containsKey("bio")) {
+            await sp.remove("bio");
+            await sp.remove("img");
+          }
+          if (!context.mounted) return;
+          iniciouUserGoogle = false;
+          GoogleSignIn().signOut();
+          username = null;
+          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(builder: (c) => const Index(false)));
+        }
+      },
+      icon: Transform.rotate(
+        angle: math.pi,
+        child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.errorContainer),
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:animations/animations.dart';
@@ -9,21 +8,24 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:gatopedia/telas/home/gatos/forum/new/image_post.dart';
-import 'package:gatopedia/telas/home/gatos/forum/new/text_post.dart';
 import 'package:gatopedia/components/post.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/gatos/forum/new/image_post.dart';
+import 'package:gatopedia/telas/home/gatos/forum/new/text_post.dart';
+import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:path_provider/path_provider.dart';
 
 bool postado = false;
 String imagemTipo = "";
 String legenda = "";
-File? file; /* arquivo pra comprimir o a imagem de upload do post */
+File? file; /* arquivo pra comprimir a imagem de upload do post */
 final txtPost = TextEditingController();
 final fagKey = GlobalKey<ExpandableFabState>();
 
 class Forum extends StatefulWidget {
-  const Forum({super.key});
+  final ScrollController scrollForum; // TODO: pegar o valor do scroll e salvar para voltar no mesmo lugar que saiu
+
+  const Forum(this.scrollForum, {super.key});
 
   @override
   State<Forum> createState() => _ForumState();
@@ -31,14 +33,15 @@ class Forum extends StatefulWidget {
 
 enum MenuItems { editar, deletar }
 
+bool iniciouListenForum = false;
+
 class _ForumState extends State<Forum> {
   bool enabled = true;
-  late StreamSubscription<DatabaseEvent> _sub;
 
   _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
-    _sub = ref.onValue.listen((event) {
+    ref.onValue.listen((event) {
       setState(() {
         snapshotForum = event.snapshot;
       });
@@ -109,13 +112,11 @@ class _ForumState extends State<Forum> {
   @override
   void initState() {
     super.initState();
-    _atualizar();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _sub.cancel();
+    tabIndex = 1;
+    if (!iniciouListenForum) {
+      _atualizar();
+      iniciouListenForum = true;
+    }
   }
 
   @override
@@ -218,7 +219,8 @@ class _ForumState extends State<Forum> {
             ? StretchingOverscrollIndicator(
                 axisDirection: AxisDirection.down,
                 child: ListView.builder(
-                  itemCount: int.parse(snapshotForum!.children.last.key!),
+                  controller: widget.scrollForum,
+                  itemCount: int.parse(snapshotForum!.children.last.key!) + 1,
                   itemBuilder: (context, i) {
                     return snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - i}").value != null
                         ? Post(int.parse("${int.parse(snapshotForum!.children.last.key!) - i}"), _like, _unlike)

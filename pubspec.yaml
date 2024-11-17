@@ -55,7 +55,10 @@ flutter:
   fonts:
     - family: Jost
       fonts:
-        - asset: assets/jost.ttf
+        - asset: assets/fonts/jost.ttf
+    - family: DanIcons
+      fonts:
+        - asset: assets/fonts/DanIcons.ttf
 
 icons_launcher:
   image_path: "assets/icon.png"

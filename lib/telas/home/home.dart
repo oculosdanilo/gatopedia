@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/components/dan_icons.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
@@ -10,6 +11,7 @@ import 'package:gatopedia/telas/index.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/loginScreen/seminternet.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 List<Widget> telasHome = const [Gatos(), Profile(false), Config(false)];
 int indexAntigo = 0;
@@ -71,18 +73,18 @@ class _HomeState extends State<Home> {
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           destinations: <NavigationDestination>[
             NavigationDestination(
-              icon: const Icon(IonIcons.paw, fill: 0),
+              icon: Icon(DanIcons.pawOutline),
               selectedIcon: Icon(IonIcons.paw, color: Theme.of(context).colorScheme.onPrimary, fill: 1),
               label: "Gatos",
             ),
             NavigationDestination(
-              icon: const Icon(Icons.person_outline_rounded),
-              selectedIcon: Icon(Icons.person_rounded, color: Theme.of(context).colorScheme.onPrimary),
+              icon: const Icon(Symbols.person_rounded, fill: 0),
+              selectedIcon: Icon(Symbols.person_rounded, color: Theme.of(context).colorScheme.onPrimary, fill: 1),
               label: "Eu",
             ),
             NavigationDestination(
-              icon: const Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings_rounded, color: Theme.of(context).colorScheme.onPrimary),
+              icon: const Icon(Symbols.settings_rounded, fill: 0),
+              selectedIcon: Icon(Symbols.settings_rounded, color: Theme.of(context).colorScheme.onPrimary, fill: 1),
               label: "Configurações",
             )
           ],

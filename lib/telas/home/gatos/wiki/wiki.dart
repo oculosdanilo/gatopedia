@@ -2,9 +2,10 @@ import 'package:animations/animations.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
-import 'package:gatopedia/telas/home/config/config.dart';
-import 'package:gatopedia/telas/home/gatos/wiki/info.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/config/config.dart';
+import 'package:gatopedia/telas/home/gatos/gatos.dart';
+import 'package:gatopedia/telas/home/gatos/wiki/info.dart';
 import 'package:grayscale/grayscale.dart';
 
 late Future<DataSnapshot> _getData;
@@ -20,11 +21,12 @@ class Wiki extends StatefulWidget {
 class _WikiState extends State<Wiki> {
   @override
   void initState() {
+    super.initState();
     if (!pegouInfo) {
       _getData = FirebaseDatabase.instance.ref().child("gatos").get();
       pegouInfo = true;
     }
-    super.initState();
+    tabIndex = 0;
   }
 
   @override
@@ -51,7 +53,7 @@ class _WikiState extends State<Wiki> {
           }
 
           return AnimatedSwitcher(
-            duration: Duration(milliseconds: 500),
+            duration: Duration(milliseconds: 300),
             child: filho,
           );
         },
@@ -139,14 +141,14 @@ class _WikiState extends State<Wiki> {
                     children: [
                       const SizedBox(height: 10),
                       Text(
-                        e.key ?? "",
+                        e.key!,
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                         softWrap: true,
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        e.child("resumo").value.toString(),
-                        style: const TextStyle(fontSize: 15),
+                        "${e.child("resumo").value}",
+                        style: const TextStyle(fontSize: 16),
                         softWrap: true,
                         maxLines: 3,
                       )

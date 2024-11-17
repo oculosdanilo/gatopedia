@@ -508,10 +508,10 @@ packages:
     dependency: transitive
     description:
       name: google_identity_services_web
-      sha256: bf215f340648e78697fdac486d75fca67f85944502e579bdcecd029babc6f4d8
+      sha256: "55580f436822d64c8ff9a77e37d61f5fb1e6c7ec9d632a43ee324e2a05c3c6c9"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.2"
+    version: "0.3.3"
   google_sign_in:
     dependency: "direct main"
     description:
@@ -796,10 +796,10 @@ packages:
     dependency: "direct main"
     description:
       name: material_symbols_icons
-      sha256: "7b723abea4ad37e16fe921f1f1971cbb9b0f66d223a8c99981168a2306416b98"
+      sha256: "1dea2aef1c83434f832f14341a5ffa1254e76b68e4d90333f95f8a2643bf1024"
       url: "https://pub.dev"
     source: hosted
-    version: "4.2791.1"
+    version: "4.2799.0"
   meta:
     dependency: transitive
     description:
