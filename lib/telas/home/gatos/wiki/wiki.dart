@@ -22,11 +22,11 @@ class _WikiState extends State<Wiki> {
   @override
   void initState() {
     super.initState();
+    tabIndex = 0;
     if (!pegouInfo) {
       _getData = FirebaseDatabase.instance.ref().child("gatos").get();
       pegouInfo = true;
     }
-    tabIndex = 0;
   }
 
   @override

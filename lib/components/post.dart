@@ -272,6 +272,7 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
 }
 
 Widget opcoes(int index, DataSnapshot postSS) {
+  // TODO: fazer o coiso de bloquear um usuário
   return PopupMenuButton<MenuItems>(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     itemBuilder: (context) => [

@@ -4,11 +4,12 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/index.dart';
 import 'package:gatopedia/telas/loginScreen/colab.dart';
-import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -16,7 +17,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:gatopedia/anim/routes.dart';
 
 final Uri _urlGatopediaWeb = Uri.parse("https://osprojetos.web.app/2023/gatopedia");
 final Uri _urlGatopediaGit = Uri.parse('https://github.com/oculosdanilo/gatopedia');
@@ -88,7 +88,6 @@ class _ConfigState extends State<Config> {
   }
 
   _deletarConta(BuildContext context) async {
-    // TODO: fazer o coiso de deletar conta do flyvoo https://github.com/journey-etecct/flyvoo-app/blob/master/lib/home/mais/minha_conta/excluir_conta/excluir_conta.dart
     final posts = await FirebaseDatabase.instance.ref("posts").get();
     for (final post in posts.children) {
       final comentarios = post.child("comentarios").value as List;
@@ -130,6 +129,7 @@ class _ConfigState extends State<Config> {
       username = null;
       final pref = await SharedPreferences.getInstance();
       if (pref.containsKey("username")) await pref.remove("username");
+      if (pref.containsKey("scrollSalvo")) await pref.remove("scrollSalvo");
       if (pref.containsKey("img") && pref.containsKey("bio")) {
         await pref.remove("bio");
         await pref.remove("img");
@@ -375,7 +375,7 @@ class _ConfigState extends State<Config> {
                   });
                   if (userGoogle == null) {
                     final senhaCorreta = await _autenticarSenha(txtControllerSenha.text);
-                    if (!context.mounted) return;
+                    if (!mounted) return;
                     if (senhaCorreta) {
                       await _deletarConta(context);
                     } else {

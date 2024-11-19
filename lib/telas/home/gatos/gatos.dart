@@ -25,8 +25,9 @@ class Gatos extends StatefulWidget {
   State<Gatos> createState() => _GatosState();
 }
 
-class _GatosState extends State<Gatos> {
+class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
   final miau = AudioPlayer();
+  late final TabController _tabController;
 
   _play() async {
     await miau.setAsset("assets/meow.mp3");
@@ -36,28 +37,26 @@ class _GatosState extends State<Gatos> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this, initialIndex: tabIndex);
     indexAntigo = 0;
   }
 
-  final ScrollController _scrollForum = ScrollController();
+  late final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo);
   late List<Widget> telasGatos = [const Wiki(), Forum(_scrollForum)];
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          toolbarHeight: 0,
-        ),
-        body: Column(
-          children: [
-            appbar(context),
-            Flexible(child: TabBarView(children: telasGatos)),
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        toolbarHeight: 0,
+      ),
+      body: Column(
+        children: [
+          appbar(context),
+          Flexible(child: TabBarView(controller: _tabController, children: telasGatos)),
+        ],
       ),
     );
   }
@@ -78,15 +77,20 @@ class _GatosState extends State<Gatos> {
               TabBar(
                 tabAlignment: TabAlignment.start,
                 isScrollable: true,
-                labelStyle: TextStyle(fontSize: 18, fontFamily: "Jost"),
+                controller: _tabController,
+                labelStyle: const TextStyle(fontSize: 18, fontFamily: "Jost"),
                 unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.70),
                 indicatorColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 tabs: const [Tab(text: "Wiki"), Tab(text: "Feed")],
                 onTap: (index) {
-                  if (tabIndex == 1 && index == 1) {
+                  if (tabIndex == 2 && index == 1) {
                     setState(() {
-                      _scrollForum.jumpTo(0.0);
+                      _scrollForum.animateTo(
+                        0.0,
+                        duration: Duration(microseconds: (300 * _scrollForum.offset).toInt()),
+                        curve: Curves.easeOutQuad,
+                      );
                     });
                   }
                 },
@@ -99,9 +103,7 @@ class _GatosState extends State<Gatos> {
             child: IconButton(
               icon: const Icon(IonIcons.paw, color: Color(0xffff9922)),
               iconSize: 110,
-              onPressed: () async {
-                await _play();
-              },
+              onPressed: () async => await _play(),
             ),
           ),
           Container(
@@ -111,7 +113,7 @@ class _GatosState extends State<Gatos> {
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 28,
-                fontVariations: [FontVariation("wght", 500)],
+                fontVariations: const [FontVariation("wght", 500)],
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -168,6 +170,7 @@ class _GatosState extends State<Gatos> {
           await atualizarListen?.cancel();
           final sp = await SharedPreferences.getInstance();
           if (sp.containsKey("username")) await sp.remove("username");
+          if (sp.containsKey("scrollSalvo")) await sp.remove("scrollSalvo");
           if (sp.containsKey("img") && sp.containsKey("bio")) {
             await sp.remove("bio");
             await sp.remove("img");

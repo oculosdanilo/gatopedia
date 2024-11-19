@@ -14,6 +14,7 @@ import 'package:gatopedia/telas/home/gatos/forum/new/image_post.dart';
 import 'package:gatopedia/telas/home/gatos/forum/new/text_post.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 bool postado = false;
 String imagemTipo = "";
@@ -23,7 +24,7 @@ final txtPost = TextEditingController();
 final fagKey = GlobalKey<ExpandableFabState>();
 
 class Forum extends StatefulWidget {
-  final ScrollController scrollForum; // TODO: pegar o valor do scroll e salvar para voltar no mesmo lugar que saiu
+  final ScrollController scrollForum;
 
   const Forum(this.scrollForum, {super.key});
 
@@ -34,8 +35,9 @@ class Forum extends StatefulWidget {
 enum MenuItems { editar, deletar }
 
 bool iniciouListenForum = false;
+double scrollSalvo = 0;
 
-class _ForumState extends State<Forum> {
+class _ForumState extends State<Forum> with SingleTickerProviderStateMixin {
   bool enabled = true;
 
   _atualizar() {
@@ -113,6 +115,12 @@ class _ForumState extends State<Forum> {
   void initState() {
     super.initState();
     tabIndex = 1;
+    widget.scrollForum.addListener(() {
+      scrollSalvo = widget.scrollForum.offset;
+      SharedPreferences.getInstance().then((sp) {
+        sp.setDouble("scrollSalvo", widget.scrollForum.offset);
+      });
+    });
     if (!iniciouListenForum) {
       _atualizar();
       iniciouListenForum = true;
@@ -227,15 +235,6 @@ class _ForumState extends State<Forum> {
                         : const SizedBox();
                   },
                 ),
-                /*ListView(
-                  shrinkWrap: true,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: snapshotForum!.children
-                      .map((e) => e.value != null ? Post(int.parse(e.key!), _like, _unlike) : const SizedBox())
-                      .toList()
-                      .reversed
-                      .toList(),
-                ),*/
               )
             : const Center(child: CircularProgressIndicator()),
       ),

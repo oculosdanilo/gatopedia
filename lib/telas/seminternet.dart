@@ -7,12 +7,10 @@ class SemInternet extends StatefulWidget {
   const SemInternet({super.key});
 
   @override
-  SemInternetState createState() {
-    return SemInternetState();
-  }
+  State<SemInternet> createState() => _SemInternetState();
 }
 
-class SemInternetState extends State {
+class _SemInternetState extends State<SemInternet> {
   late StreamSubscription listener;
 
   @override

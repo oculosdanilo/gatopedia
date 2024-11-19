@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/components/dan_icons.dart';
+import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:gatopedia/telas/index.dart';
-import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/loginScreen/seminternet.dart';
+import 'package:gatopedia/telas/seminternet.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -42,9 +42,6 @@ class _HomeState extends State<Home> {
       }
       iniciou = true;
     }
-    setState(() {
-      tabIndex = 0;
-    });
   }
 
   int paginaSelecionada = 0;

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:gatopedia/telas/firebase_options.dart';
+import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,6 +34,9 @@ void main() async {
   final SharedPreferences pref = await SharedPreferences.getInstance();
   final salvo = pref.getString("username") != null;
   if (salvo) username = pref.getString("username");
+
+  scrollSalvo = pref.getDouble("scrollSalvo") ?? 0;
+
   if (pref.getBool("dark") ?? PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
     runApp(App(ThemeMode.dark, !salvo ? const Index(true) : const Home()));
   } else {

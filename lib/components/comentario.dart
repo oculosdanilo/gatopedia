@@ -3,9 +3,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/public_profile.dart';
-import 'package:gatopedia/main.dart';
 
 class Comentario extends StatefulWidget {
   final int index;
@@ -54,6 +54,8 @@ class _ComentarioState extends State<Comentario> {
                   placeholder: AssetImage("assets/anim/loading.gif"),
                   width: 40,
                   fit: BoxFit.cover,
+                  fadeInDuration: Duration(milliseconds: 125),
+                  fadeOutDuration: Duration(milliseconds: 125),
                   imageErrorBuilder: (c, obj, stacktrace) {
                     return FutureBuilder(
                         future: _pegarFotoGoogle(widget.usernamePost),
