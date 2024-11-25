@@ -29,7 +29,7 @@ void main() async {
   FirebaseDatabase.instance.setPersistenceEnabled(true);
   await FirebaseAppCheck.instance.activate();
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   final SharedPreferences pref = await SharedPreferences.getInstance();
   final salvo = pref.getString("username") != null;

@@ -37,9 +37,7 @@ enum MenuItems { editar, deletar }
 bool iniciouListenForum = false;
 double scrollSalvo = 0;
 
-class _ForumState extends State<Forum> with SingleTickerProviderStateMixin {
-  bool enabled = true;
-
+class _ForumState extends State<Forum> {
   _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
@@ -91,32 +89,20 @@ class _ForumState extends State<Forum> with SingleTickerProviderStateMixin {
     ).show(context);
   }
 
-  _like(int post) {
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("posts/$post/likes");
-    ref.update({
-      "lenght": int.parse(snapshotForum!.child("$post/likes/lenght").value.toString()) + 1,
-      "users": "${snapshotForum!.child("$post/likes/users").value},$username,"
-    });
-  }
-
-  _unlike(int post) {
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref("posts/$post/likes");
-    ref.update(
-      {
-        "lenght": (snapshotForum!.value as List)[post]["likes"]["lenght"] - 1,
-        "users": (snapshotForum!.value as List)[post]["likes"]["users"].toString().replaceAll(",$username,", ""),
-      },
-    );
-  }
-
   @override
   void initState() {
+    // TODO: fazer o appbar() encolher beijos :*
     super.initState();
     tabIndex = 1;
     widget.scrollForum.addListener(() {
       scrollSalvo = widget.scrollForum.offset;
+      if ((offsetInicial - scrollSalvo) > kToolbarHeight * 2.86 && !expandido) {
+        debugPrint("expandiu");
+        expandido = true;
+      } else if ((offsetInicial - scrollSalvo) < -(kToolbarHeight * 2.86) && expandido) {
+        debugPrint("encolheu");
+        expandido = false;
+      }
       SharedPreferences.getInstance().then((sp) {
         sp.setDouble("scrollSalvo", widget.scrollForum.offset);
       });
@@ -126,6 +112,8 @@ class _ForumState extends State<Forum> with SingleTickerProviderStateMixin {
       iniciouListenForum = true;
     }
   }
+
+  late double offsetInicial = widget.scrollForum.offset;
 
   @override
   Widget build(BuildContext context) {
@@ -226,14 +214,21 @@ class _ForumState extends State<Forum> with SingleTickerProviderStateMixin {
         child: snapshotForum != null
             ? StretchingOverscrollIndicator(
                 axisDirection: AxisDirection.down,
-                child: ListView.builder(
-                  controller: widget.scrollForum,
-                  itemCount: int.parse(snapshotForum!.children.last.key!) + 1,
-                  itemBuilder: (context, i) {
-                    return snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - i}").value != null
-                        ? Post(int.parse("${int.parse(snapshotForum!.children.last.key!) - i}"), _like, _unlike)
-                        : const SizedBox();
+                child: GestureDetector(
+                  onVerticalDragCancel: () {
+                    setState(() {
+                      offsetInicial = widget.scrollForum.offset;
+                    });
                   },
+                  child: ListView.builder(
+                    controller: widget.scrollForum,
+                    itemCount: int.parse(snapshotForum!.children.last.key!) + 1,
+                    itemBuilder: (context, i) {
+                      return snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - i}").value != null
+                          ? Post(int.parse("${int.parse(snapshotForum!.children.last.key!) - i}"))
+                          : const SizedBox();
+                    },
+                  ),
                 ),
               )
             : const Center(child: CircularProgressIndicator()),

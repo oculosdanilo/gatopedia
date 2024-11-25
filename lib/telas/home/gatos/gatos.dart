@@ -16,6 +16,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 int tabIndex = 0;
+bool expandido = true;
 
 // tela gatos refeito
 class Gatos extends StatefulWidget {
@@ -52,18 +53,43 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
         backgroundColor: Theme.of(context).colorScheme.primary,
         toolbarHeight: 0,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          appbar(context),
-          Flexible(child: TabBarView(controller: _tabController, children: telasGatos)),
+          Positioned.fill(
+            child: Column(
+              children: [
+                AnimatedSize(
+                  duration: const Duration(seconds: 2),
+                  child: SizedBox(height: expandido ? kToolbarHeight * 2.86 : 0),
+                ),
+                AnimatedSize(
+                  duration: const Duration(seconds: 2),
+                  child: SizedBox(
+                    height:
+                        expandido ? MediaQuery.sizeOf(context).height - 287 : MediaQuery.sizeOf(context).height - 127,
+                    child: TabBarView(controller: _tabController, children: telasGatos),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          AnimatedPositioned(
+            duration: Duration(seconds: 2),
+            top: 0,
+            child: SizedBox(
+              height: kToolbarHeight * 2.86,
+              child: appbar(context),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Container appbar(BuildContext context) {
+  Widget appbar(BuildContext context) {
     return Container(
       color: Theme.of(context).colorScheme.primary,
+      width: MediaQuery.sizeOf(context).width,
       child: Stack(
         children: [
           Column(
@@ -84,7 +110,7 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
                 labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 tabs: const [Tab(text: "Wiki"), Tab(text: "Feed")],
                 onTap: (index) {
-                  if (tabIndex == 2 && index == 1) {
+                  if (tabIndex == 1 && index == 1) {
                     setState(() {
                       _scrollForum.animateTo(
                         0.0,

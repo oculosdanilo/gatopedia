@@ -36,7 +36,7 @@ class _SemInternetState extends State<SemInternet> {
       child: Scaffold(
         body: Container(
           margin: const EdgeInsets.all(20),
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.sizeOf(context).width,
           child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

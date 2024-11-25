@@ -19,10 +19,8 @@ import 'package:material_symbols_icons/symbols.dart';
 
 class Post extends StatefulWidget {
   final int index;
-  final void Function(int) like;
-  final void Function(int) unlike;
 
-  const Post(this.index, this.like, this.unlike, {super.key});
+  const Post(this.index, {super.key});
 
   @override
   State<Post> createState() => _PostState();
@@ -37,8 +35,16 @@ class _PostState extends State<Post> {
       padding: const EdgeInsets.only(top: 5),
       child: Stack(
         children: [
+          postSS.key == "0"
+              ? Positioned(
+                  bottom: 35,
+                  width: MediaQuery.sizeOf(context).width - 20,
+                  child: Center(child: Text("E acabou ;)")),
+                )
+              : const SizedBox(),
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
+            margin: EdgeInsets.fromLTRB(4, 4, 4, postSS.key == "0" ? 85 : 4),
             color: username == null && dark
                 ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
                 : Theme.of(context).colorScheme.surfaceContainerLow,
@@ -84,20 +90,18 @@ class _PostState extends State<Post> {
                               ),
                             )
                           : const SizedBox(height: 15),
-                      FooterPost(postSS, widget.like, widget.unlike),
+                      FooterPost(postSS),
                     ],
                   );
                 },
               ),
             ),
           ),
-          username == postSS.child("username").value
-              ? Positioned(
-                  right: 10,
-                  top: 10,
-                  child: opcoes(widget.index, postSS),
-                )
-              : SizedBox(),
+          Positioned(
+            right: 10,
+            top: 10,
+            child: opcoes(widget.index, postSS),
+          )
         ],
       ),
     );
@@ -113,10 +117,11 @@ class CabecalhoPost extends StatefulWidget {
   State<CabecalhoPost> createState() => _CabecalhoPostState();
 }
 
+List<String> _mostrarMais = [];
+
 class _CabecalhoPostState extends State<CabecalhoPost> {
   String pedaco1 = "";
   String pedaco2 = "";
-  bool flag = true;
 
   maisDe2Linhas(String text) {
     if (text.length > 65) {
@@ -226,11 +231,11 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
                     ),
                     Text(
                       maisDe2Linhas(widget.postSS.child("content").value.toString())
-                          ? flag
+                          ? !_mostrarMais.contains(widget.postSS.key!)
                               ? "$pedaco1..."
                               : pedaco1 + pedaco2
                           : pedaco1,
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                       softWrap: true,
                       maxLines: 50,
                     ),
@@ -239,10 +244,17 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               InkWell(
-                                onTap: () => setState(() => flag = !flag),
+                                onTap: () => setState(() {
+                                  if (!_mostrarMais.contains(widget.postSS.key!)) {
+                                    _mostrarMais.add(widget.postSS.key!);
+                                  } else {
+                                    _mostrarMais.remove(widget.postSS.key!);
+                                  }
+                                }),
                                 child: Text(
-                                  flag ? "mostrar mais" : "mostrar menos",
-                                  style: const TextStyle(color: Colors.grey),
+                                  !_mostrarMais.contains(widget.postSS.key!) ? "mostrar mais" : "mostrar menos",
+                                  style:
+                                      const TextStyle(color: Colors.grey, fontVariations: [FontVariation.weight(450)]),
                                 ),
                               ),
                             ],
@@ -265,7 +277,7 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
                   ),
                 ),
               ),
-        SizedBox(width: username == widget.postSS.child("username").value ? 58 : 15)
+        const SizedBox(width: 58)
       ],
     );
   }
@@ -275,61 +287,100 @@ Widget opcoes(int index, DataSnapshot postSS) {
   // TODO: fazer o coiso de bloquear um usuário
   return PopupMenuButton<MenuItems>(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-    itemBuilder: (context) => [
-      PopupMenuItem(
-        onTap: () {
-          showCupertinoDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) {
-              return EditPost(postSS.key!);
-            },
-          ).then((value) {
-            if (value) {
-              if (!context.mounted) return;
-              Flushbar(
-                message: "Editado com sucesso!",
-                duration: const Duration(seconds: 3),
-                margin: const EdgeInsets.all(20),
-                borderRadius: BorderRadius.circular(50),
-              ).show(context);
-            }
-          });
-        },
-        child: Row(
-          children: [
-            const Icon(Symbols.edit_rounded, fill: 1),
-            const SizedBox(width: 10),
-            Text("Editar", style: TextStyle(fontSize: 15)),
-          ],
-        ),
-      ),
-      PopupMenuItem(
-        onTap: () => showCupertinoDialog(context: context, builder: (context) => DeletePost(int.parse(postSS.key!))),
-        child: Row(
-          children: [
-            Icon(Symbols.delete_rounded, color: Theme.of(context).colorScheme.error),
-            const SizedBox(width: 10),
-            Text("Deletar", style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 15)),
-          ],
-        ),
-      )
-    ],
+    itemBuilder: postSS.child("username").value == username
+        ? (context) => [
+              PopupMenuItem(
+                onTap: () {
+                  showCupertinoDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return EditPost(postSS.key!);
+                    },
+                  ).then((value) {
+                    if (value) {
+                      if (!context.mounted) return;
+                      Flushbar(
+                        message: "Editado com sucesso!",
+                        duration: const Duration(seconds: 3),
+                        margin: const EdgeInsets.all(20),
+                        borderRadius: BorderRadius.circular(50),
+                      ).show(context);
+                    }
+                  });
+                },
+                child: const Row(
+                  children: [
+                    Icon(Symbols.edit_rounded, fill: 1),
+                    SizedBox(width: 10),
+                    Text("Editar", style: TextStyle(fontSize: 15)),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                onTap: () =>
+                    showCupertinoDialog(context: context, builder: (context) => DeletePost(int.parse(postSS.key!))),
+                child: Row(
+                  children: [
+                    Icon(Symbols.delete_rounded, color: Theme.of(context).colorScheme.error),
+                    const SizedBox(width: 10),
+                    Text("Deletar", style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 15)),
+                  ],
+                ),
+              )
+            ]
+        : (context) => [
+              PopupMenuItem(
+                onTap: () =>
+                    showCupertinoDialog(context: context, builder: (context) => DeletePost(int.parse(postSS.key!))),
+                child: Row(
+                  children: [
+                    Icon(Symbols.block, color: Theme.of(context).colorScheme.error),
+                    const SizedBox(width: 10),
+                    Text("Bloquear", style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 15)),
+                  ],
+                ),
+              ),
+            ],
   );
+}
+
+Widget alertaBlock(String userBloqueado) {
+  return AlertDialog();
 }
 
 class FooterPost extends StatefulWidget {
   final DataSnapshot postSS;
-  final void Function(int) like;
-  final void Function(int) unlike;
 
-  const FooterPost(this.postSS, this.like, this.unlike, {super.key});
+  const FooterPost(this.postSS, {super.key});
 
   @override
   State<FooterPost> createState() => _FooterPostState();
 }
 
 class _FooterPostState extends State<FooterPost> {
+  _like(int post) {
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("posts/$post/likes");
+    ref.update({
+      "lenght": int.parse(snapshotForum!.child("$post/likes/lenght").value.toString()) + 1,
+      "users": "${snapshotForum!.child("$post/likes/users").value},$username,"
+    });
+    setState(() {});
+  }
+
+  _unlike(int post) {
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("posts/$post/likes");
+    ref.update(
+      {
+        "lenght": (snapshotForum!.value as List)[post]["likes"]["lenght"] - 1,
+        "users": (snapshotForum!.value as List)[post]["likes"]["users"].toString().replaceAll(",$username,", ""),
+      },
+    );
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -422,9 +473,9 @@ class _FooterPostState extends State<FooterPost> {
                   ? () {
                       setState(() {
                         if (!widget.postSS.child("likes/users").value.toString().contains(",$username,")) {
-                          widget.like(int.parse(widget.postSS.key!));
+                          _like(int.parse(widget.postSS.key!));
                         } else {
-                          widget.unlike(int.parse(widget.postSS.key!));
+                          _unlike(int.parse(widget.postSS.key!));
                         }
                       });
                     }

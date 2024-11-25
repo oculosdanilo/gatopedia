@@ -24,11 +24,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String appName = "";
-  String packageName = "";
-  String version = "";
-  String buildNumber = "";
-
   @override
   void initState() {
     super.initState();
@@ -64,7 +59,6 @@ class _HomeState extends State<Home> {
             setState(() {
               dark = App.themeNotifier.value == ThemeMode.dark;
               paginaSelecionada = index;
-              tabIndex = 0;
             });
           },
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,

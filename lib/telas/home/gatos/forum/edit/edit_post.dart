@@ -48,7 +48,7 @@ class _EditPostState extends State<EditPost> {
       title: const Text("Editar post...", textAlign: TextAlign.center),
       icon: const Icon(Icons.edit_rounded),
       content: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.70,
+        width: MediaQuery.sizeOf(context).width * 0.70,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

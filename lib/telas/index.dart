@@ -45,8 +45,8 @@ class _IndexState extends State<Index> {
 
   bool _googleConectando = false;
 
-  late final scW = MediaQuery.of(context).size.width;
-  late final scH = MediaQuery.of(context).size.height;
+  late final scW = MediaQuery.sizeOf(context).width;
+  late final scH = MediaQuery.sizeOf(context).height;
 
   @override
   void initState() {

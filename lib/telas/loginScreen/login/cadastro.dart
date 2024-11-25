@@ -5,10 +5,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/forum/view/imagem_view.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
-import 'package:gatopedia/main.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -42,8 +42,8 @@ class _NewCadastroState extends State<NewCadastro> {
 
   bool botaoEnabled = true;
 
-  late final scW = MediaQuery.of(context).size.width;
-  late final scH = MediaQuery.of(context).size.height;
+  late final scW = MediaQuery.sizeOf(context).width;
+  late final scH = MediaQuery.sizeOf(context).height;
 
   @override
   void initState() {

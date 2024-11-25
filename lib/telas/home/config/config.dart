@@ -40,7 +40,7 @@ class Config extends StatefulWidget {
 }
 
 class _ConfigState extends State<Config> {
-  late final scW = MediaQuery.of(context).size.width;
+  late final scW = MediaQuery.sizeOf(context).width;
   bool esconderSenha = true;
   Icon iconeOlho = const Icon(Icons.visibility_rounded);
   final txtControllerSenha = TextEditingController();

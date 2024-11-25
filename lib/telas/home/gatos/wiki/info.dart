@@ -3,8 +3,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/components/comentario.dart';
-import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/config/config.dart';
 
 late Future<DataSnapshot> _getData;
 
@@ -46,8 +46,8 @@ class GatoInfoState extends State<GatoInfo> {
                   fit: StackFit.expand,
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width,
+                      width: MediaQuery.sizeOf(context).width,
+                      height: MediaQuery.sizeOf(context).width,
                       child: BlurHash(
                         hash: img.split("&")[1],
                         image:
@@ -57,18 +57,6 @@ class GatoInfoState extends State<GatoInfo> {
                         imageFit: BoxFit.cover,
                       ),
                     ),
-                    /*CachedNetworkImage(
-                      imageUrl:
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${img.split("&")[0]}.webp?alt=media",
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => AspectRatio(
-                        aspectRatio: 1 / 1,
-                        child: BlurHash(hash: img.split("&")[1]),
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      fadeInDuration: const Duration(milliseconds: 150),
-                      fadeOutDuration: const Duration(milliseconds: 150),
-                    ),*/
                     const DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(

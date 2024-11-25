@@ -2,9 +2,9 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
-import 'package:gatopedia/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FormApp extends StatefulWidget {
@@ -27,8 +27,8 @@ class FormAppState extends State<FormApp> {
   bool esconderSenha = true;
   Icon iconeOlho = const Icon(Icons.visibility_rounded);
 
-  late final scW = MediaQuery.of(context).size.width;
-  late final scH = MediaQuery.of(context).size.height;
+  late final scW = MediaQuery.sizeOf(context).width;
+  late final scH = MediaQuery.sizeOf(context).height;
 
   mudarCor(cor) {
     setState(() {
