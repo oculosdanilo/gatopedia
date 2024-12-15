@@ -25,8 +25,9 @@ final fagKey = GlobalKey<ExpandableFabState>();
 
 class Forum extends StatefulWidget {
   final ScrollController scrollForum;
+  final void Function() setStateGatos;
 
-  const Forum(this.scrollForum, {super.key});
+  const Forum(this.scrollForum, this.setStateGatos, {super.key});
 
   @override
   State<Forum> createState() => _ForumState();
@@ -98,10 +99,16 @@ class _ForumState extends State<Forum> {
       scrollSalvo = widget.scrollForum.offset;
       if ((offsetInicial - scrollSalvo) > kToolbarHeight * 2.86 && !expandido) {
         debugPrint("expandiu");
-        expandido = true;
+        setState(() {
+          expandido = true;
+        });
+        widget.setStateGatos();
       } else if ((offsetInicial - scrollSalvo) < -(kToolbarHeight * 2.86) && expandido) {
         debugPrint("encolheu");
-        expandido = false;
+        setState(() {
+          expandido = false;
+        });
+        widget.setStateGatos();
       }
       SharedPreferences.getInstance().then((sp) {
         sp.setDouble("scrollSalvo", widget.scrollForum.offset);

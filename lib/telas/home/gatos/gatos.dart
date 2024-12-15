@@ -30,6 +30,12 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
   final miau = AudioPlayer();
   late final TabController _tabController;
 
+  void _setState() {
+    return setState(() {
+      expandido = expandido;
+    });
+  }
+
   _play() async {
     await miau.setAsset("assets/meow.mp3");
     await miau.play();
@@ -40,10 +46,12 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
     super.initState();
     _tabController = TabController(length: 2, vsync: this, initialIndex: tabIndex);
     indexAntigo = 0;
+
+    _tabController.addListener(() {});
   }
 
   late final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo);
-  late List<Widget> telasGatos = [const Wiki(), Forum(_scrollForum)];
+  late List<Widget> telasGatos = [const Wiki(), Forum(_scrollForum, _setState)];
 
   @override
   Widget build(BuildContext context) {
@@ -56,26 +64,11 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Column(
-              children: [
-                AnimatedSize(
-                  duration: const Duration(seconds: 2),
-                  child: SizedBox(height: expandido ? kToolbarHeight * 2.86 : 0),
-                ),
-                AnimatedSize(
-                  duration: const Duration(seconds: 2),
-                  child: SizedBox(
-                    height:
-                        expandido ? MediaQuery.sizeOf(context).height - 287 : MediaQuery.sizeOf(context).height - 127,
-                    child: TabBarView(controller: _tabController, children: telasGatos),
-                  ),
-                ),
-              ],
-            ),
+            child: TabBarView(controller: _tabController, children: telasGatos),
           ),
           AnimatedPositioned(
-            duration: Duration(seconds: 2),
-            top: 0,
+            duration: const Duration(milliseconds: 300),
+            top: expandido ? 0 : -(kToolbarHeight * 2.86),
             child: SizedBox(
               height: kToolbarHeight * 2.86,
               child: appbar(context),

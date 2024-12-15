@@ -16,6 +16,7 @@ import 'package:gatopedia/telas/home/public_profile.dart';
 import 'package:grayscale/grayscale.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class Post extends StatefulWidget {
   final int index;
@@ -81,7 +82,7 @@ class _PostState extends State<Post> {
                                       width: double.infinity,
                                       fadeInDuration: const Duration(milliseconds: 150),
                                       fadeOutDuration: const Duration(milliseconds: 150),
-                                      placeholder: const AssetImage('assets/anim/loading.gif'),
+                                      placeholder: MemoryImage(kTransparentImage),
                                       image: CachedNetworkImageProvider(
                                           "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.index}.webp?alt=media"),
                                     ),
