@@ -62,7 +62,7 @@ flutter:
         - asset: assets/fonts/DanIcons.ttf
 
 icons_launcher:
-  image_path: "assets/icon.webp"
+  image_path: "assets/icon.png"
   platforms:
     android:
       enable: false
