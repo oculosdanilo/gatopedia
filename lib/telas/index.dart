@@ -279,7 +279,7 @@ class _IndexState extends State<Index> {
               duration: const Duration(milliseconds: 500),
               left: (scW / 2) - 125,
               top: animImg ? scH * 0.05 : (scH / 2) - 250,
-              child: ClipOval(child: Image.asset("assets/icon.png", width: 250)),
+              child: ClipOval(child: Image.asset("assets/icon.webp", width: 250)),
             ),
             SemConta(animText, scH, scW, () => setState(() => full = true)),
             AnimatedPositioned(

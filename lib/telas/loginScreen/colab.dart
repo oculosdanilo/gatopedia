@@ -64,7 +64,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                     children: [
                       const ClipRRect(
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
-                        child: Image(image: AssetImage('assets/danilo.jpg'), width: 150),
+                        child: Image(image: AssetImage('assets/danilo.png'), width: 150),
                       ),
                       const SizedBox(width: 17),
                       Flexible(

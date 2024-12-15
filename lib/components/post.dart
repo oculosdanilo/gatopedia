@@ -1,10 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/components/loading.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/gatos/forum/edit/delete_post.dart';
@@ -63,30 +63,37 @@ class _PostState extends State<Post> {
                               padding: const EdgeInsets.fromLTRB(0, 12, 0, 14),
                               child: AspectRatio(
                                 aspectRatio: 1,
-                                child: InkWell(
-                                  splashColor: Colors.transparent,
-                                  splashFactory: NoSplash.splashFactory,
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (ctx) => Imagem(
-                                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.index}.webp?alt=media",
-                                        "${widget.index}",
+                                child: Stack(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: LoadingImage(),
+                                    ),
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      splashFactory: NoSplash.splashFactory,
+                                      onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (ctx) => Imagem(
+                                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.index}.webp?alt=media",
+                                            "${widget.index}",
+                                          ),
+                                        ),
+                                      ),
+                                      child: Hero(
+                                        tag: "${widget.index}",
+                                        child: FadeInImage(
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          fadeInDuration: const Duration(milliseconds: 150),
+                                          fadeOutDuration: const Duration(milliseconds: 150),
+                                          placeholder: MemoryImage(kTransparentImage),
+                                          image: MemoryImage(kTransparentImage),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  child: Hero(
-                                    tag: "${widget.index}",
-                                    child: FadeInImage(
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      fadeInDuration: const Duration(milliseconds: 150),
-                                      fadeOutDuration: const Duration(milliseconds: 150),
-                                      placeholder: MemoryImage(kTransparentImage),
-                                      image: CachedNetworkImageProvider(
-                                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.index}.webp?alt=media"),
-                                    ),
-                                  ),
+                                  ],
                                 ),
                               ),
                             )
