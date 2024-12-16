@@ -46,8 +46,6 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
     super.initState();
     _tabController = TabController(length: 2, vsync: this, initialIndex: tabIndex);
     indexAntigo = 0;
-
-    _tabController.addListener(() {});
   }
 
   late final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo);

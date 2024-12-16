@@ -13,7 +13,6 @@ class _LoadingImageState extends State<LoadingImage> with SingleTickerProviderSt
   late Animation<double> _anim;
 
   bool alt = false;
-  bool cicloAlt = false;
 
   @override
   void initState() {
@@ -45,7 +44,7 @@ class _LoadingImageState extends State<LoadingImage> with SingleTickerProviderSt
       scale: _anim.value,
       child: ClipOval(
         child: Container(
-          color: alt ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary,
+          color: alt ? Color(0xffff9922) : Theme.of(context).colorScheme.primary,
           width: 50,
           height: 50,
         ),
