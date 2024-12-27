@@ -5,11 +5,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gatopedia/telas/firebase_options.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/index.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String? username;
@@ -73,11 +76,27 @@ class _AppState extends State<App> {
       valueListenable: App.themeNotifier,
       builder: (c, currentMode, w) {
         return MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           debugShowCheckedModeBanner: false,
           theme: temaLight(),
           darkTheme: temaDark(),
           themeMode: currentMode,
           home: widget.inicio,
+          builder: (c, w) {
+            return Banner(
+              message: AppLocalizations.of(c)!.danilo,
+              location: BannerLocation.bottomEnd,
+              color: Theme.of(c).colorScheme.primary,
+              textStyle: TextStyle(
+                color: Theme.of(c).colorScheme.onPrimary,
+                fontSize: 10,
+                fontVariations: [FontVariation.weight(700)],
+                fontFamily: "Jost",
+              ),
+              child: w,
+            );
+          },
         );
       },
     );
@@ -145,3 +164,20 @@ class _AppState extends State<App> {
 }
 
 ThemeData temaBase(ThemeMode mode) => ThemeData(colorScheme: mode == ThemeMode.dark ? blueScheme : blueSchemeL);
+
+checarUpdate(BuildContext context) {
+  InAppUpdate.checkForUpdate().then((val) async {
+    if (val.updateAvailability == UpdateAvailability.updateAvailable) {
+      if (val.updatePriority > 3) {
+        InAppUpdate.performImmediateUpdate();
+      } else if (val.updatePriority > 0) {
+        try {
+          await InAppUpdate.startFlexibleUpdate();
+          InAppUpdate.completeFlexibleUpdate();
+        } on PlatformException catch (e) {
+          Fluttertoast.showToast(msg: "Atualização falhou! Código de erro: ${e.code}");
+        }
+      }
+    }
+  });
+}

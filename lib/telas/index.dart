@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,15 +12,12 @@ import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
 import 'package:gatopedia/telas/loginScreen/login/cadastro.dart';
 import 'package:gatopedia/telas/loginScreen/login/form.dart';
 import 'package:gatopedia/telas/seminternet.dart';
-import 'package:gatopedia/telas/update.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grayscale/grayscale.dart';
-import 'package:http/http.dart' as http;
 import 'package:icons_plus/icons_plus.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool full = false;
@@ -78,19 +73,6 @@ class _IndexState extends State<Index> {
         setState(() => animImg = true);
         Future.delayed(const Duration(milliseconds: 500), () => setState(() => animText = true));
       });
-    }
-  }
-
-  _checarUpdate() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    String version = packageInfo.version;
-
-    final response = await http.get(Uri.parse("https://api.github.com/repos/oculosdanilo/gatopedia/releases/latest"));
-    Map<String, dynamic> versaoAtt = jsonDecode(response.body);
-    if (version != versaoAtt["tag_name"]) {
-      if (!mounted) return;
-      Navigator.push(context, SlideRightRoute(Update(versaoAtt["tag_name"], versaoAtt["body"])));
     }
   }
 

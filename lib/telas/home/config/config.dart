@@ -274,7 +274,7 @@ class _ConfigState extends State<Config> {
                     ],
                   ),
                 ),
-                SingleChildScrollView(scrollDirection: Axis.horizontal, child: botoes()),
+                botoes(),
                 const SizedBox(height: 17),
                 const Divider(),
                 Center(
@@ -408,32 +408,101 @@ class _ConfigState extends State<Config> {
   }
 
   Widget botoes() {
-    return Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        ElevatedButton.icon(
+        OutlinedButton(
+          onPressed: () => _launchUrl(_urlGatopediaGit),
+          style: ButtonStyle(
+            fixedSize: WidgetStatePropertyAll(Size(MediaQuery.sizeOf(context).width - 40, 50)),
+          ),
+          child: Row(
+            children: [
+              const Icon(AntDesign.github_fill),
+              Expanded(
+                child: Center(
+                  child: Text("Repositório", style: TextStyle(fontSize: 18)),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        OutlinedButton(
+          onPressed: () => _launchUrl(_urlGatopediaGitLatest),
+          style: ButtonStyle(
+            fixedSize: WidgetStatePropertyAll(Size(MediaQuery.sizeOf(context).width - 40, 50)),
+          ),
+          child: const Row(
+            children: [
+              Icon(AntDesign.github_fill),
+              Expanded(
+                child: Center(
+                  child: Text("Versões", style: TextStyle(fontSize: 18)),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        OutlinedButton(
+          onPressed: () => _launchUrl(_urlGatopediaWeb),
+          style: ButtonStyle(
+            fixedSize: WidgetStatePropertyAll(Size(MediaQuery.sizeOf(context).width - 40, 50)),
+          ),
+          child: const Row(
+            children: [
+              Icon(Symbols.public_rounded),
+              Expanded(
+                child: Center(
+                  child: Text("Site", style: TextStyle(fontSize: 18)),
+                ),
+              ),
+            ],
+          ),
+        ),
+        /*ElevatedButton.icon(
           onPressed: () => _launchUrl(_urlGatopediaGit),
           icon: const Icon(AntDesign.github_fill),
-          label: const Text("Repositório"),
+          label: const Text(
+            "Repositório",
+            style: TextStyle(fontSize: 18),
+          ),
+          style: ButtonStyle(
+            minimumSize: WidgetStatePropertyAll(Size(MediaQuery.sizeOf(context).width - 50, 50)),
+          ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(height: 10),
         ElevatedButton.icon(
           onPressed: () => _launchUrl(_urlGatopediaGitLatest),
           icon: const Icon(AntDesign.github_fill),
-          label: const Text("Versões"),
+          label: const Text(
+            "Versões",
+            style: TextStyle(fontSize: 18),
+          ),
+          style: ButtonStyle(
+            minimumSize: WidgetStatePropertyAll(Size(MediaQuery.sizeOf(context).width - 50, 50)),
+          ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(height: 10),
         ElevatedButton.icon(
           onPressed: () => _launchUrl(_urlGatopediaWeb),
           icon: const Icon(Icons.public_rounded),
-          label: const Text("Web", style: TextStyle(fontFamily: "Jost")),
-        )
+          label: const Text(
+            "Site",
+            style: TextStyle(fontSize: 18),
+          ),
+          style: ButtonStyle(
+            minimumSize: WidgetStatePropertyAll(Size(MediaQuery.sizeOf(context).width - 50, 50)),
+          ),
+        )*/
       ],
     );
   }
 }
 
 Future<void> _launchUrl(url) async {
-  if (!await launchUrl(url)) {
+  if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
     throw Exception('Could not launch $url');
   }
 }

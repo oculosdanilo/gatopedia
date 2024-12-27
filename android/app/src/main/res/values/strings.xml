@@ -5,4 +5,5 @@
       \"include\": \"https://gatopedia.web.app/.well-known/assetlinks.json\"
     }]
   </string>
+  <string name="appName">Cat-opedia!</string>
 </resources>

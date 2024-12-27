@@ -32,8 +32,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-  compileSdkVersion 34
-  ndkVersion "26.1.10909125"
+  compileSdkVersion 35
+  ndkVersion "27.0.12077973"
 
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
@@ -51,7 +51,7 @@ android {
   defaultConfig {
     applicationId "io.oculosdanilo.gatopedia"
     minSdkVersion 23
-    targetSdkVersion 34
+    targetSdkVersion 35
     versionCode flutterVersionCode.toInteger()
     versionName flutterVersionName
     multiDexEnabled true
