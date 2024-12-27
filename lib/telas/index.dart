@@ -58,7 +58,7 @@ class _IndexState extends State<Index> {
     }
     full = false;
     if (!kDebugMode && !kProfileMode && !kIsWeb) {
-      _checarUpdate();
+      checarUpdate(context);
     }
     if (widget.tocar) {
       miau.setAsset("assets/meow.mp3").then((value) {
