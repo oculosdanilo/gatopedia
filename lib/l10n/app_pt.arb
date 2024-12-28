@@ -1,7 +1,67 @@
 {
+  "gatopedia": "Gatopédia!",
   "internal": "INTERNO",
   "closed": "FECHADO",
   "open": "ABERTO",
+  "cancel": "CANCELAR",
+  "edit": "EDITAR",
+  "save": "SALVAR",
+  "comment": "########################## LINGUAGENS #############################################",
   "lan_en": "Inglês",
-  "lan_pt": "Português (Brasil)"
+  "lan_pt": "Português (Brasil)",
+  "comment": "########################## COLAB ##################################################",
+  "colab_title": "COLABORADORES",
+  "colab_desc_danilo": "Design e programação",
+  "colab_desc_lucca": "Idealização e pesquisas",
+  "colab_popup_title": "Sobre o projeto",
+  "colab_popup_desc1": "Produzido com ",
+  "colab_popup_desc2": " e ",
+  "comment": "########################## CONFIG #################################################",
+  "config_title": "Configurações",
+  "config_darkmode_title": "Modo escuro",
+  "config_darkmode_subtitle": "Lindo como gatos pretos!",
+  "config_lan_title": "Idioma do app",
+  "config_lan_subtitle": "miau miau miau miau miau?",
+  "config_deleteAcc_title": "Deletar conta",
+  "config_deleteAcc_subtitle": "Remove seu perfil e seu conteúdo na plataforma",
+  "config_about_title": "Sobre o app",
+  "config_about_desc": "{packageName}\nVersão: {version} ({buildNumber})",
+  "@config_about_desc": {
+    "placeholders": {
+      "packageName": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      },
+      "buildNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "config_copyright": "\u00a9\uFE0E {year} oculosdanilo\nTodos os direitos reservados\n\nFeito com \u2764\uFE0F por Danilo Lima",
+  "@config_copyright": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "config_botoes_repo": "Respositório",
+  "config_botoes_versions": "Versões",
+  "comment": "########################## PPEDIT #################################################",
+  "ppedit_title": "Editar foto de perfil",
+  "ppedit_noImage": "Nenhuma imagem selecionada",
+  "ppedit_cut_title": "\u2702\uFE0FCortando...",
+  "ppedit_cut_done": "Cortar",
+  "comment": "########################## PROFILE #################################################",
+  "profile_title": "Eu",
+  "profile_bio_edit": "Editar bio",
+  "profile_bio_empty": "(vazio)",
+  "profile_bio_loading": "carregando...",
+  "profile_pfp_change": "Mudar foto de perfil",
+  "profile_pfp_remove": "Remover foto de perfil",
+  "profile_pfp_addPFP": "Adicionar foto de perfil",
+  "profile_pfp_flushbarAdd": "Adicionada com sucesso!",
+  "comment": "########################## END #################################################"
 }

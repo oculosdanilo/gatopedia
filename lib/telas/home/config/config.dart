@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/deletar_conta.dart';
 import 'package:gatopedia/telas/home/home.dart';
@@ -35,11 +35,9 @@ class _ConfigState extends State<Config> {
   late final scW = MediaQuery.sizeOf(context).width;
   late final alturaLimite = MediaQuery.paddingOf(context).top + kToolbarHeight;
 
-  late String idiomaAtual = App.localeNotifier.value.languageCode == "pt"
-      ? AppLocalizations.of(context)!.lan_pt
-      : AppLocalizations.of(context)!.lan_en;
+  late String idiomaAtual = App.localeNotifier.value.languageCode;
 
-  _pegarVersao() async {
+  void _pegarVersao() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     setState(() {
@@ -50,14 +48,37 @@ class _ConfigState extends State<Config> {
     });
   }
 
-  _saveDark() async {
+  void _saveDark() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool("dark", true);
   }
 
-  _saveLight() async {
+  void _saveLight() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool("dark", false);
+  }
+
+  void _mudarLingua(String locale) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("locale", locale);
+    if (!mounted) return;
+    setState(() {
+      idiomaAtual = locale;
+      App.localeNotifier.value = Locale(locale);
+    });
+  }
+
+  String _nomeLocale(String locale, BuildContext context) {
+    String nome;
+    switch (locale) {
+      case "pt":
+        nome = AppLocalizations.of(context).lan_pt;
+      case "en":
+        nome = AppLocalizations.of(context).lan_en;
+      case _:
+        nome = "não implementado";
+    }
+    return nome;
   }
 
   @override
@@ -70,7 +91,7 @@ class _ConfigState extends State<Config> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      physics: ClampingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       slivers: [
         SliverAppBar.large(
           backgroundColor: Theme.of(context).colorScheme.surface,
@@ -79,12 +100,12 @@ class _ConfigState extends State<Config> {
           flexibleSpace: LayoutBuilder(
             builder: (c, cons) {
               return FlexibleSpaceBar(
-                title: const Row(
+                title: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Configurações",
-                      style: TextStyle(fontVariations: [FontVariation.weight(500)]),
+                      AppLocalizations.of(context).config_title,
+                      style: const TextStyle(fontVariations: [FontVariation.weight(500)]),
                     ),
                   ],
                 ),
@@ -100,7 +121,7 @@ class _ConfigState extends State<Config> {
                     icon: const Icon(Symbols.people, fill: 1),
                   ),
                 ]
-              : [],
+              : const [],
         ),
         SliverToBoxAdapter(
           child: Container(
@@ -116,9 +137,12 @@ class _ConfigState extends State<Config> {
                       children: [
                         SwitchListTile(
                           secondary: const Icon(Icons.dark_mode_rounded),
-                          title: const Text("Modo escuro", style: TextStyle(fontSize: 20)),
-                          subtitle: const Text("Lindo como gatos pretos!"),
-                          contentPadding: EdgeInsets.fromLTRB(16, 0, 5, 0),
+                          title: Text(
+                            AppLocalizations.of(context).config_darkmode_title,
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          subtitle: Text(AppLocalizations.of(context).config_darkmode_subtitle),
+                          contentPadding: const EdgeInsets.fromLTRB(16, 0, 5, 0),
                           value: dark,
                           onChanged: (bool value) {
                             setState(() {
@@ -141,59 +165,58 @@ class _ConfigState extends State<Config> {
                             final local = box.localToGlobal(Offset.zero);
                             final pos = Offset(local.dx, local.dy + 5);
 
-                            final listaIdiomas = [
-                              AppLocalizations.of(context)!.lan_pt,
-                              AppLocalizations.of(context)!.lan_en
-                            ]..remove(idiomaAtual);
+                            final listaIdiomas = AppLocalizations.supportedLocales.map((e) => e.languageCode).toList()
+                              ..remove(App.localeNotifier.value.languageCode);
 
                             showMenu(
                               context: context,
                               position: RelativeRect.fromLTRB(99999, pos.dy, 0, 99999),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                               items: [
-                                PopupMenuItem(child: Text(idiomaAtual)),
+                                PopupMenuItem(child: Text(_nomeLocale(idiomaAtual, context))),
                                 ...(listaIdiomas.map((e) {
-                                  return PopupMenuItem(child: Text(e));
+                                  return PopupMenuItem(
+                                      onTap: () => _mudarLingua(e), child: Text(_nomeLocale(e, context)));
                                 })),
                               ],
                             );
                           },
-                          title: const Text("Idioma do app"),
-                          subtitle: const Text("miau miau miau miau miau?"),
+                          title: Text(AppLocalizations.of(context).config_lan_title),
+                          subtitle: Text(AppLocalizations.of(context).config_lan_subtitle),
                           leading: const Icon(Symbols.translate_rounded),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(idiomaAtual, style: TextStyle(fontSize: 14)),
-                              Icon(Symbols.arrow_drop_down_rounded),
+                              Text(_nomeLocale(idiomaAtual, context), style: const TextStyle(fontSize: 14)),
+                              const Icon(Symbols.arrow_drop_down_rounded),
                             ],
                           ),
-                          contentPadding: EdgeInsets.fromLTRB(16, 0, 5, 0),
+                          contentPadding: const EdgeInsets.fromLTRB(16, 0, 5, 0),
                           titleTextStyle: TextStyle(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 20,
                             fontFamily: "Jost",
                           ),
                         ),
-                        !widget.voltar ? DeletarConta() : const SizedBox(),
+                        !widget.voltar ? const DeletarConta() : const SizedBox(),
                       ],
                     ),
                   ),
                 ),
                 const Divider(),
                 Container(
-                  margin: const EdgeInsets.all(15),
+                  margin: const EdgeInsets.fromLTRB(25, 15, 25, 15),
                   width: double.infinity,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Sobre o aplicativo",
-                        style: TextStyle(fontFamily: "Jost", fontSize: 25),
+                      Text(
+                        AppLocalizations.of(context).config_about_title,
+                        style: const TextStyle(fontFamily: "Jost", fontSize: 25),
                       ),
                       SelectableText(
-                        "$packageName\nVersão: $version ($buildNumber)",
+                        AppLocalizations.of(context).config_about_desc(packageName, version, buildNumber),
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ],
@@ -205,7 +228,7 @@ class _ConfigState extends State<Config> {
                 const Divider(),
                 Center(
                   child: Text(
-                    "\u00a9 ${DateTime.now().year} oculosdanilo\nTodos os direitos reservados\n\nFeito com \u2764 por Danilo Lima",
+                    AppLocalizations.of(context).config_copyright(DateTime.now().year),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.grey,
@@ -229,7 +252,7 @@ class _ConfigState extends State<Config> {
       mainAxisSize: MainAxisSize.min,
       children: [
         OutlinedButton(
-          onPressed: () => _launchUrl(_urlGatopediaPlayStore),
+          onPressed: () => abrirUrl(_urlGatopediaPlayStore),
           style: ButtonStyle(
             fixedSize: WidgetStatePropertyAll(Size(scW - 40, 50)),
           ),
@@ -249,7 +272,7 @@ class _ConfigState extends State<Config> {
         ),
         const SizedBox(height: 10),
         OutlinedButton(
-          onPressed: () => _launchUrl(_urlGatopediaGit),
+          onPressed: () => abrirUrl(_urlGatopediaGit),
           style: ButtonStyle(
             fixedSize: WidgetStatePropertyAll(Size(scW - 40, 50)),
           ),
@@ -258,7 +281,7 @@ class _ConfigState extends State<Config> {
               const Icon(AntDesign.github_fill),
               Expanded(
                 child: Center(
-                  child: Text("Repositório", style: TextStyle(fontSize: 18)),
+                  child: Text(AppLocalizations.of(context).config_botoes_repo, style: const TextStyle(fontSize: 18)),
                 ),
               ),
             ],
@@ -266,16 +289,17 @@ class _ConfigState extends State<Config> {
         ),
         const SizedBox(height: 10),
         OutlinedButton(
-          onPressed: () => _launchUrl(_urlGatopediaGitLatest),
+          onPressed: () => abrirUrl(_urlGatopediaGitLatest),
           style: ButtonStyle(
             fixedSize: WidgetStatePropertyAll(Size(scW - 40, 50)),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(AntDesign.github_fill),
+              const Icon(AntDesign.github_fill),
               Expanded(
                 child: Center(
-                  child: Text("Versões", style: TextStyle(fontSize: 18)),
+                  child:
+                      Text(AppLocalizations.of(context).config_botoes_versions, style: const TextStyle(fontSize: 18)),
                 ),
               ),
             ],
@@ -283,7 +307,7 @@ class _ConfigState extends State<Config> {
         ),
         const SizedBox(height: 10),
         OutlinedButton(
-          onPressed: () => _launchUrl(_urlGatopediaWeb),
+          onPressed: () => abrirUrl(_urlGatopediaWeb),
           style: ButtonStyle(
             fixedSize: WidgetStatePropertyAll(Size(scW - 40, 50)),
           ),
@@ -299,7 +323,7 @@ class _ConfigState extends State<Config> {
           ),
         ),
         /*ElevatedButton.icon(
-          onPressed: () => _launchUrl(_urlGatopediaGit),
+          onPressed: () => abrirUrl(_urlGatopediaGit),
           icon: const Icon(AntDesign.github_fill),
           label: const Text(
             "Repositório",
@@ -311,7 +335,7 @@ class _ConfigState extends State<Config> {
         ),
         const SizedBox(height: 10),
         ElevatedButton.icon(
-          onPressed: () => _launchUrl(_urlGatopediaGitLatest),
+          onPressed: () => abrirUrl(_urlGatopediaGitLatest),
           icon: const Icon(AntDesign.github_fill),
           label: const Text(
             "Versões",
@@ -323,7 +347,7 @@ class _ConfigState extends State<Config> {
         ),
         const SizedBox(height: 10),
         ElevatedButton.icon(
-          onPressed: () => _launchUrl(_urlGatopediaWeb),
+          onPressed: () => abrirUrl(_urlGatopediaWeb),
           icon: const Icon(Icons.public_rounded),
           label: const Text(
             "Site",
@@ -338,7 +362,7 @@ class _ConfigState extends State<Config> {
   }
 }
 
-Future<void> _launchUrl(url) async {
+Future<void> abrirUrl(Uri url) async {
   if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
     throw Exception('Could not launch $url');
   }

@@ -40,7 +40,7 @@ class GatoInfoState extends State<GatoInfo> {
               backgroundColor: !dark ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
               flexibleSpace: FlexibleSpaceBar(
                 expandedTitleScale: 2,
-                title: Text(titulo, style: TextStyle(color: Colors.white)),
+                title: Text(titulo, style: const TextStyle(color: Colors.white)),
                 background: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -81,17 +81,17 @@ class GatoInfoState extends State<GatoInfo> {
                           children: [
                             Text(
                               "${widget.gatoInfo.child("resumo").value}",
-                              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 28),
+                              style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 28),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 15),
                             Text(
                               "${widget.gatoInfo.child("descricao").value}".replaceAll("\\n", "\n"),
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 30),
-                            Text(
+                            const Text(
                               "COMENTÁRIOS",
                               style: TextStyle(fontVariations: [FontVariation("wght", 600)], fontSize: 25),
                             ),
@@ -165,7 +165,7 @@ class GatoInfoState extends State<GatoInfo> {
                 ),
               ],
             ),
-            SliverToBoxAdapter(child: SizedBox(height: 25))
+            const SliverToBoxAdapter(child: SizedBox(height: 25))
           ],
         ),
       ),

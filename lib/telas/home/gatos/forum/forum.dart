@@ -129,7 +129,7 @@ class _ForumState extends State<Forum> {
           ? ExpandableFab(
               key: fagKey,
               distance: 70,
-              overlayStyle: ExpandableFabOverlayStyle(blur: 4),
+              overlayStyle: const ExpandableFabOverlayStyle(blur: 4),
               openButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.edit_rounded)),
               closeButtonBuilder: DefaultFloatingActionButtonBuilder(
                   child: const Icon(Icons.close_rounded), fabSize: ExpandableFabSize.small),

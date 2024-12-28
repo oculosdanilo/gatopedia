@@ -52,7 +52,7 @@ class _WikiState extends State<Wiki> {
           }
 
           return AnimatedSwitcher(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             child: filho,
           );
         },

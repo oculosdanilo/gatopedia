@@ -46,7 +46,7 @@ class _PostState extends State<Post> {
               ? Positioned(
                   bottom: 35,
                   width: MediaQuery.sizeOf(context).width - 20,
-                  child: Center(child: Text("E acabou ;)")),
+                  child: const Center(child: Text("E acabou ;)")),
                 )
               : const SizedBox(),
           Card(
@@ -88,11 +88,11 @@ class _PostState extends State<Post> {
                                       width: double.infinity,
                                       fadeInDuration: const Duration(milliseconds: 150),
                                       fadeOutDuration: const Duration(milliseconds: 150),
-                                      placeholder: NetworkImage(""),
+                                      placeholder: const NetworkImage(""),
                                       image: CachedNetworkImageProvider(
                                           "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${widget.index}.webp?alt=media"),
                                       placeholderErrorBuilder: (ctx, _, __) {
-                                        return Align(
+                                        return const Align(
                                           alignment: Alignment.center,
                                           child: LoadingImage(),
                                         );
@@ -178,11 +178,11 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
                 child: FadeInImage(
                   image: NetworkImage(
                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.postSS.child("username").value}.webp?alt=media"),
-                  placeholder: AssetImage("assets/anim/loading.gif"),
+                  placeholder: const AssetImage("assets/anim/loading.gif"),
                   width: 40,
                   fit: BoxFit.cover,
-                  fadeInDuration: Duration(milliseconds: 125),
-                  fadeOutDuration: Duration(milliseconds: 125),
+                  fadeInDuration: const Duration(milliseconds: 125),
+                  fadeOutDuration: const Duration(milliseconds: 125),
                   imageErrorBuilder: (c, obj, stacktrace) {
                     return FutureBuilder(
                       future: _pegarFotoGoogle(widget.postSS.child("username").value.toString()),
@@ -211,7 +211,7 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
                         }
 
                         return AnimatedSwitcher(
-                          duration: Duration(milliseconds: 250),
+                          duration: const Duration(milliseconds: 250),
                           child: filho,
                         );
                       },
@@ -235,9 +235,9 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
                       ),
                       child: Text(
                         "@${widget.postSS.child("username").value}",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
-                          fontVariations: const [FontVariation("wght", 600.0)],
+                          fontVariations: [FontVariation("wght", 600.0)],
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -282,9 +282,9 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
                   height: 45,
                   child: Text(
                     "${widget.postSS.child("username").value}",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
-                      fontVariations: const [FontVariation("wght", 600.0)],
+                      fontVariations: [FontVariation("wght", 600.0)],
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -359,7 +359,7 @@ Widget opcoes(int index, DataSnapshot postSS) {
 }
 
 Widget alertaBlock(String userBloqueado) {
-  return AlertDialog();
+  return const AlertDialog();
 }
 
 class FooterPost extends StatefulWidget {
@@ -417,13 +417,13 @@ class _FooterPostState extends State<FooterPost> {
                       onPressed: () async {
                         action.call();
                       },
-                      icon: Icon(AntDesign.comment_outline),
+                      icon: const Icon(AntDesign.comment_outline),
                       label: Container(
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primary.withOpacity(0.25),
                           borderRadius: BorderRadius.circular(999),
                         ),
-                        constraints: BoxConstraints(minWidth: 21),
+                        constraints: const BoxConstraints(minWidth: 21),
                         height: 21,
                         child: Center(
                           child: Padding(
@@ -432,7 +432,7 @@ class _FooterPostState extends State<FooterPost> {
                               "${widget.postSS.child("comentarios").children.length - 2}",
                               style: TextStyle(
                                 fontSize: 15,
-                                fontVariations: [FontVariation("wght", 600)],
+                                fontVariations: [const FontVariation("wght", 600)],
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
@@ -458,7 +458,7 @@ class _FooterPostState extends State<FooterPost> {
                             color:
                                 GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).onSurface,
                             fontSize: 15,
-                            fontVariations: [FontVariation("wght", 600)],
+                            fontVariations: [const FontVariation("wght", 600)],
                           ),
                         ),
                       ),

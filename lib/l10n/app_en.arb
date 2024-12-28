@@ -1,7 +1,67 @@
 {
+  "gatopedia": "Cat-opedia!",
   "internal": "INTERNAL",
   "closed": "CLOSED",
   "open": "OPEN",
+  "cancel": "CANCEL",
+  "edit": "EDIT",
+  "save": "SAVE",
+  "comment": "########################## LINGUAGENS #############################################",
   "lan_en": "English",
-  "lan_pt": "Portuguese (Brazil)"
+  "lan_pt": "Portuguese (Brazil)",
+  "comment": "########################## COLAB ##################################################",
+  "colab_title": "COLLABORATORS",
+  "colab_desc_danilo": "Design and development",
+  "colab_desc_lucca": "Idealization and research",
+  "colab_popup_title": "About the project",
+  "colab_popup_desc1": "Developed with ",
+  "colab_popup_desc2": " and ",
+  "comment": "########################## CONFIG #################################################",
+  "config_title": "Settings",
+  "config_darkmode_title": "Dark mode",
+  "config_darkmode_subtitle": "Pretty, just like black cats!",
+  "config_lan_title": "App language",
+  "config_lan_subtitle": "meow meow meow meow meow?",
+  "config_deleteAcc_title": "Delete account",
+  "config_deleteAcc_subtitle": "Remove your profile and content forever",
+  "config_about_title": "About the app",
+  "config_about_desc": "{packageName}\nVersion: {version} ({buildNumber})",
+  "@config_about_desc": {
+    "placeholders": {
+      "packageName": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      },
+      "buildNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "config_copyright": "\u00a9\uFE0E {year} oculosdanilo\nAll rights reserved\n\nMade with \u2764\uFE0F by Danilo Lima",
+  "@config_copyright": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "config_botoes_repo": "Repository",
+  "config_botoes_versions": "Versions",
+  "comment": "########################## PPEDIT #################################################",
+  "ppedit_title": "Edit profile picture",
+  "ppedit_noImage": "No image selected",
+  "ppedit_cut_title": "\u2702\uFE0FCropping...",
+  "ppedit_cut_done": "Crop",
+  "comment": "########################## PROFILE #################################################",
+  "profile_title": "Me",
+  "profile_bio_edit": "Edit bio",
+  "profile_bio_empty": "(empty)",
+  "profile_bio_loading": "loading...",
+  "profile_pfp_change": "Change profile picture",
+  "profile_pfp_remove": "Remove profile picture",
+  "profile_pfp_addPFP": "Add profile picture",
+  "profile_pfp_flushbarAdd": "Added successfully!",
+  "comment": "########################## END #################################################"
 }

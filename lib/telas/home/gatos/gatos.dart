@@ -90,7 +90,7 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
                 centerTitle: false,
                 leading: username != null ? botaoSair(context) : null,
               ),
-              SizedBox(height: kToolbarHeight),
+              const SizedBox(height: kToolbarHeight),
               TabBar(
                 tabAlignment: TabAlignment.start,
                 isScrollable: true,
@@ -152,7 +152,7 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
                     angle: math.pi,
                     child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.error),
                   ),
-                  title: Text(
+                  title: const Text(
                     "Já vai? ;(",
                     style: TextStyle(fontVariations: [FontVariation("wght", 500)]),
                     textAlign: TextAlign.center,

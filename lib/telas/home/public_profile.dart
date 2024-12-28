@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:grayscale/grayscale.dart';
@@ -20,7 +21,7 @@ class PublicProfile extends StatefulWidget {
 class _PublicProfileState extends State<PublicProfile> {
   late StreamSubscription<DatabaseEvent> atualizarListenPublicProfile;
 
-  _pegarUserinfo(username) async {
+  _pegarUserinfo(String username, BuildContext c) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users/$username");
     ref.get().then(
@@ -30,26 +31,30 @@ class _PublicProfileState extends State<PublicProfile> {
             bioText = value.child("bio").value as String;
           });
         } else {
-          bioText = "(vazio)";
+          if (!c.mounted) return;
+          bioText = AppLocalizations.of(c).profile_bio_empty;
         }
       },
     );
   }
 
-  _atualizar() {
+  _atualizar(BuildContext c) {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users");
     atualizarListenPublicProfile = ref.onValue.listen((event) {
-      _pegarUserinfo(widget.username);
+      if (!c.mounted) return;
+      _pegarUserinfo(widget.username, c);
     });
   }
 
   @override
   void initState() {
-    bioText = "(vazio)";
-    _pegarUserinfo(widget.username);
-    _atualizar();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      bioText = AppLocalizations.of(context).profile_bio_loading;
+      _pegarUserinfo(widget.username, context);
+      _atualizar(context);
+    });
   }
 
   @override
@@ -82,7 +87,13 @@ class _PublicProfileState extends State<PublicProfile> {
                     expandedHeight: 400,
                     backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                     flexibleSpace: FlexibleSpaceBar(
-                      title: Text("@${widget.username}", style: TextStyle(color: Colors.white)),
+                      title: Transform.translate(
+                        offset: const Offset(-33, 0),
+                        child: Text(
+                          "@${widget.username}",
+                          style: const TextStyle(color: Colors.white, fontVariations: [FontVariation("wght", 500)]),
+                        ),
+                      ),
                       background: Stack(
                         fit: StackFit.expand,
                         children: [
@@ -112,7 +123,7 @@ class _PublicProfileState extends State<PublicProfile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text("Bio", style: TextStyle(fontSize: 15, color: Colors.grey[700]!)),
-                          SelectableText(bioText, style: TextStyle(fontSize: 20))
+                          SelectableText(bioText, style: const TextStyle(fontSize: 20)),
                         ],
                       ),
                     ),

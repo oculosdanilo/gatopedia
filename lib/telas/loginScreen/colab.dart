@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
+import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -8,15 +10,6 @@ final Uri _urlFlutter = Uri.parse('https://flutter.dev');
 final Uri _urlMaterialYou = Uri.parse('https://m3.material.io');
 final Uri _urlEmailDanilo = Uri.parse('mailto:danilo.lima67@fatec.sp.gov.br');
 final Uri _urlEmailLucca = Uri.parse('mailto:juliana.barros36@etec.sp.gov.br');
-
-class Asim extends StatelessWidget {
-  const Asim({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
 
 class Colaboradores extends StatefulWidget {
   const Colaboradores({super.key});
@@ -39,7 +32,10 @@ class _ColaboradoresState extends State<Colaboradores> {
               children: [
                 Icon(Icons.people_alt_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 40),
                 const SizedBox(width: 15),
-                Text("COLABORADORES", style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+                Text(
+                  AppLocalizations.of(context).colab_title,
+                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                ),
               ],
             ),
             actions: [
@@ -47,6 +43,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                 icon: const Icon(Symbols.info_rounded, fill: 1),
                 onPressed: () => showCupertinoDialog(
                   context: context,
+                  barrierDismissible: true,
                   builder: (context) => alertaSobre(context),
                 ),
               ),
@@ -58,7 +55,7 @@ class _ColaboradoresState extends State<Colaboradores> {
               children: [
                 Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  margin: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.fromLTRB(15, 20, 15, 20),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -76,10 +73,10 @@ class _ColaboradoresState extends State<Colaboradores> {
                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                             ),
                             const SizedBox(height: 10),
-                            const Text("\u2022 Design e programação"),
+                            Text("\u2022 ${AppLocalizations.of(context).colab_desc_danilo}"),
                             const SizedBox(height: 10),
                             ElevatedButton.icon(
-                              onPressed: () => _launchUrl(_urlEmailDanilo),
+                              onPressed: () => abrirEmail(_urlEmailDanilo),
                               icon: const Icon(Icons.mail_rounded),
                               label: const Text("Email"),
                             )
@@ -91,7 +88,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                 ),
                 Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  margin: const EdgeInsets.fromLTRB(15, 0, 15, 20),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -105,10 +102,10 @@ class _ColaboradoresState extends State<Colaboradores> {
                         children: [
                           const Text("Lucca Leal", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
                           const SizedBox(height: 10),
-                          const Text("\u2022 Idealização e pesquisas"),
+                          Text("\u2022 ${AppLocalizations.of(context).colab_desc_lucca}"),
                           const SizedBox(height: 10),
                           ElevatedButton.icon(
-                            onPressed: () => _launchUrl(_urlEmailLucca),
+                            onPressed: () => abrirEmail(_urlEmailLucca),
                             icon: const Icon(Icons.mail_rounded),
                             label: const Text("Email"),
                           )
@@ -132,16 +129,16 @@ class _ColaboradoresState extends State<Colaboradores> {
     return StatefulBuilder(builder: (context, setStateLocal) {
       return AlertDialog(
         icon: const Icon(Icons.info_rounded),
-        title: const Text(
-          "Sobre o projeto",
+        title: Text(
+          AppLocalizations.of(context).colab_popup_title,
           textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         content: RichText(
           text: TextSpan(
             style: TextStyle(fontSize: 17, color: Theme.of(context).colorScheme.onSurface, fontFamily: "Jost"),
             children: [
-              TextSpan(text: "Produzido com "),
+              TextSpan(text: AppLocalizations.of(context).colab_popup_desc1),
               TextSpan(
                   text: "Flutter",
                   style: TextStyle(
@@ -151,7 +148,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      _launchUrl(_urlFlutter);
+                      abrirUrl(_urlFlutter);
                     }
                     ..onTapDown = (d) {
                       setStateLocal(() {
@@ -168,7 +165,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                         fundoTexto1 = Colors.transparent;
                       });
                     }),
-              TextSpan(text: " e "),
+              TextSpan(text: AppLocalizations.of(context).colab_popup_desc2),
               TextSpan(
                   text: "Material You",
                   style: TextStyle(
@@ -178,7 +175,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      _launchUrl(_urlMaterialYou);
+                      abrirUrl(_urlMaterialYou);
                     }
                     ..onTapDown = (d) {
                       setStateLocal(() {
@@ -209,8 +206,8 @@ class _ColaboradoresState extends State<Colaboradores> {
   }
 }
 
-Future<void> _launchUrl(url) async {
-  if (!await launchUrl(url)) {
+Future<void> abrirEmail(Uri url) async {
+  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
     throw Exception('Could not launch $url');
   }
 }

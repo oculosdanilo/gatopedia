@@ -141,7 +141,7 @@ class FormAppState extends State<FormApp> {
                 ),
                 GestureDetector(
                   onTap: () => setState(() => inputLembrar = !inputLembrar),
-                  child: Text("Lembre-se de mim!", style: TextStyle(fontSize: 18)),
+                  child: const Text("Lembre-se de mim!", style: TextStyle(fontSize: 18)),
                 )
               ],
             ),
@@ -208,7 +208,7 @@ class FormAppState extends State<FormApp> {
               }
             }
           : null,
-      child: Text("Entrar", style: TextStyle(fontSize: 18)),
+      child: const Text("Entrar", style: TextStyle(fontSize: 18)),
     );
   }
 }

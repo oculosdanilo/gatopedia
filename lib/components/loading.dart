@@ -44,7 +44,7 @@ class _LoadingImageState extends State<LoadingImage> with SingleTickerProviderSt
       scale: _anim.value,
       child: ClipOval(
         child: Container(
-          color: alt ? Color(0xffff9922) : Theme.of(context).colorScheme.primary,
+          color: alt ? const Color(0xffff9922) : Theme.of(context).colorScheme.primary,
           width: 50,
           height: 50,
         ),

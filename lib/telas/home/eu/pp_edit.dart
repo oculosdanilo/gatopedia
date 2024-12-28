@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,7 +15,9 @@ File? file, imagemEditada;
 bool imagemSelecionada = false;
 
 class PPEdit extends StatefulWidget {
-  const PPEdit({super.key});
+  final bool edit;
+
+  const PPEdit(this.edit, {super.key});
 
   @override
   State<PPEdit> createState() => _PPEditState();
@@ -23,7 +26,7 @@ class PPEdit extends StatefulWidget {
 class _PPEditState extends State<PPEdit> {
   late bool _botaoEnabled = true;
 
-  _salvarPP(File? file) async {
+  void _salvarPP(File? file) async {
     XFile? result = await FlutterImageCompress.compressAndGetFile(
       file!.absolute.path,
       "${(await getApplicationDocumentsDirectory()).path}aa.webp",
@@ -42,7 +45,7 @@ class _PPEditState extends State<PPEdit> {
     Navigator.pop(context, true);
   }
 
-  _pegaImagem() async {
+  void _pegaImagem(BuildContext c) async {
     final picker = ImagePicker();
     XFile? result = await picker.pickImage(source: ImageSource.gallery);
     if (!mounted) return;
@@ -53,7 +56,7 @@ class _PPEditState extends State<PPEdit> {
         aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: '\u2702️Cortando...',
+            toolbarTitle: AppLocalizations.of(context).ppedit_cut_title,
             hideBottomControls: true,
             toolbarColor: Theme.of(context).colorScheme.primary,
             toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
@@ -63,9 +66,9 @@ class _PPEditState extends State<PPEdit> {
             lockAspectRatio: true,
           ),
           IOSUiSettings(
-            cancelButtonTitle: "Cancelar",
-            doneButtonTitle: "Cortar",
-            title: '\u2702️Cortando...',
+            cancelButtonTitle: AppLocalizations.of(context).cancel,
+            doneButtonTitle: AppLocalizations.of(context).ppedit_cut_done,
+            title: AppLocalizations.of(context).ppedit_cut_title,
             aspectRatioLockEnabled: true,
             minimumAspectRatio: 1 / 1,
             aspectRatioPickerButtonHidden: true,
@@ -84,14 +87,14 @@ class _PPEditState extends State<PPEdit> {
     }
   }
 
-  _editarImagem(File? file) async {
+  void _editarImagem(File? file) async {
     if (file != null) {
       CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: file.path,
         aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
         uiSettings: [
           AndroidUiSettings(
-              toolbarTitle: '\u2702️Cortando...',
+              toolbarTitle: AppLocalizations.of(context).ppedit_cut_title,
               hideBottomControls: true,
               toolbarColor: Theme.of(context).colorScheme.primary,
               toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
@@ -101,9 +104,9 @@ class _PPEditState extends State<PPEdit> {
               lockAspectRatio: true,
               aspectRatioPresets: [CropAspectRatioPreset.square]),
           IOSUiSettings(
-              cancelButtonTitle: "Cancelar",
-              doneButtonTitle: "Cortar",
-              title: '\u2702️Cortando...',
+              cancelButtonTitle: AppLocalizations.of(context).cancel,
+              doneButtonTitle: AppLocalizations.of(context).ppedit_cut_done,
+              title: AppLocalizations.of(context).ppedit_cut_title,
               aspectRatioLockEnabled: true,
               minimumAspectRatio: 1 / 1,
               aspectRatioPickerButtonHidden: true,
@@ -124,7 +127,7 @@ class _PPEditState extends State<PPEdit> {
     file = null;
     imagemEditada = null;
     imagemSelecionada = false;
-    _pegaImagem();
+    _pegaImagem(context);
     super.initState();
   }
 
@@ -143,11 +146,10 @@ class _PPEditState extends State<PPEdit> {
             ),
             title: Center(
               child: Text(
-                "Editar foto de perfil",
-                style: TextStyle(
-                  fontFamily: "Jost",
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                widget.edit
+                    ? AppLocalizations.of(context).ppedit_title
+                    : AppLocalizations.of(context).profile_pfp_addPFP,
+                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
             ),
           ),
@@ -182,9 +184,9 @@ class _PPEditState extends State<PPEdit> {
                                   ClipOval(child: Image(image: FileImage(imagemEditada!), fit: BoxFit.cover)),
                                 ],
                               )
-                            : const Padding(
-                                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                child: Text("Nenhuma imagem selecionada", textAlign: TextAlign.center),
+                            : Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: Text(AppLocalizations.of(context).ppedit_noImage, textAlign: TextAlign.center),
                               ),
                       ),
                       const SizedBox(height: 20),
@@ -193,7 +195,7 @@ class _PPEditState extends State<PPEdit> {
                         children: [
                           ElevatedButton(
                             onPressed: _botaoEnabled ? () => _editarImagem(file) : null,
-                            child: const Text("Editar"),
+                            child: Text(AppLocalizations.of(context).edit),
                           ),
                           FilledButton(
                             onPressed: _botaoEnabled
@@ -204,7 +206,7 @@ class _PPEditState extends State<PPEdit> {
                                     _salvarPP(imagemEditada!);
                                   }
                                 : null,
-                            child: const Text("Salvar"),
+                            child: Text(AppLocalizations.of(context).save),
                           )
                         ],
                       )

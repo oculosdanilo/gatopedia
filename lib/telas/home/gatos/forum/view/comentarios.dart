@@ -133,7 +133,7 @@ class _ComentariosForumState extends State<ComentariosForum> {
                             ),
                             child: Text(
                               "${postAtual.child("username").value}",
-                              style: TextStyle(fontVariations: [FontVariation("wght", 600)], fontSize: 20),
+                              style: const TextStyle(fontVariations: [FontVariation("wght", 600)], fontSize: 20),
                               softWrap: true,
                             ),
                           ),
@@ -144,7 +144,7 @@ class _ComentariosForumState extends State<ComentariosForum> {
                                     ? "$pedaco1..."
                                     : pedaco1 + pedaco2
                                 : pedaco1,
-                            style: TextStyle(fontSize: 17),
+                            style: const TextStyle(fontSize: 17),
                             softWrap: true,
                             maxLines: 50,
                           ),
@@ -161,7 +161,7 @@ class _ComentariosForumState extends State<ComentariosForum> {
                                     ),
                                   ),
                                 )
-                              : SizedBox(),
+                              : const SizedBox(),
                         ],
                       ),
                     ),

@@ -4,6 +4,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/index.dart';
@@ -56,7 +57,7 @@ class _DeletarContaState extends State<DeletarConta> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text("Para continuar, confirme sua conta do Google abaixo:", textAlign: TextAlign.start),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     SizedBox(
                       width: scW * 0.8,
                       child: FilledButton.icon(
@@ -71,7 +72,7 @@ class _DeletarContaState extends State<DeletarConta> {
                               }
                             : () {},
                         icon: Icon(!confirmado ? AntDesign.google_outline : Symbols.done_rounded),
-                        label: Text(!confirmado ? "Confirmar" : "Confirmado!", style: TextStyle(fontSize: 18)),
+                        label: Text(!confirmado ? "Confirmar" : "Confirmado!", style: const TextStyle(fontSize: 18)),
                       ),
                     ),
                   ],
@@ -95,7 +96,7 @@ class _DeletarContaState extends State<DeletarConta> {
                             padding: const EdgeInsets.only(right: 10),
                             child: IconButton(onPressed: () => _mostrarSenha(setStateB), icon: iconeOlho),
                           ),
-                          label: Text("Senha"),
+                          label: const Text("Senha"),
                         ),
                       ),
                     ),
@@ -169,7 +170,6 @@ class _DeletarContaState extends State<DeletarConta> {
     final ref = FirebaseDatabase.instance.ref("users/$username/google");
     final googleID = await ref.get();
     if (googleID.exists) {
-      debugPrint(googleID.value as String);
       setState(() {
         userGoogle = googleID.value as String;
       });
@@ -265,8 +265,8 @@ class _DeletarContaState extends State<DeletarConta> {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const Index(false)));
         }
       },
-      title: const Text("Deletar conta"),
-      subtitle: const Text("Remove seu perfil e seu conteúdo na plataforma"),
+      title: Text(AppLocalizations.of(context).config_deleteAcc_title),
+      subtitle: Text(AppLocalizations.of(context).config_deleteAcc_subtitle),
       leading: const Icon(Symbols.delete_rounded),
       iconColor: Theme.of(context).colorScheme.error,
       titleTextStyle: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 20, fontFamily: "Jost"),

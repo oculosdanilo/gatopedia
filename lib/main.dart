@@ -6,9 +6,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/telas/firebase_options.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/home.dart';
@@ -30,9 +30,6 @@ final connecteo = ConnectionChecker();
 void main() async {
   Future<bool> br() async {
     final a = await Devicelocale.currentAsLocale;
-    if (a?.languageCode == "pt") {
-      debugPrint("PÁTRIA AMADA BRASIL");
-    }
     return a?.languageCode == "pt";
   }
 
@@ -110,13 +107,13 @@ class _AppState extends State<App> {
                 home: w,
                 builder: (c, w) {
                   return Banner(
-                    message: AppLocalizations.of(c)!.internal,
+                    message: AppLocalizations.of(c).internal,
                     location: BannerLocation.bottomEnd,
                     color: Theme.of(c).colorScheme.primary,
                     textStyle: TextStyle(
                       color: Theme.of(c).colorScheme.onPrimary,
                       fontSize: 10,
-                      fontVariations: [FontVariation.weight(700)],
+                      fontVariations: [const FontVariation.weight(700)],
                       fontFamily: "Jost",
                     ),
                     child: w,

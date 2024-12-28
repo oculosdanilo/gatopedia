@@ -208,7 +208,7 @@ class _IndexState extends State<Index> {
                             }
                           : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
-                      child: Text(
+                      child: const Text(
                         "Entrar",
                         style: TextStyle(fontSize: 20, fontVariations: [FontVariation("wght", 500)]),
                       ),
@@ -226,7 +226,7 @@ class _IndexState extends State<Index> {
                             }
                           : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
-                      child: Text("Cadastrar", style: TextStyle(fontSize: 20)),
+                      child: const Text("Cadastrar", style: TextStyle(fontSize: 20)),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -240,7 +240,7 @@ class _IndexState extends State<Index> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           const SizedBox(width: 5),
-                          Text("Entrar com:", style: TextStyle(fontSize: 20)),
+                          const Text("Entrar com:", style: TextStyle(fontSize: 20)),
                           const Expanded(child: SizedBox()),
                           OutlinedButton.icon(
                             icon: const Icon(Bootstrap.google),

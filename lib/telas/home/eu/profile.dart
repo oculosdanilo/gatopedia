@@ -7,9 +7,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
+import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/eu/pp_edit.dart';
 import 'package:gatopedia/telas/home/home.dart';
-import 'package:gatopedia/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum MenuItensImg { editar, remover }
@@ -140,7 +141,7 @@ class _ProfileState extends State<Profile> {
                 icon: const Icon(Icons.more_vert_rounded, shadows: [Shadow(blurRadius: 10)], color: Colors.white),
                 onSelected: (value) async {
                   if (value == MenuItensImg.editar) {
-                    var resposta = await Navigator.push(context, SlideRightAgainRoute(const PPEdit()));
+                    var resposta = await Navigator.push(context, SlideRightAgainRoute(const PPEdit(true)));
                     if (resposta != null) {
                       if (resposta) {
                         setState(() {
@@ -207,7 +208,7 @@ class _ProfileState extends State<Profile> {
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                         const SizedBox(width: 10),
-                        const Text("Mudar foto de perfil"),
+                        Text(AppLocalizations.of(context).profile_pfp_change),
                       ],
                     ),
                   ),
@@ -221,7 +222,7 @@ class _ProfileState extends State<Profile> {
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                         const SizedBox(width: 10),
-                        const Text("Remover foto de perfil"),
+                        Text(AppLocalizations.of(context).profile_pfp_remove),
                       ],
                     ),
                   ),
@@ -238,12 +239,12 @@ class _ProfileState extends State<Profile> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 onSelected: (value) async {
                   if (value == MenuItensSemImg.adicionar) {
-                    var resposta = await Navigator.push(context, SlideRightAgainRoute(const PPEdit()));
+                    var resposta = await Navigator.push(context, SlideRightAgainRoute(const PPEdit(false)));
                     if (!context.mounted) return;
                     if (resposta != null) {
                       if (resposta) {
                         Flushbar(
-                          message: "Adicionada com sucesso!",
+                          message: AppLocalizations.of(context).profile_pfp_flushbarAdd,
                           duration: const Duration(seconds: 2),
                           margin: const EdgeInsets.all(20),
                           borderRadius: BorderRadius.circular(50),
@@ -263,7 +264,7 @@ class _ProfileState extends State<Profile> {
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                         const SizedBox(width: 10),
-                        const Text("Adicionar foto de perfil"),
+                        Text(AppLocalizations.of(context).profile_pfp_addPFP),
                       ],
                     ),
                   ),
@@ -286,7 +287,7 @@ class _ProfileState extends State<Profile> {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
             "@$username",
-            style: TextStyle(color: Colors.white, fontVariations: [FontVariation("wght", 500)]),
+            style: const TextStyle(color: Colors.white, fontVariations: [FontVariation("wght", 500)]),
           ),
         ),
         background: Stack(
@@ -353,13 +354,13 @@ class _ProfileState extends State<Profile> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SelectableText(bioText, style: TextStyle(fontSize: 20)),
+        SelectableText(bioText, style: const TextStyle(fontSize: 20)),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             TextButton.icon(
-              onPressed: bioText != "carregando..."
+              onPressed: bioText != AppLocalizations.of(context).profile_bio_loading
                   ? () {
                       setState(() {
                         editMode = true;
@@ -369,7 +370,7 @@ class _ProfileState extends State<Profile> {
                     }
                   : null,
               icon: const Icon(Icons.edit_rounded),
-              label: const Text("Editar bio"),
+              label: Text(AppLocalizations.of(context).profile_bio_edit),
             ),
           ],
         ),
@@ -388,7 +389,7 @@ class _ProfileState extends State<Profile> {
           controller: txtBio,
           maxLines: 2,
           decoration: InputDecoration(
-            hintText: "(vazio)",
+            hintText: AppLocalizations.of(context).profile_bio_empty,
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
                 color: Theme.of(context).colorScheme.primary,

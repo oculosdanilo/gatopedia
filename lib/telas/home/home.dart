@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/components/dan_icons.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
@@ -53,6 +54,7 @@ class _HomeState extends State<Home> {
         }
       },
       child: Scaffold(
+        extendBody: true,
         bottomNavigationBar: NavigationBar(
           selectedIndex: paginaSelecionada,
           onDestinationSelected: (index) {
@@ -64,19 +66,19 @@ class _HomeState extends State<Home> {
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           destinations: <NavigationDestination>[
             NavigationDestination(
-              icon: Icon(DanIcons.pawOutline),
+              icon: const Icon(DanIcons.pawOutline),
               selectedIcon: Icon(IonIcons.paw, color: Theme.of(context).colorScheme.onPrimary, fill: 1),
               label: "Gatos",
             ),
             NavigationDestination(
               icon: const Icon(Symbols.person_rounded, fill: 0),
               selectedIcon: Icon(Symbols.person_rounded, color: Theme.of(context).colorScheme.onPrimary, fill: 1),
-              label: "Eu",
+              label: AppLocalizations.of(context).profile_title,
             ),
             NavigationDestination(
               icon: const Icon(Symbols.settings_rounded, fill: 0),
               selectedIcon: Icon(Symbols.settings_rounded, color: Theme.of(context).colorScheme.onPrimary, fill: 1),
-              label: "Configurações",
+              label: AppLocalizations.of(context).config_title,
             )
           ],
         ),

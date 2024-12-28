@@ -50,11 +50,11 @@ class _ComentarioState extends State<Comentario> {
                 child: FadeInImage(
                   image: NetworkImage(
                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.usernamePost}.webp?alt=media"),
-                  placeholder: AssetImage("assets/anim/loading.gif"),
+                  placeholder: const AssetImage("assets/anim/loading.gif"),
                   width: 40,
                   fit: BoxFit.cover,
-                  fadeInDuration: Duration(milliseconds: 125),
-                  fadeOutDuration: Duration(milliseconds: 125),
+                  fadeInDuration: const Duration(milliseconds: 125),
+                  fadeOutDuration: const Duration(milliseconds: 125),
                   imageErrorBuilder: (c, obj, stacktrace) {
                     return FutureBuilder(
                         future: _pegarFotoGoogle(widget.usernamePost),
@@ -97,7 +97,7 @@ class _ComentarioState extends State<Comentario> {
                     ),
                     child: Text(
                       "@${widget.usernamePost}",
-                      style: TextStyle(fontVariations: [FontVariation("wght", 500)], fontSize: 20),
+                      style: const TextStyle(fontVariations: [FontVariation("wght", 500)], fontSize: 20),
                       softWrap: true,
                     ),
                   ),

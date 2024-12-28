@@ -101,7 +101,7 @@ class _NewCadastroState extends State<NewCadastro> {
                   const SizedBox(width: 20),
                   OutlinedButton(
                     onPressed: botaoEnabled ? () => Navigator.pop(context) : null,
-                    child: Text("Cancelar", style: TextStyle(fontSize: 18)),
+                    child: const Text("Cancelar", style: TextStyle(fontSize: 18)),
                   ),
                   const Expanded(child: SizedBox()),
                   FilledButton(
@@ -161,7 +161,7 @@ class _NewCadastroState extends State<NewCadastro> {
                             }
                           }
                         : null,
-                    child: Text("Cadastrar", style: TextStyle(fontSize: 18)),
+                    child: const Text("Cadastrar", style: TextStyle(fontSize: 18)),
                   ),
                   const SizedBox(width: 20),
                 ],
@@ -235,7 +235,7 @@ class _NewCadastroState extends State<NewCadastro> {
                           ? Positioned(
                               child: IconButton.filledTonal(
                                 onPressed: () => setState(() => novaImagem = null),
-                                icon: Icon(Symbols.delete_rounded, fill: 1),
+                                icon: const Icon(Symbols.delete_rounded, fill: 1),
                                 color: Theme.of(context).colorScheme.onTertiaryContainer,
                                 style: ButtonStyle(
                                   backgroundColor:
@@ -243,7 +243,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                 ),
                               ),
                             )
-                          : SizedBox(),
+                          : const SizedBox(),
                       Positioned(
                         right: 0,
                         bottom: 0,
@@ -254,7 +254,7 @@ class _NewCadastroState extends State<NewCadastro> {
                               context: context,
                               barrierDismissible: true,
                               barrierLabel: '',
-                              transitionDuration: Duration(milliseconds: 250),
+                              transitionDuration: const Duration(milliseconds: 250),
                               transitionBuilder: (context, a1, a2, widget) {
                                 final valueCurva = Curves.ease.transform(a1.value);
 
@@ -264,7 +264,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                     (valueCurva * -(posicao.dy - (scH / 2))) + (posicao.dy - (scH / 2)),
                                   ),
                                   child: Dialog(
-                                    insetPadding: EdgeInsets.all(0),
+                                    insetPadding: const EdgeInsets.all(0),
                                     backgroundColor: Colors.transparent,
                                     child: Container(
                                       height: 60 + (120 * valueCurva),
@@ -275,7 +275,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                         color: Theme.of(context).colorScheme.secondaryContainer,
                                       ),
                                       child: AnimatedOpacity(
-                                        duration: Duration(milliseconds: 150),
+                                        duration: const Duration(milliseconds: 150),
                                         opacity: valueCurva >= 0.9 ? 1 : 0,
                                         child: botoes(valueCurva, context),
                                       ),
@@ -283,7 +283,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                   ),
                                 );
                               },
-                              pageBuilder: (context, a1, a2) => SizedBox(),
+                              pageBuilder: (context, a1, a2) => const SizedBox(),
                             );
                           },
                           icon: const Icon(Symbols.camera_alt_rounded, fill: 1, size: 30),
@@ -353,7 +353,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                 label: const Text("Nome de usuário"),
                               ),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             widget.conta == null
                                 ? SizedBox(
                                     width: scW * 0.8,
@@ -386,7 +386,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                       ),
                                     ),
                                   )
-                                : SizedBox(),
+                                : const SizedBox(),
                             SizedBox(height: widget.conta == null ? 20 : 0),
                             TextFormField(
                               maxLength: 255,
@@ -449,7 +449,7 @@ class _NewCadastroState extends State<NewCadastro> {
     if (imagem != null) {
       CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: imagem.path,
-        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: '\u2702️Cortando...',
@@ -491,7 +491,7 @@ class _NewCadastroState extends State<NewCadastro> {
                     }
                   },
                   style: ButtonStyle(
-                    fixedSize: WidgetStatePropertyAll(Size(120, 120)),
+                    fixedSize: const WidgetStatePropertyAll(Size(120, 120)),
                     shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
                   ),
                   child: Column(
@@ -511,7 +511,7 @@ class _NewCadastroState extends State<NewCadastro> {
                   ),
                 ),
               )
-            : SizedBox(),
+            : const SizedBox(),
         valueCurva >= 0.9
             ? Flexible(
                 child: OutlinedButton(
@@ -522,7 +522,7 @@ class _NewCadastroState extends State<NewCadastro> {
                     }
                   },
                   style: ButtonStyle(
-                    fixedSize: WidgetStatePropertyAll(Size(120, 120)),
+                    fixedSize: const WidgetStatePropertyAll(Size(120, 120)),
                     shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
                   ),
                   child: Column(
@@ -542,7 +542,7 @@ class _NewCadastroState extends State<NewCadastro> {
                   ),
                 ),
               )
-            : SizedBox(),
+            : const SizedBox(),
       ],
     );
   }
