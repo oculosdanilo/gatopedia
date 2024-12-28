@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /ios/build/
+/lib/l10n/app_localizations.dart
+/lib/l10n/app_localizations_en.dart
+/lib/l10n/app_localizations_pt.dart
