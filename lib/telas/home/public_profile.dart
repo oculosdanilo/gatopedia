@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/telas/home/config/config.dart';
-import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:grayscale/grayscale.dart';
 
 String bioText = "carregando...";

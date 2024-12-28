@@ -1,4 +1,5 @@
 import 'package:connecteo/connecteo.dart';
+import 'package:devicelocale/devicelocale.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -22,9 +23,19 @@ final blueSchemeL = ColorScheme.fromSeed(seedColor: const Color(0xff000080), bri
 dynamic mensagem;
 DataSnapshot? snapshotForum;
 
+bool dark = false;
+
 final connecteo = ConnectionChecker();
 
 void main() async {
+  Future<bool> br() async {
+    final a = await Devicelocale.currentAsLocale;
+    if (a?.languageCode == "pt") {
+      debugPrint("PÁTRIA AMADA BRASIL");
+    }
+    return a?.languageCode == "pt";
+  }
+
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
@@ -35,16 +46,21 @@ void main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   final SharedPreferences pref = await SharedPreferences.getInstance();
-  final salvo = pref.getString("username") != null;
-  if (salvo) username = pref.getString("username");
+  final userSalvo = pref.getString("username") != null;
+  if (userSalvo) username = pref.getString("username");
 
   scrollSalvo = pref.getDouble("scrollSalvo") ?? 0;
 
-  if (pref.getBool("dark") ?? PlatformDispatcher.instance.platformBrightness == Brightness.dark) {
-    runApp(App(ThemeMode.dark, !salvo ? const Index(true) : const Home()));
-  } else {
-    runApp(App(ThemeMode.light, !salvo ? const Index(true) : const Home()));
-  }
+  final startsDark = pref.getBool("dark") ?? PlatformDispatcher.instance.platformBrightness == Brightness.dark;
+  dark = startsDark;
+  final localeInicial = Locale(pref.getString("locale") ?? (await br() ? "pt" : "en"));
+  runApp(
+    App(
+      startsDark ? ThemeMode.dark : ThemeMode.light,
+      localeInicial,
+      !userSalvo ? const Index(true) : const Home(),
+    ),
+  );
 }
 
 class MyBehavior extends ScrollBehavior {
@@ -54,10 +70,12 @@ class MyBehavior extends ScrollBehavior {
 
 class App extends StatefulWidget {
   static late final ValueNotifier<ThemeMode> themeNotifier;
+  static late final ValueNotifier<Locale> localeNotifier;
   final ThemeMode temaInicial;
+  final Locale localeInicial;
   final Widget inicio;
 
-  const App(this.temaInicial, this.inicio, {super.key});
+  const App(this.temaInicial, this.localeInicial, this.inicio, {super.key});
 
   @override
   State<App> createState() => _AppState();
@@ -67,6 +85,7 @@ class _AppState extends State<App> {
   @override
   void initState() {
     App.themeNotifier = ValueNotifier(widget.temaInicial);
+    App.localeNotifier = ValueNotifier(widget.localeInicial);
     super.initState();
   }
 
@@ -74,30 +93,37 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: App.themeNotifier,
+      child: widget.inicio,
       builder: (c, currentMode, w) {
-        return MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          debugShowCheckedModeBanner: false,
-          theme: temaLight(),
-          darkTheme: temaDark(),
-          themeMode: currentMode,
-          home: widget.inicio,
-          builder: (c, w) {
-            return Banner(
-              message: AppLocalizations.of(c)!.danilo,
-              location: BannerLocation.bottomEnd,
-              color: Theme.of(c).colorScheme.primary,
-              textStyle: TextStyle(
-                color: Theme.of(c).colorScheme.onPrimary,
-                fontSize: 10,
-                fontVariations: [FontVariation.weight(700)],
-                fontFamily: "Jost",
-              ),
-              child: w,
-            );
-          },
-        );
+        return ValueListenableBuilder<Locale>(
+            valueListenable: App.localeNotifier,
+            child: w,
+            builder: (c, currentLocale, w) {
+              return MaterialApp(
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                locale: currentLocale,
+                debugShowCheckedModeBanner: false,
+                theme: temaLight(),
+                darkTheme: temaDark(),
+                themeMode: currentMode,
+                home: w,
+                builder: (c, w) {
+                  return Banner(
+                    message: AppLocalizations.of(c)!.internal,
+                    location: BannerLocation.bottomEnd,
+                    color: Theme.of(c).colorScheme.primary,
+                    textStyle: TextStyle(
+                      color: Theme.of(c).colorScheme.onPrimary,
+                      fontSize: 10,
+                      fontVariations: [FontVariation.weight(700)],
+                      fontFamily: "Jost",
+                    ),
+                    child: w,
+                  );
+                },
+              );
+            });
       },
     );
   }
@@ -165,11 +191,11 @@ class _AppState extends State<App> {
 
 ThemeData temaBase(ThemeMode mode) => ThemeData(colorScheme: mode == ThemeMode.dark ? blueScheme : blueSchemeL);
 
-checarUpdate(BuildContext context) {
+void checarUpdate(BuildContext context) {
   InAppUpdate.checkForUpdate().then((val) async {
     if (val.updateAvailability == UpdateAvailability.updateAvailable) {
       if (val.updatePriority > 3) {
-        InAppUpdate.performImmediateUpdate();
+        await InAppUpdate.performImmediateUpdate();
       } else if (val.updatePriority > 0) {
         try {
           await InAppUpdate.startFlexibleUpdate();
@@ -178,6 +204,8 @@ checarUpdate(BuildContext context) {
           Fluttertoast.showToast(msg: "Atualização falhou! Código de erro: ${e.code}");
         }
       }
+    } else {
+      Fluttertoast.showToast(msg: "Atualizado!");
     }
   });
 }

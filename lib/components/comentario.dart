@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/public_profile.dart';
 
 class Comentario extends StatefulWidget {

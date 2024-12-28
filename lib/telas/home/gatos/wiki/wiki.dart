@@ -3,7 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/info.dart';
 import 'package:grayscale/grayscale.dart';

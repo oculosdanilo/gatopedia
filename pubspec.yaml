@@ -1,7 +1,7 @@
 name: gatopedia
 description: Uma enciclopédia de gatos!
 publish_to: "none"
-version: 2.0.0-part1+15
+version: 2.0.0-part1.build1+15
 
 environment:
   sdk: ^3.4.0
@@ -48,6 +48,7 @@ dependencies:
   intl: any
   in_app_update: ^4.2.3
   fluttertoast: ^8.2.10
+  devicelocale: ^0.8.1
 
 dev_dependencies:
   flutter_lints: ^5.0.0

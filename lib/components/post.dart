@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/components/loading.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/gatos/forum/edit/delete_post.dart';
 import 'package:gatopedia/telas/home/gatos/forum/edit/edit_post.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';

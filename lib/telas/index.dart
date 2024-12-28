@@ -57,9 +57,6 @@ class _IndexState extends State<Index> {
       iniciou = true;
     }
     full = false;
-    if (!kDebugMode && !kProfileMode && !kIsWeb) {
-      checarUpdate(context);
-    }
     if (widget.tocar) {
       miau.setAsset("assets/meow.mp3").then((value) {
         miau.play();
@@ -74,6 +71,8 @@ class _IndexState extends State<Index> {
         Future.delayed(const Duration(milliseconds: 500), () => setState(() => animText = true));
       });
     }
+
+    checarUpdate(context);
   }
 
   Future<dynamic> _existeContaGoogle(GoogleSignInAccount contaG) async {

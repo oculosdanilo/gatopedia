@@ -1,3 +1,7 @@
 {
-  "danilo": "TEST"
+  "internal": "INTERNAL",
+  "closed": "CLOSED",
+  "open": "OPEN",
+  "lan_en": "English",
+  "lan_pt": "Portuguese (Brazil)"
 }
