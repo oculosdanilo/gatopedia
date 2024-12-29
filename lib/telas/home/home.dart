@@ -54,7 +54,6 @@ class _HomeState extends State<Home> {
         }
       },
       child: Scaffold(
-        extendBody: true,
         bottomNavigationBar: NavigationBar(
           selectedIndex: paginaSelecionada,
           onDestinationSelected: (index) {

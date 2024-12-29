@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/info.dart';
 import 'package:grayscale/grayscale.dart';
@@ -11,13 +12,57 @@ late Future<DataSnapshot> _getData;
 bool pegouInfo = false;
 
 class Wiki extends StatefulWidget {
-  const Wiki({super.key});
+  final ScrollController scrollWiki;
+  final void Function() setStateGatos;
+  final AnimationController animController;
+  final Animation<double> anim;
+
+  const Wiki(this.scrollWiki, this.setStateGatos, this.animController, this.anim, {super.key});
 
   @override
   State<Wiki> createState() => _WikiState();
 }
 
 class _WikiState extends State<Wiki> {
+  void _barHideListen() {
+    scrollAcumulado = 0;
+    widget.setStateGatos();
+
+    widget.scrollWiki.position.isScrollingNotifier.addListener(() {
+      double off = widget.scrollWiki.offset;
+      if (!widget.scrollWiki.position.isScrollingNotifier.value) {
+        if ((scrollAcumulado < 0 && !expandido) || (scrollAcumulado > 0 && expandido)) {
+          offsetInicial = off;
+        }
+      }
+    });
+
+    widget.scrollWiki.addListener(() {
+      double off = widget.scrollWiki.offset;
+      scrollAcumulado = offsetInicial - off;
+
+      if (scrollAcumulado > (kToolbarHeight * 2.86) / 2 && !expandido) {
+        if (!mounted) return;
+        setState(() {
+          expandido = true;
+          offsetInicial = off;
+
+          widget.animController.reverse();
+        });
+        widget.setStateGatos();
+      } else if (scrollAcumulado < (-(kToolbarHeight * 2.86) / 2) && expandido) {
+        if (!mounted) return;
+        setState(() {
+          expandido = false;
+          offsetInicial = off;
+
+          widget.animController.forward();
+        });
+        widget.setStateGatos();
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -28,37 +73,72 @@ class _WikiState extends State<Wiki> {
     }
   }
 
+  late double offsetInicial = widget.scrollWiki.offset;
+
   @override
   Widget build(BuildContext context) {
-    return StretchingOverscrollIndicator(
-      axisDirection: AxisDirection.down,
-      child: FutureBuilder<DataSnapshot>(
-        future: _getData,
-        builder: (context, snapshot) {
-          Widget filho;
-          if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-            filho = ListView(
-              shrinkWrap: true,
-              controller: ScrollController(),
-              children: username != null
-                  ? snapshot.data!.children.map<Widget>((e) => gatoCard(e, snapshot, context)).toList()
-                  : [
-                      ...snapshot.data!.children.map<Widget>((e) => gatoCard(e, snapshot, context)),
-                      const SizedBox(height: 100),
-                    ],
-            );
-          } else {
-            filho = const Center(child: CircularProgressIndicator());
-          }
+    return AnimatedBuilder(
+      animation: widget.anim,
+      builder: (context, child) {
+        return Padding(
+          padding: EdgeInsets.only(
+            top: (kToolbarHeight * 2.86) - (widget.anim.value * ((kToolbarHeight * 2.86) / 2)),
+          ),
+          child: child,
+        );
+      },
+      child: StretchingOverscrollIndicator(
+        axisDirection: AxisDirection.down,
+        child: FutureBuilder<DataSnapshot>(
+          future: _getData,
+          builder: (context, snapshot) {
+            Widget filho;
+            if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+              /*filho = ListView(
+                shrinkWrap: true,
+                controller: widget.scrollWiki,
+                children: username != null
+                    ? snapshot.data!.children.map<Widget>((e) => gatoCard(e, snapshot, context)).toList()
+                    : [
+                        ...snapshot.data!.children.map<Widget>((e) => gatoCard(e, snapshot, context)),
+                        const SizedBox(height: 100),
+                      ],
+              );*/
+              filho = ListView.builder(
+                controller: widget.scrollWiki,
+                itemBuilder: (context, index) {
+                  if (!_comecouListen) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _barHideListen();
+                      _comecouListen = true;
+                    });
+                  }
+                  return username != null
+                      ? gatoCard(snapshot.data!.children.toList()[index], snapshot, context)
+                      : Column(
+                          children: [
+                            gatoCard(snapshot.data!.children.toList()[index], snapshot, context),
+                            const SizedBox(height: 100),
+                          ],
+                        );
+                },
+                itemCount: snapshot.data!.children.length,
+              );
+            } else {
+              filho = const Center(child: CircularProgressIndicator());
+            }
 
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: filho,
-          );
-        },
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: filho,
+            );
+          },
+        ),
       ),
     );
   }
+
+  bool _comecouListen = false;
 
   Container gatoCard(DataSnapshot e, AsyncSnapshot<DataSnapshot> snapshot, BuildContext context) {
     return Container(

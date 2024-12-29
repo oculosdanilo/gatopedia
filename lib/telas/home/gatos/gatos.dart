@@ -28,6 +28,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 int tabIndex = 0;
 bool expandido = true;
+bool animReverso = false;
 
 // tela gatos refeito
 class Gatos extends StatefulWidget {
@@ -37,7 +38,7 @@ class Gatos extends StatefulWidget {
   State<Gatos> createState() => _GatosState();
 }
 
-class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
+class _GatosState extends State<Gatos> with TickerProviderStateMixin {
   final miau = AudioPlayer();
   late final TabController _tabController;
 
@@ -52,15 +53,33 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
     await miau.play();
   }
 
+  late AnimationController _animTabBarController;
+  late CurvedAnimation _animTabBarCurve;
+  late Animation<double> _animTabBar;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this, initialIndex: tabIndex);
     indexAntigo = 0;
+
+    _animTabBarController =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 400), reverseDuration: null);
+    _animTabBarCurve =
+        CurvedAnimation(parent: _animTabBarController, curve: Curves.easeOutBack, reverseCurve: Curves.easeInCubic);
+    _animTabBar = Tween(begin: 0.0, end: 1.0).animate(_animTabBarCurve);
+
+    if (!expandido) {
+      _animTabBarController.forward(from: 1.0);
+    }
   }
 
   final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo);
-  late List<Widget> telasGatos = [const Wiki(), Forum(_scrollForum, _setState)];
+  final ScrollController _scrollWiki = ScrollController();
+  late List<Widget> telasGatos = <Widget>[
+    Wiki(_scrollWiki, _setState, _animTabBarController, _animTabBar),
+    Forum(_scrollForum, _setState, _animTabBarController, _animTabBar),
+  ];
 
   _postarImagem(int post, String filetype) async {
     CachedNetworkImage.evictFromCache(
@@ -110,6 +129,7 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
       floatingActionButton: username != null
           ? ExpandableFab(
               key: fagKey,
+              distance: 70,
               overlayStyle: const ExpandableFabOverlayStyle(blur: 4),
               openButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.edit_rounded)),
               closeButtonBuilder: DefaultFloatingActionButtonBuilder(
@@ -206,12 +226,20 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
           Positioned.fill(
             child: TabBarView(controller: _tabController, children: telasGatos),
           ),
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 300),
-            top: expandido ? 0 : -(kToolbarHeight * 2.86),
-            child: SizedBox(
-              height: kToolbarHeight * 2.86,
-              child: appbar(context),
+          Positioned(
+            top: 0,
+            child: AnimatedBuilder(
+              animation: _animTabBar,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(0, _animTabBar.value * (-(kToolbarHeight * 2.86) / 2)),
+                  child: child,
+                );
+              },
+              child: SizedBox(
+                height: kToolbarHeight * 2.86,
+                child: appbar(context),
+              ),
             ),
           ),
         ],
@@ -258,23 +286,46 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
           ),
           Positioned(
             right: 20,
-            top: kToolbarHeight / 5,
-            child: IconButton(
-              icon: const Icon(IonIcons.paw, color: Color(0xffff9922)),
-              iconSize: 110,
-              onPressed: () async => await _play(),
+            top: ((kToolbarHeight * 2.86) / 2) - 67,
+            child: AnimatedBuilder(
+              animation: _animTabBar,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(_animTabBar.value * 40, _animTabBar.value * ((kToolbarHeight * 2.86) / 4)),
+                  child: Transform.scale(
+                    scale: 1 - (_animTabBar.value * 0.5),
+                    child: child,
+                  ),
+                );
+              },
+              child: Material(
+                color: Colors.transparent,
+                child: IconButton(
+                  icon: const Icon(IonIcons.paw, color: Color(0xffff9922)),
+                  iconSize: 110,
+                  onPressed: () async => await _play(),
+                ),
+              ),
             ),
           ),
           Container(
             margin: const EdgeInsets.fromLTRB(15, kToolbarHeight, 10, 0),
-            child: Text(
-              username != null ? "@$username" : "@shhhanônimo",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
-                fontSize: 28,
-                fontVariations: const [FontVariation("wght", 500)],
-              ),
-              overflow: TextOverflow.ellipsis,
+            child: AnimatedBuilder(
+              animation: _animTabBar,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(0, _animTabBar.value * 25),
+                  child: Text(
+                    username != null ? "@$username" : "@shhhanônimo",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 28 + (_animTabBar.value * -8), // 28
+                      fontVariations: const [FontVariation("wght", 500)],
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              },
             ),
           )
         ],

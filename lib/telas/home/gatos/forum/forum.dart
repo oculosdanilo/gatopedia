@@ -18,8 +18,10 @@ final fagKey = GlobalKey<ExpandableFabState>();
 class Forum extends StatefulWidget {
   final ScrollController scrollForum;
   final void Function() setStateGatos;
+  final AnimationController animController;
+  final Animation<double> anim;
 
-  const Forum(this.scrollForum, this.setStateGatos, {super.key});
+  const Forum(this.scrollForum, this.setStateGatos, this.animController, this.anim, {super.key});
 
   @override
   State<Forum> createState() => _ForumState();
@@ -30,13 +32,13 @@ enum MenuItems { editar, deletar }
 bool iniciouListenForum = false;
 double scrollSalvo = 0;
 double scrollAcumulado = 0;
-bool pasosu = false;
 
 class _ForumState extends State<Forum> {
   _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
     ref.onValue.listen((event) {
+      if (!mounted) return;
       setState(() {
         snapshotForum = event.snapshot;
       });
@@ -44,7 +46,6 @@ class _ForumState extends State<Forum> {
   }
 
   void _barHideListen() {
-    expandido = true;
     scrollAcumulado = 0;
     widget.setStateGatos();
 
@@ -62,18 +63,22 @@ class _ForumState extends State<Forum> {
       scrollSalvo = off;
       scrollAcumulado = offsetInicial - off;
 
-      if (scrollAcumulado > kToolbarHeight * 2.86 && !expandido) {
+      if (scrollAcumulado > (kToolbarHeight * 2.86) / 2 && !expandido) {
         if (!mounted) return;
         setState(() {
           expandido = true;
           offsetInicial = off;
+
+          widget.animController.reverse();
         });
         widget.setStateGatos();
-      } else if (scrollAcumulado < -(kToolbarHeight * 2.86) && expandido) {
+      } else if (scrollAcumulado < (-(kToolbarHeight * 2.86) / 2) && expandido) {
         if (!mounted) return;
         setState(() {
           expandido = false;
           offsetInicial = off;
+
+          widget.animController.forward();
         });
         widget.setStateGatos();
       }
@@ -99,26 +104,36 @@ class _ForumState extends State<Forum> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        margin: EdgeInsets.fromLTRB(10, !expandido ? 0 : kToolbarHeight * 2.86, 10, 0),
+      body: Container(
+        margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: snapshotForum != null
-            ? StretchingOverscrollIndicator(
-                axisDirection: AxisDirection.down,
-                child: ListView.builder(
-                  controller: widget.scrollForum,
-                  itemCount: int.parse(snapshotForum!.children.last.key!) + 1,
-                  itemBuilder: (context, i) {
-                    if (!_comecouListen) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        _barHideListen();
-                        _comecouListen = true;
-                      });
-                    }
-                    return snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - i}").value != null
-                        ? Post(int.parse("${int.parse(snapshotForum!.children.last.key!) - i}"))
-                        : const SizedBox();
-                  },
+            ? AnimatedBuilder(
+                animation: widget.anim,
+                builder: (context, child) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      top: (kToolbarHeight * 2.86) - (widget.anim.value * ((kToolbarHeight * 2.86) / 2)),
+                    ),
+                    child: child,
+                  );
+                },
+                child: StretchingOverscrollIndicator(
+                  axisDirection: AxisDirection.down,
+                  child: ListView.builder(
+                    controller: widget.scrollForum,
+                    itemCount: int.parse(snapshotForum!.children.last.key!) + 1,
+                    itemBuilder: (context, i) {
+                      if (!_comecouListen) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _barHideListen();
+                          _comecouListen = true;
+                        });
+                      }
+                      return snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - i}").value != null
+                          ? Post(int.parse("${int.parse(snapshotForum!.children.last.key!) - i}"))
+                          : const SizedBox();
+                    },
+                  ),
                 ),
               )
             : const Center(child: CircularProgressIndicator()),

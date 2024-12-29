@@ -37,7 +37,7 @@ class _ComentarioState extends State<Comentario> {
       margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       color: username == null && dark
-          ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
+          ? Theme.of(context).colorScheme.surfaceTint.withValues(alpha: 0.25)
           : Theme.of(context).colorScheme.surfaceContainerLow,
       child: Padding(
         padding: const EdgeInsets.all(15),

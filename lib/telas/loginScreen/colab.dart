@@ -152,7 +152,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                     }
                     ..onTapDown = (d) {
                       setStateLocal(() {
-                        fundoTexto1 = Theme.of(context).colorScheme.primary.withOpacity(0.20);
+                        fundoTexto1 = Theme.of(context).colorScheme.primary.withValues(alpha: 0.20);
                       });
                     }
                     ..onTapUp = (d) {
@@ -179,7 +179,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                     }
                     ..onTapDown = (d) {
                       setStateLocal(() {
-                        fundoTexto2 = Theme.of(context).colorScheme.primary.withOpacity(0.20);
+                        fundoTexto2 = Theme.of(context).colorScheme.primary.withValues(alpha: 0.20);
                       });
                     }
                     ..onTapUp = (d) {
