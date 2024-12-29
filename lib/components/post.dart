@@ -28,13 +28,6 @@ class Post extends StatefulWidget {
 
 class _PostState extends State<Post> {
   @override
-  void initState() {
-    super.initState();
-    DataSnapshot postSnap = snapshotForum!.child("${widget.index}");
-    postSnap.child("");
-  }
-
-  @override
   Widget build(BuildContext context) {
     DataSnapshot postSS =
         snapshotForum!.child("${widget.index}"); // tem que deixar isso aqui pra ele atualizar os likes
@@ -53,7 +46,7 @@ class _PostState extends State<Post> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
             margin: EdgeInsets.fromLTRB(4, 4, 4, postSS.key == "0" ? 85 : 4),
             color: username == null && dark
-                ? Theme.of(context).colorScheme.surfaceTint.withOpacity(0.25)
+                ? Theme.of(context).colorScheme.surfaceTint.withValues(alpha: 0.25)
                 : Theme.of(context).colorScheme.surfaceContainerLow,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
@@ -420,7 +413,7 @@ class _FooterPostState extends State<FooterPost> {
                       icon: const Icon(AntDesign.comment_outline),
                       label: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.25),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
                           borderRadius: BorderRadius.circular(999),
                         ),
                         constraints: const BoxConstraints(minWidth: 21),

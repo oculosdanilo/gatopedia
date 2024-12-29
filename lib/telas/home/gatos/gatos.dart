@@ -1,11 +1,21 @@
+import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:animations/animations.dart';
+import 'package:another_flushbar/flushbar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/deletar_conta.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
+import 'package:gatopedia/telas/home/gatos/forum/new/image_post.dart';
+import 'package:gatopedia/telas/home/gatos/forum/new/text_post.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/index.dart';
@@ -13,6 +23,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 int tabIndex = 0;
@@ -48,13 +59,144 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
     indexAntigo = 0;
   }
 
-  late final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo);
+  final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo);
   late List<Widget> telasGatos = [const Wiki(), Forum(_scrollForum, _setState)];
+
+  _postarImagem(int post, String filetype) async {
+    CachedNetworkImage.evictFromCache(
+        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$post.webp?alt=media");
+    if (filetype == "img") {
+      XFile? result = await FlutterImageCompress.compressAndGetFile(
+        file!.absolute.path,
+        "${(await getApplicationDocumentsDirectory()).path}aa.webp",
+        quality: 80,
+        format: CompressFormat.webp,
+      );
+      File finalFile = File(result!.path);
+      await FirebaseStorage.instance.ref("posts/$post.webp").putFile(finalFile);
+    } else {
+      await FirebaseStorage.instance.ref("posts/$post.webp").putFile(file!);
+    }
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference ref = database.ref("posts");
+    await ref.update({
+      "$post": {
+        "username": username,
+        "content": legenda,
+        "likes": {
+          "lenght": 0,
+          "users": "",
+        },
+        "img": true,
+        "comentarios": [
+          {"a": "a"},
+          {"a": "a"}
+        ]
+      }
+    });
+    if (!mounted) return;
+    Flushbar(
+      message: "Postado com sucesso!",
+      duration: const Duration(seconds: 5),
+      margin: const EdgeInsets.all(20),
+      borderRadius: BorderRadius.circular(50),
+    ).show(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
+      floatingActionButton: username != null
+          ? ExpandableFab(
+              key: fagKey,
+              overlayStyle: const ExpandableFabOverlayStyle(blur: 4),
+              openButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.edit_rounded)),
+              closeButtonBuilder: DefaultFloatingActionButtonBuilder(
+                  child: const Icon(Icons.close_rounded), fabSize: ExpandableFabSize.small),
+              type: ExpandableFabType.up,
+              children: [
+                FloatingActionButton.extended(
+                  heroTag: null,
+                  onPressed: () async {
+                    final state = fagKey.currentState;
+                    if (state != null) state.toggle();
+                    await showModalBottomSheet(
+                      context: context,
+                      showDragHandle: true,
+                      useSafeArea: true,
+                      isScrollControlled: true,
+                      builder: (ctx) => const TextPost(),
+                    );
+                    txtPost.text = "";
+                  },
+                  label: const Text("Texto"),
+                  icon: const Icon(Icons.text_fields_rounded),
+                ),
+                OpenContainer(
+                  onClosed: (data) {
+                    if (postado) {
+                      final state = fagKey.currentState;
+                      if (state != null) state.toggle();
+                      Flushbar(
+                        message: "Postando...",
+                        duration: const Duration(seconds: 5),
+                        margin: const EdgeInsets.all(20),
+                        borderRadius: BorderRadius.circular(50),
+                      ).show(context);
+                      CachedNetworkImage.evictFromCache(
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
+                      _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "img");
+                    }
+                  },
+                  transitionDuration: const Duration(milliseconds: 400),
+                  closedElevation: 5,
+                  openColor: Theme.of(context).colorScheme.surface,
+                  openBuilder: (context, action) => const ImagePost("image"),
+                  closedColor: Theme.of(context).colorScheme.primaryContainer,
+                  closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  closedBuilder: (context, action) => FloatingActionButton.extended(
+                    heroTag: null,
+                    onPressed: () => action.call(),
+                    elevation: 0,
+                    label: const Text("Imagem"),
+                    icon: const Icon(Icons.image_rounded),
+                  ),
+                ),
+                OpenContainer(
+                  onClosed: (data) {
+                    if (postado) {
+                      final state = fagKey.currentState;
+                      if (state != null) state.toggle();
+                      Flushbar(
+                        message: "Postando...",
+                        duration: const Duration(seconds: 5),
+                        margin: const EdgeInsets.all(20),
+                        borderRadius: BorderRadius.circular(50),
+                      ).show(context);
+                      CachedNetworkImage.evictFromCache(
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
+                      _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "gif");
+                    }
+                  },
+                  transitionDuration: const Duration(milliseconds: 400),
+                  closedElevation: 5,
+                  openColor: Theme.of(context).colorScheme.surface,
+                  openBuilder: (context, action) => const ImagePost("gif"),
+                  closedColor: Theme.of(context).colorScheme.primaryContainer,
+                  closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  closedBuilder: (context, action) => FloatingActionButton.extended(
+                    heroTag: null,
+                    onPressed: () => action.call(),
+                    elevation: 0,
+                    label: const Text("GIF"),
+                    icon: const Icon(Icons.gif_rounded),
+                  ),
+                ),
+              ],
+            )
+          : null,
+      floatingActionButtonLocation: ExpandableFab.location,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         toolbarHeight: 0,
@@ -96,7 +238,7 @@ class _GatosState extends State<Gatos> with SingleTickerProviderStateMixin {
                 isScrollable: true,
                 controller: _tabController,
                 labelStyle: const TextStyle(fontSize: 18, fontFamily: "Jost"),
-                unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.70),
+                unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.70),
                 indicatorColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 tabs: const [Tab(text: "Wiki"), Tab(text: "Feed")],
