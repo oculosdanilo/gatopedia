@@ -98,7 +98,7 @@ class _WikiState extends State<Wiki> {
       child: Card(
         shadowColor: Colors.transparent,
         color: username == null
-            ? Theme.of(context).colorScheme.surfaceTint.withOpacity(dark ? 0.25 : 0.1)
+            ? Theme.of(context).colorScheme.surfaceTint.withValues(alpha: dark ? 0.25 : 0.1)
             : Theme.of(context).colorScheme.surfaceContainerLow,
         margin: const EdgeInsets.all(0),
         child: InkWell(
