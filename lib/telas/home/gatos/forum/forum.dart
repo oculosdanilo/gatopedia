@@ -18,8 +18,9 @@ class Forum extends StatefulWidget {
   final void Function() setStateGatos;
   final AnimationController animController;
   final Animation<double> anim;
+  final EdgeInsets pd;
 
-  const Forum(this.scrollForum, this.setStateGatos, this.animController, this.anim, {super.key});
+  const Forum(this.scrollForum, this.setStateGatos, this.animController, this.anim, this.pd, {super.key});
 
   @override
   State<Forum> createState() => _ForumState();
@@ -69,7 +70,6 @@ class _ForumState extends State<Forum> {
 
           widget.animController.reverse();
         });
-        widget.setStateGatos();
       } else if (scrollAcumulado < (-(kToolbarHeight * 2.86) / 2) && expandido) {
         if (!mounted) return;
         setState(() {
@@ -78,7 +78,6 @@ class _ForumState extends State<Forum> {
 
           widget.animController.forward();
         });
-        widget.setStateGatos();
       }
       SharedPreferences.getInstance().then((sp) {
         sp.setDouble("scrollSalvo", off);
@@ -96,6 +95,16 @@ class _ForumState extends State<Forum> {
       _atualizar();
       iniciouListenForum = true;
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!expandido && scrollSalvo < ((kToolbarHeight * 2.86) / 2)) {
+        setState(() {
+          expandido = true;
+
+          widget.animController.reverse();
+        });
+      }
+    });
   }
 
   @override
@@ -104,33 +113,28 @@ class _ForumState extends State<Forum> {
       body: Container(
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: snapshotForum != null
-            ? AnimatedBuilder(
-                animation: widget.anim,
-                builder: (context, child) {
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      top: (kToolbarHeight * 2.86) - (widget.anim.value * ((kToolbarHeight * 2.86) / 2)),
-                    ),
-                    child: child,
-                  );
-                },
-                child: StretchingOverscrollIndicator(
-                  axisDirection: AxisDirection.down,
-                  child: ListView.builder(
-                    controller: widget.scrollForum,
-                    itemCount: int.parse(snapshotForum!.children.last.key!) + 1,
-                    itemBuilder: (context, i) {
-                      if (!_comecouListen) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          _barHideListen();
-                          _comecouListen = true;
-                        });
-                      }
-                      return snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - i}").value != null
-                          ? Post(int.parse("${int.parse(snapshotForum!.children.last.key!) - i}"))
-                          : const SizedBox();
-                    },
-                  ),
+            ? StretchingOverscrollIndicator(
+                axisDirection: AxisDirection.down,
+                child: ListView.builder(
+                  controller: widget.scrollForum,
+                  itemCount: int.parse(snapshotForum!.children.last.key!) + 1,
+                  itemBuilder: (context, i) {
+                    if (!_comecouListen) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        widget.scrollForum.jumpTo(scrollSalvo);
+                        _barHideListen();
+                        _comecouListen = true;
+                      });
+                    }
+                    final lastKey = snapshotForum!.children.last.key!;
+                    return snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - i}").value != null
+                        ? Post(
+                            int.parse(snapshotForum!.children.last.key!) - i,
+                            widget.pd,
+                            int.parse(snapshotForum!.children.last.key!) - i == int.parse(lastKey),
+                          )
+                        : const SizedBox();
+                  },
                 ),
               )
             : const Center(child: CircularProgressIndicator()),

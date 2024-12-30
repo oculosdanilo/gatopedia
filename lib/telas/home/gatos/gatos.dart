@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -32,7 +33,9 @@ bool animReverso = false;
 
 // tela gatos refeito
 class Gatos extends StatefulWidget {
-  const Gatos({super.key});
+  final EdgeInsets pd;
+
+  const Gatos(this.pd, {super.key});
 
   @override
   State<Gatos> createState() => _GatosState();
@@ -59,28 +62,13 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
   late CurvedAnimation _animTabBarCurve;
   late Animation<double> _animTabBar;
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this, initialIndex: tabIndex);
-    indexAntigo = 0;
-
-    _animTabBarController =
-        AnimationController(vsync: this, duration: const Duration(milliseconds: 400), reverseDuration: null);
-    _animTabBarCurve =
-        CurvedAnimation(parent: _animTabBarController, curve: Curves.easeOutBack, reverseCurve: Curves.easeInCubic);
-    _animTabBar = Tween(begin: 0.0, end: 1.0).animate(_animTabBarCurve);
-
-    if (!expandido) {
-      _animTabBarController.forward(from: 1.0);
-    }
-  }
+  late AnimationController _animFAB;
 
   final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo, keepScrollOffset: false);
   final ScrollController _scrollWiki = ScrollController(initialScrollOffset: scrollSalvoWiki, keepScrollOffset: false);
   late List<Widget> telasGatos = <Widget>[
     Wiki(_scrollWiki, _setState, _animTabBarController, _animTabBar),
-    Forum(_scrollForum, _setState, _animTabBarController, _animTabBar),
+    Forum(_scrollForum, _setState, _animTabBarController, _animTabBar, widget.pd),
   ];
 
   _postarImagem(int post, String filetype) async {
@@ -125,12 +113,36 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
   }
 
   @override
-  void dispose() {
-    _animTabBarController.dispose();
-    _scrollWiki.dispose();
-    _scrollForum.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this, initialIndex: tabIndex)
+      ..animation?.addListener(() {
+        if ((_tabController.animation?.value ?? 1) > 0.5) {
+          _animFAB.forward();
+        } else {
+          _animFAB.reverse();
+        }
+      });
+    indexAntigo = 0;
+
+    _animTabBarController = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
+    _animTabBarCurve =
+        CurvedAnimation(parent: _animTabBarController, curve: Curves.easeOutBack, reverseCurve: Curves.easeInCubic);
+    _animTabBar = Tween(begin: 0.0, end: 1.0).animate(_animTabBarCurve);
+
+    _animFAB = AnimationController(vsync: this, duration: const Duration(milliseconds: 100))
+      ..addListener(() => setState(() {}));
+
+    if (!expandido) {
+      _animTabBarController.forward(from: 1.0);
+    }
+
+    if (tabIndex == 1) {
+      _animFAB.forward(from: 1.0);
+    }
   }
+
+  final Offset _offset = const Offset(-4, -4);
 
   @override
   Widget build(BuildContext context) {
@@ -140,13 +152,14 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
           ? ExpandableFab(
               key: fagKey,
               distance: 70,
-              overlayStyle: const ExpandableFabOverlayStyle(blur: 4),
+              overlayStyle: ExpandableFabOverlayStyle(color: Theme.of(context).cardColor.withValues(alpha: 0.4)),
               openButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.edit_rounded)),
-              closeButtonBuilder: DefaultFloatingActionButtonBuilder(
-                  child: const Icon(Icons.close_rounded), fabSize: ExpandableFabSize.small),
+              closeButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.close_rounded)),
+              childrenAnimation: ExpandableFabAnimation.none,
+              childrenOffset: const Offset(5, 0),
               type: ExpandableFabType.up,
               children: [
-                FloatingActionButton.extended(
+                FloatingActionButton.small(
                   heroTag: null,
                   onPressed: () async {
                     final state = fagKey.currentState;
@@ -160,67 +173,90 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                     );
                     txtPost.text = "";
                   },
-                  label: const Text("Texto"),
-                  icon: const Icon(Icons.text_fields_rounded),
+                  child: const Icon(Icons.text_fields_rounded),
                 ),
-                OpenContainer(
-                  onClosed: (data) {
-                    if (postado) {
-                      final state = fagKey.currentState;
-                      if (state != null) state.toggle();
-                      Flushbar(
-                        message: "Postando...",
-                        duration: const Duration(seconds: 5),
-                        margin: const EdgeInsets.all(20),
-                        borderRadius: BorderRadius.circular(50),
-                      ).show(context);
-                      CachedNetworkImage.evictFromCache(
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
-                      _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "img");
-                    }
-                  },
-                  transitionDuration: const Duration(milliseconds: 400),
-                  closedElevation: 5,
-                  openColor: Theme.of(context).colorScheme.surface,
-                  openBuilder: (context, action) => const ImagePost("image"),
-                  closedColor: Theme.of(context).colorScheme.primaryContainer,
-                  closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  closedBuilder: (context, action) => FloatingActionButton.extended(
-                    heroTag: null,
-                    onPressed: () => action.call(),
-                    elevation: 0,
-                    label: const Text("Imagem"),
-                    icon: const Icon(Icons.image_rounded),
+                Transform.translate(
+                  offset: _offset,
+                  child: Row(
+                    children: [
+                      Text("datasaa"),
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: OpenContainer(
+                          tappable: false,
+                          onClosed: (data) {
+                            if (postado) {
+                              final state = fagKey.currentState;
+                              if (state != null) state.toggle();
+                              Flushbar(
+                                message: "Postando...",
+                                duration: const Duration(seconds: 5),
+                                margin: const EdgeInsets.all(20),
+                                borderRadius: BorderRadius.circular(50),
+                              ).show(context);
+                              CachedNetworkImage.evictFromCache(
+                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
+                              _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "img");
+                            }
+                          },
+                          transitionDuration: const Duration(milliseconds: 500),
+                          closedElevation: 5,
+                          openColor: Theme.of(context).colorScheme.surface,
+                          openBuilder: (context, action) => const ImagePost("image"),
+                          closedColor: Theme.of(context).colorScheme.primary,
+                          closedShape:
+                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none),
+                          closedBuilder: (context, action) {
+                            return FloatingActionButton.small(
+                              heroTag: null,
+                              onPressed: () => action.call(),
+                              elevation: 0,
+                              child: const Icon(Icons.image_rounded),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                OpenContainer(
-                  onClosed: (data) {
-                    if (postado) {
-                      final state = fagKey.currentState;
-                      if (state != null) state.toggle();
-                      Flushbar(
-                        message: "Postando...",
-                        duration: const Duration(seconds: 5),
-                        margin: const EdgeInsets.all(20),
-                        borderRadius: BorderRadius.circular(50),
-                      ).show(context);
-                      CachedNetworkImage.evictFromCache(
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
-                      _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "gif");
-                    }
-                  },
-                  transitionDuration: const Duration(milliseconds: 400),
-                  closedElevation: 5,
-                  openColor: Theme.of(context).colorScheme.surface,
-                  openBuilder: (context, action) => const ImagePost("gif"),
-                  closedColor: Theme.of(context).colorScheme.primaryContainer,
-                  closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  closedBuilder: (context, action) => FloatingActionButton.extended(
-                    heroTag: null,
-                    onPressed: () => action.call(),
-                    elevation: 0,
-                    label: const Text("GIF"),
-                    icon: const Icon(Icons.gif_rounded),
+                Transform.translate(
+                  offset: _offset,
+                  child: SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: OpenContainer(
+                      tappable: false,
+                      onClosed: (data) {
+                        if (postado) {
+                          final state = fagKey.currentState;
+                          if (state != null) state.toggle();
+                          Flushbar(
+                            message: "Postando...",
+                            duration: const Duration(seconds: 5),
+                            margin: const EdgeInsets.all(20),
+                            borderRadius: BorderRadius.circular(50),
+                          ).show(context);
+                          CachedNetworkImage.evictFromCache(
+                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
+                          _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "gif");
+                        }
+                      },
+                      transitionDuration: const Duration(milliseconds: 500),
+                      closedElevation: 5,
+                      openColor: Theme.of(context).colorScheme.surface,
+                      openBuilder: (context, action) => const ImagePost("gif"),
+                      closedColor: Theme.of(context).colorScheme.primaryContainer,
+                      closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      closedBuilder: (context, action) {
+                        return FloatingActionButton.small(
+                          heroTag: null,
+                          onPressed: () => action.call(),
+                          elevation: 0,
+                          child: const Icon(Icons.gif_rounded),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -234,7 +270,11 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
       body: Stack(
         children: [
           Positioned.fill(
-            child: TabBarView(controller: _tabController, children: telasGatos),
+            child: TabBarView(
+              controller: _tabController,
+              dragStartBehavior: DragStartBehavior.down,
+              children: telasGatos,
+            ),
           ),
           Positioned(
             top: 0,
@@ -283,7 +323,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                 labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 tabs: const [Tab(text: "Wiki"), Tab(text: "Feed")],
                 onTap: (index) {
-                  if (tabIndex == 1 && index == 1) {
+                  if (tabIndex == 1 && index == 1 && _scrollForum.hasClients) {
                     setState(() {
                       _scrollForum.animateTo(
                         0.0,
@@ -416,6 +456,15 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
         child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.errorContainer),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _animTabBarController.dispose();
+    _animFAB.dispose();
+    _scrollWiki.dispose();
+    _scrollForum.dispose();
+    super.dispose();
   }
 }
 

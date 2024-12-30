@@ -3,7 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/info.dart';
 import 'package:grayscale/grayscale.dart';
@@ -24,18 +23,19 @@ class Wiki extends StatefulWidget {
 }
 
 double scrollSalvoWiki = 0;
+double scrollAcumuladoWiki = 0;
 
 class _WikiState extends State<Wiki> {
   late final pdB = MediaQuery.paddingOf(context).bottom;
 
   void _barHideListen() {
-    scrollAcumulado = 0;
+    scrollAcumuladoWiki = 0;
     widget.setStateGatos();
 
     widget.scrollWiki.position.isScrollingNotifier.addListener(() {
       double off = widget.scrollWiki.offset;
       if (!widget.scrollWiki.position.isScrollingNotifier.value) {
-        if ((scrollAcumulado < 0 && !expandido) || (scrollAcumulado > 0 && expandido)) {
+        if ((scrollAcumuladoWiki < 0 && !expandido) || (scrollAcumuladoWiki > 0 && expandido)) {
           offsetInicial = off;
         }
       }
@@ -44,9 +44,9 @@ class _WikiState extends State<Wiki> {
     widget.scrollWiki.addListener(() {
       double off = widget.scrollWiki.offset;
       scrollSalvoWiki = off;
-      scrollAcumulado = offsetInicial - off;
+      scrollAcumuladoWiki = offsetInicial - off;
 
-      if (scrollAcumulado > (kToolbarHeight * 2.86) / 2 && !expandido) {
+      if (scrollAcumuladoWiki > (kToolbarHeight * 2.86) / 2 && !expandido) {
         if (!mounted) return;
         setState(() {
           expandido = true;
@@ -55,7 +55,7 @@ class _WikiState extends State<Wiki> {
           widget.animController.reverse();
         });
         widget.setStateGatos();
-      } else if (scrollAcumulado < -(kToolbarHeight * 2.86) / 2 && expandido) {
+      } else if (scrollAcumuladoWiki < -(kToolbarHeight * 2.86) / 2 && expandido) {
         if (!mounted) return;
         setState(() {
           expandido = false;
@@ -78,72 +78,66 @@ class _WikiState extends State<Wiki> {
       _getData = FirebaseDatabase.instance.ref().child("gatos").get();
       pegouInfo = true;
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!expandido && scrollSalvoWiki < ((kToolbarHeight * 2.86) / 2)) {
+        setState(() {
+          expandido = true;
+
+          widget.animController.reverse();
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.anim,
-      builder: (context, child) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: (kToolbarHeight * 2.86) - (widget.anim.value * ((kToolbarHeight * 2.86) / 2)),
-          ),
-          child: child,
-        );
-      },
-      child: StretchingOverscrollIndicator(
-        axisDirection: AxisDirection.down,
-        child: FutureBuilder<DataSnapshot>(
-          future: _getData,
-          builder: (context, snapshot) {
-            Widget filho;
-            if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-              /*filho = ListView(
-                shrinkWrap: true,
-                controller: widget.scrollWiki,
-                children: username != null
-                    ? snapshot.data!.children.map<Widget>((e) => gatoCard(e, snapshot, context)).toList()
-                    : [
-                        ...snapshot.data!.children.map<Widget>((e) => gatoCard(e, snapshot, context)),
-                        const SizedBox(height: 100),
-                      ],
-              );*/
-              filho = ListView.builder(
-                controller: widget.scrollWiki,
-                itemBuilder: (context, index) {
-                  if (!_comecouListen) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      _barHideListen();
-                      _comecouListen = true;
-                    });
-                  }
-                  return username == null && index == 10
-                      ? SizedBox(height: 80 + pdB)
-                      : gatoCard(snapshot.data!.children.toList()[index], snapshot, context);
-                },
-                itemCount: snapshot.data!.children.length + (username != null ? 0 : 1),
-              );
-            } else {
-              filho = const Center(child: CircularProgressIndicator());
-            }
-
-            return AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: filho,
+    return StretchingOverscrollIndicator(
+      axisDirection: AxisDirection.down,
+      child: FutureBuilder<DataSnapshot>(
+        future: _getData,
+        builder: (context, snapshot) {
+          Widget filho;
+          if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+            filho = ListView.builder(
+              controller: widget.scrollWiki,
+              itemBuilder: (context, index) {
+                if (!_comecouListen) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    widget.scrollWiki.jumpTo(scrollSalvoWiki);
+                    _barHideListen();
+                    _comecouListen = true;
+                  });
+                }
+                return username == null && index == 10
+                    ? SizedBox(height: 80 + pdB)
+                    : gatoCard(snapshot.data!.children.toList()[index], snapshot, context, index);
+              },
+              itemCount: snapshot.data!.children.length + (username != null ? 0 : 1),
             );
-          },
-        ),
+          } else {
+            filho = const Center(child: CircularProgressIndicator());
+          }
+
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: filho,
+          );
+        },
       ),
     );
   }
 
   bool _comecouListen = false;
 
-  Container gatoCard(DataSnapshot? e, AsyncSnapshot<DataSnapshot> snapshot, BuildContext context) {
+  Container gatoCard(DataSnapshot? e, AsyncSnapshot<DataSnapshot> snapshot, BuildContext context, int index) {
     return Container(
       margin: EdgeInsets.fromLTRB(
-          15, e == snapshot.data?.children.first ? 15 : 10, 15, e == snapshot.data?.children.last ? 15 : 5),
+        15,
+        index == 0 ? (kToolbarHeight * 2.86) + 15 : 10,
+        15,
+        index == 9 ? 15 : 5,
+      ),
       child: OpenContainer(
         closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         transitionType: ContainerTransitionType.fade,

@@ -19,33 +19,27 @@ import 'package:material_symbols_icons/symbols.dart';
 
 class Post extends StatefulWidget {
   final int index;
+  final EdgeInsets pd;
+  final bool last;
 
-  const Post(this.index, {super.key});
+  const Post(this.index, this.pd, this.last, {super.key});
 
   @override
   State<Post> createState() => _PostState();
 }
 
 class _PostState extends State<Post> {
-  late final pdB = MediaQuery.paddingOf(context).bottom;
-
-  @override
-  void initState() {
-    super.initState();
-    debugPrint(pdB.toString());
-  }
-
   @override
   Widget build(BuildContext context) {
     DataSnapshot postSS =
         snapshotForum!.child("${widget.index}"); // tem que deixar isso aqui pra ele atualizar os likes
     return Padding(
-      padding: const EdgeInsets.only(top: 5),
+      padding: EdgeInsets.only(top: widget.last ? (kToolbarHeight * 2.86) + 5 : 5),
       child: Stack(
         children: [
           postSS.key == "0"
               ? Positioned(
-                  bottom: username != null ? 35 : 135 + pdB,
+                  bottom: username != null ? 35 : 115 + widget.pd.bottom,
                   width: MediaQuery.sizeOf(context).width - 20,
                   child: Center(
                     child: Text(
@@ -64,7 +58,7 @@ class _PostState extends State<Post> {
               postSS.key == "0"
                   ? username != null
                       ? 85
-                      : 185 + pdB
+                      : 165 + widget.pd.bottom
                   : 4,
             ),
             color: username == null && dark
@@ -361,8 +355,8 @@ Widget opcoes(int index, DataSnapshot postSS) {
             ]
         : (context) => [
               PopupMenuItem(
-                onTap: () =>
-                    showCupertinoDialog(context: context, builder: (context) => DeletePost(int.parse(postSS.key!))),
+                onTap: () {},
+                // showCupertinoDialog(context: context, builder: (context) => DeletePost(int.parse(postSS.key!)))
                 child: Row(
                   children: [
                     Icon(Symbols.block, color: Theme.of(context).colorScheme.error),

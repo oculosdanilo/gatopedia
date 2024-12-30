@@ -118,7 +118,7 @@ class _AppState extends State<App> {
                     textStyle: TextStyle(
                       color: Theme.of(c).colorScheme.onPrimary,
                       fontSize: 10,
-                      fontVariations: [const FontVariation.weight(700)],
+                      fontWeight: FontWeight.bold,
                     ),
                     child: w,
                   );

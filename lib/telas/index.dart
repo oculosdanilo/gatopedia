@@ -42,6 +42,7 @@ class _IndexState extends State<Index> {
 
   late final scW = MediaQuery.sizeOf(context).width;
   late final scH = MediaQuery.sizeOf(context).height;
+  late final pd = MediaQuery.paddingOf(context);
 
   @override
   void initState() {
@@ -264,12 +265,12 @@ class _IndexState extends State<Index> {
               top: animImg ? scH * 0.05 : (scH / 2) - 250,
               child: ClipOval(child: Image.asset("assets/icon.webp", width: 250)),
             ),
-            SemConta(animText, scH, scW, () => setState(() => full = true)),
+            SemConta(animText, scH, scW, () => setState(() => full = true), pd),
             Positioned(
               top: full ? 0 : scH,
               width: scW,
               child: AnimatedOpacity(
-                duration: full ? const Duration(milliseconds: 400) : Duration.zero,
+                duration: full ? const Duration(milliseconds: 500) : Duration.zero,
                 curve: const Interval(0.7, 1),
                 opacity: full ? 1 : 0,
                 child: Container(
@@ -283,7 +284,7 @@ class _IndexState extends State<Index> {
                       textTheme:
                           temaBaseBW(dark ? Brightness.dark : Brightness.light).textTheme.apply(fontFamily: "Jost"),
                     ),
-                    child: const Gatos(),
+                    child: Gatos(pd),
                   ),
                 ),
               ),
@@ -302,16 +303,15 @@ class SemConta extends StatefulWidget {
   final double scH;
   final double scW;
   final Function() notifyParent;
+  final EdgeInsets pd;
 
-  const SemConta(this.animText, this.scH, this.scW, this.notifyParent, {super.key});
+  const SemConta(this.animText, this.scH, this.scW, this.notifyParent, this.pd, {super.key});
 
   @override
   State<SemConta> createState() => _SemContaState();
 }
 
 class _SemContaState extends State<SemConta> {
-  late final pdB = MediaQuery.paddingOf(context).bottom;
-
   bool acabou = true;
   bool acabouAlt = true;
   bool cancelar = false;
@@ -356,7 +356,6 @@ class _SemContaState extends State<SemConta> {
               cancelar = (detalhes.primaryDelta! > 0);
               deltaZero = detalhes.delta.dy == 0.0;
             });
-            debugPrint("${(inicial.dy - pos!.dy) < ((widget.scH / 6) * 5)} $deltaZero");
           },
           onVerticalDragDown: (detalhes) {
             setState(() {
@@ -429,12 +428,12 @@ class _SemContaState extends State<SemConta> {
                                 : Theme.of(context).colorScheme.onSurface),
                   ),
                   SizedBox(
-                    height: widget.scH + pdB,
+                    height: widget.scH + widget.pd.bottom,
                     child: Center(
                       child: AnimatedOpacity(
-                        duration: full || pos == null ? const Duration(milliseconds: 400) : Duration.zero,
+                        duration: full || pos != null ? const Duration(milliseconds: 400) : Duration.zero,
                         opacity: pos != null ? 1 : 0,
-                        child: const Icon(Bootstrap.incognito, size: 100, fill: 0),
+                        child: const Icon(Bootstrap.incognito, size: 150, fill: 0),
                       ),
                     ),
                   ),

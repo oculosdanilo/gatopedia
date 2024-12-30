@@ -14,7 +14,6 @@ import 'package:gatopedia/telas/seminternet.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-List<Widget> telasHome = const [Gatos(), Profile(false), Config(false)];
 int indexAntigo = 0;
 
 class Home extends StatefulWidget {
@@ -25,6 +24,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List<Widget> telasHome = const [Gatos(EdgeInsets.only()), Profile(false), Config(false)];
+
   @override
   void initState() {
     super.initState();
