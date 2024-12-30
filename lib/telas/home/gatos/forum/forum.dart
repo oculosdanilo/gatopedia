@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:gatopedia/components/post.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
@@ -13,7 +12,6 @@ String imagemTipo = "";
 String legenda = "";
 File? file; /* arquivo pra comprimir a imagem de upload do post */
 final txtPost = TextEditingController();
-final fagKey = GlobalKey<ExpandableFabState>();
 
 class Forum extends StatefulWidget {
   final ScrollController scrollForum;
@@ -88,9 +86,10 @@ class _ForumState extends State<Forum> {
     });
   }
 
+  late double offsetInicial = widget.scrollForum.offset;
+
   @override
   void initState() {
-    // TODO: fazer o appbar() encolher beijos :*
     super.initState();
     tabIndex = 1;
     if (!iniciouListenForum) {
@@ -98,8 +97,6 @@ class _ForumState extends State<Forum> {
       iniciouListenForum = true;
     }
   }
-
-  late double offsetInicial = widget.scrollForum.offset;
 
   @override
   Widget build(BuildContext context) {

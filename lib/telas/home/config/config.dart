@@ -103,9 +103,12 @@ class _ConfigState extends State<Config> {
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      AppLocalizations.of(context).config_title,
-                      style: const TextStyle(fontVariations: [FontVariation.weight(500)]),
+                    Transform.translate(
+                      offset: Offset(widget.voltar ? -24 : 0, 0),
+                      child: Text(
+                        AppLocalizations.of(context).config_title,
+                        style: const TextStyle(fontVariations: [FontVariation.weight(500)]),
+                      ),
                     ),
                   ],
                 ),

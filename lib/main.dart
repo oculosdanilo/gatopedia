@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connecteo/connecteo.dart';
 import 'package:devicelocale/devicelocale.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -41,6 +43,9 @@ void main() async {
   await FirebaseAppCheck.instance.activate();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+  await ignoreException(ArgumentError);
 
   final SharedPreferences pref = await SharedPreferences.getInstance();
   final userSalvo = pref.getString("username") != null;
@@ -114,7 +119,6 @@ class _AppState extends State<App> {
                       color: Theme.of(c).colorScheme.onPrimary,
                       fontSize: 10,
                       fontVariations: [const FontVariation.weight(700)],
-                      fontFamily: "Jost",
                     ),
                     child: w,
                   );
@@ -205,4 +209,15 @@ void checarUpdate(BuildContext context) {
       Fluttertoast.showToast(msg: "Atualizado!");
     }
   });
+}
+
+Future<void> ignoreException(Type exceptionType) async {
+  final originalOnError = FlutterError.onError!;
+  FlutterError.onError = (FlutterErrorDetails details) {
+    final currentError = details.exception.runtimeType;
+    if (currentError == exceptionType) {
+      return;
+    }
+    originalOnError(details);
+  };
 }

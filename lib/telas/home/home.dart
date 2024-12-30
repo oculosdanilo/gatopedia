@@ -28,7 +28,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    if (!iniciou) {
+    if (!iniciouInternet) {
       FlutterNativeSplash.remove();
       if (!kIsWeb) {
         connecteo.connectionStream.listen((internet) {
@@ -36,7 +36,7 @@ class _HomeState extends State<Home> {
           if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
         });
       }
-      iniciou = true;
+      iniciouInternet = true;
     }
   }
 

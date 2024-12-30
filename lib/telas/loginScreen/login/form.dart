@@ -2,6 +2,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
@@ -151,7 +152,7 @@ class FormAppState extends State<FormApp> {
               children: [
                 OutlinedButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancelar", style: TextStyle(fontSize: 18)),
+                  child: Text(AppLocalizations.of(context).cancel),
                 ),
                 const SizedBox(width: 10),
                 botaoLogin(context),
@@ -193,14 +194,14 @@ class FormAppState extends State<FormApp> {
                     conectando = false;
                   });
                 } else {
-                  setState(() {
-                    conectando = false;
-                    txtControllerSenha.text = txtControllerLogin.text = "";
-                  });
                   if (inputLembrar) {
                     SharedPreferences sp = await SharedPreferences.getInstance();
                     await sp.setString("username", username ?? "");
                   }
+                  setState(() {
+                    conectando = false;
+                    txtControllerSenha.text = txtControllerLogin.text = "";
+                  });
                   if (!context.mounted) return;
                   Navigator.pop(context);
                   Navigator.pushReplacement(context, SlideUpRoute(const Home()));

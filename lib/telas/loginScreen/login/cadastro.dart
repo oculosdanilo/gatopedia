@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/forum/view/imagem_view.dart';
 import 'package:gatopedia/telas/home/home.dart';
@@ -44,6 +45,7 @@ class _NewCadastroState extends State<NewCadastro> {
 
   late final scW = MediaQuery.sizeOf(context).width;
   late final scH = MediaQuery.sizeOf(context).height;
+  late final pdB = MediaQuery.paddingOf(context).bottom;
 
   @override
   void initState() {
@@ -59,13 +61,13 @@ class _NewCadastroState extends State<NewCadastro> {
     });
   }
 
-  mudarCor(cor) {
+  _mudarCor(cor) {
     setState(() {
       counterColor = cor;
     });
   }
 
-  mostrarSenha() {
+  _mostrarSenha() {
     if (esconderSenha) {
       setState(() {
         esconderSenha = false;
@@ -89,7 +91,6 @@ class _NewCadastroState extends State<NewCadastro> {
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
-            automaticallyImplyLeading: false,
             toolbarHeight: 0,
             backgroundColor: Theme.of(context).colorScheme.surface,
           ),
@@ -101,7 +102,7 @@ class _NewCadastroState extends State<NewCadastro> {
                   const SizedBox(width: 20),
                   OutlinedButton(
                     onPressed: botaoEnabled ? () => Navigator.pop(context) : null,
-                    child: const Text("Cancelar", style: TextStyle(fontSize: 18)),
+                    child: Text(AppLocalizations.of(context).cancel),
                   ),
                   const Expanded(child: SizedBox()),
                   FilledButton(
@@ -161,12 +162,12 @@ class _NewCadastroState extends State<NewCadastro> {
                             }
                           }
                         : null,
-                    child: const Text("Cadastrar", style: TextStyle(fontSize: 18)),
+                    child: const Text("Cadastrar"),
                   ),
                   const SizedBox(width: 20),
                 ],
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: pdB + 10),
             ],
           ),
           body: Center(
@@ -310,9 +311,9 @@ class _NewCadastroState extends State<NewCadastro> {
                                 setState(() {
                                   txtFieldLenght = value.length;
                                   if (value.length <= 3 || value.length > 25) {
-                                    mudarCor(Theme.of(context).colorScheme.error);
+                                    _mudarCor(Theme.of(context).colorScheme.error);
                                   } else {
-                                    mudarCor(Theme.of(context).colorScheme.onSurface);
+                                    _mudarCor(Theme.of(context).colorScheme.onSurface);
                                   }
                                 });
                                 _formUsernameKey.currentState!.validate();
@@ -380,7 +381,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                         prefix: const SizedBox(width: 10),
                                         suffixIcon: Padding(
                                           padding: const EdgeInsets.only(right: 5),
-                                          child: IconButton(onPressed: () => mostrarSenha(), icon: iconeOlho),
+                                          child: IconButton(onPressed: () => _mostrarSenha(), icon: iconeOlho),
                                         ),
                                         label: const Text("Senha"),
                                       ),
@@ -396,16 +397,16 @@ class _NewCadastroState extends State<NewCadastro> {
                                 setState(() {
                                   txtFieldLenght = value.length;
                                   if (value.length <= 3 || value.length > 25) {
-                                    mudarCor(Theme.of(context).colorScheme.error);
+                                    _mudarCor(Theme.of(context).colorScheme.error);
                                   } else {
-                                    mudarCor(Theme.of(context).colorScheme.onSurface);
+                                    _mudarCor(Theme.of(context).colorScheme.onSurface);
                                   }
                                 });
                                 _formKey.currentState!.validate();
                               },
                               maxLines: 2,
                               decoration: InputDecoration(
-                                hintText: "(vazio)",
+                                hintText: AppLocalizations.of(context).profile_bio_empty,
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                                   borderRadius: BorderRadius.circular(20),
@@ -573,7 +574,7 @@ class _ImagemLocalState extends State<ImagemLocal> {
             maxScale: 1.0,
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(10, MediaQuery.of(context).padding.top + 5, 0, 0),
+            padding: EdgeInsets.fromLTRB(10, MediaQuery.paddingOf(context).top + 5, 0, 0),
             child: ClipOval(
               child: Material(
                 color: Colors.black,

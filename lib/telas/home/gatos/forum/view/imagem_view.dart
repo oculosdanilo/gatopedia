@@ -28,7 +28,7 @@ class _ImagemState extends State<Imagem> {
             maxScale: 1.0,
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(10, MediaQuery.of(context).padding.top + 5, 0, 0),
+            padding: EdgeInsets.fromLTRB(10, MediaQuery.paddingOf(context).top + 5, 0, 0),
             child: ClipOval(
               child: Material(
                 color: Colors.black,

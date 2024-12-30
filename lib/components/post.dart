@@ -27,6 +27,14 @@ class Post extends StatefulWidget {
 }
 
 class _PostState extends State<Post> {
+  late final pdB = MediaQuery.paddingOf(context).bottom;
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint(pdB.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     DataSnapshot postSS =
@@ -37,14 +45,28 @@ class _PostState extends State<Post> {
         children: [
           postSS.key == "0"
               ? Positioned(
-                  bottom: 35,
+                  bottom: username != null ? 35 : 135 + pdB,
                   width: MediaQuery.sizeOf(context).width - 20,
-                  child: const Center(child: Text("E acabou ;)")),
+                  child: Center(
+                    child: Text(
+                      "E acabou ;)",
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                    ),
+                  ),
                 )
               : const SizedBox(),
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
-            margin: EdgeInsets.fromLTRB(4, 4, 4, postSS.key == "0" ? 85 : 4),
+            margin: EdgeInsets.fromLTRB(
+              4,
+              4,
+              4,
+              postSS.key == "0"
+                  ? username != null
+                      ? 85
+                      : 185 + pdB
+                  : 4,
+            ),
             color: username == null && dark
                 ? Theme.of(context).colorScheme.surfaceTint.withValues(alpha: 0.25)
                 : Theme.of(context).colorScheme.surfaceContainerLow,
@@ -103,11 +125,13 @@ class _PostState extends State<Post> {
               ),
             ),
           ),
-          Positioned(
-            right: 10,
-            top: 10,
-            child: opcoes(widget.index, postSS),
-          )
+          username != null
+              ? Positioned(
+                  right: 10,
+                  top: 10,
+                  child: opcoes(widget.index, postSS),
+                )
+              : const SizedBox(),
         ],
       ),
     );
@@ -441,17 +465,30 @@ class _FooterPostState extends State<FooterPost> {
                     ),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: TextButton(
+                      child: TextButton.icon(
                         onPressed: () async {
                           action.call();
                         },
-                        child: Text(
-                          "Comentários",
-                          style: TextStyle(
-                            color:
-                                GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).onSurface,
-                            fontSize: 15,
-                            fontVariations: [const FontVariation("wght", 600)],
+                        icon: const Icon(AntDesign.comment_outline),
+                        label: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          constraints: const BoxConstraints(minWidth: 21),
+                          height: 21,
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              child: Text(
+                                "${widget.postSS.child("comentarios").children.length - 2}",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontVariations: [const FontVariation("wght", 600)],
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),

@@ -23,7 +23,11 @@ class Wiki extends StatefulWidget {
   State<Wiki> createState() => _WikiState();
 }
 
+double scrollSalvoWiki = 0;
+
 class _WikiState extends State<Wiki> {
+  late final pdB = MediaQuery.paddingOf(context).bottom;
+
   void _barHideListen() {
     scrollAcumulado = 0;
     widget.setStateGatos();
@@ -39,6 +43,7 @@ class _WikiState extends State<Wiki> {
 
     widget.scrollWiki.addListener(() {
       double off = widget.scrollWiki.offset;
+      scrollSalvoWiki = off;
       scrollAcumulado = offsetInicial - off;
 
       if (scrollAcumulado > (kToolbarHeight * 2.86) / 2 && !expandido) {
@@ -50,7 +55,7 @@ class _WikiState extends State<Wiki> {
           widget.animController.reverse();
         });
         widget.setStateGatos();
-      } else if (scrollAcumulado < (-(kToolbarHeight * 2.86) / 2) && expandido) {
+      } else if (scrollAcumulado < -(kToolbarHeight * 2.86) / 2 && expandido) {
         if (!mounted) return;
         setState(() {
           expandido = false;
@@ -63,6 +68,8 @@ class _WikiState extends State<Wiki> {
     });
   }
 
+  late double offsetInicial = widget.scrollWiki.offset;
+
   @override
   void initState() {
     super.initState();
@@ -72,8 +79,6 @@ class _WikiState extends State<Wiki> {
       pegouInfo = true;
     }
   }
-
-  late double offsetInicial = widget.scrollWiki.offset;
 
   @override
   Widget build(BuildContext context) {
@@ -113,16 +118,11 @@ class _WikiState extends State<Wiki> {
                       _comecouListen = true;
                     });
                   }
-                  return username != null
-                      ? gatoCard(snapshot.data!.children.toList()[index], snapshot, context)
-                      : Column(
-                          children: [
-                            gatoCard(snapshot.data!.children.toList()[index], snapshot, context),
-                            const SizedBox(height: 100),
-                          ],
-                        );
+                  return username == null && index == 10
+                      ? SizedBox(height: 80 + pdB)
+                      : gatoCard(snapshot.data!.children.toList()[index], snapshot, context);
                 },
-                itemCount: snapshot.data!.children.length,
+                itemCount: snapshot.data!.children.length + (username != null ? 0 : 1),
               );
             } else {
               filho = const Center(child: CircularProgressIndicator());
@@ -140,7 +140,7 @@ class _WikiState extends State<Wiki> {
 
   bool _comecouListen = false;
 
-  Container gatoCard(DataSnapshot e, AsyncSnapshot<DataSnapshot> snapshot, BuildContext context) {
+  Container gatoCard(DataSnapshot? e, AsyncSnapshot<DataSnapshot> snapshot, BuildContext context) {
     return Container(
       margin: EdgeInsets.fromLTRB(
           15, e == snapshot.data?.children.first ? 15 : 10, 15, e == snapshot.data?.children.last ? 15 : 5),
@@ -149,11 +149,11 @@ class _WikiState extends State<Wiki> {
         transitionType: ContainerTransitionType.fade,
         transitionDuration: const Duration(milliseconds: 500),
         openBuilder: (context, _) => username != null
-            ? GatoInfo(e)
+            ? GatoInfo(e!)
             : Theme(
                 data: ThemeData.from(
                     colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light)),
-                child: GatoInfo(e),
+                child: GatoInfo(e!),
               ),
         closedElevation: 0,
         tappable: false,
@@ -172,7 +172,7 @@ class _WikiState extends State<Wiki> {
     );
   }
 
-  SizedBox gatoCardContainer(BuildContext context, VoidCallback openContainer, DataSnapshot e) {
+  SizedBox gatoCardContainer(BuildContext context, VoidCallback openContainer, DataSnapshot? e) {
     return SizedBox(
       height: 130,
       child: Card(
@@ -182,7 +182,7 @@ class _WikiState extends State<Wiki> {
             : Theme.of(context).colorScheme.surfaceContainerLow,
         margin: const EdgeInsets.all(0),
         child: InkWell(
-          onTap: () => openContainer.call(),
+          onTap: e != null ? () => openContainer.call() : null,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
             child: Row(
@@ -191,15 +191,17 @@ class _WikiState extends State<Wiki> {
                 SizedBox(
                   width: 130,
                   height: 130,
-                  child: BlurHash(
-                    hash: e.child("img").value.toString().split("&")[1],
-                    image:
-                        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${e.child("img").value.toString().split("&")[0]}.webp?alt=media",
-                    decodingWidth: 130,
-                    decodingHeight: 130,
-                    duration: const Duration(milliseconds: 150),
-                    color: Theme.of(context).colorScheme.surfaceContainerLow,
-                  ),
+                  child: e != null
+                      ? BlurHash(
+                          hash: e.child("img").value.toString().split("&")[1],
+                          image:
+                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${e.child("img").value.toString().split("&")[0]}.webp?alt=media",
+                          decodingWidth: 130,
+                          decodingHeight: 130,
+                          duration: const Duration(milliseconds: 150),
+                          color: Theme.of(context).colorScheme.surfaceContainerLow,
+                        )
+                      : null,
                 ),
                 /*CachedNetworkImage(
                   imageUrl:
@@ -220,13 +222,13 @@ class _WikiState extends State<Wiki> {
                     children: [
                       const SizedBox(height: 10),
                       Text(
-                        e.key!,
+                        e?.key ?? "Teste",
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                         softWrap: true,
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "${e.child("resumo").value}",
+                        "${e?.child("resumo").value}",
                         style: const TextStyle(fontSize: 16),
                         softWrap: true,
                         maxLines: 3,

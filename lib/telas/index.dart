@@ -22,7 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 bool full = false;
 Offset? pos;
-bool iniciou = false;
+bool iniciouInternet = false;
 
 class Index extends StatefulWidget {
   final bool tocar;
@@ -46,7 +46,7 @@ class _IndexState extends State<Index> {
   @override
   void initState() {
     super.initState();
-    if (!iniciou) {
+    if (!iniciouInternet) {
       FlutterNativeSplash.remove();
       if (!kIsWeb) {
         connecteo.connectionStream.listen((internet) {
@@ -54,7 +54,7 @@ class _IndexState extends State<Index> {
           if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
         });
       }
-      iniciou = true;
+      iniciouInternet = true;
     }
     full = false;
     if (widget.tocar) {
@@ -72,6 +72,7 @@ class _IndexState extends State<Index> {
       });
     }
 
+    // TODO: testar se funciona o update
     checarUpdate(context);
   }
 
@@ -167,6 +168,7 @@ class _IndexState extends State<Index> {
             pos = null;
             full = false;
           });
+          Future.delayed(const Duration());
         }
       },
       child: Scaffold(
@@ -263,14 +265,12 @@ class _IndexState extends State<Index> {
               child: ClipOval(child: Image.asset("assets/icon.webp", width: 250)),
             ),
             SemConta(animText, scH, scW, () => setState(() => full = true)),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              curve: const Interval(0.99, 1),
+            Positioned(
               top: full ? 0 : scH,
               width: scW,
               child: AnimatedOpacity(
-                duration: full ? const Duration(milliseconds: 500) : Duration.zero,
-                curve: const Interval((500 / 300) * 0.01, 1),
+                duration: full ? const Duration(milliseconds: 400) : Duration.zero,
+                curve: const Interval(0.7, 1),
                 opacity: full ? 1 : 0,
                 child: Container(
                   height: scH,
@@ -280,6 +280,8 @@ class _IndexState extends State<Index> {
                     data: ThemeData.from(
                       colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
                       useMaterial3: true,
+                      textTheme:
+                          temaBaseBW(dark ? Brightness.dark : Brightness.light).textTheme.apply(fontFamily: "Jost"),
                     ),
                     child: const Gatos(),
                   ),
@@ -292,6 +294,8 @@ class _IndexState extends State<Index> {
     );
   }
 }
+
+ThemeData temaBaseBW(Brightness mode) => ThemeData(colorScheme: GrayColorScheme.highContrastGray(mode));
 
 class SemConta extends StatefulWidget {
   final bool animText;
@@ -306,8 +310,14 @@ class SemConta extends StatefulWidget {
 }
 
 class _SemContaState extends State<SemConta> {
+  late final pdB = MediaQuery.paddingOf(context).bottom;
+
   bool acabou = true;
   bool acabouAlt = true;
+  bool cancelar = false;
+  bool deltaZero = true;
+
+  Offset inicial = Offset.zero;
 
   @override
   Widget build(BuildContext context) {
@@ -316,10 +326,10 @@ class _SemContaState extends State<SemConta> {
       curve: Curves.ease,
       left: 0,
       right: 0,
-      bottom: pos == null
+      bottom: pos == null || (inicial.dy - (pos?.dy ?? 0)) < 0
           ? -widget.scH
           : !full
-              ? -pos!.dy
+              ? -widget.scH + (inicial.dy - pos!.dy)
               : 0,
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 600),
@@ -334,22 +344,29 @@ class _SemContaState extends State<SemConta> {
             });
             widget.notifyParent();
           },
-          onHorizontalDragStart: (detalhes) {
+          onVerticalDragStart: (detalhes) {
             setState(() {
               acabou = false;
               acabouAlt = false;
             });
           },
-          onHorizontalDragUpdate: (detalhes) => setState(() => pos = detalhes.globalPosition),
-          onHorizontalDragDown: (detalhes) {
+          onVerticalDragUpdate: (detalhes) {
+            setState(() {
+              pos = detalhes.globalPosition;
+              cancelar = (detalhes.primaryDelta! > 0);
+              deltaZero = detalhes.delta.dy == 0.0;
+            });
+            debugPrint("${(inicial.dy - pos!.dy) < ((widget.scH / 6) * 5)} $deltaZero");
+          },
+          onVerticalDragDown: (detalhes) {
             setState(() {
               acabouAlt = false;
               acabou = true;
-              pos = detalhes.globalPosition;
+              inicial = detalhes.globalPosition;
             });
           },
-          onHorizontalDragEnd: (detalhes) {
-            if ((pos?.dy ?? 0) > ((widget.scH / 4) * 3)) {
+          onVerticalDragEnd: (detalhes) {
+            if (((inicial.dy - pos!.dy) < ((widget.scH / 7)) && deltaZero) || cancelar) {
               setState(() {
                 acabouAlt = true;
                 acabou = true;
@@ -363,6 +380,20 @@ class _SemContaState extends State<SemConta> {
               });
               widget.notifyParent();
             }
+            /*if ((pos?.dy ?? 0) > ((widget.scH / 5) * 4) || cancelar) {
+              setState(() {
+                acabouAlt = true;
+                acabou = true;
+                pos = null;
+              });
+            } else {
+              setState(() {
+                acabouAlt = true;
+                acabou = true;
+                pos = Offset.zero;
+              });
+              widget.notifyParent();
+            }*/
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
@@ -397,7 +428,16 @@ class _SemContaState extends State<SemConta> {
                                 ? Colors.white
                                 : Theme.of(context).colorScheme.onSurface),
                   ),
-                  SizedBox(height: 20 + widget.scH),
+                  SizedBox(
+                    height: widget.scH + pdB,
+                    child: Center(
+                      child: AnimatedOpacity(
+                        duration: full || pos == null ? const Duration(milliseconds: 400) : Duration.zero,
+                        opacity: pos != null ? 1 : 0,
+                        child: const Icon(Bootstrap.incognito, size: 100, fill: 0),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

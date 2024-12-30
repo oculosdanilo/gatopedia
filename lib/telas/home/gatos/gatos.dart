@@ -39,6 +39,8 @@ class Gatos extends StatefulWidget {
 }
 
 class _GatosState extends State<Gatos> with TickerProviderStateMixin {
+  final fagKey = GlobalKey<ExpandableFabState>();
+
   final miau = AudioPlayer();
   late final TabController _tabController;
 
@@ -74,8 +76,8 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
     }
   }
 
-  final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo);
-  final ScrollController _scrollWiki = ScrollController();
+  final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo, keepScrollOffset: false);
+  final ScrollController _scrollWiki = ScrollController(initialScrollOffset: scrollSalvoWiki, keepScrollOffset: false);
   late List<Widget> telasGatos = <Widget>[
     Wiki(_scrollWiki, _setState, _animTabBarController, _animTabBar),
     Forum(_scrollForum, _setState, _animTabBarController, _animTabBar),
@@ -120,6 +122,14 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
       margin: const EdgeInsets.all(20),
       borderRadius: BorderRadius.circular(50),
     ).show(context);
+  }
+
+  @override
+  void dispose() {
+    _animTabBarController.dispose();
+    _scrollWiki.dispose();
+    _scrollForum.dispose();
+    super.dispose();
   }
 
   @override
@@ -249,7 +259,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
 
   Widget appbar(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.primary,
+      color: username != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
       width: MediaQuery.sizeOf(context).width,
       child: Stack(
         children: [
@@ -266,7 +276,9 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                 isScrollable: true,
                 controller: _tabController,
                 labelStyle: const TextStyle(fontSize: 18, fontFamily: "Jost"),
-                unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.70),
+                unselectedLabelColor: username != null
+                    ? Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.70)
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70),
                 indicatorColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 tabs: const [Tab(text: "Wiki"), Tab(text: "Feed")],
@@ -301,7 +313,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
               child: Material(
                 color: Colors.transparent,
                 child: IconButton(
-                  icon: const Icon(IonIcons.paw, color: Color(0xffff9922)),
+                  icon: Icon(IonIcons.paw, color: username != null ? const Color(0xffff9922) : const Color(0xff757575)),
                   iconSize: 110,
                   onPressed: () async => await _play(),
                 ),
@@ -318,9 +330,11 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                   child: Text(
                     username != null ? "@$username" : "@shhhanônimo",
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontSize: 28 + (_animTabBar.value * -8), // 28
-                      fontVariations: const [FontVariation("wght", 500)],
+                      color: username != null
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 28 + (_animTabBar.value * -8),
+                      fontVariations: const [FontVariation.weight(500)],
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -389,6 +403,10 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
           iniciouUserGoogle = false;
           GoogleSignIn().signOut();
           username = null;
+          scrollSalvo = 0;
+          scrollSalvoWiki = 0;
+          scrollAcumulado = 0;
+          iniciouListenForum = false;
           Navigator.pop(context);
           Navigator.push(context, MaterialPageRoute(builder: (c) => const Index(false)));
         }
