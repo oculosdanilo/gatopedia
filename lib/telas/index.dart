@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
@@ -185,10 +186,10 @@ class _IndexState extends State<Index> {
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 200),
                     opacity: animText ? 1 : 0,
-                    child: const Text(
-                      "Gatopédia!",
+                    child: Text(
+                      AppLocalizations.of(context).gatopedia,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(height: 75),

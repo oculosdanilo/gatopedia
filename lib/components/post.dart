@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/components/loading.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/forum/edit/delete_post.dart';
 import 'package:gatopedia/telas/home/gatos/forum/edit/edit_post.dart';
@@ -29,10 +30,15 @@ class Post extends StatefulWidget {
 }
 
 class _PostState extends State<Post> {
+  late DataSnapshot postSS = snapshotForum!.child("${widget.index}");
+
+  void _notificar() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    DataSnapshot postSS =
-        snapshotForum!.child("${widget.index}"); // tem que deixar isso aqui pra ele atualizar os likes
+    postSS = snapshotForum!.child("${widget.index}");
     return Padding(
       padding: EdgeInsets.only(top: widget.last ? (kToolbarHeight * 2.86) + 5 : 5),
       child: Stack(
@@ -112,7 +118,7 @@ class _PostState extends State<Post> {
                               ),
                             )
                           : const SizedBox(height: 15),
-                      FooterPost(postSS),
+                      FooterPost(postSS, _notificar),
                     ],
                   );
                 },
@@ -333,11 +339,11 @@ Widget opcoes(int index, DataSnapshot postSS) {
                     }
                   });
                 },
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Symbols.edit_rounded, fill: 1),
-                    SizedBox(width: 10),
-                    Text("Editar", style: TextStyle(fontSize: 15)),
+                    const Icon(Symbols.edit_rounded, fill: 1),
+                    const SizedBox(width: 10),
+                    Text(AppLocalizations.of(context).forum_editPost_btn, style: const TextStyle(fontSize: 15)),
                   ],
                 ),
               ),
@@ -348,7 +354,10 @@ Widget opcoes(int index, DataSnapshot postSS) {
                   children: [
                     Icon(Symbols.delete_rounded, color: Theme.of(context).colorScheme.error),
                     const SizedBox(width: 10),
-                    Text("Deletar", style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 15)),
+                    Text(
+                      AppLocalizations.of(context).forum_delete_btn,
+                      style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 15),
+                    ),
                   ],
                 ),
               )
@@ -375,38 +384,44 @@ Widget alertaBlock(String userBloqueado) {
 
 class FooterPost extends StatefulWidget {
   final DataSnapshot postSS;
+  final void Function() notificarPost;
 
-  const FooterPost(this.postSS, {super.key});
+  const FooterPost(this.postSS, this.notificarPost, {super.key});
 
   @override
   State<FooterPost> createState() => _FooterPostState();
 }
 
 class _FooterPostState extends State<FooterPost> {
-  _like(int post) {
+  late DataSnapshot postSS = widget.postSS;
+
+  _like(int post) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$post/likes");
-    ref.update({
+    await ref.update({
       "lenght": int.parse(snapshotForum!.child("$post/likes/lenght").value.toString()) + 1,
       "users": "${snapshotForum!.child("$post/likes/users").value},$username,"
     });
+    widget.notificarPost();
     setState(() {});
   }
 
-  _unlike(int post) {
+  _unlike(int post) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$post/likes");
-    ref.update(
+    await ref.update(
       {
         "lenght": (snapshotForum!.value as List)[post]["likes"]["lenght"] - 1,
         "users": (snapshotForum!.value as List)[post]["likes"]["users"].toString().replaceAll(",$username,", ""),
       },
     );
+    widget.notificarPost();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    postSS = widget.postSS;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
@@ -440,7 +455,7 @@ class _FooterPostState extends State<FooterPost> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Text(
-                              "${widget.postSS.child("comentarios").children.length - 2}",
+                              "${postSS.child("comentarios").children.length - 2}",
                               style: TextStyle(
                                 fontSize: 15,
                                 fontVariations: [const FontVariation("wght", 600)],
@@ -475,7 +490,7 @@ class _FooterPostState extends State<FooterPost> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 5),
                               child: Text(
-                                "${widget.postSS.child("comentarios").children.length - 2}",
+                                "${postSS.child("comentarios").children.length - 2}",
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontVariations: [const FontVariation("wght", 600)],
@@ -489,13 +504,13 @@ class _FooterPostState extends State<FooterPost> {
                     ),
                   ),
             openBuilder: (context, action) => username != null
-                ? ComentariosForum(widget.postSS)
+                ? ComentariosForum(postSS)
                 : Theme(
                     data: ThemeData.from(
                       colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
                       useMaterial3: true,
                     ),
-                    child: ComentariosForum(widget.postSS),
+                    child: ComentariosForum(postSS),
                   ),
           ),
           Align(
@@ -509,37 +524,37 @@ class _FooterPostState extends State<FooterPost> {
               onPressed: username != null
                   ? () {
                       setState(() {
-                        if (!widget.postSS.child("likes/users").value.toString().contains(",$username,")) {
-                          _like(int.parse(widget.postSS.key!));
+                        if (!postSS.child("likes/users").value.toString().contains(",$username,")) {
+                          _like(int.parse(postSS.key!));
                         } else {
-                          _unlike(int.parse(widget.postSS.key!));
+                          _unlike(int.parse(postSS.key!));
                         }
                       });
                     }
                   : null,
               icon: Icon(
-                widget.postSS.child("likes/users").value.toString().contains(",$username,")
+                postSS.child("likes/users").value.toString().contains(",$username,")
                     ? Icons.thumb_up_off_alt_rounded
                     : Icons.thumb_up_off_alt_outlined,
                 color: username != null
-                    ? widget.postSS.child("likes/users").value.toString().contains(",$username,")
+                    ? postSS.child("likes/users").value.toString().contains(",$username,")
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurface
                     : Colors.grey,
               ),
               label: Text(
-                "${widget.postSS.child("likes/lenght").value}",
+                "${postSS.child("likes/lenght").value}",
                 style: TextStyle(
                   fontSize: 18,
                   color: username != null
-                      ? widget.postSS.child("likes/users").value.toString().contains(",$username,")
+                      ? postSS.child("likes/users").value.toString().contains(",$username,")
                           ? Theme.of(context).colorScheme.primary
                           : Theme.of(context).colorScheme.onSurface
                       : Colors.grey,
                   fontVariations: [
                     FontVariation(
                       "wght",
-                      widget.postSS.child("likes/users").value.toString().contains(",$username,") ? 600 : 400,
+                      postSS.child("likes/users").value.toString().contains(",$username,") ? 600 : 400,
                     )
                   ],
                 ),

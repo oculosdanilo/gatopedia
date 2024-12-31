@@ -4,6 +4,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 
 class DeletePost extends StatefulWidget {
@@ -22,7 +23,7 @@ class _DeletePostState extends State<DeletePost> {
     await ref.remove();
     if (!mounted) return;
     Flushbar(
-      message: "Excluído com sucesso!",
+      message: AppLocalizations.of(context).forum_delete_flush,
       duration: const Duration(seconds: 3),
       margin: const EdgeInsets.all(20),
       borderRadius: BorderRadius.circular(50),
@@ -40,18 +41,18 @@ class _DeletePostState extends State<DeletePost> {
   Widget build(BuildContext context) {
     return AlertDialog(
       icon: Icon(Icons.delete_rounded, color: Theme.of(context).colorScheme.error),
-      title: const Text(
-        "Tem certeza que deseja deletar esse post?",
+      title: Text(
+        AppLocalizations.of(context).forum_delete_title,
         textAlign: TextAlign.center,
       ),
-      content: const Row(
+      content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text("Ele sumirá para sempre! (muito tempo)")],
+        children: [Text(AppLocalizations.of(context).forum_delete_desc)],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text("CANCELAR"),
+          child: Text(AppLocalizations.of(context).cancel),
         ),
         ElevatedButton(
           onPressed: () {

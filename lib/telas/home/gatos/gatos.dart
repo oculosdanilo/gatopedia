@@ -11,6 +11,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/deletar_conta.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
@@ -72,11 +73,9 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
   ];
 
   _postarImagem(int post, String filetype) async {
-    CachedNetworkImage.evictFromCache(
-        "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F$post.webp?alt=media");
     if (filetype == "img") {
       XFile? result = await FlutterImageCompress.compressAndGetFile(
-        file!.absolute.path,
+        imagemCortada?.absolute.path ?? file!.absolute.path,
         "${(await getApplicationDocumentsDirectory()).path}aa.webp",
         quality: 80,
         format: CompressFormat.webp,
@@ -84,7 +83,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
       File finalFile = File(result!.path);
       await FirebaseStorage.instance.ref("posts/$post.webp").putFile(finalFile);
     } else {
-      await FirebaseStorage.instance.ref("posts/$post.webp").putFile(file!);
+      await FirebaseStorage.instance.ref("posts/$post.webp").putFile(imagemCortada ?? file!);
     }
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
@@ -130,8 +129,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
         CurvedAnimation(parent: _animTabBarController, curve: Curves.easeOutBack, reverseCurve: Curves.easeInCubic);
     _animTabBar = Tween(begin: 0.0, end: 1.0).animate(_animTabBarCurve);
 
-    _animFAB = AnimationController(vsync: this, duration: const Duration(milliseconds: 100))
-      ..addListener(() => setState(() {}));
+    _animFAB = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
 
     if (!expandido) {
       _animTabBarController.forward(from: 1.0);
@@ -149,117 +147,188 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: username != null
-          ? ExpandableFab(
-              key: fagKey,
-              distance: 70,
-              overlayStyle: ExpandableFabOverlayStyle(color: Theme.of(context).cardColor.withValues(alpha: 0.4)),
-              openButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.edit_rounded)),
-              closeButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.close_rounded)),
-              childrenAnimation: ExpandableFabAnimation.none,
-              childrenOffset: const Offset(5, 0),
-              type: ExpandableFabType.up,
-              children: [
-                FloatingActionButton.small(
-                  heroTag: null,
-                  onPressed: () async {
-                    final state = fagKey.currentState;
-                    if (state != null) state.toggle();
-                    await showModalBottomSheet(
-                      context: context,
-                      showDragHandle: true,
-                      useSafeArea: true,
-                      isScrollControlled: true,
-                      builder: (ctx) => const TextPost(),
-                    );
-                    txtPost.text = "";
-                  },
-                  child: const Icon(Icons.text_fields_rounded),
-                ),
-                Transform.translate(
-                  offset: _offset,
-                  child: Row(
+          ? AnimatedBuilder(
+              animation: _animFAB,
+              builder: (c, child) {
+                return Opacity(opacity: _animFAB.value, child: child);
+              },
+              child: ExpandableFab(
+                key: fagKey,
+                distance: 70,
+                overlayStyle: ExpandableFabOverlayStyle(
+                    color: Theme.of(context)
+                        .cardColor
+                        .withValues(alpha: App.themeNotifier.value == ThemeMode.light ? 0.8 : 0.5)),
+                openButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.edit_rounded)),
+                closeButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.close_rounded)),
+                childrenAnimation: ExpandableFabAnimation.none,
+                childrenOffset: const Offset(5, 0),
+                type: ExpandableFabType.up,
+                children: [
+                  Row(
                     children: [
-                      Text("datasaa"),
-                      SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: OpenContainer(
-                          tappable: false,
-                          onClosed: (data) {
-                            if (postado) {
-                              final state = fagKey.currentState;
-                              if (state != null) state.toggle();
-                              Flushbar(
-                                message: "Postando...",
-                                duration: const Duration(seconds: 5),
-                                margin: const EdgeInsets.all(20),
-                                borderRadius: BorderRadius.circular(50),
-                              ).show(context);
-                              CachedNetworkImage.evictFromCache(
-                                  "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
-                              _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "img");
-                            }
-                          },
-                          transitionDuration: const Duration(milliseconds: 500),
-                          closedElevation: 5,
-                          openColor: Theme.of(context).colorScheme.surface,
-                          openBuilder: (context, action) => const ImagePost("image"),
-                          closedColor: Theme.of(context).colorScheme.primary,
-                          closedShape:
-                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none),
-                          closedBuilder: (context, action) {
-                            return FloatingActionButton.small(
-                              heroTag: null,
-                              onPressed: () => action.call(),
-                              elevation: 0,
-                              child: const Icon(Icons.image_rounded),
-                            );
-                          },
+                      Text(
+                        AppLocalizations.of(context).forum_fab_text,
+                        style: TextStyle(
+                          fontVariations: const [FontVariation.weight(500)],
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          shadows: App.themeNotifier.value == ThemeMode.dark
+                              ? [
+                                  Shadow(
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 10,
+                                    color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
+                                  ),
+                                ]
+                              : null,
                         ),
+                      ),
+                      const SizedBox(width: 20),
+                      FloatingActionButton.small(
+                        heroTag: null,
+                        elevation: 5,
+                        onPressed: () async {
+                          final state = fagKey.currentState;
+                          if (state != null) state.toggle();
+                          await showModalBottomSheet(
+                            context: context,
+                            showDragHandle: true,
+                            useSafeArea: true,
+                            isScrollControlled: true,
+                            builder: (ctx) => const TextPost(),
+                          );
+                          txtPost.text = "";
+                        },
+                        child: const Icon(Icons.text_fields_rounded),
                       ),
                     ],
                   ),
-                ),
-                Transform.translate(
-                  offset: _offset,
-                  child: SizedBox(
-                    height: 40,
-                    width: 40,
-                    child: OpenContainer(
-                      tappable: false,
-                      onClosed: (data) {
-                        if (postado) {
-                          final state = fagKey.currentState;
-                          if (state != null) state.toggle();
-                          Flushbar(
-                            message: "Postando...",
-                            duration: const Duration(seconds: 5),
-                            margin: const EdgeInsets.all(20),
-                            borderRadius: BorderRadius.circular(50),
-                          ).show(context);
-                          CachedNetworkImage.evictFromCache(
-                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
-                          _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "gif");
-                        }
-                      },
-                      transitionDuration: const Duration(milliseconds: 500),
-                      closedElevation: 5,
-                      openColor: Theme.of(context).colorScheme.surface,
-                      openBuilder: (context, action) => const ImagePost("gif"),
-                      closedColor: Theme.of(context).colorScheme.primaryContainer,
-                      closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      closedBuilder: (context, action) {
-                        return FloatingActionButton.small(
-                          heroTag: null,
-                          onPressed: () => action.call(),
-                          elevation: 0,
-                          child: const Icon(Icons.gif_rounded),
-                        );
-                      },
+                  Transform.translate(
+                    offset: _offset,
+                    child: Row(
+                      children: [
+                        Text(
+                          AppLocalizations.of(context).forum_fab_img,
+                          style: TextStyle(
+                            fontVariations: const [FontVariation.weight(500)],
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            shadows: App.themeNotifier.value == ThemeMode.dark
+                                ? [
+                                    Shadow(
+                                      offset: const Offset(0, 2),
+                                      blurRadius: 10,
+                                      color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: OpenContainer(
+                            tappable: false,
+                            onClosed: (data) {
+                              if (postado) {
+                                final state = fagKey.currentState;
+                                if (state != null) state.toggle();
+                                Flushbar(
+                                  message: AppLocalizations.of(context).forum_posting,
+                                  duration: const Duration(seconds: 5),
+                                  margin: const EdgeInsets.all(20),
+                                  borderRadius: BorderRadius.circular(50),
+                                ).show(context);
+                                CachedNetworkImage.evictFromCache(
+                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
+                                _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "img");
+                              }
+                            },
+                            transitionDuration: const Duration(milliseconds: 500),
+                            closedElevation: 5,
+                            openColor: Theme.of(context).colorScheme.surface,
+                            openBuilder: (context, action) => const ImagePost("image"),
+                            closedColor: Theme.of(context).colorScheme.primary,
+                            closedShape:
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none),
+                            closedBuilder: (context, action) {
+                              return FloatingActionButton.small(
+                                heroTag: null,
+                                onPressed: () => action.call(),
+                                elevation: 0,
+                                child: const Icon(Icons.image_rounded),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  Transform.translate(
+                    offset: _offset,
+                    child: Row(
+                      children: [
+                        Text(
+                          "GIF",
+                          style: TextStyle(
+                            fontVariations: const [FontVariation.weight(500)],
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            shadows: App.themeNotifier.value == ThemeMode.dark
+                                ? [
+                                    Shadow(
+                                      offset: const Offset(0, 2),
+                                      blurRadius: 10,
+                                      color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: OpenContainer(
+                            tappable: false,
+                            onClosed: (data) {
+                              if (postado) {
+                                final state = fagKey.currentState;
+                                if (state != null) state.toggle();
+                                Flushbar(
+                                  message: AppLocalizations.of(context).forum_posting,
+                                  duration: const Duration(seconds: 5),
+                                  margin: const EdgeInsets.all(20),
+                                  borderRadius: BorderRadius.circular(50),
+                                ).show(context);
+                                CachedNetworkImage.evictFromCache(
+                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${snapshotForum!.children.last.key ?? 0}") + 1}.webp?alt=media");
+                                _postarImagem(int.parse("${snapshotForum!.children.last.key ?? 0}") + 1, "gif");
+                              }
+                            },
+                            transitionDuration: const Duration(milliseconds: 500),
+                            closedElevation: 5,
+                            openColor: Theme.of(context).colorScheme.surface,
+                            openBuilder: (context, action) => const ImagePost("gif"),
+                            closedColor: Theme.of(context).colorScheme.primaryContainer,
+                            closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            closedBuilder: (context, action) {
+                              return FloatingActionButton.small(
+                                heroTag: null,
+                                onPressed: () => action.call(),
+                                elevation: 0,
+                                child: const Icon(Icons.gif_rounded),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             )
           : null,
       floatingActionButtonLocation: ExpandableFab.location,
@@ -368,7 +437,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                 return Transform.translate(
                   offset: Offset(0, _animTabBar.value * 25),
                   child: Text(
-                    username != null ? "@$username" : "@shhhanônimo",
+                    username != null ? "@$username" : AppLocalizations.of(context).gatos_anon,
                     style: TextStyle(
                       color: username != null
                           ? Theme.of(context).colorScheme.onPrimary
@@ -399,13 +468,15 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                     angle: math.pi,
                     child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.error),
                   ),
-                  title: const Text(
-                    "Já vai? ;(",
-                    style: TextStyle(fontVariations: [FontVariation("wght", 500)]),
+                  title: Text(
+                    AppLocalizations.of(context).gatos_exit_title,
+                    style: const TextStyle(fontVariations: [FontVariation("wght", 500)]),
                     textAlign: TextAlign.center,
                   ),
-                  content: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center, children: [Text("Tem certeza que deseja sair?")]),
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Text(AppLocalizations.of(context).gatos_exit_desc)],
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () {
@@ -414,7 +485,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                         });
                         Navigator.pop(context, false);
                       },
-                      child: const Text('CANCELAR'),
+                      child: Text(AppLocalizations.of(context).cancel),
                     ),
                     ElevatedButton(
                       onPressed: () {

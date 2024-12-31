@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
             NavigationDestination(
               icon: const Icon(DanIcons.pawOutline),
               selectedIcon: Icon(IonIcons.paw, color: Theme.of(context).colorScheme.onPrimary, fill: 1),
-              label: "Gatos",
+              label: AppLocalizations.of(context).gatos_title,
             ),
             NavigationDestination(
               icon: const Icon(Symbols.person_rounded, fill: 0),

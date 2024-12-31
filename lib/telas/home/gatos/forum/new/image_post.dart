@@ -2,13 +2,15 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 bool imagemSelecionada = false;
+File? imagemCortada;
 
 class ImagePost extends StatefulWidget {
   final String imageType;
@@ -41,12 +43,12 @@ class _ImagePostState extends State<ImagePost> {
     }
   }
 
-  Future<File?> _editarImagem(File img) async {
+  Future<File?> _editarImagem() async {
     CroppedFile? croppedFile = await ImageCropper().cropImage(
       sourcePath: file!.path,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: '\u270F️Editando...',
+          toolbarTitle: AppLocalizations.of(context).forum_editPost_crop_title,
           toolbarColor: Theme.of(context).colorScheme.primary,
           toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
           initAspectRatio: CropAspectRatioPreset.original,
@@ -54,9 +56,9 @@ class _ImagePostState extends State<ImagePost> {
           statusBarColor: Theme.of(context).colorScheme.primary,
         ),
         IOSUiSettings(
-          cancelButtonTitle: "Cancelar",
-          doneButtonTitle: "Editar",
-          title: '\u270F️Editando...',
+          cancelButtonTitle: AppLocalizations.of(context).cancel,
+          doneButtonTitle: AppLocalizations.of(context).ppedit_cut_done,
+          title: AppLocalizations.of(context).forum_editPost_crop_title,
           aspectRatioLockEnabled: true,
           minimumAspectRatio: 1 / 1,
           aspectRatioPickerButtonHidden: true,
@@ -73,6 +75,8 @@ class _ImagePostState extends State<ImagePost> {
     super.initState();
   }
 
+  late final pdB = MediaQuery.paddingOf(context).bottom;
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -88,6 +92,7 @@ class _ImagePostState extends State<ImagePost> {
                   setState(() {
                     postado = false;
                     imagemSelecionada = false;
+                    imagemCortada = null;
                   });
                   Navigator.pop(context);
                 },
@@ -102,7 +107,7 @@ class _ImagePostState extends State<ImagePost> {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + pdB),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -119,7 +124,7 @@ class _ImagePostState extends State<ImagePost> {
                           width: double.infinity,
                           child: imagemSelecionada
                               ? Image(
-                                  image: FileImage(file!),
+                                  image: FileImage(imagemCortada ?? file!),
                                   fit: BoxFit.cover,
                                 )
                               : const Center(child: CircularProgressIndicator()),
@@ -145,15 +150,15 @@ class _ImagePostState extends State<ImagePost> {
                             widget.imageType == "image"
                                 ? ElevatedButton.icon(
                                     onPressed: () async {
-                                      final imgEditada = await _editarImagem(file!);
+                                      final imgEditada = await _editarImagem();
                                       if (imgEditada != null) {
                                         setState(() {
-                                          file = imgEditada;
+                                          imagemCortada = imgEditada;
                                         });
                                       }
                                     },
                                     icon: const Icon(Symbols.tune_rounded),
-                                    label: const Text("EDITAR"),
+                                    label: Text(AppLocalizations.of(context).edit),
                                   )
                                 : const SizedBox(),
                             const Expanded(child: SizedBox()),
@@ -167,7 +172,7 @@ class _ImagePostState extends State<ImagePost> {
                                 Navigator.pop(context);
                               },
                               icon: const Icon(Icons.send_rounded),
-                              label: const Text("ENVIAR"),
+                              label: Text(AppLocalizations.of(context).post),
                             )
                           ],
                         )

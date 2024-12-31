@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 
 class EditPost extends StatefulWidget {
@@ -31,21 +32,18 @@ class _EditPostState extends State<EditPost> {
   Widget build(BuildContext context) {
     return AlertDialog(
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("CANCELAR")),
+        TextButton(onPressed: () => Navigator.pop(context, false), child: Text(AppLocalizations.of(context).cancel)),
         ElevatedButton(
           onPressed: () async {
             if (snapshotForum!.child("${widget.post}/content").value != txtEdit.text) {
               _editar(widget.post);
-              Navigator.pop(
-                context,
-                true,
-              );
+              Navigator.pop(context, true);
             }
           },
           child: const Text("OK"),
         ),
       ],
-      title: const Text("Editar post...", textAlign: TextAlign.center),
+      title: Text(AppLocalizations.of(context).forum_editPost_title, textAlign: TextAlign.center),
       icon: const Icon(Icons.edit_rounded),
       content: SizedBox(
         width: MediaQuery.sizeOf(context).width * 0.70,
