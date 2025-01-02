@@ -61,6 +61,17 @@
   "forum_delete_title": "Are you sure you want to delete this post?",
   "forum_delete_desc": "It will be gone forever! (a really long time)",
   "forum_delete_flush": "Deleted successfully!",
+  "forum_new_image_title": "Image post",
+  "forum_new_gif_title": "GIF post",
+  "forum_new_text": "What's in your head, {username}?",
+  "@forum_new_text": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "forum_new_flushText": "Posted successfully!",
   "comment": "########################## GATOS #################################################",
   "gatos_title": "Cats",
   "gatos_anon": "@shhhincognito",

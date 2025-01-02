@@ -100,7 +100,9 @@ class _ImagePostState extends State<ImagePost> {
               ),
               title: Center(
                 child: Text(
-                  widget.imageType == "image" ? "Post com imagem" : "Post com GIF",
+                  widget.imageType == "image"
+                      ? AppLocalizations.of(context).forum_new_image_title
+                      : AppLocalizations.of(context).forum_new_gif_title,
                   style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
               ),

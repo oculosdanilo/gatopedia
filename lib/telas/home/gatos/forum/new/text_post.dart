@@ -1,8 +1,9 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 
 class TextPost extends StatefulWidget {
   const TextPost({super.key});
@@ -83,7 +84,7 @@ class _TextPostState extends State<TextPost> {
                     controller: txtPost,
                     maxLength: 400,
                     decoration: InputDecoration(
-                      hintText: "No que está pensando, $username?",
+                      hintText: AppLocalizations.of(context).forum_new_text(username!),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                         borderRadius: BorderRadius.circular(20),
@@ -115,7 +116,7 @@ class _TextPostState extends State<TextPost> {
                             int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
                           );
                           Flushbar(
-                            message: "Postado com sucesso!",
+                            message: AppLocalizations.of(context).forum_new_flushText,
                             duration: const Duration(seconds: 3),
                             margin: const EdgeInsets.all(20),
                             borderRadius: BorderRadius.circular(50),
@@ -123,7 +124,7 @@ class _TextPostState extends State<TextPost> {
                         }
                       },
                       icon: const Icon(Icons.send_rounded),
-                      label: const Text("ENVIAR"),
+                      label: Text(AppLocalizations.of(context).post),
                     ),
                   ),
                 ),

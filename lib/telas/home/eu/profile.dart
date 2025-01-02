@@ -54,12 +54,13 @@ class _ProfileState extends State<Profile> {
     DatabaseReference ref = database.ref("users/$username");
     atualizarListen = ref.onValue.listen((event) {
       final data = event.snapshot;
-      if (data.child("bio").value != null) {
+      if (data.child("bio").value != null && data.child("bio").value.toString() != "(vazio)") {
         setState(() => bioText = "${data.child("bio").value}");
         sp.setString("bio", "${data.child("bio").value}");
       } else {
-        setState(() => bioText = "(vazio)");
-        sp.setString("bio", "(vazio)");
+        setState(() => bioText = AppLocalizations.of(context).profile_bio_empty);
+        if (!mounted) return;
+        sp.setString("bio", AppLocalizations.of(context).profile_bio_empty);
       }
       if (data.child("img").value != null) {
         setState(() => temImagem = true);
@@ -283,11 +284,14 @@ class _ProfileState extends State<Profile> {
       expandedHeight: 400,
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       flexibleSpace: FlexibleSpaceBar(
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            "@$username",
-            style: const TextStyle(color: Colors.white, fontVariations: [FontVariation("wght", 500)]),
+        title: Transform.translate(
+          offset: Offset(widget.botaoVoltar ? -48 : 0, 0),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              "@$username",
+              style: const TextStyle(color: Colors.white, fontVariations: [FontVariation("wght", 500)]),
+            ),
           ),
         ),
         background: Stack(

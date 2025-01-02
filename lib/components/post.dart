@@ -30,15 +30,13 @@ class Post extends StatefulWidget {
 }
 
 class _PostState extends State<Post> {
-  late DataSnapshot postSS = snapshotForum!.child("${widget.index}");
-
   void _notificar() {
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    postSS = snapshotForum!.child("${widget.index}");
+    DataSnapshot postSS = snapshotForum!.child("${widget.index}");
     return Padding(
       padding: EdgeInsets.only(top: widget.last ? (kToolbarHeight * 2.86) + 5 : 5),
       child: Stack(
