@@ -7,7 +7,7 @@ import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/telas/home/home.dart';
-import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
+import 'package:gatopedia/telas/login_screen/login/autenticar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FormApp extends StatefulWidget {

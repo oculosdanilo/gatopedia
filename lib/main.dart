@@ -115,11 +115,8 @@ class _AppState extends State<App> {
                     message: AppLocalizations.of(c).internal,
                     location: BannerLocation.bottomEnd,
                     color: Theme.of(c).colorScheme.primary,
-                    textStyle: TextStyle(
-                      color: Theme.of(c).colorScheme.onPrimary,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    textStyle:
+                        TextStyle(color: Theme.of(c).colorScheme.onPrimary, fontSize: 10, fontWeight: FontWeight.bold),
                     child: w,
                   );
                 },
