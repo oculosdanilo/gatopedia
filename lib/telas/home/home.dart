@@ -59,7 +59,6 @@ class _HomeState extends State<Home> {
           selectedIndex: paginaSelecionada,
           onDestinationSelected: (index) {
             setState(() {
-              dark = App.themeNotifier.value == ThemeMode.dark;
               paginaSelecionada = index;
             });
           },

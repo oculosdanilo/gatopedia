@@ -4,7 +4,7 @@ import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/deletar_conta.dart';
 import 'package:gatopedia/telas/home/home.dart';
-import 'package:gatopedia/telas/loginScreen/colab.dart';
+import 'package:gatopedia/telas/login_screen/colab.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -13,12 +13,32 @@ import 'package:url_launcher/url_launcher.dart';
 
 final Uri _urlGatopediaWeb = Uri.parse("https://osprojetos.web.app/2023/gatopedia");
 final Uri _urlGatopediaGit = Uri.parse('https://github.com/oculosdanilo/gatopedia');
-final Uri _urlGatopediaGitLatest = Uri.parse('https://github.com/oculosdanilo/gatopedia/releases');
+final Uri _urlGatopediaGitVersions = Uri.parse('https://github.com/oculosdanilo/gatopedia/releases');
 final Uri _urlGatopediaPlayStore = Uri.parse('https://play.google.com/store/apps/details?id=io.oculosdanilo.gatopedia');
 String appName = "";
 String packageName = "";
 String version = "";
 String buildNumber = "";
+
+enum Tema {
+  escuro,
+  claro,
+  sistema;
+
+  const Tema();
+
+  @override
+  String toString() {
+    switch (index) {
+      case 0:
+        return "esc";
+      case 1:
+        return "cla";
+      case _:
+        return "sys";
+    }
+  }
+}
 
 class Config extends StatefulWidget {
   final bool voltar;
@@ -48,14 +68,10 @@ class _ConfigState extends State<Config> {
     });
   }
 
-  void _saveDark() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool("dark", true);
-  }
-
-  void _saveLight() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool("dark", false);
+  void _salvarTema(Tema tema) async {
+    debugPrint(tema.toString());
+    /*final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(tema.toString(), true);*/
   }
 
   void _mudarLingua(String locale) async {
@@ -138,28 +154,15 @@ class _ConfigState extends State<Config> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SwitchListTile(
-                          secondary: const Icon(Icons.dark_mode_rounded),
+                        ListTile(
+                          leading: const Icon(Icons.dark_mode_rounded),
                           title: Text(
                             AppLocalizations.of(context).config_darkmode_title,
                             style: const TextStyle(fontSize: 20),
                           ),
                           subtitle: Text(AppLocalizations.of(context).config_darkmode_subtitle),
                           contentPadding: const EdgeInsets.fromLTRB(16, 0, 5, 0),
-                          value: dark,
-                          onChanged: (bool value) {
-                            setState(() {
-                              if (value) {
-                                App.themeNotifier.value = ThemeMode.dark;
-                                _saveDark();
-                              } else {
-                                App.themeNotifier.value = ThemeMode.light;
-                                _saveLight();
-                              }
-
-                              dark = value;
-                            });
-                          },
+                          onTap: () {},
                         ),
                         ListTile(
                           key: chaveIdioma,
@@ -292,7 +295,7 @@ class _ConfigState extends State<Config> {
         ),
         const SizedBox(height: 10),
         OutlinedButton(
-          onPressed: () => abrirUrl(_urlGatopediaGitLatest),
+          onPressed: () => abrirUrl(_urlGatopediaGitVersions),
           style: ButtonStyle(
             fixedSize: WidgetStatePropertyAll(Size(scW - 40, 50)),
           ),

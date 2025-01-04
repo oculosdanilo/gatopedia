@@ -8,10 +8,10 @@ import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:gatopedia/telas/home/home.dart';
-import 'package:gatopedia/telas/loginScreen/colab.dart';
-import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
-import 'package:gatopedia/telas/loginScreen/login/cadastro.dart';
-import 'package:gatopedia/telas/loginScreen/login/form.dart';
+import 'package:gatopedia/telas/login_screen/colab.dart';
+import 'package:gatopedia/telas/login_screen/login/autenticar.dart';
+import 'package:gatopedia/telas/login_screen/login/cadastro.dart';
+import 'package:gatopedia/telas/login_screen/login/form.dart';
 import 'package:gatopedia/telas/seminternet.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grayscale/grayscale.dart';
@@ -280,10 +280,13 @@ class _IndexState extends State<Index> {
                   decoration: const BoxDecoration(color: Colors.black),
                   child: Theme(
                     data: ThemeData.from(
-                      colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
+                      colorScheme: GrayColorScheme.highContrastGray(
+                          App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light),
                       useMaterial3: true,
                       textTheme:
-                          temaBaseBW(dark ? Brightness.dark : Brightness.light).textTheme.apply(fontFamily: "Jost"),
+                          temaBaseBW(App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)
+                              .textTheme
+                              .apply(fontFamily: "Jost"),
                     ),
                     child: Gatos(pd),
                   ),
@@ -405,7 +408,7 @@ class _SemContaState extends State<SemConta> {
               duration: const Duration(milliseconds: 250),
               width: widget.scW,
               decoration: BoxDecoration(
-                gradient: !full && acabouAlt && dark
+                gradient: !full && acabouAlt && App.themeNotifier.value == ThemeMode.dark
                     ? LinearGradient(
                         begin: const Alignment(0, -0.75),
                         end: const Alignment(0, -0.96),
@@ -417,16 +420,22 @@ class _SemContaState extends State<SemConta> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 10),
-                  Center(child: Lottie.asset("assets/anim/seta${dark || !acabouAlt ? '' : '-light'}.json", width: 50)),
+                  Center(
+                    child: Lottie.asset(
+                      "assets/anim/seta${App.themeNotifier.value == ThemeMode.dark || !acabouAlt ? '' : '-light'}.json",
+                      width: 50,
+                    ),
+                  ),
                   Text(
                     "Entrar sem conta",
                     style: TextStyle(
-                        fontSize: 20,
-                        color: dark
-                            ? Theme.of(context).colorScheme.onSurface
-                            : !acabouAlt
-                                ? Colors.white
-                                : Theme.of(context).colorScheme.onSurface),
+                      fontSize: 20,
+                      color: App.themeNotifier.value == ThemeMode.dark
+                          ? Theme.of(context).colorScheme.onSurface
+                          : !acabouAlt
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   SizedBox(
                     height: widget.scH + widget.pd.bottom,

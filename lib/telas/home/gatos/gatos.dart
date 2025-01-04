@@ -479,21 +479,11 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                   ),
                   actions: [
                     TextButton(
-                      onPressed: () {
-                        setState(() {
-                          dark = App.themeNotifier.value == ThemeMode.dark;
-                        });
-                        Navigator.pop(context, false);
-                      },
+                      onPressed: () => Navigator.pop(context, false),
                       child: Text(AppLocalizations.of(context).cancel),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          dark = App.themeNotifier.value == ThemeMode.dark;
-                        });
-                        Navigator.pop(context, true);
-                      },
+                      onPressed: () => Navigator.pop(context, true),
                       child: const Text('OK'),
                     ),
                   ],

@@ -65,7 +65,7 @@ class _PostState extends State<Post> {
                       : 165 + widget.pd.bottom
                   : 4,
             ),
-            color: username == null && dark
+            color: username == null && App.themeNotifier.value == ThemeMode.dark
                 ? Theme.of(context).colorScheme.surfaceTint.withValues(alpha: 0.25)
                 : Theme.of(context).colorScheme.surfaceContainerLow,
             child: Padding(
@@ -428,12 +428,16 @@ class _FooterPostState extends State<FooterPost> {
           OpenContainer(
             closedColor: username != null
                 ? Theme.of(context).colorScheme.surface
-                : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).surface,
+                : GrayColorScheme.highContrastGray(
+                        App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)
+                    .surface,
             closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             transitionDuration: const Duration(milliseconds: 300),
             openColor: username != null
                 ? Theme.of(context).colorScheme.surface
-                : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).surface,
+                : GrayColorScheme.highContrastGray(
+                        App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)
+                    .surface,
             closedBuilder: (context, action) => username != null
                 ? Align(
                     alignment: Alignment.centerLeft,
@@ -467,7 +471,8 @@ class _FooterPostState extends State<FooterPost> {
                   )
                 : Theme(
                     data: ThemeData.from(
-                      colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
+                      colorScheme: GrayColorScheme.highContrastGray(
+                          App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light),
                       useMaterial3: true,
                     ),
                     child: Align(
@@ -505,7 +510,8 @@ class _FooterPostState extends State<FooterPost> {
                 ? ComentariosForum(postSS)
                 : Theme(
                     data: ThemeData.from(
-                      colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
+                      colorScheme: GrayColorScheme.highContrastGray(
+                          App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light),
                       useMaterial3: true,
                     ),
                     child: ComentariosForum(postSS),

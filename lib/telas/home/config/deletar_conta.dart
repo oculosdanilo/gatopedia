@@ -8,7 +8,7 @@ import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/index.dart';
-import 'package:gatopedia/telas/loginScreen/login/autenticar.dart';
+import 'package:gatopedia/telas/login_screen/login/autenticar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -250,7 +250,7 @@ class _DeletarContaState extends State<DeletarConta> {
               textTheme: temaBase(ThemeMode.dark).textTheme.apply(fontFamily: "Jost"),
               colorScheme: ColorScheme.fromSeed(
                 seedColor: const Color(0xffff0000),
-                brightness: dark ? Brightness.dark : Brightness.light,
+                brightness: App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light,
               ),
             ),
             child: StatefulBuilder(builder: (context, setStateB) => alertaDeletar(setStateB)),

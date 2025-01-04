@@ -36,7 +36,7 @@ class _ComentarioState extends State<Comentario> {
     return Card(
       margin: const EdgeInsets.fromLTRB(15, 10, 15, 5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      color: username == null && dark
+      color: username == null && App.themeNotifier.value == ThemeMode.dark
           ? Theme.of(context).colorScheme.surfaceTint.withValues(alpha: 0.25)
           : Theme.of(context).colorScheme.surfaceContainerLow,
       child: Padding(

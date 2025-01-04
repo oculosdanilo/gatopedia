@@ -37,7 +37,9 @@ class GatoInfoState extends State<GatoInfo> {
                   const IconThemeData(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 20)]),
               expandedHeight: 360,
               pinned: true,
-              backgroundColor: !dark ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
+              backgroundColor: App.themeNotifier.value != ThemeMode.dark
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.surface,
               flexibleSpace: FlexibleSpaceBar(
                 expandedTitleScale: 2,
                 title: Text(titulo, style: const TextStyle(color: Colors.white)),

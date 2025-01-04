@@ -25,8 +25,6 @@ final blueSchemeL = ColorScheme.fromSeed(seedColor: const Color(0xff000080), bri
 dynamic mensagem;
 DataSnapshot? snapshotForum;
 
-bool dark = false;
-
 final connecteo = ConnectionChecker();
 
 void main() async {
@@ -54,7 +52,6 @@ void main() async {
   scrollSalvo = pref.getDouble("scrollSalvo") ?? 0;
 
   final startsDark = pref.getBool("dark") ?? PlatformDispatcher.instance.platformBrightness == Brightness.dark;
-  dark = startsDark;
   final localeInicial = Locale(pref.getString("locale") ?? (await br() ? "pt" : "en"));
   runApp(
     App(

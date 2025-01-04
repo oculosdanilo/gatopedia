@@ -146,17 +146,22 @@ class _WikiState extends State<Wiki> {
             ? GatoInfo(e!)
             : Theme(
                 data: ThemeData.from(
-                    colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light)),
+                    colorScheme: GrayColorScheme.highContrastGray(
+                        App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)),
                 child: GatoInfo(e!),
               ),
         closedElevation: 0,
         tappable: false,
         openColor: username != null
             ? Theme.of(context).colorScheme.surface
-            : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).surface,
+            : GrayColorScheme.highContrastGray(
+                    App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)
+                .surface,
         closedColor: username != null
             ? Theme.of(context).colorScheme.surfaceContainerLow
-            : GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light).surface,
+            : GrayColorScheme.highContrastGray(
+                    App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)
+                .surface,
         closedBuilder: (
           context,
           VoidCallback openContainer,
@@ -172,7 +177,10 @@ class _WikiState extends State<Wiki> {
       child: Card(
         shadowColor: Colors.transparent,
         color: username == null
-            ? Theme.of(context).colorScheme.surfaceTint.withValues(alpha: dark ? 0.25 : 0.1)
+            ? Theme.of(context)
+                .colorScheme
+                .surfaceTint
+                .withValues(alpha: App.themeNotifier.value == ThemeMode.dark ? 0.25 : 0.1)
             : Theme.of(context).colorScheme.surfaceContainerLow,
         margin: const EdgeInsets.all(0),
         child: InkWell(
@@ -197,18 +205,6 @@ class _WikiState extends State<Wiki> {
                         )
                       : null,
                 ),
-                /*CachedNetworkImage(
-                  imageUrl:
-                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${e.child("img").value.toString().split("&")[0]}.webp?alt=media",
-                  placeholder: (context, url) => AspectRatio(
-                    aspectRatio: 1 / 1,
-                    child: BlurHash(hash: e.child("img").value.toString().split("&")[1]),
-                  ),
-                  fadeInDuration: const Duration(milliseconds: 150),
-                  fadeOutDuration: const Duration(milliseconds: 150),
-                  width: 130,
-                  height: 130,
-                ),*/
                 const SizedBox(width: 15),
                 Flexible(
                   child: Column(

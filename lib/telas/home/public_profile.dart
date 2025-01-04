@@ -69,7 +69,8 @@ class _PublicProfileState extends State<PublicProfile> {
       data: username != null
           ? Theme.of(context)
           : ThemeData.from(
-              colorScheme: GrayColorScheme.highContrastGray(dark ? Brightness.dark : Brightness.light),
+              colorScheme: GrayColorScheme.highContrastGray(
+                  App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light),
             ),
       child: Scaffold(
         body: widget.username == username
