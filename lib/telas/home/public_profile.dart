@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
-import 'package:grayscale/grayscale.dart';
+import 'package:gatopedia/telas/index.dart';
 
 String bioText = "carregando...";
 
@@ -26,7 +26,7 @@ class _PublicProfileState extends State<PublicProfile> {
     DatabaseReference ref = database.ref("users/$username");
     ref.get().then(
       (value) {
-        if (value.child("bio").exists) {
+        if (value.child("bio").exists && value.child("bio").value != "(vazio)") {
           setState(() {
             bioText = value.child("bio").value as String;
           });
@@ -69,8 +69,8 @@ class _PublicProfileState extends State<PublicProfile> {
       data: username != null
           ? Theme.of(context)
           : ThemeData.from(
-              colorScheme: GrayColorScheme.highContrastGray(
-                  App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light),
+              colorScheme: temaBaseBW(App.themeNotifier.value, context).colorScheme,
+              textTheme: temaBaseBW(App.themeNotifier.value, context).textTheme.apply(fontFamily: "Jost"),
             ),
       child: Scaffold(
         body: widget.username == username

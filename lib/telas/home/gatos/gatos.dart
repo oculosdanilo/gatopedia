@@ -68,7 +68,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
   final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo, keepScrollOffset: false);
   final ScrollController _scrollWiki = ScrollController(initialScrollOffset: scrollSalvoWiki, keepScrollOffset: false);
   late List<Widget> telasGatos = <Widget>[
-    Wiki(_scrollWiki, _setState, _animTabBarController, _animTabBar),
+    Wiki(_scrollWiki, _setState, _animTabBarController, _animTabBar, widget.pd),
     Forum(_scrollForum, _setState, _animTabBarController, _animTabBar, widget.pd),
   ];
 
@@ -173,7 +173,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                           fontVariations: const [FontVariation.weight(500)],
                           fontSize: 18,
                           color: Theme.of(context).colorScheme.onPrimaryContainer,
-                          shadows: App.themeNotifier.value == ThemeMode.dark
+                          shadows: _isDark(context)
                               ? [
                                   Shadow(
                                     offset: const Offset(0, 2),
@@ -214,7 +214,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                             fontVariations: const [FontVariation.weight(500)],
                             fontSize: 18,
                             color: Theme.of(context).colorScheme.onPrimaryContainer,
-                            shadows: App.themeNotifier.value == ThemeMode.dark
+                            shadows: _isDark(context)
                                 ? [
                                     Shadow(
                                       offset: const Offset(0, 2),
@@ -276,7 +276,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                             fontVariations: const [FontVariation.weight(500)],
                             fontSize: 18,
                             color: Theme.of(context).colorScheme.onPrimaryContainer,
-                            shadows: App.themeNotifier.value == ThemeMode.dark
+                            shadows: _isDark(context)
                                 ? [
                                     Shadow(
                                       offset: const Offset(0, 2),
@@ -368,7 +368,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
 
   Widget appbar(BuildContext context) {
     return Container(
-      color: username != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
+      color: username != null ? Theme.of(context).colorScheme.primary : Colors.black,
       width: MediaQuery.sizeOf(context).width,
       child: Stack(
         children: [
@@ -387,7 +387,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                 labelStyle: const TextStyle(fontSize: 18, fontFamily: "Jost"),
                 unselectedLabelColor: username != null
                     ? Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.70)
-                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70),
+                    : Colors.white.withValues(alpha: 0.70),
                 indicatorColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 tabs: const [Tab(text: "Wiki"), Tab(text: "Feed")],
@@ -439,9 +439,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                   child: Text(
                     username != null ? "@$username" : AppLocalizations.of(context).gatos_anon,
                     style: TextStyle(
-                      color: username != null
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                       fontSize: 28 + (_animTabBar.value * -8),
                       fontVariations: const [FontVariation.weight(500)],
                     ),
@@ -492,7 +490,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
             ) ??
             false;
         if (dialogo) {
-          await atualizarListen?.cancel();
+          await atualizarListenProfile?.cancel();
           final sp = await SharedPreferences.getInstance();
           if (sp.containsKey("username")) await sp.remove("username");
           if (sp.containsKey("scrollSalvo")) await sp.remove("scrollSalvo");
@@ -507,7 +505,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
           scrollSalvo = 0;
           scrollSalvoWiki = 0;
           scrollAcumulado = 0;
-          iniciouListenForum = false;
+          scrollAcumuladoWiki = 0;
           Navigator.pop(context);
           Navigator.push(context, MaterialPageRoute(builder: (c) => const Index(false)));
         }
@@ -519,149 +517,11 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
     );
   }
 
-  @override
-  void dispose() {
-    _animTabBarController.dispose();
-    _animFAB.dispose();
-    _scrollWiki.dispose();
-    _scrollForum.dispose();
-    super.dispose();
+  bool _isDark(BuildContext context) {
+    if (App.themeNotifier.value == ThemeMode.system) {
+      return MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    } else {
+      return App.themeNotifier.value == ThemeMode.dark;
+    }
   }
 }
-
-/*
-class GatoLista extends StatefulWidget {
-  const GatoLista({super.key});
-
-  @override
-  State<GatoLista> createState() => _GatoListaState();
-}
-
-class _GatoListaState extends State<GatoLista> {
-  final miau = AudioPlayer();
-  bool isPlaying = false;
-
-  void _play() {
-    miau.setAsset("assets/meow.mp3");
-    miau.play();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    indexAntigo = 0;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        body: CustomScrollView(
-          scrollBehavior: MyBehavior(),
-          physics: const NeverScrollableScrollPhysics(),
-          slivers: [
-            SliverAppBar.large(
-              floating: false,
-              backgroundColor: username != null ? Theme.of(context).colorScheme.primary : Colors.black,
-              expandedHeight: username == null ? 70 : null,
-              centerTitle: false,
-              leading: username != null
-                  ? IconButton(
-                      onPressed: () async {
-                        bool dialogo = await showCupertinoDialog<bool>(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text(
-                                    "Já vai? ;(",
-                                    style: TextStyle(fontVariations: [FontVariation("wght", 500)]),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  content: const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [Text("Tem certeza que deseja sair?")]),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          dark = App.themeNotifier.value == ThemeMode.dark;
-                                        });
-                                        Navigator.pop(context, false);
-                                      },
-                                      child: const Text('CANCELAR'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          dark = App.themeNotifier.value == ThemeMode.dark;
-                                        });
-                                        Navigator.pop(context, true);
-                                      },
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ) ??
-                            false;
-                        if (dialogo) {
-                          await atualizarListen?.cancel();
-                          final sp = await SharedPreferences.getInstance();
-                          if (sp.containsKey("username")) await sp.remove("username");
-                          if (sp.containsKey("img") && sp.containsKey("bio")) {
-                            await sp.remove("bio");
-                            await sp.remove("img");
-                          }
-                          if (!context.mounted) return;
-                          username = null;
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (c) => const Index(false)));
-                        }
-                      },
-                      icon: Transform.rotate(
-                        angle: math.pi,
-                        child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.onPrimary),
-                      ),
-                    )
-                  : null,
-              flexibleSpace: FlexibleSpaceBar(
-                titlePadding: const EdgeInsets.only(bottom: 60, left: 50),
-                centerTitle: false,
-                title: Text(
-                  username != null ? "@$username" : "@shhhanônimo",
-                  style: TextStyle(color: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white),
-                ),
-                background: Container(
-                  alignment: Alignment.centerRight,
-                  margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                  child: IconButton(
-                    icon: const Icon(Icons.pets_rounded, color: Color(0xffff9922)),
-                    iconSize: 100,
-                    onPressed: () async {
-                      if (!isPlaying) _play();
-                    },
-                  ),
-                ),
-              ),
-              bottom: TabBar(
-                tabAlignment: TabAlignment.start,
-                isScrollable: true,
-                labelStyle: TextStyle(fontSize: 18, fontFamily: "Jost"),
-                unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.70),
-                indicatorColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
-                labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
-                tabs: const [Tab(text: "Wiki"), Tab(text: "Forum")],
-              ),
-            ),
-            SliverFillRemaining(
-              child: TabBarView(children: telasGatos),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/

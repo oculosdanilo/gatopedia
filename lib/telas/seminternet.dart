@@ -20,7 +20,6 @@ class _SemInternetState extends State<SemInternet> {
       if (!mounted) return;
       if (internet) Navigator.pop(context);
     });
-    super.initState();
   }
 
   @override

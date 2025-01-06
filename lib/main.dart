@@ -5,13 +5,13 @@ import 'package:devicelocale/devicelocale.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/telas/firebase_options.dart';
+import 'package:gatopedia/telas/home/config/config.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/home.dart';
 import 'package:gatopedia/telas/index.dart';
@@ -44,6 +44,7 @@ void main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   await ignoreException(ArgumentError);
+  await ignoreException(NetworkImageLoadException);
 
   final SharedPreferences pref = await SharedPreferences.getInstance();
   final userSalvo = pref.getString("username") != null;
@@ -51,11 +52,11 @@ void main() async {
 
   scrollSalvo = pref.getDouble("scrollSalvo") ?? 0;
 
-  final startsDark = pref.getBool("dark") ?? PlatformDispatcher.instance.platformBrightness == Brightness.dark;
+  final startsDark = pref.getString("tema") ?? "sis";
   final localeInicial = Locale(pref.getString("locale") ?? (await br() ? "pt" : "en"));
   runApp(
     App(
-      startsDark ? ThemeMode.dark : ThemeMode.light,
+      stringToTemas[startsDark]!,
       localeInicial,
       !userSalvo ? const Index(true) : const Home(),
     ),
@@ -83,9 +84,9 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   void initState() {
+    super.initState();
     App.themeNotifier = ValueNotifier(widget.temaInicial);
     App.localeNotifier = ValueNotifier(widget.localeInicial);
-    super.initState();
   }
 
   @override
@@ -149,7 +150,7 @@ class _AppState extends State<App> {
       snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
       colorSchemeSeed: const Color(0xff000080),
       useMaterial3: true,
-      textTheme: temaBase(ThemeMode.light).textTheme.apply(fontFamily: "Jost"),
+      textTheme: temaBase(ThemeMode.light, context).textTheme.apply(fontFamily: "Jost"),
     );
   }
 
@@ -179,12 +180,21 @@ class _AppState extends State<App> {
       snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
       colorSchemeSeed: const Color(0xff000080),
       useMaterial3: true,
-      textTheme: temaBase(ThemeMode.dark).textTheme.apply(fontFamily: "Jost"),
+      textTheme: temaBase(ThemeMode.dark, context).textTheme.apply(fontFamily: "Jost"),
     );
   }
 }
 
-ThemeData temaBase(ThemeMode mode) => ThemeData(colorScheme: mode == ThemeMode.dark ? blueScheme : blueSchemeL);
+ThemeData temaBase(ThemeMode mode, BuildContext context) {
+  return ThemeData(
+      colorScheme: mode == ThemeMode.system
+          ? MediaQuery.platformBrightnessOf(context) == Brightness.dark
+              ? blueScheme
+              : blueSchemeL
+          : mode == ThemeMode.dark
+              ? blueScheme
+              : blueSchemeL);
+}
 
 void checarUpdate(BuildContext context) {
   InAppUpdate.checkForUpdate().then((val) async {

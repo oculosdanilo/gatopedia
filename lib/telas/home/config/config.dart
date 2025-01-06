@@ -20,26 +20,6 @@ String packageName = "";
 String version = "";
 String buildNumber = "";
 
-enum Tema {
-  escuro,
-  claro,
-  sistema;
-
-  const Tema();
-
-  @override
-  String toString() {
-    switch (index) {
-      case 0:
-        return "esc";
-      case 1:
-        return "cla";
-      case _:
-        return "sys";
-    }
-  }
-}
-
 class Config extends StatefulWidget {
   final bool voltar;
 
@@ -49,13 +29,24 @@ class Config extends StatefulWidget {
   State<Config> createState() => _ConfigState();
 }
 
+final temasToString = <ThemeMode, String>{
+  ThemeMode.system: "sis",
+  ThemeMode.light: "cla",
+  ThemeMode.dark: "esc",
+};
+
+final stringToTemas = <String, ThemeMode>{
+  "sis": ThemeMode.system,
+  "cla": ThemeMode.light,
+  "esc": ThemeMode.dark,
+};
+
 class _ConfigState extends State<Config> {
-  final chaveIdioma = GlobalKey<_ConfigState>();
+  final chaveIdioma = GlobalKey();
+  final chaveTema = GlobalKey();
 
   late final scW = MediaQuery.sizeOf(context).width;
   late final alturaLimite = MediaQuery.paddingOf(context).top + kToolbarHeight;
-
-  late String idiomaAtual = App.localeNotifier.value.languageCode;
 
   void _pegarVersao() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -68,20 +59,18 @@ class _ConfigState extends State<Config> {
     });
   }
 
-  void _salvarTema(Tema tema) async {
-    debugPrint(tema.toString());
-    /*final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(tema.toString(), true);*/
+  void _mudarTema(ThemeMode tema) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("tema", temasToString[tema]!);
+    setState(() {
+      App.themeNotifier.value = tema;
+    });
   }
 
   void _mudarLingua(String locale) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("locale", locale);
-    if (!mounted) return;
-    setState(() {
-      idiomaAtual = locale;
-      App.localeNotifier.value = Locale(locale);
-    });
+    App.localeNotifier.value = Locale(locale);
   }
 
   String _nomeLocale(String locale, BuildContext context) {
@@ -93,6 +82,19 @@ class _ConfigState extends State<Config> {
         nome = AppLocalizations.of(context).lan_en;
       case _:
         nome = "não implementado";
+    }
+    return nome;
+  }
+
+  String _nomeTema(ThemeMode tema, BuildContext context) {
+    String nome;
+    switch (tema) {
+      case ThemeMode.system:
+        nome = AppLocalizations.of(context).config_darkmode_option_system;
+      case ThemeMode.light:
+        nome = AppLocalizations.of(context).config_darkmode_option_light;
+      case _:
+        nome = AppLocalizations.of(context).config_darkmode_option_dark;
     }
     return nome;
   }
@@ -155,6 +157,7 @@ class _ConfigState extends State<Config> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
+                          key: chaveTema,
                           leading: const Icon(Icons.dark_mode_rounded),
                           title: Text(
                             AppLocalizations.of(context).config_darkmode_title,
@@ -162,7 +165,35 @@ class _ConfigState extends State<Config> {
                           ),
                           subtitle: Text(AppLocalizations.of(context).config_darkmode_subtitle),
                           contentPadding: const EdgeInsets.fromLTRB(16, 0, 5, 0),
-                          onTap: () {},
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _nomeTema(App.themeNotifier.value, context),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              const Icon(Symbols.arrow_drop_down_rounded),
+                            ],
+                          ),
+                          onTap: () {
+                            final box = chaveTema.currentContext!.findRenderObject() as RenderBox;
+                            final local = box.localToGlobal(Offset.zero);
+                            final pos = Offset(local.dx, local.dy + 5);
+
+                            showMenu(
+                              context: context,
+                              position: RelativeRect.fromLTRB(99999, pos.dy, 0, 99999),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                              items: ThemeMode.values.map((e) {
+                                return PopupMenuItem(
+                                  onTap: () {
+                                    _mudarTema(e);
+                                  },
+                                  child: Text(_nomeTema(e, context)),
+                                );
+                              }).toList(),
+                            );
+                          },
                         ),
                         ListTile(
                           key: chaveIdioma,
@@ -179,7 +210,7 @@ class _ConfigState extends State<Config> {
                               position: RelativeRect.fromLTRB(99999, pos.dy, 0, 99999),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                               items: [
-                                PopupMenuItem(child: Text(_nomeLocale(idiomaAtual, context))),
+                                PopupMenuItem(child: Text(_nomeLocale(App.localeNotifier.value.languageCode, context))),
                                 ...(listaIdiomas.map((e) {
                                   return PopupMenuItem(
                                       onTap: () => _mudarLingua(e), child: Text(_nomeLocale(e, context)));
@@ -193,7 +224,10 @@ class _ConfigState extends State<Config> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(_nomeLocale(idiomaAtual, context), style: const TextStyle(fontSize: 14)),
+                              Text(
+                                _nomeLocale(App.localeNotifier.value.languageCode, context),
+                                style: const TextStyle(fontSize: 14),
+                              ),
                               const Icon(Symbols.arrow_drop_down_rounded),
                             ],
                           ),
@@ -328,41 +362,6 @@ class _ConfigState extends State<Config> {
             ],
           ),
         ),
-        /*ElevatedButton.icon(
-          onPressed: () => abrirUrl(_urlGatopediaGit),
-          icon: const Icon(AntDesign.github_fill),
-          label: const Text(
-            "Repositório",
-            style: TextStyle(fontSize: 18),
-          ),
-          style: ButtonStyle(
-            minimumSize: WidgetStatePropertyAll(Size(MediaQuery.sizeOf(context).width - 50, 50)),
-          ),
-        ),
-        const SizedBox(height: 10),
-        ElevatedButton.icon(
-          onPressed: () => abrirUrl(_urlGatopediaGitLatest),
-          icon: const Icon(AntDesign.github_fill),
-          label: const Text(
-            "Versões",
-            style: TextStyle(fontSize: 18),
-          ),
-          style: ButtonStyle(
-            minimumSize: WidgetStatePropertyAll(Size(MediaQuery.sizeOf(context).width - 50, 50)),
-          ),
-        ),
-        const SizedBox(height: 10),
-        ElevatedButton.icon(
-          onPressed: () => abrirUrl(_urlGatopediaWeb),
-          icon: const Icon(Icons.public_rounded),
-          label: const Text(
-            "Site",
-            style: TextStyle(fontSize: 18),
-          ),
-          style: ButtonStyle(
-            minimumSize: WidgetStatePropertyAll(Size(MediaQuery.sizeOf(context).width - 50, 50)),
-          ),
-        )*/
       ],
     );
   }

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
+import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
+import 'package:gatopedia/telas/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/telas/index.dart';
 import 'package:gatopedia/telas/login_screen/login/autenticar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -219,7 +221,7 @@ class _DeletarContaState extends State<DeletarConta> {
     }
 
     Future.delayed(Duration.zero, () async {
-      await atualizarListen?.cancel();
+      await atualizarListenProfile?.cancel();
       await FirebaseDatabase.instance.ref("users/$username").remove();
       username = null;
       final pref = await SharedPreferences.getInstance();
@@ -229,6 +231,10 @@ class _DeletarContaState extends State<DeletarConta> {
         await pref.remove("bio");
         await pref.remove("img");
       }
+      scrollSalvo = 0;
+      scrollSalvoWiki = 0;
+      scrollAcumulado = 0;
+      scrollAcumuladoWiki = 0;
 
       iniciouUserGoogle = false;
       GoogleSignIn().signOut();
@@ -245,12 +251,12 @@ class _DeletarContaState extends State<DeletarConta> {
         final dialogo = await showCupertinoDialog<bool>(
           barrierDismissible: false,
           context: context,
-          builder: (c) => Theme(
+          builder: (context) => Theme(
             data: ThemeData.from(
-              textTheme: temaBase(ThemeMode.dark).textTheme.apply(fontFamily: "Jost"),
+              textTheme: temaBase(ThemeMode.dark, context).textTheme.apply(fontFamily: "Jost"),
               colorScheme: ColorScheme.fromSeed(
                 seedColor: const Color(0xffff0000),
-                brightness: App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light,
+                brightness: _isDark(context) ? Brightness.dark : Brightness.light,
               ),
             ),
             child: StatefulBuilder(builder: (context, setStateB) => alertaDeletar(setStateB)),
@@ -272,5 +278,13 @@ class _DeletarContaState extends State<DeletarConta> {
       titleTextStyle: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 20, fontFamily: "Jost"),
       subtitleTextStyle: TextStyle(color: Theme.of(context).colorScheme.error, fontFamily: "Jost"),
     );
+  }
+
+  bool _isDark(BuildContext context) {
+    if (App.themeNotifier.value == ThemeMode.system) {
+      return MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    } else {
+      return App.themeNotifier.value == ThemeMode.dark;
+    }
   }
 }

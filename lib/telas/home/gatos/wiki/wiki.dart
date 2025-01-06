@@ -5,6 +5,7 @@ import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/info.dart';
+import 'package:gatopedia/telas/index.dart';
 import 'package:grayscale/grayscale.dart';
 
 late Future<DataSnapshot> _getData;
@@ -15,8 +16,9 @@ class Wiki extends StatefulWidget {
   final void Function() setStateGatos;
   final AnimationController animController;
   final Animation<double> anim;
+  final EdgeInsets pd;
 
-  const Wiki(this.scrollWiki, this.setStateGatos, this.animController, this.anim, {super.key});
+  const Wiki(this.scrollWiki, this.setStateGatos, this.animController, this.anim, this.pd, {super.key});
 
   @override
   State<Wiki> createState() => _WikiState();
@@ -26,8 +28,6 @@ double scrollSalvoWiki = 0;
 double scrollAcumuladoWiki = 0;
 
 class _WikiState extends State<Wiki> {
-  late final pdB = MediaQuery.paddingOf(context).bottom;
-
   void _barHideListen() {
     scrollAcumuladoWiki = 0;
     widget.setStateGatos();
@@ -110,8 +110,8 @@ class _WikiState extends State<Wiki> {
                   });
                 }
                 return username == null && index == 10
-                    ? SizedBox(height: 80 + pdB)
-                    : gatoCard(snapshot.data!.children.toList()[index], snapshot, context, index);
+                    ? SizedBox(height: 80 + MediaQuery.paddingOf(context).bottom)
+                    : GatoCard(index, snapshot.data!.children.toList()[index], widget.pd);
               },
               itemCount: snapshot.data!.children.length + (username != null ? 0 : 1),
             );
@@ -129,34 +129,46 @@ class _WikiState extends State<Wiki> {
   }
 
   bool _comecouListen = false;
+}
 
-  Container gatoCard(DataSnapshot? e, AsyncSnapshot<DataSnapshot> snapshot, BuildContext context, int index) {
+class GatoCard extends StatefulWidget {
+  final int index;
+  final DataSnapshot? e;
+  final EdgeInsets pd;
+
+  const GatoCard(this.index, this.e, this.pd, {super.key});
+
+  @override
+  State<GatoCard> createState() => _GatoCardState();
+}
+
+class _GatoCardState extends State<GatoCard> {
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.fromLTRB(
         15,
-        index == 0 ? (kToolbarHeight * 2.86) + 15 : 10,
+        widget.index == 0 ? (kToolbarHeight * 2.86) + 15 : 10,
         15,
-        index == 9 ? 15 : 5,
+        widget.index == 9 ? 5 + widget.pd.bottom : 5,
       ),
       child: OpenContainer(
         closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        transitionType: ContainerTransitionType.fade,
         transitionDuration: const Duration(milliseconds: 500),
         openBuilder: (context, _) => username != null
-            ? GatoInfo(e!)
+            ? GatoInfo(widget.e!, widget.pd)
             : Theme(
                 data: ThemeData.from(
-                    colorScheme: GrayColorScheme.highContrastGray(
-                        App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)),
-                child: GatoInfo(e!),
+                  colorScheme: temaBaseBW(App.themeNotifier.value, context).colorScheme,
+                  textTheme: temaBaseBW(App.themeNotifier.value, context).textTheme.apply(fontFamily: "Jost"),
+                ),
+                child: GatoInfo(widget.e!, widget.pd),
               ),
         closedElevation: 0,
         tappable: false,
         openColor: username != null
             ? Theme.of(context).colorScheme.surface
-            : GrayColorScheme.highContrastGray(
-                    App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)
-                .surface,
+            : temaBaseBW(App.themeNotifier.value, context).colorScheme.surface,
         closedColor: username != null
             ? Theme.of(context).colorScheme.surfaceContainerLow
             : GrayColorScheme.highContrastGray(
@@ -166,7 +178,7 @@ class _WikiState extends State<Wiki> {
           context,
           VoidCallback openContainer,
         ) =>
-            gatoCardContainer(context, openContainer, e),
+            gatoCardContainer(context, openContainer, widget.e),
       ),
     );
   }
@@ -177,10 +189,10 @@ class _WikiState extends State<Wiki> {
       child: Card(
         shadowColor: Colors.transparent,
         color: username == null
-            ? Theme.of(context)
+            ? temaBaseBW(App.themeNotifier.value, context)
                 .colorScheme
                 .surfaceTint
-                .withValues(alpha: App.themeNotifier.value == ThemeMode.dark ? 0.25 : 0.1)
+                .withValues(alpha: _isDark(context) ? 0.25 : 0.1)
             : Theme.of(context).colorScheme.surfaceContainerLow,
         margin: const EdgeInsets.all(0),
         child: InkWell(
@@ -232,5 +244,13 @@ class _WikiState extends State<Wiki> {
         ),
       ),
     );
+  }
+
+  bool _isDark(BuildContext context) {
+    if (App.themeNotifier.value == ThemeMode.system) {
+      return MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    } else {
+      return App.themeNotifier.value == ThemeMode.dark;
+    }
   }
 }

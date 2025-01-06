@@ -30,7 +30,7 @@ class _PPEditState extends State<PPEdit> {
     XFile? result = await FlutterImageCompress.compressAndGetFile(
       file!.absolute.path,
       "${(await getApplicationDocumentsDirectory()).path}aa.webp",
-      quality: 80,
+      quality: 60,
       format: CompressFormat.webp,
     );
     FirebaseStorage storage = FirebaseStorage.instance;
@@ -124,11 +124,11 @@ class _PPEditState extends State<PPEdit> {
 
   @override
   void initState() {
+    super.initState();
     file = null;
     imagemEditada = null;
     imagemSelecionada = false;
     _pegaImagem(context);
-    super.initState();
   }
 
   @override

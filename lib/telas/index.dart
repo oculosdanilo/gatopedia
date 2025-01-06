@@ -280,13 +280,9 @@ class _IndexState extends State<Index> {
                   decoration: const BoxDecoration(color: Colors.black),
                   child: Theme(
                     data: ThemeData.from(
-                      colorScheme: GrayColorScheme.highContrastGray(
-                          App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light),
+                      colorScheme: temaBaseBW(App.themeNotifier.value, context).colorScheme,
                       useMaterial3: true,
-                      textTheme:
-                          temaBaseBW(App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)
-                              .textTheme
-                              .apply(fontFamily: "Jost"),
+                      textTheme: temaBaseBW(App.themeNotifier.value, context).textTheme.apply(fontFamily: "Jost"),
                     ),
                     child: Gatos(pd),
                   ),
@@ -300,7 +296,17 @@ class _IndexState extends State<Index> {
   }
 }
 
-ThemeData temaBaseBW(Brightness mode) => ThemeData(colorScheme: GrayColorScheme.highContrastGray(mode));
+ThemeData temaBaseBW(ThemeMode mode, BuildContext context) {
+  return ThemeData(
+    colorScheme: GrayColorScheme.highContrastGray(
+      mode == ThemeMode.system
+          ? PlatformDispatcher.instance.platformBrightness
+          : mode == ThemeMode.dark
+              ? Brightness.dark
+              : Brightness.light,
+    ),
+  );
+}
 
 class SemConta extends StatefulWidget {
   final bool animText;
@@ -383,20 +389,6 @@ class _SemContaState extends State<SemConta> {
               });
               widget.notifyParent();
             }
-            /*if ((pos?.dy ?? 0) > ((widget.scH / 5) * 4) || cancelar) {
-              setState(() {
-                acabouAlt = true;
-                acabou = true;
-                pos = null;
-              });
-            } else {
-              setState(() {
-                acabouAlt = true;
-                acabou = true;
-                pos = Offset.zero;
-              });
-              widget.notifyParent();
-            }*/
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
@@ -408,7 +400,7 @@ class _SemContaState extends State<SemConta> {
               duration: const Duration(milliseconds: 250),
               width: widget.scW,
               decoration: BoxDecoration(
-                gradient: !full && acabouAlt && App.themeNotifier.value == ThemeMode.dark
+                gradient: !full && acabouAlt && _isDark(context)
                     ? LinearGradient(
                         begin: const Alignment(0, -0.75),
                         end: const Alignment(0, -0.96),
@@ -422,7 +414,7 @@ class _SemContaState extends State<SemConta> {
                   const SizedBox(height: 10),
                   Center(
                     child: Lottie.asset(
-                      "assets/anim/seta${App.themeNotifier.value == ThemeMode.dark || !acabouAlt ? '' : '-light'}.json",
+                      "assets/anim/seta${_isDark(context) || !acabouAlt ? '' : '-light'}.json",
                       width: 50,
                     ),
                   ),
@@ -430,7 +422,7 @@ class _SemContaState extends State<SemConta> {
                     "Entrar sem conta",
                     style: TextStyle(
                       fontSize: 20,
-                      color: App.themeNotifier.value == ThemeMode.dark
+                      color: _isDark(context)
                           ? Theme.of(context).colorScheme.onSurface
                           : !acabouAlt
                               ? Colors.white
@@ -443,7 +435,7 @@ class _SemContaState extends State<SemConta> {
                       child: AnimatedOpacity(
                         duration: full || pos != null ? const Duration(milliseconds: 400) : Duration.zero,
                         opacity: pos != null ? 1 : 0,
-                        child: const Icon(Bootstrap.incognito, size: 150, fill: 0),
+                        child: const Icon(Bootstrap.incognito, size: 150, fill: 0, color: Colors.white),
                       ),
                     ),
                   ),
@@ -454,5 +446,13 @@ class _SemContaState extends State<SemConta> {
         ),
       ),
     );
+  }
+
+  bool _isDark(BuildContext context) {
+    if (App.themeNotifier.value == ThemeMode.system) {
+      return MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    } else {
+      return App.themeNotifier.value == ThemeMode.dark;
+    }
   }
 }

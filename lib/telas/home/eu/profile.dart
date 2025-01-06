@@ -17,7 +17,7 @@ enum MenuItensImg { editar, remover }
 
 enum MenuItensSemImg { adicionar }
 
-StreamSubscription<DatabaseEvent>? atualizarListen;
+StreamSubscription<DatabaseEvent>? atualizarListenProfile;
 
 String bioText = "carregando...";
 bool? temImagem;
@@ -52,7 +52,7 @@ class _ProfileState extends State<Profile> {
     final sp = await SharedPreferences.getInstance();
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users/$username");
-    atualizarListen = ref.onValue.listen((event) {
+    atualizarListenProfile = ref.onValue.listen((event) {
       final data = event.snapshot;
       if (data.child("bio").value != null && data.child("bio").value.toString() != "(vazio)") {
         setState(() => bioText = "${data.child("bio").value}");
@@ -108,7 +108,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   void dispose() {
-    atualizarListen?.cancel();
+    atualizarListenProfile?.cancel();
     super.dispose();
   }
 
@@ -329,13 +329,6 @@ class _ProfileState extends State<Profile> {
                             },
                           );
                         },
-                        /*FadeInImage(
-                      fadeInDuration: const Duration(milliseconds: 100),
-                      placeholder: const AssetImage("assets/anim/loading.gif"),
-                      image: NetworkImage(),
-                      imageErrorBuilder: (context, obj, stck) => Image.asset("assets/user.webp", fit: BoxFit.cover),
-                      fit: BoxFit.cover,
-                    ),*/
                         fit: BoxFit.cover,
                       )
                 : Image.asset("assets/user.webp", fit: BoxFit.cover),

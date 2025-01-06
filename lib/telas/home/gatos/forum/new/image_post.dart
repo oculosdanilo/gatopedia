@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
@@ -32,10 +33,16 @@ class _ImagePostState extends State<ImagePost> {
     );
     if (result != null) {
       file = File(result.paths.first!);
-      setState(() {
-        imagemSelecionada = true;
-        imagemTipo = widget.imageType;
-      });
+      if (file!.lengthSync() > (widget.imageType == "image" ? 3145728 : 5242880)) {
+        if (!mounted) return;
+        Fluttertoast.showToast(msg: AppLocalizations.of(context).forum_new_image_toastBig);
+        _pegaImagem();
+      } else {
+        setState(() {
+          imagemSelecionada = true;
+          imagemTipo = widget.imageType;
+        });
+      }
     } else {
       postado = false;
       if (!mounted) return;
@@ -71,8 +78,8 @@ class _ImagePostState extends State<ImagePost> {
 
   @override
   void initState() {
-    _pegaImagem();
     super.initState();
+    _pegaImagem();
   }
 
   late final pdB = MediaQuery.paddingOf(context).bottom;

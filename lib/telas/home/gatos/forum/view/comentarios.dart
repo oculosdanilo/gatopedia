@@ -5,9 +5,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/components/comentario.dart';
-
-import 'package:gatopedia/telas/home/public_profile.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/public_profile.dart';
 
 class ComentariosForum extends StatefulWidget {
   final DataSnapshot post;
@@ -74,8 +73,8 @@ class _ComentariosForumState extends State<ComentariosForum> {
 
   @override
   void dispose() {
-    super.dispose();
     _sub.cancel();
+    super.dispose();
   }
 
   @override
@@ -222,9 +221,11 @@ class _ComentariosForumState extends State<ComentariosForum> {
                                   postAtual.child("comentarios/$index/username").value as String,
                                   postAtual.child("comentarios/$index/content").value as String,
                                   _deletarC,
-                                  key: Key((postAtual.child("comentarios/$index/username").value as String) +
-                                      (postAtual.child("comentarios/$index/content").value as String) +
-                                      index.toString()), /* key pra cada comentario ter sua propria foto certinho */
+                                  key: Key(
+                                    (postAtual.child("comentarios/$index/username").value as String) +
+                                        (postAtual.child("comentarios/$index/content").value as String) +
+                                        index.toString(),
+                                  ), /* key pra cada comentario ter sua propria foto certinho */
                                 )
                               : const SizedBox();
                         },

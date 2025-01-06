@@ -24,8 +24,8 @@ class _EditPostState extends State<EditPost> {
 
   @override
   void initState() {
-    txtEdit.text = snapshotForum!.child("${widget.post}/content").value as String;
     super.initState();
+    txtEdit.text = snapshotForum!.child("${widget.post}/content").value as String;
   }
 
   @override

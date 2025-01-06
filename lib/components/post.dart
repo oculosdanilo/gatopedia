@@ -14,7 +14,7 @@ import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/forum/view/comentarios.dart';
 import 'package:gatopedia/telas/home/gatos/forum/view/imagem_view.dart';
 import 'package:gatopedia/telas/home/public_profile.dart';
-import 'package:grayscale/grayscale.dart';
+import 'package:gatopedia/telas/index.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -65,7 +65,7 @@ class _PostState extends State<Post> {
                       : 165 + widget.pd.bottom
                   : 4,
             ),
-            color: username == null && App.themeNotifier.value == ThemeMode.dark
+            color: username == null && _isDark(context)
                 ? Theme.of(context).colorScheme.surfaceTint.withValues(alpha: 0.25)
                 : Theme.of(context).colorScheme.surfaceContainerLow,
             child: Padding(
@@ -127,12 +127,20 @@ class _PostState extends State<Post> {
               ? Positioned(
                   right: 10,
                   top: 10,
-                  child: opcoes(widget.index, postSS),
+                  child: _opcoes(widget.index, postSS),
                 )
               : const SizedBox(),
         ],
       ),
     );
+  }
+
+  bool _isDark(BuildContext context) {
+    if (App.themeNotifier.value == ThemeMode.system) {
+      return MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    } else {
+      return App.themeNotifier.value == ThemeMode.dark;
+    }
   }
 }
 
@@ -311,7 +319,7 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
   }
 }
 
-Widget opcoes(int index, DataSnapshot postSS) {
+Widget _opcoes(int index, DataSnapshot postSS) {
   // TODO: fazer o coiso de bloquear um usuário
   return PopupMenuButton<MenuItems>(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -428,90 +436,27 @@ class _FooterPostState extends State<FooterPost> {
           OpenContainer(
             closedColor: username != null
                 ? Theme.of(context).colorScheme.surface
-                : GrayColorScheme.highContrastGray(
-                        App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)
-                    .surface,
+                : temaBaseBW(App.themeNotifier.value, context).colorScheme.surface,
             closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             transitionDuration: const Duration(milliseconds: 300),
             openColor: username != null
                 ? Theme.of(context).colorScheme.surface
-                : GrayColorScheme.highContrastGray(
-                        App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light)
-                    .surface,
+                : temaBaseBW(App.themeNotifier.value, context).colorScheme.surface,
             closedBuilder: (context, action) => username != null
-                ? Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: () async {
-                        action.call();
-                      },
-                      icon: const Icon(AntDesign.comment_outline),
-                      label: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        constraints: const BoxConstraints(minWidth: 21),
-                        height: 21,
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: Text(
-                              "${postSS.child("comentarios").children.length - 2}",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontVariations: [const FontVariation("wght", 600)],
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
+                ? _comentariosBtn(action, context)
                 : Theme(
                     data: ThemeData.from(
-                      colorScheme: GrayColorScheme.highContrastGray(
-                          App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light),
+                      colorScheme: temaBaseBW(App.themeNotifier.value, context).colorScheme,
                       useMaterial3: true,
                     ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton.icon(
-                        onPressed: () async {
-                          action.call();
-                        },
-                        icon: const Icon(AntDesign.comment_outline),
-                        label: Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          constraints: const BoxConstraints(minWidth: 21),
-                          height: 21,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 5),
-                              child: Text(
-                                "${postSS.child("comentarios").children.length - 2}",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontVariations: [const FontVariation("wght", 600)],
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    child: _comentariosBtn(action, context),
                   ),
             openBuilder: (context, action) => username != null
                 ? ComentariosForum(postSS)
                 : Theme(
                     data: ThemeData.from(
-                      colorScheme: GrayColorScheme.highContrastGray(
-                          App.themeNotifier.value == ThemeMode.dark ? Brightness.dark : Brightness.light),
+                      textTheme: temaBaseBW(App.themeNotifier.value, context).textTheme.apply(fontFamily: "Jost"),
+                      colorScheme: temaBaseBW(App.themeNotifier.value, context).colorScheme,
                       useMaterial3: true,
                     ),
                     child: ComentariosForum(postSS),
@@ -566,6 +511,42 @@ class _FooterPostState extends State<FooterPost> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Align _comentariosBtn(VoidCallback action, BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: TextButton.icon(
+        onPressed: () async => action.call(),
+        icon: Icon(
+          AntDesign.comment_outline,
+          color: username != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
+        ),
+        label: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          constraints: const BoxConstraints(minWidth: 21),
+          height: 21,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Text(
+                "${postSS.child("comentarios").children.length - 2}",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontVariations: [const FontVariation("wght", 600)],
+                  color: username != null
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
