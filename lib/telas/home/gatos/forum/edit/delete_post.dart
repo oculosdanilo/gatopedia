@@ -5,7 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
-import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/gatos/gatos.dart';
 
 class DeletePost extends StatefulWidget {
   final int post;
@@ -28,7 +28,7 @@ class _DeletePostState extends State<DeletePost> {
       margin: const EdgeInsets.all(20),
       borderRadius: BorderRadius.circular(50),
     ).show(context);
-    if (snapshotForum!.child("$postN/img").value != null) {
+    if (Gatos.snapshotForum.value!.child("$postN/img").value != null) {
       Reference refI = FirebaseStorage.instance.ref("posts/$postN.webp");
       Uint8List? lista = await refI.getData();
       if (lista?.isNotEmpty ?? false) {

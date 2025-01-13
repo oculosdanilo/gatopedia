@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
+import 'package:gatopedia/telas/home/gatos/gatos.dart';
 
 class TextPost extends StatefulWidget {
   const TextPost({super.key});
@@ -113,7 +114,7 @@ class _TextPostState extends State<TextPost> {
                       onPressed: () {
                         if (txtPost.text != "") {
                           _postar(
-                            int.parse("${snapshotForum!.children.last.key ?? 0}") + 1,
+                            int.parse("${Gatos.snapshotForum.value!.children.last.key ?? 0}") + 1,
                           );
                           Flushbar(
                             message: AppLocalizations.of(context).forum_new_flushText,

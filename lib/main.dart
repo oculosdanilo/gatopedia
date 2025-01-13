@@ -23,7 +23,6 @@ bool internet = true;
 final blueScheme = ColorScheme.fromSeed(seedColor: const Color(0xff000080), brightness: Brightness.dark);
 final blueSchemeL = ColorScheme.fromSeed(seedColor: const Color(0xff000080), brightness: Brightness.light);
 dynamic mensagem;
-DataSnapshot? snapshotForum;
 
 final connecteo = ConnectionChecker();
 

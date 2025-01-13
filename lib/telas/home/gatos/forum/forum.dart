@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/components/post.dart';
-import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,7 +38,7 @@ class _ForumState extends State<Forum> {
     ref.onValue.listen((event) {
       if (!mounted) return;
       setState(() {
-        snapshotForum = event.snapshot;
+        Gatos.snapshotForum.value = event.snapshot;
       });
     });
   }
@@ -112,12 +111,12 @@ class _ForumState extends State<Forum> {
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: snapshotForum != null
+        child: Gatos.snapshotForum.value != null
             ? StretchingOverscrollIndicator(
                 axisDirection: AxisDirection.down,
                 child: ListView.builder(
                   controller: widget.scrollForum,
-                  itemCount: int.parse(snapshotForum!.children.last.key!) + 1,
+                  itemCount: int.parse(Gatos.snapshotForum.value!.children.last.key!) + 1,
                   itemBuilder: (context, i) {
                     if (!_comecouListen) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -126,12 +125,15 @@ class _ForumState extends State<Forum> {
                         _comecouListen = true;
                       });
                     }
-                    final lastKey = snapshotForum!.children.last.key!;
-                    return snapshotForum!.child("${int.parse(snapshotForum!.children.last.key!) - i}").value != null
+                    final lastKey = Gatos.snapshotForum.value!.children.last.key!;
+                    return Gatos.snapshotForum.value!
+                                .child("${int.parse(Gatos.snapshotForum.value!.children.last.key!) - i}")
+                                .value !=
+                            null
                         ? Post(
-                            int.parse(snapshotForum!.children.last.key!) - i,
+                            int.parse(Gatos.snapshotForum.value!.children.last.key!) - i,
                             widget.pd,
-                            int.parse(snapshotForum!.children.last.key!) - i == int.parse(lastKey),
+                            int.parse(Gatos.snapshotForum.value!.children.last.key!) - i == int.parse(lastKey),
                           )
                         : const SizedBox();
                   },

@@ -8,7 +8,6 @@ import 'package:gatopedia/telas/home/gatos/wiki/info.dart';
 import 'package:gatopedia/telas/index.dart';
 import 'package:grayscale/grayscale.dart';
 
-late Future<DataSnapshot> _getData;
 bool pegouInfo = false;
 
 class Wiki extends StatefulWidget {
@@ -28,6 +27,8 @@ double scrollSalvoWiki = 0;
 double scrollAcumuladoWiki = 0;
 
 class _WikiState extends State<Wiki> {
+  late Future<DataSnapshot> _getData;
+
   void _barHideListen() {
     scrollAcumuladoWiki = 0;
     widget.setStateGatos();
