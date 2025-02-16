@@ -139,24 +139,26 @@ class _ProfileState extends State<Profile> {
       actions: temImagem ?? false
           ? [
               PopupMenuButton<MenuItensImg>(
-                icon: const Icon(Icons.more_vert_rounded, shadows: [Shadow(blurRadius: 10)], color: Colors.white),
+                icon: const Icon(
+                  Icons.more_vert_rounded,
+                  shadows: [Shadow(blurRadius: 10)],
+                  color: Colors.white,
+                ),
                 onSelected: (value) async {
                   if (value == MenuItensImg.editar) {
                     var resposta = await Navigator.push(context, SlideRightAgainRoute(const PPEdit(true)));
-                    if (resposta != null) {
-                      if (resposta) {
-                        setState(() {
-                          CachedNetworkImage.evictFromCache(
-                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media");
-                        });
-                        if (!context.mounted) return;
-                        Flushbar(
-                          message: "Atualizada com sucesso!",
-                          duration: const Duration(seconds: 2),
-                          margin: const EdgeInsets.all(20),
-                          borderRadius: BorderRadius.circular(50),
-                        ).show(context);
-                      }
+                    if (resposta != null && resposta) {
+                      setState(() {
+                        CachedNetworkImage.evictFromCache(
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media");
+                      });
+                      if (!context.mounted) return;
+                      Flushbar(
+                        message: AppLocalizations.of(context).profile_pfp_flushbarAdd,
+                        duration: const Duration(seconds: 2),
+                        margin: const EdgeInsets.all(20),
+                        borderRadius: BorderRadius.circular(50),
+                      ).show(context);
                     }
                   } else {
                     showCupertinoDialog<bool>(

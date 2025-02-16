@@ -32,7 +32,8 @@ int tabIndex = 0;
 bool expandido = true;
 bool animReverso = false;
 
-// tela gatos refeito
+bool _iniciouValueNotifierForum = false;
+
 class Gatos extends StatefulWidget {
   static late final ValueNotifier<DataSnapshot?> snapshotForum;
   final EdgeInsets pd;
@@ -49,12 +50,6 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
   final miau = AudioPlayer();
   late final TabController _tabController;
 
-  void _setState() {
-    return setState(() {
-      expandido = expandido;
-    });
-  }
-
   _play() async {
     await miau.setAsset("assets/meow.mp3");
     await miau.play();
@@ -65,13 +60,6 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
   late Animation<double> _animTabBar;
 
   late AnimationController _animFAB;
-
-  final ScrollController _scrollForum = ScrollController(initialScrollOffset: scrollSalvo, keepScrollOffset: false);
-  final ScrollController _scrollWiki = ScrollController(initialScrollOffset: scrollSalvoWiki, keepScrollOffset: false);
-  late List<Widget> telasGatos = <Widget>[
-    Wiki(_scrollWiki, _setState, _animTabBarController, _animTabBar, widget.pd),
-    Forum(_scrollForum, _setState, _animTabBarController, _animTabBar, widget.pd),
-  ];
 
   _postarImagem(int post, String filetype) async {
     if (filetype == "img") {
@@ -112,16 +100,133 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
     ).show(context);
   }
 
+  late final ScrollController scrollForum;
+  late final ScrollController scrollWiki;
+
   @override
   void initState() {
     super.initState();
-    Gatos.snapshotForum = ValueNotifier(null);
+    scrollForum = ScrollController(
+      initialScrollOffset: scrollSalvo,
+      keepScrollOffset: false,
+      onAttach: (pos) {
+        double offsetInicial = scrollForum.offset;
+
+        listenerStopScroll() {
+          double off = scrollForum.offset;
+          scrollSalvo = off;
+          scrollAcumulado = offsetInicial - off;
+
+          if (scrollAcumulado > (kToolbarHeight * 2.86) / 2 && !expandido) {
+            setState(() {
+              expandido = true;
+              offsetInicial = off;
+
+              _animTabBarController.reverse();
+            });
+          } else if (scrollAcumulado < (-(kToolbarHeight * 2.86) / 2) && expandido) {
+            setState(() {
+              expandido = false;
+              offsetInicial = off;
+
+              _animTabBarController.forward();
+            });
+          }
+          SharedPreferences.getInstance().then((sp) {
+            sp.setDouble("scrollSalvo", off);
+          });
+        }
+
+        listenerScroll() {
+          double off = scrollForum.offset;
+          if (!scrollForum.position.isScrollingNotifier.value) {
+            if ((scrollAcumulado < 0 && !expandido) || (scrollAcumulado > 0 && expandido)) {
+              offsetInicial = off;
+            }
+          }
+        }
+
+        scrollAcumulado = 0;
+
+        scrollForum.position.isScrollingNotifier.addListener(listenerScroll);
+
+        scrollForum.position.addListener(listenerStopScroll);
+      },
+    );
+    scrollWiki = ScrollController(
+      initialScrollOffset: scrollSalvoWiki,
+      keepScrollOffset: false,
+      onAttach: (pos) {
+        double offsetInicial = scrollWiki.offset;
+
+        listenerStopScroll() {
+          double off = scrollWiki.offset;
+          if (!scrollWiki.position.isScrollingNotifier.value) {
+            if ((scrollAcumuladoWiki < 0 && !expandido) || (scrollAcumuladoWiki > 0 && expandido)) {
+              setState(() {
+                offsetInicial = off;
+              });
+            }
+          }
+        }
+
+        listenerScroll() {
+          double off = scrollWiki.offset;
+          scrollSalvoWiki = off;
+          scrollAcumuladoWiki = offsetInicial - off;
+
+          if (scrollAcumuladoWiki > (kToolbarHeight * 2.86) / 2 && !expandido) {
+            setState(() {
+              expandido = true;
+              offsetInicial = off;
+
+              _animTabBarController.reverse();
+            });
+          } else if (scrollAcumuladoWiki < -(kToolbarHeight * 2.86) / 2 && expandido) {
+            setState(() {
+              expandido = false;
+              offsetInicial = off;
+
+              _animTabBarController.forward();
+            });
+          }
+        }
+
+        scrollAcumuladoWiki = 0;
+
+        scrollWiki.position.isScrollingNotifier.addListener(listenerStopScroll);
+
+        scrollWiki.position.addListener(listenerScroll);
+      },
+    );
+
+    if (!_iniciouValueNotifierForum) {
+      Gatos.snapshotForum = ValueNotifier(null);
+      _iniciouValueNotifierForum = true;
+    }
+
     _tabController = TabController(length: 2, vsync: this, initialIndex: tabIndex)
       ..animation?.addListener(() {
         if ((_tabController.animation?.value ?? 1) > 0.5) {
+          if (!expandido && scrollSalvo < ((kToolbarHeight * 2.86) / 2)) {
+            setState(() {
+              expandido = true;
+
+              _animTabBarController.reverse();
+            });
+          }
           _animFAB.forward();
+          scrollAcumulado = 0;
         } else {
+          if (!expandido && scrollSalvoWiki < ((kToolbarHeight * 2.86) / 2)) {
+            setState(() {
+              expandido = true;
+
+              _animTabBarController.reverse();
+            });
+          }
           _animFAB.reverse();
+          scrollAcumuladoWiki = 0;
         }
       });
     indexAntigo = 0;
@@ -142,13 +247,20 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
     }
   }
 
+  @override
+  void dispose() {
+    scrollForum.dispose();
+    scrollWiki.dispose();
+    super.dispose();
+  }
+
   final Offset _offset = const Offset(-4, -4);
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<DataSnapshot?>(
         valueListenable: Gatos.snapshotForum,
-        builder: (context, snapshotForum, widget) {
+        builder: (context, snapshotForum, _) {
           return Scaffold(
             backgroundColor: Theme.of(context).colorScheme.surface,
             floatingActionButton: username != null
@@ -350,7 +462,10 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                   child: TabBarView(
                     controller: _tabController,
                     dragStartBehavior: DragStartBehavior.down,
-                    children: telasGatos,
+                    children: [
+                      Wiki(scrollWiki, _animTabBarController, widget.pd),
+                      Forum(scrollForum, _animTabBarController, widget.pd),
+                    ],
                   ),
                 ),
                 Positioned(
@@ -401,11 +516,11 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
                 labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
                 tabs: const [Tab(text: "Wiki"), Tab(text: "Feed")],
                 onTap: (index) {
-                  if (tabIndex == 1 && index == 1 && _scrollForum.hasClients) {
+                  if (tabIndex == 1 && index == 1 && scrollForum.hasClients) {
                     setState(() {
-                      _scrollForum.animateTo(
+                      scrollForum.animateTo(
                         0.0,
-                        duration: Duration(microseconds: (300 * _scrollForum.offset).toInt()),
+                        duration: Duration(microseconds: (300 * scrollForum.offset).toInt()),
                         curve: Curves.easeOutQuad,
                       );
                     });

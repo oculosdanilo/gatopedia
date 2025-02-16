@@ -92,11 +92,9 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: App.themeNotifier,
-      child: widget.inicio,
       builder: (c, currentMode, w) {
         return ValueListenableBuilder<Locale>(
             valueListenable: App.localeNotifier,
-            child: w,
             builder: (c, currentLocale, w) {
               return MaterialApp(
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -106,7 +104,7 @@ class _AppState extends State<App> {
                 theme: temaLight(),
                 darkTheme: temaDark(),
                 themeMode: currentMode,
-                home: w,
+                home: widget.inicio,
                 builder: (c, w) {
                   return Banner(
                     message: AppLocalizations.of(c).internal,

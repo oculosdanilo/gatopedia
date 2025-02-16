@@ -24,7 +24,7 @@ class PPEdit extends StatefulWidget {
 }
 
 class _PPEditState extends State<PPEdit> {
-  late bool _botaoEnabled = true;
+  bool _botaoEnabled = true;
 
   void _salvarPP(File? file) async {
     XFile? result = await FlutterImageCompress.compressAndGetFile(
@@ -45,7 +45,7 @@ class _PPEditState extends State<PPEdit> {
     Navigator.pop(context, true);
   }
 
-  void _pegaImagem(BuildContext c) async {
+  void _pegaImagem() async {
     final picker = ImagePicker();
     XFile? result = await picker.pickImage(source: ImageSource.gallery);
     if (!mounted) return;
@@ -128,7 +128,7 @@ class _PPEditState extends State<PPEdit> {
     file = null;
     imagemEditada = null;
     imagemSelecionada = false;
-    _pegaImagem(context);
+    _pegaImagem();
   }
 
   @override
@@ -168,7 +168,9 @@ class _PPEditState extends State<PPEdit> {
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
-                      SizedBox(
+                      Container(
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                        clipBehavior: Clip.hardEdge,
                         width: double.infinity,
                         child: imagemEditada != null
                             ? Stack(
@@ -182,6 +184,17 @@ class _PPEditState extends State<PPEdit> {
                                     ),
                                   ),
                                   ClipOval(child: Image(image: FileImage(imagemEditada!), fit: BoxFit.cover)),
+                                  Positioned.fill(
+                                    child: AnimatedOpacity(
+                                      duration: const Duration(milliseconds: 100),
+                                      opacity: _botaoEnabled ? 0 : 1,
+                                      child: Container(
+                                        width: double.infinity,
+                                        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                                        child: const Center(child: CircularProgressIndicator()),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               )
                             : Padding(

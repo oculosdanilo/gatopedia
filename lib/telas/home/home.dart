@@ -24,7 +24,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Widget> telasHome = const [Gatos(EdgeInsets.only()), Profile(false), Config(false)];
+  List<Widget> telasHome = const [Gatos(EdgeInsets.zero), Profile(false), Config(false)];
 
   @override
   void initState() {
