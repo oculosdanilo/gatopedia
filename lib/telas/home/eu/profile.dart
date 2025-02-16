@@ -151,6 +151,7 @@ class _ProfileState extends State<Profile> {
                       setState(() {
                         CachedNetworkImage.evictFromCache(
                             "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media");
+                        temImagem = true;
                       });
                       if (!context.mounted) return;
                       Flushbar(
