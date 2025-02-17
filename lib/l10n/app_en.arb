@@ -103,5 +103,6 @@
   "profile_pfp_addPFP": "Add profile picture",
   "profile_pfp_flushbarAdd": "Added successfully!",
   "comment": "########################## WIKI #################################################",
+  "wiki_info_commentHint": "Comment...",
   "comment": "########################## END #################################################"
 }

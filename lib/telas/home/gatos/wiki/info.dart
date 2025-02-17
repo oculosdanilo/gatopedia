@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/components/comentario.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 
 late Future<DataSnapshot> _getData;
@@ -114,8 +115,10 @@ class GatoInfoState extends State<GatoInfo> {
                                 child: TextField(
                                   controller: txtControllerC,
                                   enabled: !mandando,
-                                  decoration:
-                                      const InputDecoration(hintText: "Comentar...", prefix: SizedBox(width: 10)),
+                                  decoration: InputDecoration(
+                                    hintText: AppLocalizations.of(context).wiki_info_commentHint,
+                                    prefix: const SizedBox(width: 10),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 10),
@@ -137,7 +140,7 @@ class GatoInfoState extends State<GatoInfo> {
                                           });
                                           if (!context.mounted) return;
                                           Flushbar(
-                                            message: "Postado com sucesso!",
+                                            message: AppLocalizations.of(context).forum_new_flushText,
                                             duration: const Duration(seconds: 2),
                                             margin: const EdgeInsets.all(20),
                                             borderRadius: BorderRadius.circular(50),
@@ -157,9 +160,10 @@ class GatoInfoState extends State<GatoInfo> {
                       : const SizedBox(),
                   widget.gatoInfo.child("comentarios").children.length > 2
                       ? ComentariosWiki(widget.gatoInfo)
-                      : const SizedBox(
+                      : Container(
                           height: 80,
-                          child: Row(
+                          margin: const EdgeInsets.only(top: 50),
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [Text("Nenhum comentário (ainda...)")],

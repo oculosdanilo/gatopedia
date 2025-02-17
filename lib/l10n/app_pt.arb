@@ -102,5 +102,6 @@
   "profile_pfp_addPFP": "Adicionar foto de perfil",
   "profile_pfp_flushbarAdd": "Adicionada com sucesso!",
   "comment": "########################## WIKI #################################################",
+  "wiki_info_commentHint": "Comentar...",
   "comment": "########################## END #################################################"
 }

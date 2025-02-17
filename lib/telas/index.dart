@@ -178,7 +178,6 @@ class _IndexState extends State<Index> {
             pos = null;
             full = false;
           });
-          Future.delayed(const Duration());
         }
       },
       child: Scaffold(
