@@ -14,7 +14,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/config/deletar_conta.dart';
-import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/forum/new/image_post.dart';
 import 'package:gatopedia/telas/home/gatos/forum/new/text_post.dart';
@@ -614,7 +613,6 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
             ) ??
             false;
         if (dialogo) {
-          await atualizarListenProfile?.cancel();
           final sp = await SharedPreferences.getInstance();
           if (sp.containsKey("username")) await sp.remove("username");
           if (sp.containsKey("scrollSalvo")) await sp.remove("scrollSalvo");

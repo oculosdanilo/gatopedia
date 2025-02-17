@@ -144,14 +144,22 @@ class _IndexState extends State<Index> {
           itemBuilder: (BuildContext context) => [
             PopupMenuItem(
               onTap: () async => await Navigator.push(context, SlideUpRoute(const Colaboradores())),
-              child: const Row(
-                children: [Icon(Symbols.people_rounded, fill: 1), SizedBox(width: 15), Text("Colaboradores")],
+              child: Row(
+                children: [
+                  const Icon(Symbols.people_rounded, fill: 1),
+                  const SizedBox(width: 15),
+                  Text(AppLocalizations.of(context).index_menu_colab),
+                ],
               ),
             ),
             PopupMenuItem(
               onTap: () => Navigator.push(context, SlideUpRoute(const Scaffold(body: Config(true)))),
-              child: const Row(
-                children: [Icon(Symbols.settings_rounded, fill: 1), SizedBox(width: 15), Text("Configurações")],
+              child: Row(
+                children: [
+                  const Icon(Symbols.settings_rounded, fill: 1),
+                  const SizedBox(width: 15),
+                  Text(AppLocalizations.of(context).config_title),
+                ],
               ),
             ),
           ],
@@ -212,9 +220,9 @@ class _IndexState extends State<Index> {
                             }
                           : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
-                      child: const Text(
-                        "Entrar",
-                        style: TextStyle(fontSize: 20, fontVariations: [FontVariation("wght", 500)]),
+                      child: Text(
+                        AppLocalizations.of(context).index_login,
+                        style: const TextStyle(fontSize: 20, fontVariations: [FontVariation("wght", 500)]),
                       ),
                     ),
                   ),
@@ -230,7 +238,7 @@ class _IndexState extends State<Index> {
                             }
                           : null,
                       style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(scW * 0.7, 50))),
-                      child: const Text("Cadastrar", style: TextStyle(fontSize: 20)),
+                      child: Text(AppLocalizations.of(context).index_signup, style: const TextStyle(fontSize: 20)),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -244,7 +252,7 @@ class _IndexState extends State<Index> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           const SizedBox(width: 5),
-                          const Text("Entrar com:", style: TextStyle(fontSize: 20)),
+                          Text(AppLocalizations.of(context).index_loginWith, style: const TextStyle(fontSize: 20)),
                           const Expanded(child: SizedBox()),
                           OutlinedButton.icon(
                             icon: const Icon(Bootstrap.google),
@@ -419,7 +427,7 @@ class _SemContaState extends State<SemConta> {
                     ),
                   ),
                   Text(
-                    "Entrar sem conta",
+                    AppLocalizations.of(context).index_anon,
                     style: TextStyle(
                       fontSize: 20,
                       color: _isDark(context)

@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/telas/index.dart';
@@ -221,7 +220,6 @@ class _DeletarContaState extends State<DeletarConta> {
     }
 
     Future.delayed(Duration.zero, () async {
-      await atualizarListenProfile?.cancel();
       await FirebaseDatabase.instance.ref("users/$username").remove();
       username = null;
       final pref = await SharedPreferences.getInstance();

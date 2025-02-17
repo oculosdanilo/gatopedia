@@ -7,8 +7,6 @@ import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/eu/profile.dart';
 import 'package:gatopedia/telas/index.dart';
 
-String bioText = "carregando...";
-
 class PublicProfile extends StatefulWidget {
   final String username;
 
@@ -19,7 +17,9 @@ class PublicProfile extends StatefulWidget {
 }
 
 class _PublicProfileState extends State<PublicProfile> {
-  late StreamSubscription<DatabaseEvent> atualizarListenPublicProfile;
+  late StreamSubscription<DatabaseEvent> _atualizarListenPublicProfile;
+
+  String bioText = "carregando...";
 
   _pegarUserinfo(String username, BuildContext c) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
@@ -41,7 +41,7 @@ class _PublicProfileState extends State<PublicProfile> {
   _atualizar(BuildContext c) {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users");
-    atualizarListenPublicProfile = ref.onValue.listen((event) {
+    _atualizarListenPublicProfile = ref.onValue.listen((event) {
       if (!c.mounted) return;
       _pegarUserinfo(widget.username, c);
     });
@@ -59,7 +59,7 @@ class _PublicProfileState extends State<PublicProfile> {
 
   @override
   void dispose() {
-    atualizarListenPublicProfile.cancel();
+    _atualizarListenPublicProfile.cancel();
     super.dispose();
   }
 

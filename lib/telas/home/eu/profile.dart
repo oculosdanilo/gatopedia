@@ -17,9 +17,6 @@ enum MenuItensImg { editar, remover }
 
 enum MenuItensSemImg { adicionar }
 
-StreamSubscription<DatabaseEvent>? atualizarListenProfile;
-
-String bioText = "carregando...";
 bool? temImagem;
 
 String? imagemGoogle;
@@ -30,12 +27,15 @@ class Profile extends StatefulWidget {
   const Profile(this.botaoVoltar, {super.key});
 
   @override
-  State<Profile> createState() => _ProfileState();
+  State<Profile> createState() => ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
-  bool editMode = false;
-  final txtBio = TextEditingController();
+class ProfileState extends State<Profile> {
+  late StreamSubscription<DatabaseEvent> _atualizarListenProfile;
+
+  bool _editMode = false;
+  final _txtBio = TextEditingController();
+  String _bioText = "carregando...";
 
   late Future<String?> _pegarImgGoogleVar;
 
@@ -52,13 +52,13 @@ class _ProfileState extends State<Profile> {
     final sp = await SharedPreferences.getInstance();
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users/$username");
-    atualizarListenProfile = ref.onValue.listen((event) {
+    _atualizarListenProfile = ref.onValue.listen((event) {
       final data = event.snapshot;
       if (data.child("bio").value != null && data.child("bio").value.toString() != "(vazio)") {
-        setState(() => bioText = "${data.child("bio").value}");
+        setState(() => _bioText = "${data.child("bio").value}");
         sp.setString("bio", "${data.child("bio").value}");
       } else {
-        setState(() => bioText = AppLocalizations.of(context).profile_bio_empty);
+        setState(() => _bioText = AppLocalizations.of(context).profile_bio_empty);
         if (!mounted) return;
         sp.setString("bio", AppLocalizations.of(context).profile_bio_empty);
       }
@@ -80,7 +80,7 @@ class _ProfileState extends State<Profile> {
     final sp = await SharedPreferences.getInstance();
     if (sp.containsKey("bio") && sp.containsKey("img")) {
       setState(() {
-        bioText = sp.getString("bio")!;
+        _bioText = sp.getString("bio")!;
         temImagem = sp.getBool("img")!;
       });
     }
@@ -108,9 +108,11 @@ class _ProfileState extends State<Profile> {
 
   @override
   void dispose() {
-    atualizarListenProfile?.cancel();
+    _atualizarListenProfile.cancel();
     super.dispose();
   }
+
+  final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -124,8 +126,54 @@ class _ProfileState extends State<Profile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Bio", style: TextStyle(fontSize: 15, color: Colors.grey[700]!)),
-                editMode ? editando(context) : estatico()
+                Text(
+                  "Bio",
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                    fontVariations: const [FontVariation.weight(600)],
+                  ),
+                ),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 150),
+                  child: _editMode
+                      ? Editando(
+                          focusNode: _focusNode,
+                          cancelClick: () {
+                            setState(() {
+                              _editMode = false;
+                            });
+                          },
+                          saveClick: () async {
+                            if (_txtBio.text != "" && _txtBio.text != _bioText) {
+                              _salvarBio(_txtBio.text);
+                              if (mounted) {
+                                setState(() {
+                                  _editMode = false;
+                                });
+                              }
+                              Flushbar(
+                                message: "Atualizado com sucesso!",
+                                duration: const Duration(seconds: 2),
+                                margin: const EdgeInsets.all(20),
+                                borderRadius: BorderRadius.circular(50),
+                              ).show(context);
+                            }
+                          },
+                          bioText: _bioText,
+                          txtBio: _txtBio,
+                        )
+                      : Estatico(
+                          editClick: () {
+                            setState(() {
+                              _editMode = true;
+                              _txtBio.text = _bioText;
+                              _focusNode.requestFocus();
+                            });
+                          },
+                          bioText: _bioText,
+                        ),
+                ),
               ],
             ),
           ),
@@ -349,26 +397,31 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
+}
 
-  Column estatico() {
+class Estatico extends StatefulWidget {
+  final void Function() editClick;
+  final String bioText;
+
+  const Estatico({super.key, required this.editClick, required this.bioText});
+
+  @override
+  State<Estatico> createState() => _EstaticoState();
+}
+
+class _EstaticoState extends State<Estatico> {
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SelectableText(bioText, style: const TextStyle(fontSize: 20)),
+        SelectableText(widget.bioText, style: const TextStyle(fontSize: 20)),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             TextButton.icon(
-              onPressed: bioText != AppLocalizations.of(context).profile_bio_loading
-                  ? () {
-                      setState(() {
-                        editMode = true;
-                        txtBio.text = bioText;
-                        FocusNode().requestFocus();
-                      });
-                    }
-                  : null,
+              onPressed: widget.bioText != AppLocalizations.of(context).profile_bio_loading ? widget.editClick : null,
               icon: const Icon(Icons.edit_rounded),
               label: Text(AppLocalizations.of(context).profile_bio_edit),
             ),
@@ -377,8 +430,31 @@ class _ProfileState extends State<Profile> {
       ],
     );
   }
+}
 
-  Column editando(BuildContext context) {
+class Editando extends StatefulWidget {
+  final void Function() cancelClick;
+  final void Function() saveClick;
+  final String bioText;
+  final TextEditingController txtBio;
+  final FocusNode focusNode;
+
+  const Editando({
+    super.key,
+    required this.cancelClick,
+    required this.saveClick,
+    required this.bioText,
+    required this.txtBio,
+    required this.focusNode,
+  });
+
+  @override
+  State<Editando> createState() => _EditandoState();
+}
+
+class _EditandoState extends State<Editando> {
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,8 +462,9 @@ class _ProfileState extends State<Profile> {
         const SizedBox(height: 10),
         TextField(
           maxLength: 255,
-          controller: txtBio,
+          controller: widget.txtBio,
           maxLines: 2,
+          focusNode: widget.focusNode,
           decoration: InputDecoration(
             hintText: AppLocalizations.of(context).profile_bio_empty,
             focusedBorder: OutlineInputBorder(
@@ -411,31 +488,12 @@ class _ProfileState extends State<Profile> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             OutlinedButton(
-              onPressed: () {
-                setState(() {
-                  editMode = false;
-                });
-              },
+              onPressed: widget.cancelClick,
               child: const Text("CANCELAR"),
             ),
             FilledButton(
+              onPressed: widget.saveClick,
               child: const Text("SALVAR"),
-              onPressed: () async {
-                if (txtBio.text != "" && txtBio.text != bioText) {
-                  _salvarBio(txtBio.text);
-                  if (mounted) {
-                    setState(() {
-                      editMode = false;
-                    });
-                  }
-                  Flushbar(
-                    message: "Atualizado com sucesso!",
-                    duration: const Duration(seconds: 2),
-                    margin: const EdgeInsets.all(20),
-                    borderRadius: BorderRadius.circular(50),
-                  ).show(context);
-                }
-              },
             ),
           ],
         ),
