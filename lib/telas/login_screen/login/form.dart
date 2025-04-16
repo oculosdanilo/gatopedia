@@ -81,15 +81,15 @@ class FormAppState extends State<FormApp> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Obrigatório';
+                    return AppLocalizations.of(context).login_err1;
                   } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
-                    return 'Caractere(s) inválido(s)! (espaços e símbolos especiais)';
+                    return AppLocalizations.of(context).login_err2;
                   } else if (value.length <= 3) {
-                    return "Nome muito pequeno!";
+                    return AppLocalizations.of(context).login_err3;
                   } else if (value.contains(RegExp(r'^[0-9]+$'))) {
-                    return "só números? sério?";
+                    return AppLocalizations.of(context).login_err4;
                   } else if (value.length > 25) {
-                    return "Nome de usuário muito grande!";
+                    return AppLocalizations.of(context).login_err5;
                   }
                   return null;
                 },
@@ -110,7 +110,7 @@ class FormAppState extends State<FormApp> {
                     ),
                   ),
                   prefixIcon: const Icon(Icons.alternate_email_rounded),
-                  label: const Text("Nome de usuário"),
+                  label: Text(AppLocalizations.of(context).login_username),
                 ),
               ),
             ),
@@ -130,7 +130,7 @@ class FormAppState extends State<FormApp> {
                     padding: const EdgeInsets.only(right: 5),
                     child: IconButton(onPressed: () => mostrarSenha(), icon: iconeOlho),
                   ),
-                  label: const Text("Senha"),
+                  label: Text(AppLocalizations.of(context).login_password),
                 ),
               ),
             ),
@@ -144,7 +144,10 @@ class FormAppState extends State<FormApp> {
                 ),
                 GestureDetector(
                   onTap: () => setState(() => inputLembrar = !inputLembrar),
-                  child: const Text("Lembre-se de mim!", style: TextStyle(fontSize: 18)),
+                  child: Text(
+                    AppLocalizations.of(context).login_remindMe,
+                    style: const TextStyle(fontSize: 18),
+                  ),
                 )
               ],
             ),
@@ -172,11 +175,10 @@ class FormAppState extends State<FormApp> {
     return FilledButton(
       onPressed: !conectando
           ? () async {
-              // Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
                 setState(() => conectando = true);
                 TextInput.finishAutofillContext();
-                var retorno = await entrar(txtControllerLogin.text, txtControllerSenha.text);
+                var retorno = await entrar(context, txtControllerLogin.text, txtControllerSenha.text);
                 if (!context.mounted) return;
                 if (retorno is String) {
                   Flushbar(
@@ -214,7 +216,7 @@ class FormAppState extends State<FormApp> {
               }
             }
           : null,
-      child: const Text("Entrar", style: TextStyle(fontSize: 18)),
+      child: Text(AppLocalizations.of(context).login),
     );
   }
 }

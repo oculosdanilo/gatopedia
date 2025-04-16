@@ -4,24 +4,27 @@ import 'dart:io';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path_provider/path_provider.dart';
 
-Future<dynamic> entrar(String usernameDigitado, String senhaDigitada) async {
+Future<dynamic> entrar(BuildContext c, String usernameDigitado, String senhaDigitada) async {
   final refLocal = FirebaseDatabase.instance.ref("users/${usernameDigitado.toLowerCase()}/");
   final snapshotLocal = await refLocal.get();
+  if (!c.mounted) return;
   if (snapshotLocal.exists) {
     String senhaDB = String.fromCharCodes(base64.decode(snapshotLocal.child("senha").value.toString()));
     if (senhaDB == senhaDigitada) {
       username = usernameDigitado;
       return true;
     } else {
-      return "Senha incorreta :/";
+      return AppLocalizations.of(c).login_errPassword;
     }
   } else {
-    return "Usuário não existe :/";
+    return AppLocalizations.of(c).login_errUsername;
   }
 }
 

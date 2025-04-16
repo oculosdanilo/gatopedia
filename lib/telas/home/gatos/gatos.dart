@@ -34,7 +34,6 @@ bool animReverso = false;
 bool _iniciouValueNotifierForum = false;
 
 class Gatos extends StatefulWidget {
-  static late final ValueNotifier<DataSnapshot?> snapshotForum;
   final EdgeInsets pd;
 
   const Gatos(this.pd, {super.key});
@@ -200,7 +199,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
     );
 
     if (!_iniciouValueNotifierForum) {
-      Gatos.snapshotForum = ValueNotifier(null);
+      Forum.snapshotForum = ValueNotifier(null);
       _iniciouValueNotifierForum = true;
     }
 
@@ -257,236 +256,232 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<DataSnapshot?>(
-        valueListenable: Gatos.snapshotForum,
-        builder: (context, snapshotForum, _) {
-          return Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            floatingActionButton: username != null
-                ? AnimatedBuilder(
-                    animation: _animFAB,
-                    builder: (c, child) {
-                      return Opacity(opacity: _animFAB.value, child: child);
-                    },
-                    child: ExpandableFab(
-                      key: fagKey,
-                      distance: 70,
-                      overlayStyle: ExpandableFabOverlayStyle(
-                        color: Theme.of(context)
-                            .cardColor
-                            .withValues(alpha: App.themeNotifier.value == ThemeMode.light ? 0.8 : 0.5),
-                      ),
-                      openButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.edit_rounded)),
-                      closeButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.close_rounded)),
-                      childrenAnimation: ExpandableFabAnimation.none,
-                      childrenOffset: const Offset(5, 0),
-                      type: ExpandableFabType.up,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              AppLocalizations.of(context).forum_fab_text,
-                              style: TextStyle(
-                                fontVariations: const [FontVariation.weight(500)],
-                                fontSize: 18,
-                                color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                shadows: _isDark(context)
-                                    ? [
-                                        Shadow(
-                                          offset: const Offset(0, 2),
-                                          blurRadius: 10,
-                                          color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
-                                        ),
-                                      ]
-                                    : null,
-                              ),
-                            ),
-                            const SizedBox(width: 20),
-                            FloatingActionButton.small(
-                              heroTag: null,
-                              elevation: 5,
-                              onPressed: () async {
-                                final state = fagKey.currentState;
-                                if (state != null) state.toggle();
-                                await showModalBottomSheet(
-                                  context: context,
-                                  showDragHandle: true,
-                                  useSafeArea: true,
-                                  isScrollControlled: true,
-                                  builder: (ctx) => const TextPost(),
-                                );
-                                txtPost.text = "";
-                              },
-                              child: const Icon(Icons.text_fields_rounded),
-                            ),
-                          ],
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      floatingActionButton: username != null
+          ? AnimatedBuilder(
+              animation: _animFAB,
+              builder: (c, child) {
+                return Opacity(opacity: _animFAB.value, child: child);
+              },
+              child: ExpandableFab(
+                key: fagKey,
+                distance: 70,
+                overlayStyle: ExpandableFabOverlayStyle(
+                  color: Theme.of(context)
+                      .cardColor
+                      .withValues(alpha: App.themeNotifier.value == ThemeMode.light ? 0.8 : 0.5),
+                ),
+                openButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.edit_rounded)),
+                closeButtonBuilder: DefaultFloatingActionButtonBuilder(child: const Icon(Icons.close_rounded)),
+                childrenAnimation: ExpandableFabAnimation.none,
+                childrenOffset: const Offset(5, 0),
+                type: ExpandableFabType.up,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context).forum_fab_text,
+                        style: TextStyle(
+                          fontVariations: const [FontVariation.weight(500)],
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          shadows: _isDark(context)
+                              ? [
+                                  Shadow(
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 10,
+                                    color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
+                                  ),
+                                ]
+                              : null,
                         ),
-                        Transform.translate(
-                          offset: _offset,
-                          child: Row(
-                            children: [
-                              Text(
-                                AppLocalizations.of(context).forum_fab_img,
-                                style: TextStyle(
-                                  fontVariations: const [FontVariation.weight(500)],
-                                  fontSize: 18,
-                                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                  shadows: _isDark(context)
-                                      ? [
-                                          Shadow(
-                                            offset: const Offset(0, 2),
-                                            blurRadius: 10,
-                                            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
-                                          ),
-                                        ]
-                                      : null,
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              SizedBox(
-                                height: 40,
-                                width: 40,
-                                child: OpenContainer(
-                                  tappable: false,
-                                  onClosed: (data) {
-                                    if (postado) {
-                                      final state = fagKey.currentState;
-                                      if (state != null) state.toggle();
-                                      Flushbar(
-                                        message: AppLocalizations.of(context).forum_posting,
-                                        duration: const Duration(seconds: 5),
-                                        margin: const EdgeInsets.all(20),
-                                        borderRadius: BorderRadius.circular(50),
-                                      ).show(context);
-                                      CachedNetworkImage.evictFromCache(
-                                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${Gatos.snapshotForum.value!.children.last.key ?? 0}") + 1}.webp?alt=media");
-                                      _postarImagem(
-                                          int.parse("${Gatos.snapshotForum.value!.children.last.key ?? 0}") + 1, "img");
-                                    }
-                                  },
-                                  transitionDuration: const Duration(milliseconds: 500),
-                                  closedElevation: 5,
-                                  openColor: Theme.of(context).colorScheme.surface,
-                                  openBuilder: (context, action) => const ImagePost("image"),
-                                  closedColor: Theme.of(context).colorScheme.primary,
-                                  closedShape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12), side: BorderSide.none),
-                                  closedBuilder: (context, action) {
-                                    return FloatingActionButton.small(
-                                      heroTag: null,
-                                      onPressed: () => action.call(),
-                                      elevation: 0,
-                                      child: const Icon(Icons.image_rounded),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
+                      ),
+                      const SizedBox(width: 20),
+                      FloatingActionButton.small(
+                        heroTag: null,
+                        elevation: 5,
+                        onPressed: () async {
+                          final state = fagKey.currentState;
+                          if (state != null) state.toggle();
+                          await showModalBottomSheet(
+                            context: context,
+                            showDragHandle: true,
+                            useSafeArea: true,
+                            isScrollControlled: true,
+                            builder: (ctx) => const TextPost(),
+                          );
+                          txtPost.text = "";
+                        },
+                        child: const Icon(Icons.text_fields_rounded),
+                      ),
+                    ],
+                  ),
+                  Transform.translate(
+                    offset: _offset,
+                    child: Row(
+                      children: [
+                        Text(
+                          AppLocalizations.of(context).forum_fab_img,
+                          style: TextStyle(
+                            fontVariations: const [FontVariation.weight(500)],
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            shadows: _isDark(context)
+                                ? [
+                                    Shadow(
+                                      offset: const Offset(0, 2),
+                                      blurRadius: 10,
+                                      color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
+                                    ),
+                                  ]
+                                : null,
                           ),
                         ),
-                        Transform.translate(
-                          offset: _offset,
-                          child: Row(
-                            children: [
-                              Text(
-                                "GIF",
-                                style: TextStyle(
-                                  fontVariations: const [FontVariation.weight(500)],
-                                  fontSize: 18,
-                                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                  shadows: _isDark(context)
-                                      ? [
-                                          Shadow(
-                                            offset: const Offset(0, 2),
-                                            blurRadius: 10,
-                                            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
-                                          ),
-                                        ]
-                                      : null,
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              SizedBox(
-                                height: 40,
-                                width: 40,
-                                child: OpenContainer(
-                                  tappable: false,
-                                  onClosed: (data) {
-                                    if (postado) {
-                                      final state = fagKey.currentState;
-                                      if (state != null) state.toggle();
-                                      Flushbar(
-                                        message: AppLocalizations.of(context).forum_posting,
-                                        duration: const Duration(seconds: 5),
-                                        margin: const EdgeInsets.all(20),
-                                        borderRadius: BorderRadius.circular(50),
-                                      ).show(context);
-                                      CachedNetworkImage.evictFromCache(
-                                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${Gatos.snapshotForum.value!.children.last.key ?? 0}") + 1}.webp?alt=media");
-                                      _postarImagem(
-                                          int.parse("${Gatos.snapshotForum.value!.children.last.key ?? 0}") + 1, "gif");
-                                    }
-                                  },
-                                  transitionDuration: const Duration(milliseconds: 500),
-                                  closedElevation: 5,
-                                  openColor: Theme.of(context).colorScheme.surface,
-                                  openBuilder: (context, action) => const ImagePost("gif"),
-                                  closedColor: Theme.of(context).colorScheme.primaryContainer,
-                                  closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                  closedBuilder: (context, action) {
-                                    return FloatingActionButton.small(
-                                      heroTag: null,
-                                      onPressed: () => action.call(),
-                                      elevation: 0,
-                                      child: const Icon(Icons.gif_rounded),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
+                        const SizedBox(width: 20),
+                        SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: OpenContainer(
+                            tappable: false,
+                            onClosed: (data) {
+                              if (postado) {
+                                final state = fagKey.currentState;
+                                if (state != null) state.toggle();
+                                Flushbar(
+                                  message: AppLocalizations.of(context).forum_posting,
+                                  duration: const Duration(seconds: 5),
+                                  margin: const EdgeInsets.all(20),
+                                  borderRadius: BorderRadius.circular(50),
+                                ).show(context);
+                                CachedNetworkImage.evictFromCache(
+                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${Forum.snapshotForum.value!.children.last.key ?? 0}") + 1}.webp?alt=media");
+                                _postarImagem(
+                                    int.parse("${Forum.snapshotForum.value!.children.last.key ?? 0}") + 1, "img");
+                              }
+                            },
+                            transitionDuration: const Duration(milliseconds: 500),
+                            closedElevation: 5,
+                            openColor: Theme.of(context).colorScheme.surface,
+                            openBuilder: (context, action) => const ImagePost("image"),
+                            closedColor: Theme.of(context).colorScheme.primary,
+                            closedShape:
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none),
+                            closedBuilder: (context, action) {
+                              return FloatingActionButton.small(
+                                heroTag: null,
+                                onPressed: () => action.call(),
+                                elevation: 0,
+                                child: const Icon(Icons.image_rounded),
+                              );
+                            },
                           ),
                         ),
                       ],
                     ),
-                  )
-                : null,
-            floatingActionButtonLocation: ExpandableFab.location,
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              toolbarHeight: 0,
-            ),
-            body: Stack(
-              children: [
-                Positioned.fill(
-                  child: TabBarView(
-                    controller: _tabController,
-                    dragStartBehavior: DragStartBehavior.down,
-                    children: [
-                      Wiki(scrollWiki, _animTabBarController, widget.pd),
-                      Forum(scrollForum, _animTabBarController, widget.pd),
-                    ],
                   ),
-                ),
-                Positioned(
-                  top: 0,
-                  child: AnimatedBuilder(
-                    animation: _animTabBar,
-                    builder: (context, child) {
-                      return Transform.translate(
-                        offset: Offset(0, _animTabBar.value * (-(kToolbarHeight * 2.86) / 2)),
-                        child: child,
-                      );
-                    },
-                    child: SizedBox(
-                      height: kToolbarHeight * 2.86,
-                      child: appbar(context),
+                  Transform.translate(
+                    offset: _offset,
+                    child: Row(
+                      children: [
+                        Text(
+                          "GIF",
+                          style: TextStyle(
+                            fontVariations: const [FontVariation.weight(500)],
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            shadows: _isDark(context)
+                                ? [
+                                    Shadow(
+                                      offset: const Offset(0, 2),
+                                      blurRadius: 10,
+                                      color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: OpenContainer(
+                            tappable: false,
+                            onClosed: (data) {
+                              if (postado) {
+                                final state = fagKey.currentState;
+                                if (state != null) state.toggle();
+                                Flushbar(
+                                  message: AppLocalizations.of(context).forum_posting,
+                                  duration: const Duration(seconds: 5),
+                                  margin: const EdgeInsets.all(20),
+                                  borderRadius: BorderRadius.circular(50),
+                                ).show(context);
+                                CachedNetworkImage.evictFromCache(
+                                    "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/posts%2F${int.parse("${Forum.snapshotForum.value!.children.last.key ?? 0}") + 1}.webp?alt=media");
+                                _postarImagem(
+                                    int.parse("${Forum.snapshotForum.value!.children.last.key ?? 0}") + 1, "gif");
+                              }
+                            },
+                            transitionDuration: const Duration(milliseconds: 500),
+                            closedElevation: 5,
+                            openColor: Theme.of(context).colorScheme.surface,
+                            openBuilder: (context, action) => const ImagePost("gif"),
+                            closedColor: Theme.of(context).colorScheme.primaryContainer,
+                            closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            closedBuilder: (context, action) {
+                              return FloatingActionButton.small(
+                                heroTag: null,
+                                onPressed: () => action.call(),
+                                elevation: 0,
+                                child: const Icon(Icons.gif_rounded),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
+                ],
+              ),
+            )
+          : null,
+      floatingActionButtonLocation: ExpandableFab.location,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        toolbarHeight: 0,
+      ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: TabBarView(
+              controller: _tabController,
+              dragStartBehavior: DragStartBehavior.down,
+              children: [
+                Wiki(scrollWiki, _animTabBarController, widget.pd),
+                Forum(scrollForum, _animTabBarController, widget.pd),
               ],
             ),
-          );
-        });
+          ),
+          Positioned(
+            top: 0,
+            child: AnimatedBuilder(
+              animation: _animTabBar,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(0, _animTabBar.value * (-(kToolbarHeight * 2.86) / 2)),
+                  child: child,
+                );
+              },
+              child: SizedBox(
+                height: kToolbarHeight * 2.86,
+                child: appbar(context),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget appbar(BuildContext context) {

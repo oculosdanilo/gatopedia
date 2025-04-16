@@ -12,6 +12,7 @@ File? file; /* arquivo pra comprimir a imagem de upload do post */
 final txtPost = TextEditingController();
 
 class Forum extends StatefulWidget {
+  static late final ValueNotifier<DataSnapshot?> snapshotForum;
   final ScrollController scrollForum;
   final AnimationController animController;
   final EdgeInsets pd;
@@ -35,7 +36,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
     ref.onValue.listen((event) {
       if (!mounted) return;
       setState(() {
-        Gatos.snapshotForum.value = event.snapshot;
+        Forum.snapshotForum.value = event.snapshot;
       });
     });
   }
@@ -53,33 +54,34 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: Gatos.snapshotForum.value != null
-            ? StretchingOverscrollIndicator(
-                axisDirection: AxisDirection.down,
-                child: ListView.builder(
-                  controller: widget.scrollForum,
-                  itemCount: int.parse(Gatos.snapshotForum.value!.children.last.key!) + 1,
-                  itemBuilder: (context, i) {
-                    final lastKey = Gatos.snapshotForum.value!.children.last.key!;
-                    return Gatos.snapshotForum.value!
-                                .child("${int.parse(Gatos.snapshotForum.value!.children.last.key!) - i}")
-                                .value !=
-                            null
-                        ? Post(
-                            int.parse(Gatos.snapshotForum.value!.children.last.key!) - i,
-                            widget.pd,
-                            int.parse(Gatos.snapshotForum.value!.children.last.key!) - i == int.parse(lastKey),
-                          )
-                        : const SizedBox();
-                  },
-                ),
-              )
-            : const Center(child: CircularProgressIndicator()),
-      ),
-    );
+    return ValueListenableBuilder<DataSnapshot?>(
+        valueListenable: Forum.snapshotForum,
+        builder: (context, snapshotForum, _) {
+          return Scaffold(
+            body: Container(
+              margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: snapshotForum?.value != null
+                  ? StretchingOverscrollIndicator(
+                      axisDirection: AxisDirection.down,
+                      child: ListView.builder(
+                        controller: widget.scrollForum,
+                        itemCount: int.parse(snapshotForum!.children.last.key!) + 1,
+                        itemBuilder: (context, i) {
+                          final lastKey = snapshotForum.children.last.key!;
+                          return snapshotForum.child("${int.parse(snapshotForum.children.last.key!) - i}").value != null
+                              ? Post(
+                                  int.parse(snapshotForum.children.last.key!) - i,
+                                  widget.pd,
+                                  int.parse(snapshotForum.children.last.key!) - i == int.parse(lastKey),
+                                )
+                              : const SizedBox();
+                        },
+                      ),
+                    )
+                  : const Center(child: CircularProgressIndicator()),
+            ),
+          );
+        });
   }
 
   @override

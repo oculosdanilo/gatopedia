@@ -34,7 +34,11 @@ class SlideUpRoute extends PageRouteBuilder {
                     begin: const Offset(0, 1),
                     end: Offset.zero,
                   ).animate(
-                    CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn, reverseCurve: Curves.fastOutSlowIn),
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.fastOutSlowIn,
+                      reverseCurve: Curves.fastOutSlowIn,
+                    ),
                   ),
                   child: child),
         );
@@ -98,11 +102,47 @@ class SlideRightRoute extends PageRouteBuilder {
                   position: Tween<Offset>(
                     begin: const Offset(1, 0),
                     end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.fastOutSlowIn,
-                    reverseCurve: Curves.fastOutSlowIn,
-                  )),
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.fastOutSlowIn,
+                      reverseCurve: Curves.fastOutSlowIn,
+                    ),
+                  ),
+                  child: child),
+        );
+}
+
+class SlideRightSmoothRoute extends PageRouteBuilder {
+  final Widget page;
+
+  SlideRightSmoothRoute(this.page)
+      : super(
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionDuration: const Duration(milliseconds: 800),
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(1, 0),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.fastOutSlowIn,
+                      reverseCurve: Curves.fastOutSlowIn,
+                    ),
+                  ),
                   child: child),
         );
 }

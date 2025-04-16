@@ -155,6 +155,8 @@ class _AppState extends State<App> {
     return ThemeData(
       navigationBarTheme: NavigationBarThemeData(indicatorColor: blueScheme.primary),
       appBarTheme: AppBarTheme(backgroundColor: blueScheme.surface),
+      sliderTheme: const SliderThemeData(year2023: false),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(year2023: false),
       inputDecorationTheme: InputDecorationTheme(
         focusedBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(50)),
