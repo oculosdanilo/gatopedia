@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
-import 'package:gatopedia/telas/home/gatos/gatos.dart';
+import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 
 class EditPost extends StatefulWidget {
   final String post;
@@ -25,7 +25,7 @@ class _EditPostState extends State<EditPost> {
   @override
   void initState() {
     super.initState();
-    txtEdit.text = Gatos.snapshotForum.value!.child("${widget.post}/content").value as String;
+    txtEdit.text = Forum.snapshotForum.value!.child("${widget.post}/content").value as String;
   }
 
   @override
@@ -35,7 +35,7 @@ class _EditPostState extends State<EditPost> {
         TextButton(onPressed: () => Navigator.pop(context, false), child: Text(AppLocalizations.of(context).cancel)),
         ElevatedButton(
           onPressed: () async {
-            if (Gatos.snapshotForum.value!.child("${widget.post}/content").value != txtEdit.text) {
+            if (Forum.snapshotForum.value!.child("${widget.post}/content").value != txtEdit.text) {
               _editar(widget.post);
               Navigator.pop(context, true);
             }

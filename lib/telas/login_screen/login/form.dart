@@ -88,8 +88,6 @@ class FormAppState extends State<FormApp> {
                     return AppLocalizations.of(context).login_err3;
                   } else if (value.contains(RegExp(r'^[0-9]+$'))) {
                     return AppLocalizations.of(context).login_err4;
-                  } else if (value.length > 25) {
-                    return AppLocalizations.of(context).login_err5;
                   }
                   return null;
                 },

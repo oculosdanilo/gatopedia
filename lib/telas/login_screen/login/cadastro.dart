@@ -85,7 +85,9 @@ class _NewCadastroState extends State<NewCadastro> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: botaoEnabled,
-      onPopInvokedWithResult: (poppou, result) => GoogleSignIn().signOut(),
+      onPopInvokedWithResult: (poppou, result) {
+        if (poppou) GoogleSignIn().signOut();
+      },
       child: GestureDetector(
         onTap: () => setState(() => FocusManager.instance.primaryFocus?.unfocus()),
         child: Scaffold(
@@ -124,7 +126,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                       Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
                                       const SizedBox(width: 10),
                                       Text(
-                                        "Usuário com esse nome já existe :/",
+                                        AppLocalizations.of(context).cadastro_errUsername,
                                         style: TextStyle(color: blueScheme.onErrorContainer),
                                       ),
                                     ],
@@ -162,7 +164,7 @@ class _NewCadastroState extends State<NewCadastro> {
                             }
                           }
                         : null,
-                    child: const Text("Cadastrar"),
+                    child: Text(AppLocalizations.of(context).signup),
                   ),
                   const SizedBox(width: 20),
                 ],
@@ -175,12 +177,17 @@ class _NewCadastroState extends State<NewCadastro> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Quase lá!", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+                  Text(
+                    AppLocalizations.of(context).cadastro_title,
+                    style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(
                     width: scW * 0.8,
-                    child: const Text(
-                      "Agora você só precisa escolher uma foto de perfil e um nome de usuário:",
-                      style: TextStyle(fontSize: 16),
+                    child: Text(
+                      widget.conta == null
+                          ? AppLocalizations.of(context).cadastro_subtitle1
+                          : AppLocalizations.of(context).cadastro_subtitle2,
+                      style: const TextStyle(fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -234,6 +241,8 @@ class _NewCadastroState extends State<NewCadastro> {
                       ),
                       novaImagem != null
                           ? Positioned(
+                              top: 5,
+                              left: 5,
                               child: IconButton.filledTonal(
                                 onPressed: () => setState(() => novaImagem = null),
                                 icon: const Icon(Symbols.delete_rounded, fill: 1),
@@ -309,7 +318,6 @@ class _NewCadastroState extends State<NewCadastro> {
                               controller: _txtControllerLogin,
                               onChanged: (value) {
                                 setState(() {
-                                  txtFieldLenght = value.length;
                                   if (value.length <= 3 || value.length > 25) {
                                     _mudarCor(Theme.of(context).colorScheme.error);
                                   } else {
@@ -320,15 +328,13 @@ class _NewCadastroState extends State<NewCadastro> {
                               },
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Obrigatório';
+                                  return AppLocalizations.of(context).login_err1;
                                 } else if (!value.contains(RegExp(r'^[a-zA-Z0-9._]+$'))) {
-                                  return 'Caractere(s) inválido(s)! (espaços ou símbolos)';
+                                  return AppLocalizations.of(context).login_err2;
                                 } else if (value.length <= 3) {
-                                  return "Nome muito pequeno!";
+                                  return AppLocalizations.of(context).login_err3;
                                 } else if (value.contains(RegExp(r'^[0-9]+$'))) {
-                                  return "só números? sério?";
-                                } else if (value.length > 25) {
-                                  return "Nome de usuário muito grande!";
+                                  return AppLocalizations.of(context).login_err4;
                                 }
                                 return null;
                               },
@@ -345,13 +351,13 @@ class _NewCadastroState extends State<NewCadastro> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      Text("$txtFieldLenght", style: TextStyle(color: counterColor)),
+                                      Text("${_txtControllerLogin.text.length}", style: TextStyle(color: counterColor)),
                                       Text("/25", style: TextStyle(color: blueScheme.outline)),
                                     ],
                                   ),
                                 ),
                                 prefixIcon: const Icon(Icons.alternate_email_rounded),
-                                label: const Text("Nome de usuário"),
+                                label: Text(AppLocalizations.of(context).login_username),
                               ),
                             ),
                             const SizedBox(height: 10),
@@ -370,9 +376,9 @@ class _NewCadastroState extends State<NewCadastro> {
                                       },
                                       validator: (valor) {
                                         if (valor == null || valor.isEmpty) {
-                                          return "Obrigatório";
+                                          return AppLocalizations.of(context).login_err1;
                                         } else if (valor.length < 8) {
-                                          return "Senha muito pequena!";
+                                          return AppLocalizations.of(context).cadastro_errPassword;
                                         } else {
                                           return null;
                                         }
@@ -383,7 +389,7 @@ class _NewCadastroState extends State<NewCadastro> {
                                           padding: const EdgeInsets.only(right: 5),
                                           child: IconButton(onPressed: () => _mostrarSenha(), icon: iconeOlho),
                                         ),
-                                        label: const Text("Senha"),
+                                        label: Text(AppLocalizations.of(context).login_password),
                                       ),
                                     ),
                                   )
@@ -393,17 +399,6 @@ class _NewCadastroState extends State<NewCadastro> {
                               maxLength: 255,
                               textInputAction: TextInputAction.next,
                               controller: _txtControllerBio,
-                              onChanged: (value) {
-                                setState(() {
-                                  txtFieldLenght = value.length;
-                                  if (value.length <= 3 || value.length > 25) {
-                                    _mudarCor(Theme.of(context).colorScheme.error);
-                                  } else {
-                                    _mudarCor(Theme.of(context).colorScheme.onSurface);
-                                  }
-                                });
-                                _formKey.currentState!.validate();
-                              },
                               maxLines: 2,
                               decoration: InputDecoration(
                                 hintText: AppLocalizations.of(context).profile_bio_empty,
@@ -420,12 +415,12 @@ class _NewCadastroState extends State<NewCadastro> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      Text("${_txtControllerBio.text.length}", style: TextStyle(color: counterColor)),
+                                      Text("${_txtControllerBio.text.length}"),
                                       Text("/255", style: TextStyle(color: blueScheme.outline)),
                                     ],
                                   ),
                                 ),
-                                label: const Text("Bio (opcional)"),
+                                label: Text(AppLocalizations.of(context).cadastro_bio),
                               ),
                             ),
                           ],
@@ -505,7 +500,7 @@ class _NewCadastroState extends State<NewCadastro> {
                         color: Theme.of(context).colorScheme.onSecondaryContainer,
                       ),
                       Text(
-                        "Câmera",
+                        AppLocalizations.of(context).camera,
                         style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSecondaryContainer),
                       ),
                     ],
@@ -536,7 +531,7 @@ class _NewCadastroState extends State<NewCadastro> {
                         color: Theme.of(context).colorScheme.onSecondaryContainer,
                       ),
                       Text(
-                        "Galeria",
+                        AppLocalizations.of(context).gallery,
                         style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSecondaryContainer),
                       ),
                     ],

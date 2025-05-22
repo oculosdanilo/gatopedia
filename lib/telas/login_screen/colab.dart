@@ -75,7 +75,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                             const SizedBox(height: 10),
                             Text("\u2022 ${AppLocalizations.of(context).colab_desc_danilo}"),
                             const SizedBox(height: 10),
-                            ElevatedButton.icon(
+                            OutlinedButton.icon(
                               onPressed: () => abrirEmail(_urlEmailDanilo),
                               icon: const Icon(Icons.mail_rounded),
                               label: const Text("Email"),
@@ -104,7 +104,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                           const SizedBox(height: 10),
                           Text("\u2022 ${AppLocalizations.of(context).colab_desc_lucca}"),
                           const SizedBox(height: 10),
-                          ElevatedButton.icon(
+                          OutlinedButton.icon(
                             onPressed: () => abrirEmail(_urlEmailLucca),
                             icon: const Icon(Icons.mail_rounded),
                             label: const Text("Email"),

@@ -13,7 +13,6 @@ import 'package:gatopedia/telas/home/gatos/forum/edit/edit_post.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/forum/view/comentarios.dart';
 import 'package:gatopedia/telas/home/gatos/forum/view/imagem_view.dart';
-import 'package:gatopedia/telas/home/gatos/gatos.dart';
 import 'package:gatopedia/telas/home/public_profile.dart';
 import 'package:gatopedia/telas/index.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -37,7 +36,7 @@ class _PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
-    DataSnapshot postSS = Gatos.snapshotForum.value!.child("${widget.index}");
+    DataSnapshot postSS = Forum.snapshotForum.value!.child("${widget.index}");
     return Padding(
       padding: EdgeInsets.only(top: widget.last ? (kToolbarHeight * 2.86) + 5 : 5),
       child: Stack(
@@ -406,8 +405,8 @@ class _FooterPostState extends State<FooterPost> {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$post/likes");
     await ref.update({
-      "lenght": int.parse(Gatos.snapshotForum.value!.child("$post/likes/lenght").value.toString()) + 1,
-      "users": "${Gatos.snapshotForum.value!.child("$post/likes/users").value},$username,"
+      "lenght": int.parse(Forum.snapshotForum.value!.child("$post/likes/lenght").value.toString()) + 1,
+      "users": "${Forum.snapshotForum.value!.child("$post/likes/users").value},$username,"
     });
     widget.notificarPost();
     setState(() {});
@@ -418,9 +417,9 @@ class _FooterPostState extends State<FooterPost> {
     DatabaseReference ref = database.ref("posts/$post/likes");
     await ref.update(
       {
-        "lenght": (Gatos.snapshotForum.value!.value as List)[post]["likes"]["lenght"] - 1,
+        "lenght": (Forum.snapshotForum.value!.value as List)[post]["likes"]["lenght"] - 1,
         "users":
-            (Gatos.snapshotForum.value!.value as List)[post]["likes"]["users"].toString().replaceAll(",$username,", ""),
+            (Forum.snapshotForum.value!.value as List)[post]["likes"]["users"].toString().replaceAll(",$username,", ""),
       },
     );
     widget.notificarPost();

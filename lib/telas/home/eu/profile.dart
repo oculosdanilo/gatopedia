@@ -18,7 +18,6 @@ enum MenuItensImg { editar, remover }
 enum MenuItensSemImg { adicionar }
 
 bool? temImagem;
-
 String? imagemGoogle;
 
 class Profile extends StatefulWidget {
@@ -214,15 +213,16 @@ class ProfileState extends State<Profile> {
                       context: context,
                       builder: (context) => AlertDialog(
                         icon: Icon(Icons.delete_rounded, color: Theme.of(context).colorScheme.error),
-                        title: const Text(
-                          "Tem certeza que deseja remover sua foto de perfil?",
+                        title: Text(
+                          AppLocalizations.of(context).profile_pfp_removeAlert_title,
                           textAlign: TextAlign.center,
                         ),
-                        content: const Text("Essa ação é irreversível", textAlign: TextAlign.center),
+                        content: Text(AppLocalizations.of(context).profile_pfp_removeAlert_title,
+                            textAlign: TextAlign.center),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),
-                            child: const Text("CANCELAR"),
+                            child: Text(AppLocalizations.of(context).cancel),
                           ),
                           ElevatedButton(
                             onPressed: () => Navigator.pop(context, true),
@@ -238,7 +238,7 @@ class ProfileState extends State<Profile> {
                               "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media"));
                           if (!context.mounted) return;
                           Flushbar(
-                            message: "Removida com sucesso!",
+                            message: AppLocalizations.of(context).forum_delete_flush,
                             duration: const Duration(seconds: 2),
                             margin: const EdgeInsets.all(20),
                             borderRadius: BorderRadius.circular(50),
@@ -489,11 +489,11 @@ class _EditandoState extends State<Editando> {
           children: [
             OutlinedButton(
               onPressed: widget.cancelClick,
-              child: const Text("CANCELAR"),
+              child: Text(AppLocalizations.of(context).cancel),
             ),
             FilledButton(
               onPressed: widget.saveClick,
-              child: const Text("SALVAR"),
+              child: Text(AppLocalizations.of(context).save),
             ),
           ],
         ),

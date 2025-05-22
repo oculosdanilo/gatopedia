@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/components/comentario.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/gatos/gatos.dart';
+import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/public_profile.dart';
 
 class ComentariosForum extends StatefulWidget {
@@ -33,7 +33,7 @@ class _ComentariosForumState extends State<ComentariosForum> {
     _sub = ref.onValue.listen((event) {
       if (mounted) {
         setState(() {
-          Gatos.snapshotForum.value = event.snapshot;
+          Forum.snapshotForum.value = event.snapshot;
           postAtual = event.snapshot.child("${postAtual.key}");
         });
       }

@@ -29,4 +29,5 @@ software que sejam capazes de causar danos anteriormente mencionados.</span></li
 Mais informações</span></h3><p><span >Esperemos que esteja esclarecido e, como mencionado
 anteriormente, se houver algo que você não tem certeza se precisa ou não, geralmente é mais seguro
 deixar os cookies ativados, caso interaja com um dos recursos que você usa em nosso
-site.</span></p><p><span >Esta política é efetiva a partir de&nbsp;26 December 2024 18:55</span></p>
+site.</span></p><p><span >Esta política é efetiva a partir de&nbsp;26 de dezembro de 2024 18:
+55</span></p>
