@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
@@ -186,33 +187,28 @@ class _DeletarContaState extends State<DeletarConta> {
   _deletarConta(BuildContext context) async {
     final posts = await FirebaseDatabase.instance.ref("posts").get();
     for (final post in posts.children) {
-      final comentarios = post.child("comentarios").value as List;
+      final comentarios = post.child("comentarios").children;
       if (comentarios.length > 2) {
         for (final comentario in comentarios) {
-          if ((comentario ?? {"username": ""})["username"] == username) {
-            final refRemoveComm =
-                FirebaseDatabase.instance.ref("posts/${post.key}/comentarios/${comentarios.indexOf(comentario)}");
-            await refRemoveComm.remove();
+          if (comentario.child("username").value == username) {
+            await comentario.ref.remove();
           }
         }
       }
 
       if (post.child("username").value == username) {
-        final refRemove = FirebaseDatabase.instance.ref("posts/${post.key}");
-        await refRemove.remove();
+        await post.ref.remove();
       }
     }
 
     final wiki = await FirebaseDatabase.instance.ref("gatos").get();
     for (final gato in wiki.children) {
-      final comentarios = gato.child("comentarios").value as List;
+      final comentarios = gato.child("comentarios").children;
       if (comentarios.length > 2) {
         for (final comentario in comentarios) {
-          if (comentario != "null" && comentario != null) {
-            if (comentario["user"] == username) {
-              final refRemove =
-                  FirebaseDatabase.instance.ref("gatos/${gato.key}/comentarios/${comentarios.indexOf(comentario)}");
-              await refRemove.remove();
+          if (comentario.value != "null" && comentario.value != null) {
+            if (comentario.child("user").value == username) {
+              await comentario.ref.remove();
             }
           }
         }
@@ -220,6 +216,7 @@ class _DeletarContaState extends State<DeletarConta> {
     }
 
     Future.delayed(Duration.zero, () async {
+      await FirebaseStorage.instance.ref("users/$username").delete();
       await FirebaseDatabase.instance.ref("users/$username").remove();
       username = null;
       final pref = await SharedPreferences.getInstance();
