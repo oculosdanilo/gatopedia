@@ -38,7 +38,7 @@ class ProfileState extends State<Profile> {
 
   late Future<String?> _pegarImgGoogleVar;
 
-  _apagarImagem(String username) async {
+  Future<void> _apagarImagem(String username) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     final ref = database.ref("users/$username/img");
     FirebaseStorage storage = FirebaseStorage.instance;
@@ -47,7 +47,7 @@ class ProfileState extends State<Profile> {
     await refS.delete();
   }
 
-  _atualizar() async {
+  Future<void> _atualizar() async {
     final sp = await SharedPreferences.getInstance();
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users/$username");
@@ -70,12 +70,12 @@ class ProfileState extends State<Profile> {
     });
   }
 
-  _salvarBio(String bio) async {
+  Future<void> _salvarBio(String bio) async {
     final ref = FirebaseDatabase.instance.ref("users/$username");
     await ref.update({"bio": bio});
   }
 
-  _init() async {
+  Future<void> _init() async {
     final sp = await SharedPreferences.getInstance();
     if (sp.containsKey("bio") && sp.containsKey("img")) {
       setState(() {

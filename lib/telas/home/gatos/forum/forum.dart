@@ -30,7 +30,7 @@ double scrollSalvo = 0;
 double scrollAcumulado = 0;
 
 class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
-  _atualizar() {
+  void _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
     ref.onValue.listen((event) {

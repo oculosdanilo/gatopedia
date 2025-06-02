@@ -26,7 +26,7 @@ class _ImagePostState extends State<ImagePost> {
   final txtLegenda = TextEditingController();
   final ImagePicker picker = ImagePicker();
 
-  _pegaImagem() async {
+  Future<void> _pegaImagem() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowedExtensions: widget.imageType == "image" ? ['jpeg', 'jpg', 'png', 'webp'] : ['gif'],
       type: FileType.custom,

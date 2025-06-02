@@ -21,7 +21,7 @@ class _PublicProfileState extends State<PublicProfile> {
 
   String bioText = "carregando...";
 
-  _pegarUserinfo(String username, BuildContext c) async {
+  Future<void> _pegarUserinfo(String username, BuildContext c) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users/$username");
     ref.get().then(
@@ -38,7 +38,7 @@ class _PublicProfileState extends State<PublicProfile> {
     );
   }
 
-  _atualizar(BuildContext c) {
+  void _atualizar(BuildContext c) {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("users");
     _atualizarListenPublicProfile = ref.onValue.listen((event) {

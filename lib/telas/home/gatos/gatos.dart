@@ -48,7 +48,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
   final miau = AudioPlayer();
   late final TabController _tabController;
 
-  _play() async {
+  Future<void> _play() async {
     await miau.setAsset("assets/meow.mp3");
     await miau.play();
   }
@@ -59,7 +59,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
 
   late AnimationController _animFAB;
 
-  _postarImagem(int post, String filetype) async {
+  Future<void> _postarImagem(int post, String filetype) async {
     if (filetype == "img") {
       XFile? result = await FlutterImageCompress.compressAndGetFile(
         imagemCortada?.absolute.path ?? file!.absolute.path,

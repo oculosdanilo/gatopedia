@@ -234,7 +234,7 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
     );
   }
 
-  _deletarC(int index) {
+  void _deletarC(int index) {
     FirebaseDatabase.instance.ref("gatos/${widget.gatoInfo.key}/comentarios/$index").remove();
     setState(() {
       _getData = FirebaseDatabase.instance.ref("gatos/${widget.gatoInfo.key}/comentarios").get();

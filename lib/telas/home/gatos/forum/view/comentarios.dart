@@ -27,7 +27,7 @@ class _ComentariosForumState extends State<ComentariosForum> {
 
   late DataSnapshot postAtual = widget.post;
 
-  _atualizar() {
+  void _atualizar() {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
     _sub = ref.onValue.listen((event) {
@@ -40,7 +40,7 @@ class _ComentariosForumState extends State<ComentariosForum> {
     });
   }
 
-  _postarC() async {
+  Future<void> _postarC() async {
     DatabaseReference ref = postAtual.child("comentarios").ref;
     await ref.update({
       "${int.parse(postAtual.child("comentarios").children.last.key!) + 2}": {
@@ -50,12 +50,12 @@ class _ComentariosForumState extends State<ComentariosForum> {
     });
   }
 
-  _deletarC(int comment) {
+  Future<void> _deletarC(int comment) async {
     DatabaseReference ref = postAtual.child("comentarios/$comment").ref;
-    ref.remove();
+    await ref.remove();
   }
 
-  _maisDe2Linhas(String text) {
+  bool _maisDe2Linhas(String text) {
     if (text.length > 65) {
       pedaco1 = text.substring(0, 65);
       pedaco2 = text.substring(65, text.length);

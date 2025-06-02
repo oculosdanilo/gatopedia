@@ -17,7 +17,7 @@ class DeletePost extends StatefulWidget {
 }
 
 class _DeletePostState extends State<DeletePost> {
-  _deletar(int postN) async {
+  Future<void> _deletar(int postN) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$postN");
     await ref.remove();

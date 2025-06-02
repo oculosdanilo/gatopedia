@@ -92,7 +92,7 @@ class _IndexState extends State<Index> {
     return false;
   }
 
-  _entrarGoogle(BuildContext context) async {
+  Future<void> _entrarGoogle(BuildContext context) async {
     setState(() => _googleConectando = true);
     final conta = await loginGoogle();
     if (conta != null) {

@@ -33,13 +33,13 @@ class FormAppState extends State<FormApp> {
   late final scW = MediaQuery.sizeOf(context).width;
   late final scH = MediaQuery.sizeOf(context).height;
 
-  mudarCor(cor) {
+  void mudarCor(Color cor) {
     setState(() {
       counterColor = cor;
     });
   }
 
-  mostrarSenha() {
+  void mostrarSenha() {
     if (esconderSenha) {
       setState(() {
         esconderSenha = false;

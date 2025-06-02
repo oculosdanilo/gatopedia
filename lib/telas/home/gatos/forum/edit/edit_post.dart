@@ -15,7 +15,7 @@ class EditPost extends StatefulWidget {
 class _EditPostState extends State<EditPost> {
   final txtEdit = TextEditingController();
 
-  _editar(String post) async {
+  Future<void> _editar(String post) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref("posts/$post");
     ref.update(
       {"content": txtEdit.text},

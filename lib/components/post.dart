@@ -159,7 +159,7 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
   String pedaco1 = "";
   String pedaco2 = "";
 
-  maisDe2Linhas(String text) {
+  bool maisDe2Linhas(String text) {
     if (text.length > 65) {
       pedaco1 = text.substring(0, 65);
       pedaco2 = text.substring(65, text.length);
@@ -401,7 +401,7 @@ class FooterPost extends StatefulWidget {
 class _FooterPostState extends State<FooterPost> {
   late DataSnapshot postSS = widget.postSS;
 
-  _like(int post) async {
+  Future<void> _like(int post) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$post/likes");
     await ref.update({
@@ -412,7 +412,7 @@ class _FooterPostState extends State<FooterPost> {
     setState(() {});
   }
 
-  _unlike(int post) async {
+  Future<void> _unlike(int post) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts/$post/likes");
     await ref.update(

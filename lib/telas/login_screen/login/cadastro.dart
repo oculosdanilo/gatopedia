@@ -61,13 +61,13 @@ class _NewCadastroState extends State<NewCadastro> {
     });
   }
 
-  _mudarCor(cor) {
+  void _mudarCor(Color cor) {
     setState(() {
       counterColor = cor;
     });
   }
 
-  _mostrarSenha() {
+  void _mostrarSenha() {
     if (esconderSenha) {
       setState(() {
         esconderSenha = false;
@@ -437,11 +437,11 @@ class _NewCadastroState extends State<NewCadastro> {
     );
   }
 
-  _pegarImagem(ImageSource modo) async {
+  Future<bool?> _pegarImagem(ImageSource modo) async {
     final ImagePicker picker = ImagePicker();
 
     final imagem = await picker.pickImage(source: modo);
-    if (!mounted) return;
+    if (!mounted) return null;
     if (imagem != null) {
       CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: imagem.path,
@@ -481,7 +481,7 @@ class _NewCadastroState extends State<NewCadastro> {
             ? Flexible(
                 child: OutlinedButton(
                   onPressed: () async {
-                    if (await _pegarImagem(ImageSource.camera)) {
+                    if (await _pegarImagem(ImageSource.camera) ?? false) {
                       if (!context.mounted) return;
                       Navigator.pop(context);
                     }
@@ -512,7 +512,7 @@ class _NewCadastroState extends State<NewCadastro> {
             ? Flexible(
                 child: OutlinedButton(
                   onPressed: () async {
-                    if (await _pegarImagem(ImageSource.gallery)) {
+                    if (await _pegarImagem(ImageSource.gallery) ?? false) {
                       if (!context.mounted) return;
                       Navigator.pop(context);
                     }

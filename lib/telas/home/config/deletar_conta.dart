@@ -47,18 +47,17 @@ class _DeletarContaState extends State<DeletarConta> {
 
   AlertDialog alertaDeletar(StateSetter setStateB) {
     return AlertDialog(
-      title: const Text("Sentirei saudades :,("),
+      title: Text(AppLocalizations.of(context).delete_title),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-              "Quando sua conta for deletada, suas postagens e comentários também serão removidos da plataforma.\n"),
+          Text("${AppLocalizations.of(context).delete_subtitle1}\n"),
           userGoogle != null
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Para continuar, confirme sua conta do Google abaixo:", textAlign: TextAlign.start),
+                    Text(AppLocalizations.of(context).delete_subtitle2_google, textAlign: TextAlign.start),
                     const SizedBox(height: 15),
                     SizedBox(
                       width: scW * 0.8,
@@ -74,7 +73,12 @@ class _DeletarContaState extends State<DeletarConta> {
                               }
                             : () {},
                         icon: Icon(!confirmado ? AntDesign.google_outline : Symbols.done_rounded),
-                        label: Text(!confirmado ? "Confirmar" : "Confirmado!", style: const TextStyle(fontSize: 18)),
+                        label: Text(
+                          !confirmado
+                              ? AppLocalizations.of(context).delete_googleConfirm
+                              : AppLocalizations.of(context).delete_googleConfirmed,
+                          style: const TextStyle(fontSize: 18),
+                        ),
                       ),
                     ),
                   ],
@@ -82,7 +86,7 @@ class _DeletarContaState extends State<DeletarConta> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Para continuar, insira abaixo sua senha:", textAlign: TextAlign.start),
+                    Text(AppLocalizations.of(context).delete_subtitle2_password, textAlign: TextAlign.start),
                     SizedBox(
                       width: scW * 0.8,
                       height: 65,
@@ -98,7 +102,7 @@ class _DeletarContaState extends State<DeletarConta> {
                             padding: const EdgeInsets.only(right: 10),
                             child: IconButton(onPressed: () => _mostrarSenha(setStateB), icon: iconeOlho),
                           ),
-                          label: const Text("Senha"),
+                          label: Text(AppLocalizations.of(context).login_password),
                         ),
                       ),
                     ),
@@ -108,11 +112,13 @@ class _DeletarContaState extends State<DeletarConta> {
       ),
       actions: [
         OutlinedButton(
-          onPressed: () {
-            Navigator.pop(context);
-            confirmado = false;
-          },
-          child: const Text("CANCELAR"),
+          onPressed: !conectando
+              ? () {
+                  Navigator.pop(context);
+                  confirmado = false;
+                }
+              : null,
+          child: Text(AppLocalizations.of(context).cancel),
         ),
         FilledButton(
           onPressed: (userGoogle == null && !conectando) || (userGoogle != null && confirmado && !conectando)
@@ -134,7 +140,10 @@ class _DeletarContaState extends State<DeletarConta> {
                           children: [
                             Icon(Icons.error_rounded, color: blueScheme.onErrorContainer),
                             const SizedBox(width: 10),
-                            Text("Senha incorreta :/", style: TextStyle(color: blueScheme.onErrorContainer)),
+                            Text(
+                              AppLocalizations.of(context).login_errPassword,
+                              style: TextStyle(color: blueScheme.onErrorContainer),
+                            ),
                           ],
                         ),
                         backgroundColor: blueScheme.errorContainer,
@@ -148,13 +157,13 @@ class _DeletarContaState extends State<DeletarConta> {
                   }
                 }
               : null,
-          child: const Text("APAGAR MINHA CONTA"),
+          child: Text(AppLocalizations.of(context).delete_erase),
         ),
       ],
     );
   }
 
-  _mostrarSenha(setState) {
+  void _mostrarSenha(void Function(void Function()) setState) {
     if (esconderSenha) {
       setState(() {
         esconderSenha = false;
@@ -168,7 +177,7 @@ class _DeletarContaState extends State<DeletarConta> {
     }
   }
 
-  _pegarUserGoogle() async {
+  Future<void> _pegarUserGoogle() async {
     final ref = FirebaseDatabase.instance.ref("users/$username/google");
     final googleID = await ref.get();
     if (googleID.exists) {
@@ -178,13 +187,13 @@ class _DeletarContaState extends State<DeletarConta> {
     }
   }
 
-  Future<bool> _autenticarSenha(senhaDigitada) async {
+  Future<bool> _autenticarSenha(String senhaDigitada) async {
     final ref = FirebaseDatabase.instance.ref("users/$username/senha");
     final userSenha = utf8.decode(base64Decode((await ref.get()).value as String));
     return senhaDigitada == userSenha;
   }
 
-  _deletarConta(BuildContext context) async {
+  Future<void> _deletarConta(BuildContext context) async {
     final posts = await FirebaseDatabase.instance.ref("posts").get();
     for (final post in posts.children) {
       final comentarios = post.child("comentarios").children;

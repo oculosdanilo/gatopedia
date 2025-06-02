@@ -13,7 +13,7 @@ class TextPost extends StatefulWidget {
 }
 
 class _TextPostState extends State<TextPost> {
-  _postar(int postN) async {
+  Future<void> _postar(int postN) async {
     Navigator.pop(context);
     FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference ref = database.ref("posts");
