@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
@@ -291,26 +293,30 @@ class _ConfigState extends State<Config> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        OutlinedButton(
-          onPressed: () => abrirUrl(_urlGatopediaPlayStore),
-          style: ButtonStyle(
-            fixedSize: WidgetStatePropertyAll(Size(scW - 40, 50)),
-          ),
-          child: Row(
-            children: [
-              Transform.scale(
-                scale: 0.9,
-                child: const Icon(Bootstrap.google_play),
+        Platform.isAndroid ? Column(
+          children: [
+            OutlinedButton(
+              onPressed: () => abrirUrl(_urlGatopediaPlayStore),
+              style: ButtonStyle(
+                fixedSize: WidgetStatePropertyAll(Size(scW - 40, 50)),
               ),
-              const Expanded(
-                child: Center(
-                  child: Text("Play Store", style: TextStyle(fontSize: 18)),
-                ),
+              child: Row(
+                children: [
+                  Transform.scale(
+                    scale: 0.9,
+                    child: const Icon(Bootstrap.google_play),
+                  ),
+                  const Expanded(
+                    child: Center(
+                      child: Text("Play Store", style: TextStyle(fontSize: 18)),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
+            ),
+            const SizedBox(height: 10),
+          ],
+        ) : const SizedBox(),
         OutlinedButton(
           onPressed: () => abrirUrl(_urlGatopediaGit),
           style: ButtonStyle(

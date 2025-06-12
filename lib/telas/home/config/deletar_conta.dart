@@ -194,30 +194,30 @@ class _DeletarContaState extends State<DeletarConta> {
   }
 
   Future<void> _deletarConta(BuildContext context) async {
-    final posts = await FirebaseDatabase.instance.ref("posts").get();
-    for (final post in posts.children) {
-      final comentarios = post.child("comentarios").children;
+    final posts = (await FirebaseDatabase.instance.ref("posts").get()).children.toList();
+    for (int j = 0; j < posts.length; j++) {
+      final comentarios = posts[j].child("comentarios").children.toList();
       if (comentarios.length > 2) {
-        for (final comentario in comentarios) {
-          if (comentario.child("username").value == username) {
-            await comentario.ref.remove();
+        for (int i = 0; i < comentarios.length; i++) {
+          if (comentarios[i].child("username").value == username) {
+            await comentarios[i].ref.remove();
           }
         }
       }
 
-      if (post.child("username").value == username) {
-        await post.ref.remove();
+      if (posts[j].child("username").value == username) {
+        await posts[j].ref.remove();
       }
     }
 
     final wiki = await FirebaseDatabase.instance.ref("gatos").get();
     for (final gato in wiki.children) {
-      final comentarios = gato.child("comentarios").children;
+      final comentarios = gato.child("comentarios").children.toList();
       if (comentarios.length > 2) {
-        for (final comentario in comentarios) {
-          if (comentario.value != "null" && comentario.value != null) {
-            if (comentario.child("user").value == username) {
-              await comentario.ref.remove();
+        for (int i = 0; i < comentarios.length; i++) {
+          if (comentarios[i].value != "null" && comentarios[i].value != null) {
+            if (comentarios[i].child("user").value == username) {
+              await comentarios[i].ref.remove();
             }
           }
         }

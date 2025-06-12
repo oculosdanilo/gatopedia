@@ -9,6 +9,7 @@
   "post": "POST",
   "login": "LOGIN",
   "signup": "SIGN UP",
+  "crop": "CROP",
   "noComment": "No comments (yet...)",
   "gallery": "Gallery",
   "camera": "Camera",
