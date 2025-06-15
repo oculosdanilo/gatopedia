@@ -28,7 +28,7 @@
             },
             {
               "appearance": "tinted",
-              "value": true
+              "value": false
             }
           ],
           "image-name": "Frame 19.png",
