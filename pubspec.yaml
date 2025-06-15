@@ -65,17 +65,6 @@ flutter:
       fonts:
         - asset: assets/fonts/DanIcons.ttf
 
-icons_launcher:
-  image_path: "assets/icon.png"
-  platforms:
-    android:
-      enable: false
-    ios:
-      enable: true
-    web:
-      enable: true
-      favicon_path: "assets/favicon.ico"
-
 flutter_native_splash:
   image: assets/splash/icon.png
   color: "#fbf8ff"
