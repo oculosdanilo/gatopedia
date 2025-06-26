@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -186,9 +187,9 @@ class ProfileState extends State<Profile> {
       actions: temImagem ?? false
           ? [
               PopupMenuButton<MenuItensImg>(
-                icon: const Icon(
-                  Icons.more_vert_rounded,
-                  shadows: [Shadow(blurRadius: 10)],
+                icon: Icon(
+                  Platform.isIOS ? Icons.more_horiz_rounded : Icons.more_vert_rounded,
+                  shadows: const [Shadow(blurRadius: 10)],
                   color: Colors.white,
                 ),
                 onSelected: (value) async {
