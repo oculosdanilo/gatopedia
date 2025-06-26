@@ -34,7 +34,7 @@ class ProfileState extends State<Profile> {
 
   bool _editMode = false;
   final _txtBio = TextEditingController();
-  String _bioText = "carregando...";
+  late String _bioText = AppLocalizations.of(context).profile_bio_loading;
 
   late Future<String?> _pegarImgGoogleVar;
 
@@ -152,7 +152,7 @@ class ProfileState extends State<Profile> {
                                 });
                               }
                               Flushbar(
-                                message: "Atualizado com sucesso!",
+                                message: AppLocalizations.of(context).profile_pfp_changeSuccess,
                                 duration: const Duration(seconds: 2),
                                 margin: const EdgeInsets.all(20),
                                 borderRadius: BorderRadius.circular(50),
@@ -217,7 +217,7 @@ class ProfileState extends State<Profile> {
                           AppLocalizations.of(context).profile_pfp_removeAlert_title,
                           textAlign: TextAlign.center,
                         ),
-                        content: Text(AppLocalizations.of(context).profile_pfp_removeAlert_title,
+                        content: Text(AppLocalizations.of(context).profile_pfp_removeAlert_subtitle,
                             textAlign: TextAlign.center),
                         actions: [
                           TextButton(

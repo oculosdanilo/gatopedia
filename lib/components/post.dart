@@ -47,7 +47,7 @@ class _PostState extends State<Post> {
                   width: MediaQuery.sizeOf(context).width - 20,
                   child: Center(
                     child: Text(
-                      "E acabou ;)",
+                      AppLocalizations.of(context).end,
                       style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                     ),
                   ),
@@ -337,7 +337,7 @@ Widget _opcoes(int index, DataSnapshot postSS) {
                     if (value) {
                       if (!context.mounted) return;
                       Flushbar(
-                        message: "Editado com sucesso!",
+                        message: AppLocalizations.of(context).forum_editPost_success,
                         duration: const Duration(seconds: 3),
                         margin: const EdgeInsets.all(20),
                         borderRadius: BorderRadius.circular(50),
@@ -371,12 +371,14 @@ Widget _opcoes(int index, DataSnapshot postSS) {
         : (context) => [
               PopupMenuItem(
                 onTap: () {},
-                // showCupertinoDialog(context: context, builder: (context) => DeletePost(int.parse(postSS.key!)))
                 child: Row(
                   children: [
                     Icon(Symbols.block, color: Theme.of(context).colorScheme.error),
                     const SizedBox(width: 10),
-                    Text("Bloquear", style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 15)),
+                    Text(
+                      AppLocalizations.of(context).forum_block,
+                      style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 15),
+                    ),
                   ],
                 ),
               ),

@@ -91,7 +91,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
     });
     if (!mounted) return;
     Flushbar(
-      message: "Postado com sucesso!",
+      message: AppLocalizations.of(context).forum_new_flushText,
       duration: const Duration(seconds: 5),
       margin: const EdgeInsets.all(20),
       borderRadius: BorderRadius.circular(50),
