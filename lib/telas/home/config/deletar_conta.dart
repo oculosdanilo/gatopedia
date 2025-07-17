@@ -10,7 +10,6 @@ import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/telas/index.dart';
-import 'package:gatopedia/telas/login_screen/login/autenticar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -64,12 +63,12 @@ class _DeletarContaState extends State<DeletarConta> {
                       child: FilledButton.icon(
                         onPressed: !confirmado
                             ? () async {
-                                conta = await loginGoogle();
-                                if (conta != null && conta?.id == userGoogle) {
-                                  setStateB(() {
-                                    confirmado = true;
-                                  });
-                                }
+                                //conta = await loginGoogle();
+                                //if (conta != null && conta?.id == userGoogle) {
+                                setStateB(() {
+                                  confirmado = true;
+                                });
+                                //}
                               }
                             : () {},
                         icon: Icon(!confirmado ? AntDesign.google_outline : Symbols.done_rounded),
@@ -194,19 +193,20 @@ class _DeletarContaState extends State<DeletarConta> {
   }
 
   Future<void> _deletarConta(BuildContext context) async {
-    final posts = (await FirebaseDatabase.instance.ref("posts").get()).children.toList();
+    final posts = (await FirebaseDatabase.instance.ref("posts").get()).children;
     for (int j = 0; j < posts.length; j++) {
-      final comentarios = posts[j].child("comentarios").children.toList();
+      final comentarios = posts.elementAt(j).child("comentarios").children;
       if (comentarios.length > 2) {
         for (int i = 0; i < comentarios.length; i++) {
-          if (comentarios[i].child("username").value == username) {
-            await comentarios[i].ref.remove();
+          debugPrint("${comentarios.length}");
+          if (comentarios.elementAt(i).child("username").value == username) {
+            await comentarios.elementAt(i).ref.remove();
           }
         }
       }
 
-      if (posts[j].child("username").value == username) {
-        await posts[j].ref.remove();
+      if (posts.elementAt(j).child("username").value == username) {
+        await posts.elementAt(j).ref.remove();
       }
     }
 
@@ -214,7 +214,7 @@ class _DeletarContaState extends State<DeletarConta> {
     for (final gato in wiki.children) {
       final comentarios = gato.child("comentarios").children.toList();
       if (comentarios.length > 2) {
-        for (int i = 0; i < comentarios.length; i++) {
+        for (int i = 0; i < comentarios.length - 1; i++) {
           if (comentarios[i].value != "null" && comentarios[i].value != null) {
             if (comentarios[i].child("user").value == username) {
               await comentarios[i].ref.remove();
