@@ -617,7 +617,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
           }
           if (!context.mounted) return;
           iniciouUserGoogle = false;
-          GoogleSignIn().signOut();
+          GoogleSignIn.instance.signOut();
           username = null;
           scrollSalvo = 0;
           scrollSalvoWiki = 0;

@@ -52,7 +52,7 @@ Future<void> cadastrar(String username, String senha, String bio, {File? imagem}
 
 Future<GoogleSignInAccount?> loginGoogle() async {
   try {
-    final conta = await GoogleSignIn().signIn();
+    final conta = await GoogleSignIn.instance.authenticate();
 
     return conta;
   } catch (e) {

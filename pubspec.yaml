@@ -33,7 +33,7 @@ dependencies:
   grayscale: ^0.0.5+7
   http: ^1.2.1
   flutter_blurhash: ^0.9.1
-  google_sign_in: ^6.2.1
+  google_sign_in: ^7.1.1
   icons_plus: ^5.0.0
   file_picker: ^10.0.0
   image_picker: ^1.1.2

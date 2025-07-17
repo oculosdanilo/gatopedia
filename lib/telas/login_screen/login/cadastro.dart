@@ -86,7 +86,7 @@ class _NewCadastroState extends State<NewCadastro> {
     return PopScope(
       canPop: botaoEnabled,
       onPopInvokedWithResult: (poppou, result) {
-        if (poppou) GoogleSignIn().signOut();
+        if (poppou) GoogleSignIn.instance.signOut();
       },
       child: GestureDetector(
         onTap: () => setState(() => FocusManager.instance.primaryFocus?.unfocus()),

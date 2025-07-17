@@ -241,7 +241,7 @@ class _DeletarContaState extends State<DeletarConta> {
       scrollAcumuladoWiki = 0;
 
       iniciouUserGoogle = false;
-      GoogleSignIn().signOut();
+      GoogleSignIn.instance.signOut();
 
       if (!context.mounted) return;
       Navigator.pop(context, true);
