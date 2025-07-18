@@ -519,6 +519,7 @@ class _FooterPostState extends State<FooterPost> {
   }
 
   Align _comentariosBtn(VoidCallback action, BuildContext context) {
+    final comentarios = postSS.child("comentarios").value as List<Object?>;
     return Align(
       alignment: Alignment.centerLeft,
       child: TextButton.icon(
@@ -538,7 +539,7 @@ class _FooterPostState extends State<FooterPost> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Text(
-                "${postSS.child("comentarios").children.length - 2}",
+                "${comentarios.where((snap) => snap != null).length - 2}",
                 style: TextStyle(
                   fontSize: 15,
                   fontVariations: [const FontVariation("wght", 600)],
