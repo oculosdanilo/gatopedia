@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class PublicProfile extends StatefulWidget {
 class _PublicProfileState extends State<PublicProfile> {
   late StreamSubscription<DatabaseEvent> _atualizarListenPublicProfile;
 
-  String bioText = "carregando...";
+  late String bioText = AppLocalizations.of(context).profile_bio_loading;
 
   Future<void> _pegarUserinfo(String username, BuildContext c) async {
     FirebaseDatabase database = FirebaseDatabase.instance;
@@ -83,7 +84,9 @@ class _PublicProfileState extends State<PublicProfile> {
                     leading: IconButton(
                       onPressed: () => Navigator.pop(context),
                       color: Colors.white,
-                      icon: const Icon(Icons.arrow_back_rounded),
+                      icon: Platform.isAndroid
+                          ? const Icon(Icons.arrow_back_rounded)
+                          : const Icon(Icons.arrow_back_ios_new_rounded),
                     ),
                     expandedHeight: 400,
                     backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,

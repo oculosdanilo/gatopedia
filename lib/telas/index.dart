@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +77,7 @@ class _IndexState extends State<Index> {
     }
 
     // TODO: testar se funciona o update
-    checarUpdate(context);
+    if (Platform.isAndroid) checarUpdate(context);
   }
 
   Future<dynamic> _existeContaGoogle(GoogleSignInAccount contaG) async {
@@ -133,7 +135,7 @@ class _IndexState extends State<Index> {
                     full = false;
                   })
               : null,
-          icon: const Icon(Symbols.arrow_back),
+          icon: Platform.isAndroid ? const Icon(Symbols.arrow_back) : const Icon(Symbols.arrow_back_ios_new_rounded),
           color: Colors.white,
         ),
       ),
