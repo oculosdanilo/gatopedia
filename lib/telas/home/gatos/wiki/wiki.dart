@@ -22,14 +22,24 @@ double scrollAcumuladoWiki = 0;
 
 class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
   late Future<DataSnapshot> _getData;
+  late Future<DataSnapshot> _getComentarios;
   bool pegouInfo = false;
+
+  String _pegarIdioma() {
+    return App.localeNotifier.value.languageCode;
+  }
+
+  void _pegarInfo() {
+    _getData = FirebaseDatabase.instance.ref().child("gatos_${_pegarIdioma()}").get();
+    _getComentarios = FirebaseDatabase.instance.ref().child("gatos").get();
+  }
 
   @override
   void initState() {
     super.initState();
     tabIndex = 0;
     if (!pegouInfo) {
-      _getData = FirebaseDatabase.instance.ref().child("gatos").get();
+      _pegarInfo();
       pegouInfo = true;
     }
   }

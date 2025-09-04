@@ -25,7 +25,7 @@ class GatoInfoState extends State<GatoInfo> {
   bool mandando = false;
 
   late String img = widget.gatoInfo.child("img").value.toString();
-  late String titulo = widget.gatoInfo.key!;
+  late String titulo = widget.gatoInfo.child("nome").value as String;
 
   @override
   Widget build(BuildContext context) {
@@ -97,9 +97,9 @@ class GatoInfoState extends State<GatoInfo> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 30),
-                        const Text(
-                          "COMENTÁRIOS",
-                          style: TextStyle(fontVariations: [FontVariation("wght", 600)], fontSize: 25),
+                        Text(
+                          AppLocalizations.of(context).comments,
+                          style: const TextStyle(fontVariations: [FontVariation("wght", 600)], fontSize: 25),
                         ),
                       ],
                     ),

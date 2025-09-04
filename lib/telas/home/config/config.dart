@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
@@ -112,24 +111,24 @@ class _ConfigState extends State<Config> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      physics: const ClampingScrollPhysics(),
       slivers: [
         SliverAppBar.large(
           backgroundColor: Theme.of(context).colorScheme.surface,
           automaticallyImplyLeading: widget.voltar,
           titleTextStyle: const TextStyle(fontSize: 40),
+          centerTitle: true,
           flexibleSpace: LayoutBuilder(
             builder: (c, cons) {
               return FlexibleSpaceBar(
+                centerTitle: true,
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Transform.translate(
-                      offset: Offset(widget.voltar ? -24 : 0, 0),
-                      child: Text(
-                        AppLocalizations.of(context).config_title,
-                        style: const TextStyle(fontVariations: [FontVariation.weight(500)]),
-                      ),
+                    Text(
+                      AppLocalizations.of(context).config_title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontVariations: [FontVariation.weight(500)]),
                     ),
                   ],
                 ),
@@ -357,9 +356,7 @@ class _ConfigState extends State<Config> {
         const SizedBox(height: 10),
         OutlinedButton(
           onPressed: () {
-            final postseila = FirebaseDatabase.instance.ref("gatos_en").push();
-            postseila.set("auaumiau");
-            // abrirUrl(_urlGatopediaWeb);
+            abrirUrl(_urlGatopediaWeb);
           },
           style: ButtonStyle(
             fixedSize: WidgetStatePropertyAll(Size(scW - 40, 50)),

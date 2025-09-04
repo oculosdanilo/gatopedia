@@ -96,7 +96,7 @@ class _GatoCardState extends State<GatoCard> {
                     children: [
                       const SizedBox(height: 10),
                       Text(
-                        e?.key ?? "Teste",
+                        "${e?.child("nome").value}",
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                         softWrap: true,
                       ),

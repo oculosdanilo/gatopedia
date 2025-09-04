@@ -10,6 +10,7 @@
   "login": "LOGIN",
   "signup": "SIGN UP",
   "crop": "CROP",
+  "comments": "COMMENTS",
   "noComment": "No comments (yet...)",
   "gallery": "Gallery",
   "camera": "Camera",
