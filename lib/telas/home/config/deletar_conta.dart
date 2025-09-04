@@ -2,12 +2,19 @@ import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
+import 'package:gatopedia/telas/home/gatos/wiki/wiki.dart';
+import 'package:gatopedia/telas/index.dart';
+import 'package:gatopedia/telas/login_screen/login/autenticar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 bool iniciouUserGoogle = false;
 
@@ -58,12 +65,12 @@ class _DeletarContaState extends State<DeletarConta> {
                       child: FilledButton.icon(
                         onPressed: !confirmado
                             ? () async {
-                                //conta = await loginGoogle();
-                                //if (conta != null && conta?.id == userGoogle) {
-                                setStateB(() {
-                                  confirmado = true;
+                                conta = await loginGoogle();
+                                if (conta != null && conta?.id == userGoogle) {
+                                  setStateB(() {
+                                    confirmado = true;
                                 });
-                                //}
+                                }
                               }
                             : () {},
                         icon: Icon(!confirmado ? AntDesign.google_outline : Symbols.done_rounded),
@@ -199,37 +206,65 @@ class _DeletarContaState extends State<DeletarConta> {
             comentario = comentario as Map<Object?, Object?>?;
             if (comentario != null) {
               if (comentario["username"] == username) {
-                debugPrint("${comentarios.indexOf(comentario)}");
+                /*debugPrint("${comentarios.indexOf(comentario)} a");*/
+                await postsSnapshot
+                    .child("${posts.indexOf(post)}/comentarios/${comentarios.indexOf(comentario)}")
+                    .ref
+                    .remove();
               }
             }
           }
         }
 
         if (post["username"] == username) {
-          debugPrint("${posts.indexOf(post)}");
+          /*debugPrint("${posts.indexOf(post)} c");*/
+          await postsSnapshot.child("${posts.indexOf(post)}").ref.remove();
         }
       }
     }
 
     final wikiSnapshot = await FirebaseDatabase.instance.ref("gatos").get();
     final wiki = wikiSnapshot.value as Map<Object?, Object?>;
-    for (Object? gato in wiki.values) {
-      gato = gato as Map<Object?, Object?>?;
+    wiki.forEach((nome, info) async {
+      final infoMap = info as Map<Object?, Object?>?;
+      if (infoMap != null) {
+        final comentarios = infoMap["comentarios"] as List<Object?>;
+        if (comentarios.length > 2) {
+          for (Object? comentario in comentarios) {
+            if (comentario is Map<Object?, Object?>) {
+              if (comentario["user"] == username) {
+                /*debugPrint("${comentarios.indexOf(comentario)} b");*/
+                await postsSnapshot.child("gatos/$nome/comentarios/${comentarios.indexOf(comentario)}").ref.remove();
+              }
+            }
+          }
+        }
+      }
+    });
+
+    /*for (Object? gatoSnap in wiki.values) {
+      final gato = gatoSnap as Map<Object?, Object?>?;
       if (gato != null) {
         final comentarios = gato["comentarios"] as List<Object?>;
         if (comentarios.length > 2) {
           for (Object? comentario in comentarios) {
             if (comentario is Map<Object?, Object?>) {
-              debugPrint("$comentario");
-              if (comentario["user"] == username) {}
+              if (comentario["user"] == username) {
+                /*debugPrint("${comentarios.indexOf(comentario)} b");*/
+                await postsSnapshot.child("gatos/comentarios/${comentarios.indexOf(comentario)}").ref.remove();
+              }
             }
           }
         }
       }
-    }
+    }*/
 
-    /*Future.delayed(Duration.zero, () async {
-      await FirebaseStorage.instance.ref("users/$username").delete();
+    Future.delayed(Duration.zero, () async {
+      try {
+        await FirebaseStorage.instance.ref("users/$username").delete();
+      } on FirebaseException {
+        debugPrint("usuário não tem foto :p");
+      }
       await FirebaseDatabase.instance.ref("users/$username").remove();
       username = null;
       final pref = await SharedPreferences.getInstance();
@@ -249,15 +284,14 @@ class _DeletarContaState extends State<DeletarConta> {
 
       if (!context.mounted) return;
       Navigator.pop(context, true);
-    });*/
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () async {
-        _deletarConta(context);
-        /*final dialogo = await showCupertinoDialog<bool>(
+        final dialogo = await showCupertinoDialog<bool>(
           barrierDismissible: false,
           context: context,
           builder: (context) => Theme(
@@ -278,7 +312,7 @@ class _DeletarContaState extends State<DeletarConta> {
           if (!context.mounted) return;
           username = null;
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const Index(false)));
-        }*/
+        }
       },
       title: Text(AppLocalizations.of(context).config_deleteAcc_title),
       subtitle: Text(AppLocalizations.of(context).config_deleteAcc_subtitle),
