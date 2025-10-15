@@ -63,7 +63,7 @@ class _PPEditState extends State<PPEdit> {
             lockAspectRatio: true,
           ),
           IOSUiSettings(
-            cancelButtonTitle: AppLocalizations.of(context).cancel,
+            cancelButtonTitle: AppLocalizations.of(context).cancel_camelcase,
             doneButtonTitle: AppLocalizations.of(context).ppedit_cut_done,
             title: AppLocalizations.of(context).ppedit_cut_title,
             aspectRatioLockEnabled: true,
@@ -101,7 +101,7 @@ class _PPEditState extends State<PPEdit> {
               lockAspectRatio: true,
               aspectRatioPresets: [CropAspectRatioPreset.square]),
           IOSUiSettings(
-              cancelButtonTitle: AppLocalizations.of(context).cancel,
+              cancelButtonTitle: AppLocalizations.of(context).cancel_camelcase,
               doneButtonTitle: AppLocalizations.of(context).ppedit_cut_done,
               title: AppLocalizations.of(context).ppedit_cut_title,
               aspectRatioLockEnabled: true,

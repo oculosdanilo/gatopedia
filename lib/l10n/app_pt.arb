@@ -4,6 +4,7 @@
   "closed": "FECHADO",
   "open": "ABERTO",
   "cancel": "CANCELAR",
+  "cancel_camelcase": "Cancelar",
   "edit": "EDITAR",
   "save": "SALVAR",
   "post": "POSTAR",

@@ -97,7 +97,7 @@ class _GatoCardState extends State<GatoCard> {
                       const SizedBox(height: 10),
                       Text(
                         "${e?.child("nome").value}",
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                        style: const TextStyle(fontVariations: [FontVariation.weight(550)], fontSize: 25),
                         softWrap: true,
                       ),
                       const SizedBox(height: 10),

@@ -3,11 +3,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/telas/home/config/config.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final Uri _urlFlutter = Uri.parse('https://flutter.dev');
 final Uri _urlMaterialYou = Uri.parse('https://m3.material.io');
+final Uri _urlGithubDanilo = Uri.parse('https://github.com/oculosdanilo');
 final Uri _urlEmailDanilo = Uri.parse('mailto:danilo.lima67@fatec.sp.gov.br');
 final Uri _urlEmailLucca = Uri.parse('mailto:juliana.barros36@etec.sp.gov.br');
 
@@ -19,6 +21,19 @@ class Colaboradores extends StatefulWidget {
 }
 
 class _ColaboradoresState extends State<Colaboradores> {
+  final GlobalKey cardKey = GlobalKey();
+  double cardHeight = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        cardHeight = cardKey.currentContext!.size!.height;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,14 +69,18 @@ class _ColaboradoresState extends State<Colaboradores> {
             child: Column(
               children: [
                 Card(
+                  key: cardKey,
+                  clipBehavior: Clip.hardEdge,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                   margin: const EdgeInsets.fromLTRB(15, 20, 15, 20),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const ClipRRect(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
-                        child: Image(image: AssetImage('assets/danilo.png'), width: 150),
+                      Image(
+                        image: const AssetImage('assets/danilo.png'),
+                        width: 150,
+                        height: cardHeight - 20,
+                        fit: BoxFit.cover,
                       ),
                       const SizedBox(width: 17),
                       Flexible(
@@ -75,10 +94,19 @@ class _ColaboradoresState extends State<Colaboradores> {
                             const SizedBox(height: 10),
                             Text("\u2022 ${AppLocalizations.of(context).colab_desc_danilo}"),
                             const SizedBox(height: 10),
-                            OutlinedButton.icon(
-                              onPressed: () => abrirEmail(_urlEmailDanilo),
-                              icon: const Icon(Icons.mail_rounded),
-                              label: const Text("Email"),
+                            Wrap(
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: () => abrirEmail(_urlEmailDanilo),
+                                  icon: const Icon(Icons.mail_rounded),
+                                  label: const Text("Email"),
+                                ),
+                                OutlinedButton.icon(
+                                  onPressed: () => abrirUrl(_urlGithubDanilo),
+                                  icon: const Icon(Bootstrap.github),
+                                  label: const Text("GitHub"),
+                                ),
+                              ],
                             )
                           ],
                         ),

@@ -1,9 +1,7 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/components/comentario.dart';
-import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 
 late Future<DataSnapshot> _getData;
@@ -21,9 +19,6 @@ class GatoInfo extends StatefulWidget {
 }
 
 class GatoInfoState extends State<GatoInfo> {
-  final txtControllerC = TextEditingController();
-  bool mandando = false;
-
   late String img = widget.gatoInfo.child("img").value.toString();
   late String titulo = widget.gatoInfo.child("nome").value as String;
 
@@ -47,7 +42,7 @@ class GatoInfoState extends State<GatoInfo> {
                 centerTitle: true,
                 title: Text(
                   titulo,
-                  style: const TextStyle(color: Colors.white, fontVariations: [FontVariation.weight(450)]),
+                  style: const TextStyle(color: Colors.white, fontVariations: [FontVariation.weight(550)]),
                 ),
                 background: Stack(
                   fit: StackFit.expand,
@@ -87,7 +82,8 @@ class GatoInfoState extends State<GatoInfo> {
                       children: [
                         Text(
                           "${widget.gatoInfo.child("resumo").value}",
-                          style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 28),
+                          style: const TextStyle(
+                              fontStyle: FontStyle.italic, fontVariations: [FontVariation.weight(450)], fontSize: 28),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 15),
@@ -96,79 +92,9 @@ class GatoInfoState extends State<GatoInfo> {
                           style: const TextStyle(fontSize: 20),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 30),
-                        Text(
-                          AppLocalizations.of(context).comments,
-                          style: const TextStyle(fontVariations: [FontVariation("wght", 600)], fontSize: 25),
-                        ),
                       ],
                     ),
                   ),
-                  username != null
-                      ? Padding(
-                          padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Flexible(
-                                flex: 7,
-                                child: TextField(
-                                  controller: txtControllerC,
-                                  enabled: !mandando,
-                                  decoration: InputDecoration(
-                                    hintText: AppLocalizations.of(context).wiki_info_commentHint,
-                                    prefix: const SizedBox(width: 10),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              IconButton.filled(
-                                onPressed: !mandando
-                                    ? () async {
-                                        FocusManager.instance.primaryFocus?.unfocus();
-                                        if (txtControllerC.text != "") {
-                                          setState(() => mandando = true);
-                                          await _getData.then((value) async {
-                                            await value.ref
-                                                .child("${int.parse(value.children.last.key!) + 1}")
-                                                .update({"user": username, "content": txtControllerC.text});
-                                          });
-                                          setState(() {
-                                            _getData = FirebaseDatabase.instance
-                                                .ref("gatos/${widget.gatoInfo.key}/comentarios")
-                                                .get();
-                                          });
-                                          if (!context.mounted) return;
-                                          Flushbar(
-                                            message: AppLocalizations.of(context).forum_new_flushText,
-                                            duration: const Duration(seconds: 2),
-                                            margin: const EdgeInsets.all(20),
-                                            borderRadius: BorderRadius.circular(50),
-                                          ).show(context);
-                                          txtControllerC.text = "";
-                                          setState(() => mandando = false);
-                                        }
-                                      }
-                                    : null,
-                                icon: const Icon(Icons.send_rounded),
-                                iconSize: 25,
-                                padding: const EdgeInsets.all(15),
-                              ),
-                            ],
-                          ),
-                        )
-                      : const SizedBox(),
-                  widget.gatoInfo.child("comentarios").children.length > 2
-                      ? ComentariosWiki(widget.gatoInfo)
-                      : Container(
-                          height: 80,
-                          margin: const EdgeInsets.only(top: 50),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [Text("Nenhum comentário (ainda...)")],
-                          ),
-                        ),
                 ],
               ),
             ),
