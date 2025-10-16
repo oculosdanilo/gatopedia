@@ -542,7 +542,7 @@ class _FooterPostState extends State<FooterPost> {
                 "${comentarios.where((snap) => snap != null).length - 2}",
                 style: TextStyle(
                   fontSize: 15,
-                  fontVariations: [const FontVariation("wght", 600)],
+                  fontVariations: [const FontVariation.weight(600)],
                   color: username != null
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).colorScheme.onSurface,

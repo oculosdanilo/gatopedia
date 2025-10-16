@@ -1,10 +1,12 @@
+import 'package:animations/animations.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
-import 'package:gatopedia/components/comentario.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-
-late Future<DataSnapshot> _getData;
+import 'package:gatopedia/telas/home/gatos/wiki/comentarios.dart';
+import 'package:gatopedia/telas/index.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class GatoInfo extends StatefulWidget {
   final DataSnapshot gatoInfo;
@@ -22,84 +24,138 @@ class GatoInfoState extends State<GatoInfo> {
   late String img = widget.gatoInfo.child("img").value.toString();
   late String titulo = widget.gatoInfo.child("nome").value as String;
 
+  late final scP = MediaQuery.of(context).padding;
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => setState(() => FocusManager.instance.primaryFocus?.unfocus()),
-      child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar.large(
-              iconTheme:
-                  const IconThemeData(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 20)]),
-              expandedHeight: 360,
-              pinned: true,
-              backgroundColor: !_isDark(context)
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.surfaceContainer,
-              flexibleSpace: FlexibleSpaceBar(
-                expandedTitleScale: 2,
-                centerTitle: true,
-                title: Text(
-                  titulo,
-                  style: const TextStyle(color: Colors.white, fontVariations: [FontVariation.weight(550)]),
-                ),
-                background: Stack(
-                  fit: StackFit.expand,
+    return Scaffold(
+      bottomNavigationBar: Container(
+        margin: EdgeInsets.only(bottom: scP.bottom, left: 75, right: 75),
+        child: OpenContainer(
+          closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+          closedColor: username != null
+              ? Theme.of(context).colorScheme.surface
+              : temaBaseBW(App.themeNotifier.value, context).colorScheme.surface,
+          closedBuilder: (context, action) {
+            return ElevatedButton.icon(
+              style: const ButtonStyle(
+                padding: WidgetStatePropertyAll(EdgeInsets.all(13.5)),
+              ),
+              onPressed: () async => action.call(),
+              icon: Icon(
+                AntDesign.comment_outline,
+                color:
+                    username != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
+              ),
+              label: SizedBox(
+                height: 21,
+                child: Row(
                   children: [
-                    SizedBox(
-                      width: MediaQuery.sizeOf(context).width,
-                      height: MediaQuery.sizeOf(context).width,
-                      child: BlurHash(
-                        hash: img.split("&")[1],
-                        image:
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${img.split("&")[0]}.webp?alt=media",
-                        duration: const Duration(milliseconds: 150),
-                        color: Theme.of(context).colorScheme.surface,
-                        imageFit: BoxFit.cover,
-                      ),
+                    Expanded(
+                      child: Center(child: Text(AppLocalizations.of(context).wiki_info_commentBtn)),
                     ),
-                    const DecoratedBox(
+                    Container(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment(0.0, 0.5),
-                          end: Alignment.center,
-                          colors: [Color(0x60000000), Color(0x00000000)],
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      constraints: const BoxConstraints(minWidth: 21),
+                      height: 21,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Text(
+                          "0",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontVariations: [const FontVariation.weight(600)],
+                            color: username != null
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onSurface,
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            SliverPadding(
-              padding: EdgeInsets.only(bottom: widget.pd.bottom + 25),
-              sliver: SliverList.list(
+            );
+          },
+          openBuilder: (context, value) {
+            return const ComentariosWiki();
+          },
+        ),
+      ),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar.large(
+            iconTheme: const IconThemeData(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 20)]),
+            expandedHeight: 360,
+            pinned: true,
+            backgroundColor: !_isDark(context)
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.surfaceContainer,
+            flexibleSpace: FlexibleSpaceBar(
+              expandedTitleScale: 2,
+              centerTitle: true,
+              title: Text(
+                titulo,
+                style: const TextStyle(color: Colors.white, fontVariations: [FontVariation.weight(550)]),
+              ),
+              background: Stack(
+                fit: StackFit.expand,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Text(
-                          "${widget.gatoInfo.child("resumo").value}",
-                          style: const TextStyle(
-                              fontStyle: FontStyle.italic, fontVariations: [FontVariation.weight(450)], fontSize: 28),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 15),
-                        Text(
-                          "${widget.gatoInfo.child("descricao").value}".replaceAll("\\n", "\n"),
-                          style: const TextStyle(fontSize: 20),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                  SizedBox(
+                    width: MediaQuery.sizeOf(context).width,
+                    height: MediaQuery.sizeOf(context).width,
+                    child: BlurHash(
+                      hash: img.split("&")[1],
+                      image:
+                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${img.split("&")[0]}.webp?alt=media",
+                      duration: const Duration(milliseconds: 150),
+                      color: Theme.of(context).colorScheme.surface,
+                      imageFit: BoxFit.cover,
+                    ),
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment(0.0, 0.5),
+                        end: Alignment.center,
+                        colors: [Color(0x60000000), Color(0x00000000)],
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          SliverPadding(
+            padding: EdgeInsets.only(bottom: widget.pd.bottom + 25),
+            sliver: SliverList.list(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      Text(
+                        "${widget.gatoInfo.child("resumo").value}",
+                        style: const TextStyle(
+                            fontStyle: FontStyle.italic, fontVariations: [FontVariation.weight(450)], fontSize: 28),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        "${widget.gatoInfo.child("descricao").value}".replaceAll("\\n", "\n"),
+                        style: const TextStyle(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -113,16 +169,16 @@ class GatoInfoState extends State<GatoInfo> {
   }
 }
 
-class ComentariosWiki extends StatefulWidget {
+/*class ComentariosWiki extends StatefulWidget {
   final DataSnapshot gatoInfo;
 
   const ComentariosWiki(this.gatoInfo, {super.key});
 
   @override
   State<ComentariosWiki> createState() => _ComentariosWikiState();
-}
+}*/
 
-class _ComentariosWikiState extends State<ComentariosWiki> {
+/*class _ComentariosWikiState extends State<ComentariosWiki> {
   @override
   void initState() {
     super.initState();
@@ -166,4 +222,4 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
       _getData = FirebaseDatabase.instance.ref("gatos/${widget.gatoInfo.key}/comentarios").get();
     });
   }
-}
+}*/

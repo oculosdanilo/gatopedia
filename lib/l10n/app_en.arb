@@ -142,5 +142,6 @@
   "profile_pfp_flushbarAdd": "Added successfully!",
   "comment": "########################## WIKI #################################################",
   "wiki_info_commentHint": "Comment...",
+  "wiki_info_commentBtn": "Comments",
   "comment": "########################## END #################################################"
 }

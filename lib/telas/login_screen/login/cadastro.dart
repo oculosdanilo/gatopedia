@@ -454,7 +454,6 @@ class _NewCadastroState extends State<NewCadastro> {
             toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
             initAspectRatio: CropAspectRatioPreset.original,
             activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
-            statusBarColor: Theme.of(context).colorScheme.primary,
             lockAspectRatio: true,
           ),
         ],

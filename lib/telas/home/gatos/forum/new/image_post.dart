@@ -60,7 +60,6 @@ class _ImagePostState extends State<ImagePost> {
           toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
           initAspectRatio: CropAspectRatioPreset.original,
           activeControlsWidgetColor: Theme.of(context).colorScheme.primary,
-          statusBarColor: Theme.of(context).colorScheme.primary,
         ),
         IOSUiSettings(
           cancelButtonTitle: AppLocalizations.of(context).cancel,

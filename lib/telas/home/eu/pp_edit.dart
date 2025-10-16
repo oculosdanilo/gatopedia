@@ -59,7 +59,6 @@ class _PPEditState extends State<PPEdit> {
             toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
             initAspectRatio: CropAspectRatioPreset.square,
             activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
-            statusBarColor: Theme.of(context).colorScheme.primary,
             lockAspectRatio: true,
           ),
           IOSUiSettings(
@@ -97,7 +96,6 @@ class _PPEditState extends State<PPEdit> {
               toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
               initAspectRatio: CropAspectRatioPreset.square,
               activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
-              statusBarColor: Theme.of(context).colorScheme.primary,
               lockAspectRatio: true,
               aspectRatioPresets: [CropAspectRatioPreset.square]),
           IOSUiSettings(
