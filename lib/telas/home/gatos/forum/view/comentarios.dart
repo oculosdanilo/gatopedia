@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/anim/routes.dart';
 import 'package:gatopedia/components/comentario.dart';
+import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
 import 'package:gatopedia/telas/home/public_profile.dart';
@@ -179,9 +180,9 @@ class _ComentariosForumState extends State<ComentariosForum> {
                             flex: 7,
                             child: TextField(
                               controller: txtComment,
-                              decoration: const InputDecoration(
-                                hintText: "Comentar...",
-                                prefix: SizedBox(width: 10),
+                              decoration: InputDecoration(
+                                hintText: AppLocalizations.of(context).wiki_info_commentHint,
+                                prefix: const SizedBox(width: 10),
                               ),
                             ),
                           ),

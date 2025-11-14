@@ -20,6 +20,7 @@ class _ImagemState extends State<Imagem> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
+        clipBehavior: Clip.antiAlias,
         children: [
           PhotoView(
             imageProvider: CachedNetworkImageProvider(widget.imagemUrl),

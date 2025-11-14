@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
+import 'package:gatopedia/telas/home/gatos/forum/view/imagem_view.dart';
 import 'package:gatopedia/telas/home/gatos/wiki/comentarios.dart';
 import 'package:gatopedia/telas/index.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -23,6 +24,9 @@ class GatoInfo extends StatefulWidget {
 class GatoInfoState extends State<GatoInfo> {
   late String img = widget.gatoInfo.child("img").value.toString();
   late String titulo = widget.gatoInfo.child("nome").value as String;
+  late String gatoID = widget.gatoInfo.key ?? "error";
+  late String gatoImgID = img.split("&")[0];
+  late String gatoHash = img.split("&")[1];
 
   late final scP = MediaQuery.of(context).padding;
 
@@ -32,6 +36,7 @@ class GatoInfoState extends State<GatoInfo> {
       bottomNavigationBar: Container(
         margin: EdgeInsets.only(bottom: scP.bottom, left: 75, right: 75),
         child: OpenContainer(
+          transitionDuration: const Duration(milliseconds: 350),
           closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
           closedColor: username != null
               ? Theme.of(context).colorScheme.surface
@@ -48,11 +53,16 @@ class GatoInfoState extends State<GatoInfo> {
                     username != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
               ),
               label: SizedBox(
-                height: 21,
+                height: 26,
                 child: Row(
                   children: [
                     Expanded(
-                      child: Center(child: Text(AppLocalizations.of(context).wiki_info_commentBtn)),
+                      child: Center(
+                        child: Text(
+                          AppLocalizations.of(context).wiki_info_commentBtn,
+                          style: const TextStyle(fontSize: 18, fontVariations: [FontVariation.weight(500)]),
+                        ),
+                      ),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -80,12 +90,12 @@ class GatoInfoState extends State<GatoInfo> {
               ),
             );
           },
-          openBuilder: (context, value) {
-            return const ComentariosWiki();
-          },
+          openColor: Theme.of(context).colorScheme.surface,
+          openBuilder: (context, value) => ComentariosWiki(gatoID, titulo, gatoHash, gatoImgID),
         ),
       ),
       body: CustomScrollView(
+        physics: const NeverScrollableScrollPhysics(),
         slivers: [
           SliverAppBar.large(
             iconTheme: const IconThemeData(color: Colors.white, shadows: [Shadow(color: Colors.black, blurRadius: 20)]),
@@ -94,38 +104,51 @@ class GatoInfoState extends State<GatoInfo> {
             backgroundColor: !_isDark(context)
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.surfaceContainer,
-            flexibleSpace: FlexibleSpaceBar(
-              expandedTitleScale: 2,
-              centerTitle: true,
-              title: Text(
-                titulo,
-                style: const TextStyle(color: Colors.white, fontVariations: [FontVariation.weight(550)]),
-              ),
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.sizeOf(context).width,
-                    height: MediaQuery.sizeOf(context).width,
-                    child: BlurHash(
-                      hash: img.split("&")[1],
-                      image:
-                          "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${img.split("&")[0]}.webp?alt=media",
-                      duration: const Duration(milliseconds: 150),
-                      color: Theme.of(context).colorScheme.surface,
-                      imageFit: BoxFit.cover,
+            flexibleSpace: GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => ClipRect(
+                    child: Imagem(
+                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F$gatoImgID.webp?alt=media",
+                      gatoImgID,
                     ),
                   ),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment(0.0, 0.5),
-                        end: Alignment.center,
-                        colors: [Color(0x60000000), Color(0x00000000)],
+                ),
+              ),
+              child: FlexibleSpaceBar(
+                expandedTitleScale: 2,
+                centerTitle: true,
+                title: Text(
+                  titulo,
+                  style: const TextStyle(color: Colors.white, fontVariations: [FontVariation.weight(550)]),
+                ),
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.sizeOf(context).width,
+                      height: MediaQuery.sizeOf(context).width,
+                      child: BlurHash(
+                        hash: gatoHash,
+                        image:
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F$gatoImgID.webp?alt=media",
+                        duration: const Duration(milliseconds: 150),
+                        color: Theme.of(context).colorScheme.surface,
+                        imageFit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                ],
+                    const DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment(0.0, 0.5),
+                          end: Alignment.center,
+                          colors: [Color(0x60000000), Color(0x00000000)],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
