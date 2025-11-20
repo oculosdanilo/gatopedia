@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:another_flushbar/flushbar.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:gatopedia/components/comentario.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 
@@ -21,6 +23,12 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
   final _txtComment = TextEditingController();
 
   void _postarC() {}
+
+  dynamic _deletarC(int index) {}
+
+  Future<DataSnapshot> _fetchComentarios() {
+    return FirebaseDatabase.instance.ref("gatos/${widget.gatoID}/comentarios").get();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +122,49 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
                       ),
                     )
                   : const SizedBox(),
+              FutureBuilder<DataSnapshot>(
+                future: _fetchComentarios(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                    DataSnapshot snapData = snapshot.data!;
+                    if (snapData.children.length > 2) {
+                      return Expanded(
+                        child: ListView.builder(
+                          itemCount: snapData.children.length - 2,
+                          itemBuilder: (context, i) {
+                            final index = snapData.children.length - i;
+                            final thisComment = snapData.child("$index");
+                            return thisComment.child("user").value != null
+                                ? Comentario(
+                                    index,
+                                    thisComment.child("user").value as String,
+                                    thisComment.child("content").value as String,
+                                    _deletarC,
+                                    key: Key(
+                                      (thisComment.child("user").value as String) +
+                                          (thisComment.child("content").value as String) +
+                                          index.toString(),
+                                    ), /* key pra cada comentario ter sua propria foto certinho */
+                                  )
+                                : const SizedBox();
+                          },
+                        ),
+                      );
+                    } else {
+                      return const SizedBox(
+                        height: 80,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [Text("Nenhum comentário (ainda...)")],
+                        ),
+                      );
+                    }
+                  } else {
+                    return CircularProgressIndicator(value: null);
+                  }
+                },
+              ),
               /*postAtual.child("comentarios").children.length > 2
                   ? Expanded(
                       child: ListView.builder(
