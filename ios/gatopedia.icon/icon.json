@@ -1,68 +1,48 @@
 {
-  "fill": {
-    "automatic-gradient": "srgb:0.00000,0.00000,0.50196,1.00000"
+  "fill" : {
+    "linear-gradient" : [
+      "display-p3:0.00000,0.00000,0.50196,1.00000",
+      "display-p3:0.08622,0.08622,0.30015,1.00000"
+    ],
+    "orientation" : {
+      "start" : {
+        "x" : 0.5,
+        "y" : 0
+      },
+      "stop" : {
+        "x" : 0.5,
+        "y" : 0.7
+      }
+    }
   },
-  "groups": [
+  "groups" : [
     {
-      "layers": [
+      "layers" : [
         {
-          "fill-specializations": [
-            {
-              "appearance": "dark",
-              "value": "automatic"
-            },
-            {
-              "appearance": "tinted",
-              "value": {
-                "solid": "srgb:1.00000,0.47843,1.00000,1.00000"
-              }
-            }
-          ],
-          "glass-specializations": [
-            {
-              "value": false
-            },
-            {
-              "appearance": "dark",
-              "value": false
-            },
-            {
-              "appearance": "tinted",
-              "value": false
-            }
-          ],
-          "image-name": "Frame 19.png",
-          "name": "Frame 19",
-          "opacity-specializations": [
-            {
-              "appearance": "dark",
-              "value": 1
-            }
-          ],
-          "position": {
-            "scale": 1.01,
-            "translation-in-points": [
+          "glass" : false,
+          "image-name" : "pata icon.svg",
+          "name" : "pata icon",
+          "position" : {
+            "scale" : 0.98,
+            "translation-in-points" : [
               0,
               0
             ]
           }
         }
       ],
-      "shadow": {
-        "kind": "neutral",
-        "opacity": 0.5
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
       },
-      "translucency": {
-        "enabled": true,
-        "value": 0.5
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
       }
     }
   ],
-  "supported-platforms": {
-    "circles": [
-      "watchOS"
-    ],
-    "squares": [
+  "supported-platforms" : {
+    "squares" : [
       "iOS"
     ]
   }
