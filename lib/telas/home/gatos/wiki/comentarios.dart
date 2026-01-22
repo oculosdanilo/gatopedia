@@ -3,9 +3,9 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/components/comentario.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
+import 'package:uuid/uuid.dart';
 
 class ComentariosWiki extends StatefulWidget {
   final String gatoID;
@@ -20,14 +20,23 @@ class ComentariosWiki extends StatefulWidget {
 }
 
 class _ComentariosWikiState extends State<ComentariosWiki> {
+  final uuid = Uuid();
   final _txtComment = TextEditingController();
+
+  late Future<DataSnapshot> _comentarios;
 
   void _postarC() {}
 
   dynamic _deletarC(int index) {}
 
-  Future<DataSnapshot> _fetchComentarios() {
-    return FirebaseDatabase.instance.ref("gatos/${widget.gatoID}/comentarios").get();
+  void _fetchComentarios() {
+    _comentarios = FirebaseDatabase.instance.ref("gatos/${widget.gatoID}").get();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchComentarios();
   }
 
   @override
@@ -123,30 +132,30 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
                     )
                   : const SizedBox(),
               FutureBuilder<DataSnapshot>(
-                future: _fetchComentarios(),
+                future: _comentarios,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                    DataSnapshot snapData = snapshot.data!;
-                    if (snapData.children.length > 2) {
+                    final DataSnapshot snapData = snapshot.data!.child("comentarios");
+                    final int nComentarios = (snapshot.data!.child("nComentarios").value as int) + 2;
+                    if (nComentarios != 0) {
                       return Expanded(
                         child: ListView.builder(
-                          itemCount: snapData.children.length - 2,
+                          itemCount: nComentarios,
                           itemBuilder: (context, i) {
-                            final index = snapData.children.length - i;
-                            final thisComment = snapData.child("$index");
-                            return thisComment.child("user").value != null
+                            return Text((nComentarios - i).toString());
+                            // TODO: VÊ SE FAZ AS COISAS DIREITO DA PROXIMA VEZ SEU BURRO DO CARALHO AGORA TRANSFORMA TUDO QUE VOCE FEZ DE LISTA EM MAP COM KEY SEU OTARIO DO CARALHO MERECE MORRER
+                            /*final index = nComentarios - i;
+                            final commentList = snapData.value as List<Object?>;
+                            final thisComment = commentList[index] as dynamic;
+                            return thisComment is Map<Object?, Object?>
                                 ? Comentario(
-                                    index,
-                                    thisComment.child("user").value as String,
-                                    thisComment.child("content").value as String,
+                                    i,
+                                    thisComment["user"] as String,
+                                    thisComment["content"] as String,
                                     _deletarC,
-                                    key: Key(
-                                      (thisComment.child("user").value as String) +
-                                          (thisComment.child("content").value as String) +
-                                          index.toString(),
-                                    ), /* key pra cada comentario ter sua propria foto certinho */
+                                    key: Key(uuid.v4()), // key pra cada comentario ter sua propria foto certinho
                                   )
-                                : const SizedBox();
+                                : const SizedBox();*/
                           },
                         ),
                       );

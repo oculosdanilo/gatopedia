@@ -30,6 +30,18 @@ class GatoInfoState extends State<GatoInfo> {
 
   late final scP = MediaQuery.of(context).padding;
 
+  late Future<DataSnapshot> _nComentarios;
+
+  void _fetchNComentarios() {
+    _nComentarios = FirebaseDatabase.instance.ref("gatos/$gatoID/nComentarios").get();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNComentarios();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,16 +85,26 @@ class GatoInfoState extends State<GatoInfo> {
                       height: 21,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Text(
-                          "0",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontVariations: [const FontVariation.weight(600)],
-                            color: username != null
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
+                        child: FutureBuilder(
+                            future: _nComentarios,
+                            builder: (context, asyncSnapshot) {
+                              final bool carregou =
+                                  asyncSnapshot.connectionState == ConnectionState.done && asyncSnapshot.hasData;
+                              late DataSnapshot data;
+                              if (carregou) {
+                                data = asyncSnapshot.data!;
+                              }
+                              return Text(
+                                carregou ? "${data.value}" : "O",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontVariations: [const FontVariation.weight(600)],
+                                  color: username != null
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.onSurface,
+                                ),
+                              );
+                            }),
                       ),
                     ),
                   ],

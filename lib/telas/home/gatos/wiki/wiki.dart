@@ -22,7 +22,6 @@ double scrollAcumuladoWiki = 0;
 
 class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
   late Future<DataSnapshot> _getData;
-  late Future<DataSnapshot> _getComentarios;
   bool pegouInfo = false;
 
   String _pegarIdioma() {
@@ -31,7 +30,6 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
 
   void _pegarInfo() {
     _getData = FirebaseDatabase.instance.ref().child("gatos_${_pegarIdioma()}").get();
-    _getComentarios = FirebaseDatabase.instance.ref().child("gatos").get();
   }
 
   @override
