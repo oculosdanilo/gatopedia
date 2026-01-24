@@ -131,19 +131,30 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
                       ),
                     )
                   : const SizedBox(),
+              FilledButton(
+                onPressed: () async {
+                  final snapgatos = await FirebaseDatabase.instance.ref("gatos").get();
+                  for (final e in snapgatos.children) {
+                    final ereversed = e.child("comentarios").children.toList().reversed;
+                    for (final comentario in ereversed) {
+                      await comentario.ref.update({"timestamp": "1669156755000"});
+                    }
+                  }
+                },
+                child: Text("converter"),
+              ),
               FutureBuilder<DataSnapshot>(
                 future: _comentarios,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                    final DataSnapshot snapData = snapshot.data!.child("comentarios");
-                    final int nComentarios = (snapshot.data!.child("nComentarios").value as int) + 2;
+                    final Query comentarios = snapshot.data!.child("comentarios").ref.orderByChild("path");
+                    final int nComentarios = snapshot.data!.child("nComentarios").value as int;
                     if (nComentarios != 0) {
                       return Expanded(
                         child: ListView.builder(
                           itemCount: nComentarios,
                           itemBuilder: (context, i) {
                             return Text((nComentarios - i).toString());
-                            // TODO: VÊ SE FAZ AS COISAS DIREITO DA PROXIMA VEZ SEU BURRO DO CARALHO AGORA TRANSFORMA TUDO QUE VOCE FEZ DE LISTA EM MAP COM KEY SEU OTARIO DO CARALHO MERECE MORRER
                             /*final index = nComentarios - i;
                             final commentList = snapData.value as List<Object?>;
                             final thisComment = commentList[index] as dynamic;

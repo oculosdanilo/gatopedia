@@ -174,3 +174,8 @@ class _ComentarioState extends State<Comentario> {
     }
   }
 }
+
+class ComentarioData {
+  String user = "erronulo";
+  String content = "erronulo";
+}
