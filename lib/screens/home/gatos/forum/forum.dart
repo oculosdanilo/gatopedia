@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/components/post.dart';
-import 'package:gatopedia/telas/home/gatos/gatos.dart';
+import 'package:gatopedia/screens/home/gatos/gatos.dart';
 
 bool postado = false;
 String imagemTipo = "";

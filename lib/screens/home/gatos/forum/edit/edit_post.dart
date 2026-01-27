@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
-import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
+import 'package:gatopedia/screens/home/gatos/forum/forum.dart';
 
 class EditPost extends StatefulWidget {
   final String post;

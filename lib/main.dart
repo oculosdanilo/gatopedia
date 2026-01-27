@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:connecteo/connecteo.dart';
-import 'package:devicelocale/devicelocale.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -10,11 +10,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
-import 'package:gatopedia/telas/firebase_options.dart';
-import 'package:gatopedia/telas/home/config/config.dart';
-import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
-import 'package:gatopedia/telas/home/home.dart';
-import 'package:gatopedia/telas/index.dart';
+import 'package:gatopedia/screens/firebase_options.dart';
+import 'package:gatopedia/screens/home/config/config.dart';
+import 'package:gatopedia/screens/home/gatos/forum/forum.dart';
+import 'package:gatopedia/screens/home/home.dart';
+import 'package:gatopedia/screens/index.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,9 +27,9 @@ dynamic mensagem;
 final connecteo = ConnectionChecker();
 
 void main() async {
-  Future<bool> br() async {
-    final a = await Devicelocale.currentAsLocale;
-    return a?.languageCode == "pt";
+  bool br() {
+    final a = Locale(Platform.localeName.split("_")[0]);
+    return a.languageCode == "pt";
   }
 
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +52,15 @@ void main() async {
   scrollSalvo = pref.getDouble("scrollSalvo") ?? 0;
 
   final startsDark = pref.getString("tema") ?? "sis";
-  final localeInicial = Locale(pref.getString("locale") ?? (await br() ? "pt" : "en"));
+
+  Locale localeInicial; // = Locale(pref.getString("locale") ?? (br() ? "pt" : "en"));
+
+  if (Platform.isIOS) {
+    localeInicial = Locale(Platform.localeName.split("_")[0]);
+  } else {
+    localeInicial = Locale(pref.getString("locale") ?? (br() ? "pt" : "en"));
+  }
+
   runApp(
     App(
       stringToTemas[startsDark]!,

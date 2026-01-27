@@ -7,10 +7,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
-import 'package:gatopedia/telas/home/gatos/wiki/wiki.dart';
-import 'package:gatopedia/telas/index.dart';
-import 'package:gatopedia/telas/login_screen/login/autenticar.dart';
+import 'package:gatopedia/screens/home/gatos/forum/forum.dart';
+import 'package:gatopedia/screens/home/gatos/wiki/wiki.dart';
+import 'package:gatopedia/screens/index.dart';
+import 'package:gatopedia/screens/login_screen/login/autenticar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -69,7 +69,7 @@ class _DeletarContaState extends State<DeletarConta> {
                                 if (conta != null && conta?.id == userGoogle) {
                                   setStateB(() {
                                     confirmado = true;
-                                });
+                                  });
                                 }
                               }
                             : () {},

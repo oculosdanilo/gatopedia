@@ -4,17 +4,17 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/animations/routes.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/config/config.dart';
-import 'package:gatopedia/telas/home/gatos/gatos.dart';
-import 'package:gatopedia/telas/home/home.dart';
-import 'package:gatopedia/telas/login_screen/colab.dart';
-import 'package:gatopedia/telas/login_screen/login/autenticar.dart';
-import 'package:gatopedia/telas/login_screen/login/cadastro.dart';
-import 'package:gatopedia/telas/login_screen/login/form.dart';
-import 'package:gatopedia/telas/seminternet.dart';
+import 'package:gatopedia/screens/home/config/config.dart';
+import 'package:gatopedia/screens/home/gatos/gatos.dart';
+import 'package:gatopedia/screens/home/home.dart';
+import 'package:gatopedia/screens/login_screen/colab.dart';
+import 'package:gatopedia/screens/login_screen/login/autenticar.dart';
+import 'package:gatopedia/screens/login_screen/login/cadastro.dart';
+import 'package:gatopedia/screens/login_screen/login/form.dart';
+import 'package:gatopedia/screens/seminternet.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grayscale/grayscale.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -423,7 +423,7 @@ class _SemContaState extends State<SemConta> {
                   const SizedBox(height: 10),
                   Center(
                     child: Lottie.asset(
-                      "assets/anim/seta${_isDark(context) || !acabouAlt ? '' : '-light'}.json",
+                      "assets/animations/seta${_isDark(context) || !acabouAlt ? '' : '-light'}.json",
                       width: 50,
                     ),
                   ),

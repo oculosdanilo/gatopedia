@@ -4,17 +4,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/animations/routes.dart';
 import 'package:gatopedia/components/loading.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/gatos/forum/edit/delete_post.dart';
-import 'package:gatopedia/telas/home/gatos/forum/edit/edit_post.dart';
-import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
-import 'package:gatopedia/telas/home/gatos/forum/view/comentarios.dart';
-import 'package:gatopedia/telas/home/gatos/forum/view/imagem_view.dart';
-import 'package:gatopedia/telas/home/public_profile.dart';
-import 'package:gatopedia/telas/index.dart';
+import 'package:gatopedia/screens/home/gatos/forum/edit/delete_post.dart';
+import 'package:gatopedia/screens/home/gatos/forum/edit/edit_post.dart';
+import 'package:gatopedia/screens/home/gatos/forum/forum.dart';
+import 'package:gatopedia/screens/home/gatos/forum/view/comentarios.dart';
+import 'package:gatopedia/screens/home/gatos/forum/view/imagem_view.dart';
+import 'package:gatopedia/screens/home/public_profile.dart';
+import 'package:gatopedia/screens/index.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -201,7 +201,7 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
                 child: FadeInImage(
                   image: NetworkImage(
                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.postSS.child("username").value}.webp?alt=media"),
-                  placeholder: const AssetImage("assets/anim/loading.gif"),
+                  placeholder: const AssetImage("assets/animations/loading.gif"),
                   width: 40,
                   fit: BoxFit.cover,
                   fadeInDuration: const Duration(milliseconds: 125),
@@ -227,7 +227,7 @@ class _CabecalhoPostState extends State<CabecalhoPost> {
                           }
                         } else {
                           filho = Image.asset(
-                            "assets/anim/loading.gif",
+                            "assets/animations/loading.gif",
                             width: 40,
                             fit: BoxFit.cover,
                           );

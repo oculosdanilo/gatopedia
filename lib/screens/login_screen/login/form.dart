@@ -1,13 +1,13 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/animations/routes.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
-import 'package:gatopedia/telas/home/gatos/wiki/wiki.dart';
-import 'package:gatopedia/telas/home/home.dart';
-import 'package:gatopedia/telas/login_screen/login/autenticar.dart';
+import 'package:gatopedia/screens/home/gatos/forum/forum.dart';
+import 'package:gatopedia/screens/home/gatos/wiki/wiki.dart';
+import 'package:gatopedia/screens/home/home.dart';
+import 'package:gatopedia/screens/login_screen/login/autenticar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FormApp extends StatefulWidget {

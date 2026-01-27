@@ -3,15 +3,15 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/gatos/wiki/info.dart';
-import 'package:gatopedia/telas/index.dart';
+import 'package:gatopedia/screens/home/gatos/wiki/info.dart';
+import 'package:gatopedia/screens/index.dart';
 
 class GatoCard extends StatefulWidget {
   final int index;
-  final DataSnapshot? e;
+  final DataSnapshot data;
   final EdgeInsets pd;
 
-  const GatoCard(this.index, this.e, this.pd, {super.key});
+  const GatoCard(this.index, this.data, this.pd, {super.key});
 
   @override
   State<GatoCard> createState() => _GatoCardState();
@@ -31,13 +31,13 @@ class _GatoCardState extends State<GatoCard> {
         closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         transitionDuration: const Duration(milliseconds: 500),
         openBuilder: (context, _) => username != null
-            ? GatoInfo(widget.e!, widget.pd)
+            ? GatoInfo(widget.data, widget.pd)
             : Theme(
                 data: ThemeData.from(
                   colorScheme: temaBaseBW(App.themeNotifier.value, context).colorScheme,
                   textTheme: temaBaseBW(App.themeNotifier.value, context).textTheme.apply(fontFamily: "Jost"),
                 ),
-                child: GatoInfo(widget.e!, widget.pd),
+                child: GatoInfo(widget.data, widget.pd),
               ),
         closedElevation: 0,
         tappable: false,
@@ -49,12 +49,12 @@ class _GatoCardState extends State<GatoCard> {
           context,
           VoidCallback openContainer,
         ) =>
-            gatoCardContainer(context, openContainer, widget.e),
+            gatoCardContainer(context, openContainer, widget.data),
       ),
     );
   }
 
-  SizedBox gatoCardContainer(BuildContext context, VoidCallback openContainer, DataSnapshot? e) {
+  SizedBox gatoCardContainer(BuildContext context, VoidCallback openContainer, DataSnapshot? data) {
     return SizedBox(
       height: 130,
       child: Card(
@@ -67,7 +67,7 @@ class _GatoCardState extends State<GatoCard> {
             : Theme.of(context).colorScheme.surfaceContainerLow,
         margin: const EdgeInsets.all(0),
         child: InkWell(
-          onTap: e != null ? () => openContainer.call() : null,
+          onTap: data != null ? () => openContainer.call() : null,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
             child: Row(
@@ -76,11 +76,11 @@ class _GatoCardState extends State<GatoCard> {
                 SizedBox(
                   width: 130,
                   height: 130,
-                  child: e != null
+                  child: data != null
                       ? FadeInImage(
                           image: NetworkImage(
-                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${e.child("img").value.toString().split("&")[0]}.webp?alt=media"),
-                          placeholder: BlurHashImage(e.child("img").value.toString().split("&")[1],
+                              "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${data.child("img").value.toString().split("&")[0]}.webp?alt=media"),
+                          placeholder: BlurHashImage(data.child("img").value.toString().split("&")[1],
                               decodingHeight: 130, decodingWidth: 130),
                           fadeInDuration: const Duration(milliseconds: 150),
                           fadeOutDuration: const Duration(milliseconds: 1),
@@ -96,13 +96,13 @@ class _GatoCardState extends State<GatoCard> {
                     children: [
                       const SizedBox(height: 10),
                       Text(
-                        "${e?.child("nome").value}",
+                        "${data?.child("nome").value}",
                         style: const TextStyle(fontVariations: [FontVariation.weight(550)], fontSize: 25),
                         softWrap: true,
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "${e?.child("resumo").value}",
+                        "${data?.child("resumo").value}",
                         style: const TextStyle(fontSize: 16),
                         softWrap: true,
                         maxLines: 3,

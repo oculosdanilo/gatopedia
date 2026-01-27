@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/animations/routes.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/config/deletar_conta.dart';
-import 'package:gatopedia/telas/home/home.dart';
-import 'package:gatopedia/telas/login_screen/colab.dart';
+import 'package:gatopedia/screens/home/config/deletar_conta.dart';
+import 'package:gatopedia/screens/home/home.dart';
+import 'package:gatopedia/screens/login_screen/colab.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -197,49 +197,54 @@ class _ConfigState extends State<Config> {
                             );
                           },
                         ),
-                        ListTile(
-                          key: chaveIdioma,
-                          onTap: () {
-                            final box = chaveIdioma.currentContext!.findRenderObject() as RenderBox;
-                            final local = box.localToGlobal(Offset.zero);
-                            final pos = Offset(local.dx, local.dy + 5);
+                        Platform.isAndroid
+                            ? ListTile(
+                                key: chaveIdioma,
+                                onTap: () {
+                                  final box = chaveIdioma.currentContext!.findRenderObject() as RenderBox;
+                                  final local = box.localToGlobal(Offset.zero);
+                                  final pos = Offset(local.dx, local.dy + 5);
 
-                            final listaIdiomas = AppLocalizations.supportedLocales.map((e) => e.languageCode).toList()
-                              ..remove(App.localeNotifier.value.languageCode);
+                                  final listaIdiomas = AppLocalizations.supportedLocales
+                                      .map((e) => e.languageCode)
+                                      .toList()
+                                    ..remove(App.localeNotifier.value.languageCode);
 
-                            showMenu(
-                              context: context,
-                              position: RelativeRect.fromLTRB(99999, pos.dy, 0, 99999),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                              items: [
-                                PopupMenuItem(child: Text(_nomeLocale(App.localeNotifier.value.languageCode, context))),
-                                ...(listaIdiomas.map((e) {
-                                  return PopupMenuItem(
-                                      onTap: () => _mudarLingua(e), child: Text(_nomeLocale(e, context)));
-                                })),
-                              ],
-                            );
-                          },
-                          title: Text(AppLocalizations.of(context).config_lan_title),
-                          subtitle: Text(AppLocalizations.of(context).config_lan_subtitle),
-                          leading: const Icon(Symbols.translate_rounded),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                _nomeLocale(App.localeNotifier.value.languageCode, context),
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              const Icon(Symbols.arrow_drop_down_rounded),
-                            ],
-                          ),
-                          contentPadding: const EdgeInsets.fromLTRB(16, 0, 5, 0),
-                          titleTextStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontSize: 20,
-                            fontFamily: "Jost",
-                          ),
-                        ),
+                                  showMenu(
+                                    context: context,
+                                    position: RelativeRect.fromLTRB(99999, pos.dy, 0, 99999),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                    items: [
+                                      PopupMenuItem(
+                                          child: Text(_nomeLocale(App.localeNotifier.value.languageCode, context))),
+                                      ...(listaIdiomas.map((e) {
+                                        return PopupMenuItem(
+                                            onTap: () => _mudarLingua(e), child: Text(_nomeLocale(e, context)));
+                                      })),
+                                    ],
+                                  );
+                                },
+                                title: Text(AppLocalizations.of(context).config_lan_title),
+                                subtitle: Text(AppLocalizations.of(context).config_lan_subtitle),
+                                leading: const Icon(Symbols.translate_rounded),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      _nomeLocale(App.localeNotifier.value.languageCode, context),
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    const Icon(Symbols.arrow_drop_down_rounded),
+                                  ],
+                                ),
+                                contentPadding: const EdgeInsets.fromLTRB(16, 0, 5, 0),
+                                titleTextStyle: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  fontSize: 20,
+                                  fontFamily: "Jost",
+                                ),
+                              )
+                            : const SizedBox(),
                         !widget.voltar ? const DeletarConta() : const SizedBox(),
                       ],
                     ),

@@ -7,11 +7,11 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/animations/routes.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/eu/pp_edit.dart';
-import 'package:gatopedia/telas/home/home.dart';
+import 'package:gatopedia/screens/home/eu/pp_edit.dart';
+import 'package:gatopedia/screens/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum MenuItensImg { editar, remover }
@@ -354,7 +354,7 @@ class ProfileState extends State<Profile> {
                     ? Image.network(imagemGoogle!, fit: BoxFit.cover)
                     : FadeInImage(
                         fadeInDuration: const Duration(milliseconds: 100),
-                        placeholder: const AssetImage("assets/anim/loading.gif"),
+                        placeholder: const AssetImage("assets/animations/loading.gif"),
                         image: CachedNetworkImageProvider(
                             "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F$username.webp?alt=media"),
                         imageErrorBuilder: (context, obj, stck) {
@@ -366,7 +366,7 @@ class ProfileState extends State<Profile> {
                                   imagemGoogle = snapshot.data!;
                                   return FadeInImage(
                                     fadeInDuration: const Duration(milliseconds: 100),
-                                    placeholder: const AssetImage("assets/anim/loading.gif"),
+                                    placeholder: const AssetImage("assets/animations/loading.gif"),
                                     image: NetworkImage(snapshot.data!),
                                     imageErrorBuilder: (context, obj, stck) =>
                                         Image.asset("assets/user.webp", fit: BoxFit.cover),
@@ -376,7 +376,7 @@ class ProfileState extends State<Profile> {
                                   return Image.asset("assets/user.webp", fit: BoxFit.cover);
                                 }
                               } else {
-                                return Image.asset("assets/anim/loading.gif", fit: BoxFit.cover);
+                                return Image.asset("assets/animations/loading.gif", fit: BoxFit.cover);
                               }
                             },
                           );

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
-import 'package:gatopedia/telas/home/config/config.dart';
+import 'package:gatopedia/screens/home/config/config.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:url_launcher/url_launcher.dart';

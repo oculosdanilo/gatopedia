@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/gatos/forum/view/imagem_view.dart';
-import 'package:gatopedia/telas/home/gatos/wiki/comentarios.dart';
-import 'package:gatopedia/telas/index.dart';
+import 'package:gatopedia/screens/home/gatos/forum/view/imagem_view.dart';
+import 'package:gatopedia/screens/home/gatos/wiki/comentarios.dart';
+import 'package:gatopedia/screens/index.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class GatoInfo extends StatefulWidget {

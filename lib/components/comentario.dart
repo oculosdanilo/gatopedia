@@ -2,9 +2,9 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gatopedia/anim/routes.dart';
+import 'package:gatopedia/animations/routes.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/public_profile.dart';
+import 'package:gatopedia/screens/home/public_profile.dart';
 
 class Comentario extends StatefulWidget {
   final int index;
@@ -52,7 +52,7 @@ class _ComentarioState extends State<Comentario> {
                 child: FadeInImage(
                   image: NetworkImage(
                       "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.usernamePost}.webp?alt=media"),
-                  placeholder: const AssetImage("assets/anim/loading.gif"),
+                  placeholder: const AssetImage("assets/animations/loading.gif"),
                   width: 40,
                   fit: BoxFit.cover,
                   fadeInDuration: const Duration(milliseconds: 125),
@@ -77,7 +77,7 @@ class _ComentarioState extends State<Comentario> {
                           }
                         } else {
                           return Image.asset(
-                            "assets/anim/loading.gif",
+                            "assets/animations/loading.gif",
                             width: 40,
                             fit: BoxFit.cover,
                           );

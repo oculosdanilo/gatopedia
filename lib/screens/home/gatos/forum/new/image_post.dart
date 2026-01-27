@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/gatos/forum/forum.dart';
+import 'package:gatopedia/screens/home/gatos/forum/forum.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
@@ -27,7 +27,7 @@ class _ImagePostState extends State<ImagePost> {
   final ImagePicker picker = ImagePicker();
 
   Future<void> _pegaImagem() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
+    FilePickerResult? result = await FilePicker.pickFiles(
       allowedExtensions: widget.imageType == "image" ? ['jpeg', 'jpg', 'png', 'webp'] : ['gif'],
       type: FileType.custom,
     );

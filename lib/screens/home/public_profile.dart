@@ -5,8 +5,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/eu/profile.dart';
-import 'package:gatopedia/telas/index.dart';
+import 'package:gatopedia/screens/home/eu/profile.dart';
+import 'package:gatopedia/screens/index.dart';
 
 class PublicProfile extends StatefulWidget {
   final String username;

@@ -4,7 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/components/gato_card.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/telas/home/gatos/gatos.dart';
+import 'package:gatopedia/screens/home/gatos/gatos.dart';
 
 class Wiki extends StatefulWidget {
   final ScrollController scrollWiki;
@@ -50,24 +50,26 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
       child: FutureBuilder<DataSnapshot>(
         future: _getData,
         builder: (context, snapshot) {
-          Widget filho;
+          Widget child;
           if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-            filho = ListView.builder(
+            child = ListView.builder(
               controller: widget.scrollWiki,
               itemBuilder: (context, index) {
-                return username == null && index == 10
-                    ? SizedBox(height: 80 + MediaQuery.paddingOf(context).bottom)
-                    : GatoCard(index, snapshot.data!.children.toList()[index], widget.pd);
+                return Padding(
+                  padding: EdgeInsets.only(
+                      bottom: username == null && index == 9 ? (80 + MediaQuery.paddingOf(context).bottom) : 0),
+                  child: GatoCard(index, snapshot.data!.children.toList()[index], widget.pd),
+                );
               },
-              itemCount: snapshot.data!.children.length + (username != null ? 0 : 1),
+              itemCount: snapshot.data!.children.length,
             );
           } else {
-            filho = const Center(child: CircularProgressIndicator());
+            child = const Center(child: CircularProgressIndicator());
           }
 
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
-            child: filho,
+            child: child,
           );
         },
       ),
