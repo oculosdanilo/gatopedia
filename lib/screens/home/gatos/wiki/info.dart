@@ -22,11 +22,9 @@ class GatoInfo extends StatefulWidget {
 }
 
 class GatoInfoState extends State<GatoInfo> {
-  late String img = widget.gatoInfo.child("img").value.toString();
+  late String gatoHash = widget.gatoInfo.child("img").value.toString();
   late String titulo = widget.gatoInfo.child("nome").value as String;
   late String gatoID = widget.gatoInfo.key ?? "error";
-  late String gatoImgID = img.split("&")[0];
-  late String gatoHash = img.split("&")[1];
 
   late final scP = MediaQuery.of(context).padding;
 
@@ -113,7 +111,7 @@ class GatoInfoState extends State<GatoInfo> {
             );
           },
           openColor: Theme.of(context).colorScheme.surface,
-          openBuilder: (context, value) => ComentariosWiki(gatoID, titulo, gatoHash, gatoImgID),
+          openBuilder: (context, value) => ComentariosWiki(gatoID, titulo, gatoHash),
         ),
       ),
       body: CustomScrollView(
@@ -132,8 +130,8 @@ class GatoInfoState extends State<GatoInfo> {
                 MaterialPageRoute(
                   builder: (ctx) => ClipRect(
                     child: Imagem(
-                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F$gatoImgID.webp?alt=media",
-                      gatoImgID,
+                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F$gatoID.webp?alt=media",
+                      gatoID,
                     ),
                   ),
                 ),
@@ -154,7 +152,7 @@ class GatoInfoState extends State<GatoInfo> {
                       child: BlurHash(
                         hash: gatoHash,
                         image:
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F$gatoImgID.webp?alt=media",
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F$gatoID.webp?alt=media",
                         duration: const Duration(milliseconds: 150),
                         color: Theme.of(context).colorScheme.surface,
                         imageFit: BoxFit.cover,

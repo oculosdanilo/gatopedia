@@ -30,3 +30,4 @@ app.*.map.json
 /android/app/release
 /ios/build/
 /lib/l10n/app_*.dart
+/lib/firebase_options.dart

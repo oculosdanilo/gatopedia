@@ -52,13 +52,17 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
         builder: (context, snapshot) {
           Widget child;
           if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+            final cardList = snapshot.data!.children.toList();
             child = ListView.builder(
               controller: widget.scrollWiki,
               itemBuilder: (context, index) {
+                final thisCard = cardList[index];
                 return Padding(
                   padding: EdgeInsets.only(
-                      bottom: username == null && index == 9 ? (80 + MediaQuery.paddingOf(context).bottom) : 0),
-                  child: GatoCard(index, snapshot.data!.children.toList()[index], widget.pd),
+                    bottom:
+                        username == null && cardList.last == thisCard ? (80 + MediaQuery.paddingOf(context).bottom) : 0,
+                  ),
+                  child: GatoCard(index, thisCard, widget.pd),
                 );
               },
               itemCount: snapshot.data!.children.length,

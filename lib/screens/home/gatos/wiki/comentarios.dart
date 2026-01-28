@@ -11,9 +11,8 @@ class ComentariosWiki extends StatefulWidget {
   final String gatoID;
   final String gatoName;
   final String gatoHash;
-  final String gatoImgID;
 
-  const ComentariosWiki(this.gatoID, this.gatoName, this.gatoHash, this.gatoImgID, {super.key});
+  const ComentariosWiki(this.gatoID, this.gatoName, this.gatoHash, {super.key});
 
   @override
   State<ComentariosWiki> createState() => _ComentariosWikiState();
@@ -60,7 +59,7 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
                     ClipOval(
                       child: Image(
                         image: NetworkImage(
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${widget.gatoImgID}.webp?alt=media"),
+                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${widget.gatoID}.webp?alt=media"),
                         width: 30,
                         errorBuilder: (c, obj, stacktrace) {
                           return Image.asset("assets/user.webp", width: 30);
