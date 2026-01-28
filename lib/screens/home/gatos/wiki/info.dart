@@ -22,9 +22,9 @@ class GatoInfo extends StatefulWidget {
 }
 
 class GatoInfoState extends State<GatoInfo> {
-  late String gatoHash = widget.gatoInfo.child("img").value.toString();
+  late String gatoHash = widget.gatoInfo.child("img").value as String;
   late String titulo = widget.gatoInfo.child("nome").value as String;
-  late String gatoID = widget.gatoInfo.key ?? "error";
+  late String gatoID = widget.gatoInfo.key!;
 
   late final scP = MediaQuery.of(context).padding;
 
@@ -39,6 +39,8 @@ class GatoInfoState extends State<GatoInfo> {
     super.initState();
     _fetchNComentarios();
   }
+
+  // TODO: implementar comentarios e ajustar as informações
 
   @override
   Widget build(BuildContext context) {

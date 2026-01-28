@@ -59,8 +59,9 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
                 final thisCard = cardList[index];
                 return Padding(
                   padding: EdgeInsets.only(
-                    bottom:
-                        username == null && cardList.last == thisCard ? (80 + MediaQuery.paddingOf(context).bottom) : 0,
+                    bottom: username == null && cardList.last == thisCard
+                        ? (100 + MediaQuery.paddingOf(context).bottom)
+                        : 0,
                   ),
                   child: GatoCard(index, thisCard, widget.pd),
                 );
