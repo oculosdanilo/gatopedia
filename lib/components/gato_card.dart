@@ -96,13 +96,13 @@ class _GatoCardState extends State<GatoCard> {
                         Widget imagem;
                         if (asyncSnapshot.hasData && asyncSnapshot.connectionState == ConnectionState.done) {
                           imagem = FadeInImage(
-                            placeholder: BlurHashImage(gatoHash, decodingWidth: 130, decodingHeight: 130),
+                            placeholder: BlurHashImage(gatoHash, decodingWidth: 4, decodingHeight: 4),
                             image: CachedNetworkImageProvider(asyncSnapshot.data!),
                             width: 130,
                             height: 130,
                           );
                         } else {
-                          imagem = BlurHash(hash: gatoHash, decodingWidth: 130, decodingHeight: 130);
+                          imagem = BlurHash(hash: gatoHash, decodingWidth: 4, decodingHeight: 4);
                         }
 
                         return AnimatedSwitcher(duration: const Duration(milliseconds: 200), child: imagem);

@@ -198,7 +198,7 @@ class _IndexState extends State<Index> {
                     child: Text(
                       AppLocalizations.of(context).gatopedia,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 50, fontVariations: [FontVariation("wght", 450)]),
                     ),
                   ),
                   const SizedBox(height: 75),
