@@ -283,9 +283,7 @@ class _ConfigState extends State<Config> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: !widget.voltar ? kBottomNavigationBarHeight : 0,
-                ),
+                const SizedBox(height: kBottomNavigationBarHeight),
               ],
             ),
           ),

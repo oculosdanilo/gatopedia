@@ -12,3 +12,4 @@ key.properties
 **/*.keystore
 **/*.jks
 /app/.cxx/
+/gradle/gradle-daemon-jvm.properties

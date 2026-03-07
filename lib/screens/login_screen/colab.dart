@@ -21,19 +21,6 @@ class Colaboradores extends StatefulWidget {
 }
 
 class _ColaboradoresState extends State<Colaboradores> {
-  final GlobalKey cardKey = GlobalKey();
-  double cardHeight = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        cardHeight = cardKey.currentContext!.size!.height;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,87 +52,175 @@ class _ColaboradoresState extends State<Colaboradores> {
             ],
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
-          SliverToBoxAdapter(
-            child: Column(
+          bodyContent(context)
+        ],
+      ),
+    );
+  }
+
+  /*SliverToBoxAdapter bodyContentOld(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          Card(
+            clipBehavior: Clip.hardEdge,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            margin: const EdgeInsets.fromLTRB(15, 20, 15, 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Card(
-                  key: cardKey,
-                  clipBehavior: Clip.hardEdge,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  margin: const EdgeInsets.fromLTRB(15, 20, 15, 20),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image(
-                        image: const AssetImage('assets/danilo.png'),
-                        width: 150,
-                        height: cardHeight - 20,
-                        fit: BoxFit.cover,
-                      ),
-                      const SizedBox(width: 17),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Danilo Lima",
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                            ),
-                            const SizedBox(height: 10),
-                            Text("\u2022 ${AppLocalizations.of(context).colab_desc_danilo}"),
-                            const SizedBox(height: 10),
-                            Wrap(
-                              children: [
-                                OutlinedButton.icon(
-                                  onPressed: () => abrirEmail(_urlEmailDanilo),
-                                  icon: const Icon(Icons.mail_rounded),
-                                  label: const Text("Email"),
-                                ),
-                                OutlinedButton.icon(
-                                  onPressed: () => abrirUrl(_urlGithubDanilo),
-                                  icon: const Icon(Bootstrap.github),
-                                  label: const Text("GitHub"),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                const Image(
+                  image: AssetImage('assets/danilo.png'),
+                  width: 150,
+                  height: 20,
+                  fit: BoxFit.cover,
                 ),
-                Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  margin: const EdgeInsets.fromLTRB(15, 0, 15, 20),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                const SizedBox(width: 17),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const ClipRRect(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
-                        child: Image(image: AssetImage('assets/lucca.png'), width: 150),
+                      const Text(
+                        "Danilo Lima",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                       ),
-                      const SizedBox(width: 17),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      const SizedBox(height: 10),
+                      Text("\u2022 ${AppLocalizations.of(context).colab_desc_danilo}"),
+                      const SizedBox(height: 10),
+                      Wrap(
                         children: [
-                          const Text("Lucca Leal", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
-                          const SizedBox(height: 10),
-                          Text("\u2022 ${AppLocalizations.of(context).colab_desc_lucca}"),
-                          const SizedBox(height: 10),
                           OutlinedButton.icon(
-                            onPressed: () => abrirEmail(_urlEmailLucca),
+                            onPressed: () => abrirEmail(_urlEmailDanilo),
                             icon: const Icon(Icons.mail_rounded),
                             label: const Text("Email"),
-                          )
+                          ),
+                          OutlinedButton.icon(
+                            onPressed: () => abrirUrl(_urlGithubDanilo),
+                            icon: const Icon(Bootstrap.github),
+                            label: const Text("GitHub"),
+                          ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ),
               ],
             ),
-          )
+          ),
+          Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            margin: const EdgeInsets.fromLTRB(15, 0, 15, 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const ClipRRect(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
+                  child: Image(image: AssetImage('assets/lucca.png'), width: 150),
+                ),
+                const SizedBox(width: 17),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Lucca Leal", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+                    const SizedBox(height: 10),
+                    Text("\u2022 ${AppLocalizations.of(context).colab_desc_lucca}"),
+                    const SizedBox(height: 10),
+                    OutlinedButton.icon(
+                      onPressed: () => abrirEmail(_urlEmailLucca),
+                      icon: const Icon(Icons.mail_rounded),
+                      label: const Text("Email"),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }*/
+
+  SliverToBoxAdapter bodyContent(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const ClipOval(
+                    child: Image(
+                      image: AssetImage('assets/danilo.png'),
+                      width: 135,
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Danilo Lima",
+                          style: TextStyle(fontVariations: [FontVariation.weight(550)], fontSize: 25),
+                        ),
+                        const SizedBox(height: 10),
+                        Text("\u2022 ${AppLocalizations.of(context).colab_desc_danilo}"),
+                        const SizedBox(height: 10),
+                        OutlinedButton.icon(
+                          onPressed: () => abrirEmail(_urlEmailDanilo),
+                          icon: const Icon(Icons.mail_rounded),
+                          label: const Text("Email"),
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: () => abrirUrl(_urlGithubDanilo),
+                          icon: const Icon(Bootstrap.github),
+                          label: const Text("GitHub"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text("Lucca Leal",
+                            style: TextStyle(fontVariations: [FontVariation.weight(550)], fontSize: 25)),
+                        const SizedBox(height: 10),
+                        Text("\u2022 ${AppLocalizations.of(context).colab_desc_lucca}"),
+                        const SizedBox(height: 10),
+                        OutlinedButton.icon(
+                          onPressed: () => abrirEmail(_urlEmailLucca),
+                          icon: const Icon(Icons.mail_rounded),
+                          label: const Text("Email"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const ClipOval(
+                    child: Image(image: AssetImage('assets/lucca.png'), width: 135),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
