@@ -14,7 +14,6 @@ import 'package:gatopedia/screens/login_screen/colab.dart';
 import 'package:gatopedia/screens/login_screen/login/autenticar.dart';
 import 'package:gatopedia/screens/login_screen/login/cadastro.dart';
 import 'package:gatopedia/screens/login_screen/login/form.dart';
-import 'package:gatopedia/screens/seminternet.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grayscale/grayscale.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -25,7 +24,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 bool full = false;
 Offset? pos;
-bool iniciouInternet = false;
 
 class Index extends StatefulWidget {
   final bool tocar;
@@ -50,16 +48,7 @@ class _IndexState extends State<Index> {
   @override
   void initState() {
     super.initState();
-    if (!iniciouInternet) {
-      FlutterNativeSplash.remove();
-      if (!kIsWeb) {
-        connecteo.connectionStream.listen((internet) {
-          if (!mounted) return;
-          if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
-        });
-      }
-      iniciouInternet = true;
-    }
+    FlutterNativeSplash.remove();
     full = false;
     if (widget.tocar) {
       miau.setAsset("assets/meow.mp3").then((value) {

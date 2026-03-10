@@ -153,101 +153,15 @@ class _ConfigState extends State<Config> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ListTile(
-                          key: chaveTema,
-                          leading: const Icon(Icons.dark_mode_rounded),
-                          title: Text(
-                            AppLocalizations.of(context).config_darkmode_title,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          subtitle: Text(AppLocalizations.of(context).config_darkmode_subtitle),
-                          contentPadding: const EdgeInsets.fromLTRB(16, 0, 5, 0),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                _nomeTema(App.themeNotifier.value, context),
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              const Icon(Symbols.arrow_drop_down_rounded),
-                            ],
-                          ),
-                          onTap: () {
-                            final box = chaveTema.currentContext!.findRenderObject() as RenderBox;
-                            final local = box.localToGlobal(Offset.zero);
-                            final pos = Offset(local.dx, local.dy + 5);
-
-                            showMenu(
-                              context: context,
-                              position: RelativeRect.fromLTRB(99999, pos.dy, 0, 99999),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                              items: ThemeMode.values.map((e) {
-                                return PopupMenuItem(
-                                  onTap: () {
-                                    _mudarTema(e);
-                                  },
-                                  child: Text(_nomeTema(e, context)),
-                                );
-                              }).toList(),
-                            );
-                          },
-                        ),
-                        Platform.isAndroid
-                            ? ListTile(
-                                key: chaveIdioma,
-                                onTap: () {
-                                  final box = chaveIdioma.currentContext!.findRenderObject() as RenderBox;
-                                  final local = box.localToGlobal(Offset.zero);
-                                  final pos = Offset(local.dx, local.dy + 5);
-
-                                  final listaIdiomas = AppLocalizations.supportedLocales
-                                      .map((e) => e.languageCode)
-                                      .toList()
-                                    ..remove(App.localeNotifier.value.languageCode);
-
-                                  showMenu(
-                                    context: context,
-                                    position: RelativeRect.fromLTRB(99999, pos.dy, 0, 99999),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                    items: [
-                                      PopupMenuItem(
-                                          child: Text(_nomeLocale(App.localeNotifier.value.languageCode, context))),
-                                      ...(listaIdiomas.map((e) {
-                                        return PopupMenuItem(
-                                            onTap: () => _mudarLingua(e), child: Text(_nomeLocale(e, context)));
-                                      })),
-                                    ],
-                                  );
-                                },
-                                title: Text(AppLocalizations.of(context).config_lan_title),
-                                subtitle: Text(AppLocalizations.of(context).config_lan_subtitle),
-                                leading: const Icon(Symbols.translate_rounded),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      _nomeLocale(App.localeNotifier.value.languageCode, context),
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                    const Icon(Symbols.arrow_drop_down_rounded),
-                                  ],
-                                ),
-                                contentPadding: const EdgeInsets.fromLTRB(16, 0, 5, 0),
-                                titleTextStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                  fontSize: 20,
-                                  fontFamily: "Jost",
-                                ),
-                              )
-                            : const SizedBox(),
-                        !widget.voltar ? const DeletarConta() : const SizedBox(),
-                      ],
-                    ),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      tileTema(context),
+                      SizedBox(height: Platform.isAndroid ? 10 : 0),
+                      Platform.isAndroid ? tileIdioma(context) : const SizedBox(),
+                      !widget.voltar ? const DeletarConta() : const SizedBox(),
+                    ],
                   ),
                 ),
                 const Divider(),
@@ -285,6 +199,171 @@ class _ConfigState extends State<Config> {
                 ),
                 const SizedBox(height: kBottomNavigationBarHeight),
               ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget tileTema(BuildContext context) {
+    final clr = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(Icons.dark_mode_rounded, color: clr.onSurfaceVariant),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context).config_darkmode_title,
+                  style: const TextStyle(fontSize: 20),
+                  textAlign: TextAlign.left,
+                ),
+                Text(
+                  AppLocalizations.of(context).config_darkmode_subtitle,
+                  style: TextStyle(
+                    color: clr.onSurfaceVariant,
+                    fontSize: TextTheme.of(context).bodyMedium?.fontSize,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Align(
+          alignment: AlignmentGeometry.centerEnd,
+          child: ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(9999),
+            child: InkWell(
+              key: chaveTema,
+              borderRadius: BorderRadius.circular(9999),
+              onTap: () {
+                final box = chaveTema.currentContext!.findRenderObject() as RenderBox;
+                final local = box.localToGlobal(Offset.zero);
+
+                showMenu(
+                  context: context,
+                  position: RelativeRect.fromLTRB(99999, local.dy, 15, 99999),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  items: ThemeMode.values.map((e) {
+                    return PopupMenuItem(
+                      onTap: () {
+                        _mudarTema(e);
+                      },
+                      child: Text(_nomeTema(e, context)),
+                    );
+                  }).toList(),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: clr.primaryContainer,
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 2, 5, 2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      _nomeTema(App.themeNotifier.value, context),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: clr.onPrimaryContainer,
+                        fontVariations: const [FontVariation.weight(500)],
+                      ),
+                    ),
+                    Icon(Symbols.arrow_drop_down_rounded, color: clr.onPrimaryContainer),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget tileIdioma(BuildContext context) {
+    final clr = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(Icons.translate_rounded, color: clr.onSurfaceVariant),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context).config_lan_title,
+                  style: const TextStyle(fontSize: 20),
+                  textAlign: TextAlign.left,
+                ),
+                Text(
+                  AppLocalizations.of(context).config_lan_subtitle,
+                  style: TextStyle(
+                    color: clr.onSurfaceVariant,
+                    fontSize: TextTheme.of(context).bodyMedium?.fontSize,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Align(
+          alignment: AlignmentGeometry.centerEnd,
+          child: ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(9999),
+            child: InkWell(
+              key: chaveIdioma,
+              borderRadius: BorderRadius.circular(9999),
+              onTap: () {
+                final box = chaveIdioma.currentContext!.findRenderObject() as RenderBox;
+                final local = box.localToGlobal(Offset.zero);
+
+                final listaIdiomas = AppLocalizations.supportedLocales.map((e) => e.languageCode).toList()
+                  ..remove(App.localeNotifier.value.languageCode);
+
+                showMenu(
+                  context: context,
+                  position: RelativeRect.fromLTRB(99999, local.dy, 15, 99999),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  items: [
+                    PopupMenuItem(child: Text(_nomeLocale(App.localeNotifier.value.languageCode, context))),
+                    ...(listaIdiomas.map((e) {
+                      return PopupMenuItem(onTap: () => _mudarLingua(e), child: Text(_nomeLocale(e, context)));
+                    })),
+                  ],
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: clr.primaryContainer,
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 2, 5, 2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      _nomeLocale(App.localeNotifier.value.languageCode, context),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: clr.onPrimaryContainer,
+                        fontVariations: const [FontVariation.weight(500)],
+                      ),
+                    ),
+                    Icon(Symbols.arrow_drop_down_rounded, color: clr.onPrimaryContainer),
+                  ],
+                ),
+              ),
             ),
           ),
         )

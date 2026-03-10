@@ -1,16 +1,11 @@
 import 'package:animations/animations.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:gatopedia/animations/routes.dart';
 import 'package:gatopedia/components/dan_icons.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
-import 'package:gatopedia/main.dart';
 import 'package:gatopedia/screens/home/config/config.dart';
 import 'package:gatopedia/screens/home/eu/profile.dart';
 import 'package:gatopedia/screens/home/gatos/gatos.dart';
-import 'package:gatopedia/screens/index.dart';
-import 'package:gatopedia/screens/seminternet.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -26,22 +21,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> telasHome = const [Gatos(EdgeInsets.zero), Profile(false), Config(false)];
 
+  int paginaSelecionada = 0;
+
   @override
   void initState() {
     super.initState();
-    if (!iniciouInternet) {
-      FlutterNativeSplash.remove();
-      if (!kIsWeb) {
-        connecteo.connectionStream.listen((internet) {
-          if (!mounted) return;
-          if (!internet) Navigator.push(context, SlideUpRoute(const SemInternet()));
-        });
-      }
-      iniciouInternet = true;
-    }
+    FlutterNativeSplash.remove();
   }
-
-  int paginaSelecionada = 0;
 
   @override
   Widget build(BuildContext context) {
