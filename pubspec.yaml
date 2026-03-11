@@ -46,6 +46,7 @@ dependencies:
   uuid: ^4.5.2
   transparent_image: ^2.0.1
   flutter_native_splash: ^2.4.0
+  path_provider: any
 
 dev_dependencies:
   build_runner: ^2.12.2
