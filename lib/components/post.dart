@@ -18,18 +18,18 @@ import 'package:gatopedia/screens/index.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class Post extends StatefulWidget {
+class ForumPost extends StatefulWidget {
   final int index;
   final EdgeInsets pd;
   final bool last;
 
-  const Post(this.index, this.pd, this.last, {super.key});
+  const ForumPost(this.index, this.pd, this.last, {super.key});
 
   @override
-  State<Post> createState() => _PostState();
+  State<ForumPost> createState() => _ForumPostState();
 }
 
-class _PostState extends State<Post> {
+class _ForumPostState extends State<ForumPost> {
   void _notificar() {
     setState(() {});
   }

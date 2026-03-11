@@ -44,7 +44,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    tabIndex = 1;
+    Gatos.tabIndex.value = 1;
     if (!iniciouListenForum) {
       _atualizar();
       iniciouListenForum = true;
@@ -69,7 +69,7 @@ class _ForumState extends State<Forum> with AutomaticKeepAliveClientMixin {
                         itemBuilder: (context, i) {
                           final lastKey = snapshotForum.children.last.key!;
                           return snapshotForum.child("${int.parse(snapshotForum.children.last.key!) - i}").value != null
-                              ? Post(
+                              ? ForumPost(
                                   int.parse(snapshotForum.children.last.key!) - i,
                                   widget.pd,
                                   int.parse(snapshotForum.children.last.key!) - i == int.parse(lastKey),

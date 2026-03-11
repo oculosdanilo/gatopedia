@@ -1,39 +1,31 @@
 import 'dart:io';
-import 'dart:math' as math;
 
 import 'package:animations/animations.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:gatopedia/components/gatos_appbar.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
-import 'package:gatopedia/screens/home/config/deletar_conta.dart';
 import 'package:gatopedia/screens/home/gatos/forum/forum.dart';
 import 'package:gatopedia/screens/home/gatos/forum/new/image_post.dart';
 import 'package:gatopedia/screens/home/gatos/forum/new/text_post.dart';
 import 'package:gatopedia/screens/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/screens/home/home.dart';
-import 'package:gatopedia/screens/index.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:icons_plus/icons_plus.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-int tabIndex = 0;
-bool expandido = true;
-bool animReverso = false;
-
 bool _iniciouValueNotifierForum = false;
+bool _initAnimTabBar = false;
 
 class Gatos extends StatefulWidget {
+  static final ValueNotifier<int> tabIndex = ValueNotifier(0);
+  static late final ValueNotifier<Animation<double>> animTabBar;
   final EdgeInsets pd;
 
   const Gatos(this.pd, {super.key});
@@ -43,19 +35,14 @@ class Gatos extends StatefulWidget {
 }
 
 class _GatosState extends State<Gatos> with TickerProviderStateMixin {
+  bool _expandido = true;
+
   final fagKey = GlobalKey<ExpandableFabState>();
 
-  final miau = AudioPlayer();
   late final TabController _tabController;
-
-  Future<void> _play() async {
-    await miau.setAsset("assets/meow.mp3");
-    await miau.play();
-  }
 
   late AnimationController _animTabBarController;
   late CurvedAnimation _animTabBarCurve;
-  late Animation<double> _animTabBar;
 
   late AnimationController _animFAB;
 
@@ -115,16 +102,16 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
           scrollSalvo = off;
           scrollAcumulado = offsetInicial - off;
 
-          if (scrollAcumulado > (kToolbarHeight * 2.86) / 2 && !expandido) {
+          if (scrollAcumulado > (kToolbarHeight * 2.86) / 2 && !_expandido) {
             setState(() {
-              expandido = true;
+              _expandido = true;
               offsetInicial = off;
 
               _animTabBarController.reverse();
             });
-          } else if (scrollAcumulado < (-(kToolbarHeight * 2.86) / 2) && expandido) {
+          } else if (scrollAcumulado < (-(kToolbarHeight * 2.86) / 2) && _expandido) {
             setState(() {
-              expandido = false;
+              _expandido = false;
               offsetInicial = off;
 
               _animTabBarController.forward();
@@ -138,7 +125,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
         listenerScroll() {
           double off = scrollForum.offset;
           if (!scrollForum.position.isScrollingNotifier.value) {
-            if ((scrollAcumulado < 0 && !expandido) || (scrollAcumulado > 0 && expandido)) {
+            if ((scrollAcumulado < 0 && !_expandido) || (scrollAcumulado > 0 && _expandido)) {
               offsetInicial = off;
             }
           }
@@ -160,7 +147,7 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
         listenerStopScroll() {
           double off = scrollWiki.offset;
           if (!scrollWiki.position.isScrollingNotifier.value) {
-            if ((scrollAcumuladoWiki < 0 && !expandido) || (scrollAcumuladoWiki > 0 && expandido)) {
+            if ((scrollAcumuladoWiki < 0 && !_expandido) || (scrollAcumuladoWiki > 0 && _expandido)) {
               setState(() {
                 offsetInicial = off;
               });
@@ -173,16 +160,16 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
           scrollSalvoWiki = off;
           scrollAcumuladoWiki = offsetInicial - off;
 
-          if (scrollAcumuladoWiki > (kToolbarHeight * 2.86) / 2 && !expandido) {
+          if (scrollAcumuladoWiki > (kToolbarHeight * 2.86) / 2 && !_expandido) {
             setState(() {
-              expandido = true;
+              _expandido = true;
               offsetInicial = off;
 
               _animTabBarController.reverse();
             });
-          } else if (scrollAcumuladoWiki < -(kToolbarHeight * 2.86) / 2 && expandido) {
+          } else if (scrollAcumuladoWiki < -(kToolbarHeight * 2.86) / 2 && _expandido) {
             setState(() {
-              expandido = false;
+              _expandido = false;
               offsetInicial = off;
 
               _animTabBarController.forward();
@@ -199,16 +186,16 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
     );
 
     if (!_iniciouValueNotifierForum) {
-      Forum.snapshotForum = ValueNotifier(null);
+      Forum.snapshotForum = ValueNotifier<DataSnapshot?>(null);
       _iniciouValueNotifierForum = true;
     }
 
-    _tabController = TabController(length: 2, vsync: this, initialIndex: tabIndex)
+    _tabController = TabController(length: 2, vsync: this, initialIndex: Gatos.tabIndex.value)
       ..animation?.addListener(() {
         if ((_tabController.animation?.value ?? 1) > 0.5) {
-          if (!expandido && scrollSalvo < ((kToolbarHeight * 2.86) / 2)) {
+          if (!_expandido && scrollSalvo < ((kToolbarHeight * 2.86) / 2)) {
             setState(() {
-              expandido = true;
+              _expandido = true;
 
               _animTabBarController.reverse();
             });
@@ -216,9 +203,9 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
           _animFAB.forward();
           scrollAcumulado = 0;
         } else {
-          if (!expandido && scrollSalvoWiki < ((kToolbarHeight * 2.86) / 2)) {
+          if (!_expandido && scrollSalvoWiki < ((kToolbarHeight * 2.86) / 2)) {
             setState(() {
-              expandido = true;
+              _expandido = true;
 
               _animTabBarController.reverse();
             });
@@ -232,15 +219,20 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
     _animTabBarController = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
     _animTabBarCurve =
         CurvedAnimation(parent: _animTabBarController, curve: Curves.easeOutBack, reverseCurve: Curves.easeInCubic);
-    _animTabBar = Tween(begin: 0.0, end: 1.0).animate(_animTabBarCurve);
+    if (_initAnimTabBar) {
+      Gatos.animTabBar.value = Tween(begin: 0.0, end: 1.0).animate(_animTabBarCurve);
+    } else {
+      Gatos.animTabBar = ValueNotifier(Tween(begin: 0.0, end: 1.0).animate(_animTabBarCurve));
+      _initAnimTabBar = true;
+    }
 
     _animFAB = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
 
-    if (!expandido) {
+    if (!_expandido) {
       _animTabBarController.forward(from: 1.0);
     }
 
-    if (tabIndex == 1) {
+    if (Gatos.tabIndex.value == 1) {
       _animFAB.forward(from: 1.0);
     }
   }
@@ -466,170 +458,20 @@ class _GatosState extends State<Gatos> with TickerProviderStateMixin {
           Positioned(
             top: 0,
             child: AnimatedBuilder(
-              animation: _animTabBar,
+              animation: Gatos.animTabBar.value,
               builder: (context, child) {
                 return Transform.translate(
-                  offset: Offset(0, _animTabBar.value * (-(kToolbarHeight * 2.86) / 2)),
+                  offset: Offset(0, Gatos.animTabBar.value.value * (-(kToolbarHeight * 2.86) / 2)),
                   child: child,
                 );
               },
               child: SizedBox(
                 height: kToolbarHeight * 2.86,
-                child: appbar(context),
+                child: AppBarGatos(_tabController, scrollForum),
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget appbar(BuildContext context) {
-    return Container(
-      color: username != null ? Theme.of(context).colorScheme.primary : Colors.black,
-      width: MediaQuery.sizeOf(context).width,
-      child: Stack(
-        children: [
-          Column(
-            children: [
-              AppBar(
-                backgroundColor: Colors.transparent,
-                centerTitle: false,
-                leading: username != null ? botaoSair(context) : null,
-              ),
-              const SizedBox(height: kToolbarHeight),
-              TabBar(
-                tabAlignment: TabAlignment.start,
-                isScrollable: true,
-                controller: _tabController,
-                labelStyle: const TextStyle(fontSize: 18, fontFamily: "Jost"),
-                unselectedLabelColor: username != null
-                    ? Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.70)
-                    : Colors.white.withValues(alpha: 0.70),
-                indicatorColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
-                labelColor: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
-                tabs: const [Tab(text: "Wiki"), Tab(text: "Feed")],
-                onTap: (index) {
-                  if (tabIndex == 1 && index == 1 && scrollForum.hasClients) {
-                    setState(() {
-                      scrollForum.animateTo(
-                        0.0,
-                        duration: Duration(microseconds: (300 * scrollForum.offset).toInt()),
-                        curve: Curves.easeOutQuad,
-                      );
-                    });
-                  }
-                },
-              ),
-            ],
-          ),
-          Positioned(
-            right: 20,
-            top: ((kToolbarHeight * 2.86) / 2) - 67,
-            child: AnimatedBuilder(
-              animation: _animTabBar,
-              builder: (context, child) {
-                return Transform.translate(
-                  offset: Offset(_animTabBar.value * 40, _animTabBar.value * ((kToolbarHeight * 2.86) / 4)),
-                  child: Transform.scale(
-                    scale: 1 - (_animTabBar.value * 0.5),
-                    child: child,
-                  ),
-                );
-              },
-              child: Material(
-                color: Colors.transparent,
-                child: IconButton(
-                  icon: Icon(IonIcons.paw, color: username != null ? const Color(0xffff9922) : const Color(0xff757575)),
-                  iconSize: 110,
-                  onPressed: () async => await _play(),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.fromLTRB(15, kToolbarHeight, 10, 0),
-            child: AnimatedBuilder(
-              animation: _animTabBar,
-              builder: (context, child) {
-                return Transform.translate(
-                  offset: Offset(0, _animTabBar.value * 25),
-                  child: Text(
-                    username != null ? "@$username" : AppLocalizations.of(context).gatos_anon,
-                    style: TextStyle(
-                      color: username != null ? Theme.of(context).colorScheme.onPrimary : Colors.white,
-                      fontSize: 28 + (_animTabBar.value * -8),
-                      fontVariations: const [FontVariation.weight(500)],
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              },
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  IconButton botaoSair(BuildContext context) {
-    return IconButton(
-      onPressed: () async {
-        bool dialogo = await showCupertinoDialog<bool>(
-              barrierDismissible: false,
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  icon: Transform.rotate(
-                    angle: math.pi,
-                    child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.error),
-                  ),
-                  title: Text(
-                    AppLocalizations.of(context).gatos_exit_title,
-                    style: const TextStyle(fontVariations: [FontVariation("wght", 500)]),
-                    textAlign: TextAlign.center,
-                  ),
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Text(AppLocalizations.of(context).gatos_exit_desc)],
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: Text(AppLocalizations.of(context).cancel),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                );
-              },
-            ) ??
-            false;
-        if (dialogo) {
-          final sp = await SharedPreferences.getInstance();
-          if (sp.containsKey("username")) await sp.remove("username");
-          if (sp.containsKey("scrollSalvo")) await sp.remove("scrollSalvo");
-          if (sp.containsKey("img") && sp.containsKey("bio")) {
-            await sp.remove("bio");
-            await sp.remove("img");
-          }
-          if (!context.mounted) return;
-          iniciouUserGoogle = false;
-          GoogleSignIn.instance.signOut();
-          username = null;
-          scrollSalvo = 0;
-          scrollSalvoWiki = 0;
-          scrollAcumulado = 0;
-          scrollAcumuladoWiki = 0;
-          Navigator.pop(context);
-          Navigator.push(context, MaterialPageRoute(builder: (c) => const Index(false)));
-        }
-      },
-      icon: Transform.rotate(
-        angle: math.pi,
-        child: Icon(Symbols.logout, color: Theme.of(context).colorScheme.errorContainer),
       ),
     );
   }

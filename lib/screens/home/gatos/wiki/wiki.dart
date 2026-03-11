@@ -35,7 +35,7 @@ class _WikiState extends State<Wiki> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    tabIndex = 0;
+    Gatos.tabIndex.value = 0;
     if (!pegouInfo) {
       _pegarInfo();
       pegouInfo = true;

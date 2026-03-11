@@ -182,6 +182,7 @@ class _IndexState extends State<Index> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AnimatedOpacity(
+                    // TITULO
                     duration: const Duration(milliseconds: 200),
                     opacity: animText ? 1 : 0,
                     child: Text(
@@ -190,8 +191,9 @@ class _IndexState extends State<Index> {
                       style: const TextStyle(fontSize: 50, fontVariations: [FontVariation("wght", 450)]),
                     ),
                   ),
-                  const SizedBox(height: 75),
+                  SizedBox(height: scH * 0.05),
                   AnimatedOpacity(
+                    // ENTRAR
                     duration: const Duration(milliseconds: 300),
                     opacity: animText ? 1 : 0,
                     curve: const Interval(0.5, 1),
@@ -218,6 +220,7 @@ class _IndexState extends State<Index> {
                   ),
                   const SizedBox(height: 10),
                   AnimatedOpacity(
+                    // CADASTRO
                     duration: const Duration(milliseconds: 400),
                     opacity: animText ? 1 : 0,
                     curve: const Interval(0.5, 1),
@@ -233,6 +236,7 @@ class _IndexState extends State<Index> {
                   ),
                   const SizedBox(height: 10),
                   AnimatedOpacity(
+                    // ENTRADA GOOGLE
                     duration: const Duration(milliseconds: 500),
                     opacity: animText ? 1 : 0,
                     curve: const Interval(0.5, 1),

@@ -19,21 +19,26 @@ class GatoCard extends StatefulWidget {
   State<GatoCard> createState() => _GatoCardState();
 }
 
-class _GatoCardState extends State<GatoCard> {
+class _GatoCardState extends State<GatoCard> with AutomaticKeepAliveClientMixin {
   late final String gatoID = widget.data.key!;
   late final String gatoHash = widget.data.child("img").value as String;
 
   late Future<String> _imageUrl;
+  bool _pegouImageUrl = false;
 
   @override
   void initState() {
     super.initState();
 
-    _imageUrl = FirebaseStorage.instance.ref("gatos/$gatoID.webp").getDownloadURL();
+    if (!_pegouImageUrl) {
+      _imageUrl = FirebaseStorage.instance.ref("gatos/$gatoID.webp").getDownloadURL();
+      _pegouImageUrl = true;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       margin: EdgeInsets.fromLTRB(
         15,
@@ -91,22 +96,25 @@ class _GatoCardState extends State<GatoCard> {
                   width: 130,
                   height: 130,
                   child: FutureBuilder(
-                      future: _imageUrl,
-                      builder: (context, asyncSnapshot) {
-                        Widget imagem;
-                        if (asyncSnapshot.hasData && asyncSnapshot.connectionState == ConnectionState.done) {
-                          imagem = FadeInImage(
-                            placeholder: BlurHashImage(gatoHash, decodingWidth: 4, decodingHeight: 4),
-                            image: CachedNetworkImageProvider(asyncSnapshot.data!),
-                            width: 130,
-                            height: 130,
-                          );
-                        } else {
-                          imagem = BlurHash(hash: gatoHash, decodingWidth: 4, decodingHeight: 4);
-                        }
+                    future: _imageUrl,
+                    builder: (context, asyncSnapshot) {
+                      Widget imagem;
+                      if (asyncSnapshot.hasData && asyncSnapshot.connectionState == ConnectionState.done) {
+                        imagem = FadeInImage(
+                          placeholder: BlurHashImage(gatoHash, decodingWidth: 130, decodingHeight: 130),
+                          image: CachedNetworkImageProvider(asyncSnapshot.data!),
+                          fadeInDuration: const Duration(milliseconds: 300),
+                          fadeOutDuration: const Duration(milliseconds: 300),
+                          width: 130,
+                          height: 130,
+                        );
+                      } else {
+                        imagem = BlurHash(hash: gatoHash, decodingWidth: 130, decodingHeight: 130);
+                      }
 
-                        return AnimatedSwitcher(duration: const Duration(milliseconds: 200), child: imagem);
-                      }),
+                      return AnimatedSwitcher(duration: const Duration(milliseconds: 300), child: imagem);
+                    },
+                  ),
                 ),
                 const SizedBox(width: 15),
                 Flexible(
@@ -144,4 +152,7 @@ class _GatoCardState extends State<GatoCard> {
       return App.themeNotifier.value == ThemeMode.dark;
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
