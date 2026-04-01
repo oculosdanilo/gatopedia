@@ -23,15 +23,22 @@ class _GatoCardState extends State<GatoCard> with AutomaticKeepAliveClientMixin 
   late final String gatoID = widget.data.key!;
   late final String gatoHash = widget.data.child("img").value as String;
 
-  late Future<String> _imageUrl;
+  String? _imageUrl;
   bool _pegouImageUrl = false;
+
+  void _pegarImg() async {
+    String url = await FirebaseStorage.instance.ref("gatos/$gatoID.webp").getDownloadURL();
+    setState(() {
+      _imageUrl = url;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
 
     if (!_pegouImageUrl) {
-      _imageUrl = FirebaseStorage.instance.ref("gatos/$gatoID.webp").getDownloadURL();
+      _pegarImg();
       _pegouImageUrl = true;
     }
   }
@@ -95,26 +102,25 @@ class _GatoCardState extends State<GatoCard> with AutomaticKeepAliveClientMixin 
                 SizedBox(
                   width: 130,
                   height: 130,
-                  child: FutureBuilder(
-                    future: _imageUrl,
-                    builder: (context, asyncSnapshot) {
-                      Widget imagem;
-                      if (asyncSnapshot.hasData && asyncSnapshot.connectionState == ConnectionState.done) {
-                        imagem = FadeInImage(
+                  child: Stack(
+                    children: [
+                      BlurHash(hash: gatoHash, decodingWidth: 130, decodingHeight: 130),
+                      _imageUrl != null
+                          ? AnimatedOpacity(
+                              duration: const Duration(milliseconds: 5000),
+                              opacity: _imageUrl != null ? 1 : 0,
+                              child: CachedNetworkImage(imageUrl: _imageUrl!, width: 130, height: 130))
+                          : const SizedBox(),
+                    ],
+                  ),
+                  /*FadeInImage(
                           placeholder: BlurHashImage(gatoHash, decodingWidth: 130, decodingHeight: 130),
-                          image: CachedNetworkImageProvider(asyncSnapshot.data!),
+                          image: CachedNetworkImageProvider(_imageUrl!),
                           fadeInDuration: const Duration(milliseconds: 300),
                           fadeOutDuration: const Duration(milliseconds: 300),
                           width: 130,
                           height: 130,
-                        );
-                      } else {
-                        imagem = BlurHash(hash: gatoHash, decodingWidth: 130, decodingHeight: 130);
-                      }
-
-                      return AnimatedSwitcher(duration: const Duration(milliseconds: 300), child: imagem);
-                    },
-                  ),
+                        )*/
                 ),
                 const SizedBox(width: 15),
                 Flexible(

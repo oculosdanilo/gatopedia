@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:connecteo/connecteo.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -23,8 +22,6 @@ bool internet = true;
 final blueScheme = ColorScheme.fromSeed(seedColor: const Color(0xff000080), brightness: Brightness.dark);
 final blueSchemeL = ColorScheme.fromSeed(seedColor: const Color(0xff000080), brightness: Brightness.light);
 dynamic mensagem;
-
-final connecteo = ConnectionChecker();
 
 void main() async {
   bool br() {

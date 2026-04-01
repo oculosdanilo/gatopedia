@@ -21,13 +21,12 @@ dependencies:
   firebase_storage: ^13.0.1
   badges: ^3.1.2
   cached_network_image: ^3.3.1
-  image_cropper: ^11.0.0
+  image_cropper: ^12.1.1
   flutter_image_compress: ^2.3.0
   flutter_expandable_fab: ^2.0.0
   photo_view: ^0.15.0
   material_symbols_icons: ^4.2741.0
   firebase_app_check: ^0.4.0+1
-  connecteo: ^3.0.0
   lottie: ^3.1.1
   grayscale: ^0.0.5+7
   http: ^1.2.1

@@ -31,3 +31,4 @@ app.*.map.json
 /ios/build/
 /lib/l10n/app_*.dart
 /lib/firebase_options.dart
+/lib/services/storage_url_resolver.dart
