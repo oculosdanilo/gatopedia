@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
@@ -16,12 +17,10 @@ class GatoInfo extends StatefulWidget {
   const GatoInfo(this.gatoInfo, this.pd, {super.key});
 
   @override
-  GatoInfoState createState() {
-    return GatoInfoState();
-  }
+  State<GatoInfo> createState() => _GatoInfoState();
 }
 
-class GatoInfoState extends State<GatoInfo> {
+class _GatoInfoState extends State<GatoInfo> {
   late String gatoHash = widget.gatoInfo.child("img").value as String;
   late String titulo = widget.gatoInfo.child("nome").value as String;
   late String gatoID = widget.gatoInfo.key!;
@@ -34,10 +33,18 @@ class GatoInfoState extends State<GatoInfo> {
     _nComentarios = FirebaseDatabase.instance.ref("gatos/$gatoID/nComentarios").get();
   }
 
+  late Future<String> _imageUrlGet;
+  bool _pegouImageUrl = false;
+
   @override
   void initState() {
     super.initState();
     _fetchNComentarios();
+
+    if (!_pegouImageUrl) {
+      _imageUrlGet = FirebaseStorage.instance.ref("gatos/$gatoID.webp").getDownloadURL();
+      _pegouImageUrl = true;
+    }
   }
 
   // TODO: implementar comentarios e ajustar as informações
@@ -46,7 +53,7 @@ class GatoInfoState extends State<GatoInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Container(
-        margin: EdgeInsets.only(bottom: scP.bottom, left: 75, right: 75),
+        margin: EdgeInsets.only(bottom: scP.bottom + 15, left: 75, right: 75),
         child: OpenContainer(
           transitionDuration: const Duration(milliseconds: 350),
           closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
@@ -131,10 +138,7 @@ class GatoInfoState extends State<GatoInfo> {
                 context,
                 MaterialPageRoute(
                   builder: (ctx) => ClipRect(
-                    child: Imagem(
-                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F$gatoID.webp?alt=media",
-                      gatoID,
-                    ),
+                    child: Imagem("gatos/$gatoID.webp", gatoID),
                   ),
                 ),
               ),
@@ -151,13 +155,21 @@ class GatoInfoState extends State<GatoInfo> {
                     SizedBox(
                       width: MediaQuery.sizeOf(context).width,
                       height: MediaQuery.sizeOf(context).width,
-                      child: BlurHash(
-                        hash: gatoHash,
-                        image:
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F$gatoID.webp?alt=media",
-                        duration: const Duration(milliseconds: 150),
-                        color: Theme.of(context).colorScheme.surface,
-                        imageFit: BoxFit.cover,
+                      child: FutureBuilder(
+                        future: _imageUrlGet,
+                        builder: (context, asyncSnapshot) {
+                          if (asyncSnapshot.hasData && asyncSnapshot.connectionState == ConnectionState.done) {
+                            return BlurHash(
+                              hash: gatoHash,
+                              image: asyncSnapshot.requireData,
+                              duration: const Duration(milliseconds: 150),
+                              color: Theme.of(context).colorScheme.surface,
+                              imageFit: BoxFit.cover,
+                            );
+                          } else {
+                            return BlurHash(hash: gatoHash, decodingHeight: 130, decodingWidth: 130);
+                          }
+                        },
                       ),
                     ),
                     const DecoratedBox(

@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:another_flushbar/flushbar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
@@ -58,7 +59,7 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
                   children: [
                     ClipOval(
                       child: Image(
-                        image: NetworkImage(
+                        image: CachedNetworkImageProvider(
                             "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${widget.gatoID}.webp?alt=media"),
                         width: 30,
                         errorBuilder: (c, obj, stacktrace) {

@@ -1,5 +1,4 @@
 import 'package:animations/animations.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -23,22 +22,15 @@ class _GatoCardState extends State<GatoCard> with AutomaticKeepAliveClientMixin 
   late final String gatoID = widget.data.key!;
   late final String gatoHash = widget.data.child("img").value as String;
 
-  String? _imageUrl;
+  late Future<String> _imageUrlGet;
   bool _pegouImageUrl = false;
-
-  void _pegarImg() async {
-    String url = await FirebaseStorage.instance.ref("gatos/$gatoID.webp").getDownloadURL();
-    setState(() {
-      _imageUrl = url;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
 
     if (!_pegouImageUrl) {
-      _pegarImg();
+      _imageUrlGet = FirebaseStorage.instance.ref("gatos/${gatoID}_mini.webp").getDownloadURL();
       _pegouImageUrl = true;
     }
   }
@@ -102,16 +94,22 @@ class _GatoCardState extends State<GatoCard> with AutomaticKeepAliveClientMixin 
                 SizedBox(
                   width: 130,
                   height: 130,
-                  child: Stack(
-                    children: [
-                      BlurHash(hash: gatoHash, decodingWidth: 130, decodingHeight: 130),
-                      _imageUrl != null
-                          ? AnimatedOpacity(
-                              duration: const Duration(milliseconds: 5000),
-                              opacity: _imageUrl != null ? 1 : 0,
-                              child: CachedNetworkImage(imageUrl: _imageUrl!, width: 130, height: 130))
-                          : const SizedBox(),
-                    ],
+                  child: FutureBuilder(
+                    future: _imageUrlGet,
+                    builder: (context, data) {
+                      if (data.hasData && data.connectionState == ConnectionState.done) {
+                        String imageUrl = data.data!;
+                        return BlurHash(
+                          hash: gatoHash,
+                          decodingHeight: 130,
+                          decodingWidth: 130,
+                          image: imageUrl,
+                          duration: const Duration(milliseconds: 150),
+                        );
+                      } else {
+                        return BlurHash(hash: gatoHash, decodingWidth: 130, decodingHeight: 130);
+                      }
+                    },
                   ),
                   /*FadeInImage(
                           placeholder: BlurHashImage(gatoHash, decodingWidth: 130, decodingHeight: 130),
