@@ -184,7 +184,7 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
                           timestamp: e.child("timestamp").value as int,
                         );
                         comentarios.add(comentarioConvertido);
-                      }
+                      } // TODO: continuar a fazer os comentarios daqui
 
                       return Expanded(
                         child: ListView.builder(
