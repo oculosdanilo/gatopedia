@@ -143,5 +143,25 @@
   "comment": "########################## WIKI #################################################",
   "wiki_info_commentHint": "Comment...",
   "wiki_info_commentBtn": "Comments",
+  "wiki_info_desc": "Fur color: {cores}\nWeight: {peso}\nLifetime estimate: {tempoVida}\nSize: {porte}\nOriginal from: {pais}",
+  "@wiki_info_desc": {
+    "placeholders": {
+      "cores": {
+        "type": "String"
+      },
+      "peso": {
+        "type": "String"
+      },
+      "tempoVida": {
+        "type": "String"
+      },
+      "porte": {
+        "type": "String"
+      },
+      "pais": {
+        "type": "String"
+      }
+    }
+  },
   "comment": "########################## END #################################################"
 }

@@ -1,9 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:another_flushbar/flushbar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:gatopedia/components/comentario.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:uuid/uuid.dart';
@@ -25,18 +27,27 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
 
   late Future<DataSnapshot> _comentarios;
 
+  late Future<String> _imageUrlGet;
+  bool _pegouImageUrl = false;
+
   void _postarC() {}
 
   dynamic _deletarC(int index) {}
 
   void _fetchComentarios() {
-    _comentarios = FirebaseDatabase.instance.ref("gatos/${widget.gatoID}").get();
+    final DatabaseReference query = FirebaseDatabase.instance.ref("gatos/${widget.gatoID}");
+    _comentarios = query.get();
   }
 
   @override
   void initState() {
     super.initState();
     _fetchComentarios();
+
+    if (!_pegouImageUrl) {
+      _imageUrlGet = FirebaseStorage.instance.ref("gatos/${widget.gatoID}_mini.webp").getDownloadURL();
+      _pegouImageUrl = true;
+    }
   }
 
   @override
@@ -58,13 +69,27 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ClipOval(
-                      child: Image(
-                        image: CachedNetworkImageProvider(
-                            "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/gatos%2F${widget.gatoID}.webp?alt=media"),
+                      child: SizedBox(
                         width: 30,
-                        errorBuilder: (c, obj, stacktrace) {
-                          return Image.asset("assets/user.webp", width: 30);
-                        },
+                        height: 30,
+                        child: FutureBuilder(
+                          future: _imageUrlGet,
+                          builder: (context, asyncSnapshot) {
+                            if (asyncSnapshot.hasData && asyncSnapshot.connectionState == ConnectionState.done) {
+                              return BlurHash(
+                                hash: widget.gatoHash,
+                                image: asyncSnapshot.requireData,
+                                duration: const Duration(milliseconds: 150),
+                                color: Theme.of(context).colorScheme.surface,
+                                imageFit: BoxFit.cover,
+                                decodingHeight: 30,
+                                decodingWidth: 30,
+                              );
+                            } else {
+                              return BlurHash(hash: widget.gatoHash, decodingHeight: 30, decodingWidth: 30);
+                            }
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(width: 15),
@@ -131,30 +156,41 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
                       ),
                     )
                   : const SizedBox(),
-              FilledButton(
+              /*FilledButton(
                 onPressed: () async {
                   final snapgatos = await FirebaseDatabase.instance.ref("gatos").get();
                   for (final e in snapgatos.children) {
                     final ereversed = e.child("comentarios").children.toList().reversed;
                     for (final comentario in ereversed) {
-                      await comentario.ref.update({"timestamp": "1669156755000"});
+                      await comentario.ref.update({"timestamp": "1669152780"});
                     }
                   }
                 },
                 child: Text("converter"),
-              ),
+              ),*/
               FutureBuilder<DataSnapshot>(
                 future: _comentarios,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                    final Query comentarios = snapshot.data!.child("comentarios").ref.orderByChild("path");
+                    final List<DataSnapshot> comentariosListaRaw =
+                        snapshot.requireData.child("comentarios").children.toList();
                     final int nComentarios = snapshot.data!.child("nComentarios").value as int;
                     if (nComentarios != 0) {
+                      final List<ComentarioData> comentarios = [];
+                      for (DataSnapshot e in comentariosListaRaw) {
+                        ComentarioData comentarioConvertido = ComentarioData(
+                          user: e.child("user").value as String,
+                          content: e.child("content").value as String,
+                          timestamp: e.child("timestamp").value as int,
+                        );
+                        comentarios.add(comentarioConvertido);
+                      }
+
                       return Expanded(
                         child: ListView.builder(
                           itemCount: nComentarios,
                           itemBuilder: (context, i) {
-                            return Text((nComentarios - i).toString());
+                            return Text(i.toString());
                             /*final index = nComentarios - i;
                             final commentList = snapData.value as List<Object?>;
                             final thisComment = commentList[index] as dynamic;

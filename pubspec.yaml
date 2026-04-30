@@ -33,7 +33,7 @@ dependencies:
   flutter_blurhash: ^0.9.1
   google_sign_in: ^7.1.1
   icons_plus: ^5.0.0
-  file_picker: ^10.0.0
+  file_picker: ^11.0.2
   image_picker: ^1.1.2
   icons_launcher: ^3.0.0
   flutter_localizations:

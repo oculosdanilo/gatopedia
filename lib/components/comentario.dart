@@ -178,4 +178,7 @@ class _ComentarioState extends State<Comentario> {
 class ComentarioData {
   String user = "erronulo";
   String content = "erronulo";
+  int timestamp = 0;
+
+  ComentarioData({required this.user, required this.content, required this.timestamp});
 }

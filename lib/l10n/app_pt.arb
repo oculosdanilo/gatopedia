@@ -143,5 +143,25 @@
   "comment": "########################## WIKI #################################################",
   "wiki_info_commentHint": "Comentar...",
   "wiki_info_commentBtn": "Comentários",
+  "wiki_info_desc": "Cor do pelo: {cores}\nPeso: {peso}\nTempo de vida: {tempoVida}\nPorte: {porte}\nPaís de origem: {pais}",
+  "@wiki_info_desc": {
+    "placeholders": {
+      "cores": {
+        "type": "String"
+      },
+      "peso": {
+        "type": "String"
+      },
+      "tempoVida": {
+        "type": "String"
+      },
+      "porte": {
+        "type": "String"
+      },
+      "pais": {
+        "type": "String"
+      }
+    }
+  },
   "comment": "########################## END #################################################"
 }

@@ -24,6 +24,7 @@ class _GatoInfoState extends State<GatoInfo> {
   late String gatoHash = widget.gatoInfo.child("img").value as String;
   late String titulo = widget.gatoInfo.child("nome").value as String;
   late String gatoID = widget.gatoInfo.key!;
+  late Map<Object?, Object?> gatoDesc = widget.gatoInfo.child("descricao").value as Map<Object?, Object?>;
 
   late final scP = MediaQuery.of(context).padding;
 
@@ -202,7 +203,13 @@ class _GatoInfoState extends State<GatoInfo> {
                       ),
                       const SizedBox(height: 15),
                       Text(
-                        "${widget.gatoInfo.child("descricao").value}".replaceAll("\\n", "\n"),
+                        AppLocalizations.of(context).wiki_info_desc(
+                          gatoDesc["cores"] as String,
+                          gatoDesc["peso"] as String,
+                          gatoDesc["tempoVida"] as String,
+                          gatoDesc["porte"] as String,
+                          gatoDesc["pais"] as String,
+                        ),
                         style: const TextStyle(fontSize: 20),
                         textAlign: TextAlign.center,
                       ),
