@@ -116,7 +116,7 @@ class _AppState extends State<App> {
                     location: BannerLocation.bottomEnd,
                     color: Theme.of(c).colorScheme.primary,
                     textStyle:
-                        TextStyle(color: Theme.of(c).colorScheme.onPrimary, fontSize: 10, fontWeight: FontWeight.bold),
+                        TextStyle(color: Theme.of(c).colorScheme.onPrimary, fontSize: 8, fontWeight: FontWeight.bold),
                     child: w,
                   );
                 },

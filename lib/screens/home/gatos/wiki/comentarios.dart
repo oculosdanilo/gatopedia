@@ -162,7 +162,7 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
                   for (final e in snapgatos.children) {
                     final ereversed = e.child("comentarios").children.toList().reversed;
                     for (final comentario in ereversed) {
-                      await comentario.ref.update({"timestamp": "1669152780"});
+                      await comentario.ref.update({"timestamp": 1669152780000});
                     }
                   }
                 },
@@ -179,31 +179,21 @@ class _ComentariosWikiState extends State<ComentariosWiki> {
                       final List<ComentarioData> comentarios = [];
                       for (DataSnapshot e in comentariosListaRaw) {
                         ComentarioData comentarioConvertido = ComentarioData(
+                          id: e.key!,
                           user: e.child("user").value as String,
                           content: e.child("content").value as String,
                           timestamp: e.child("timestamp").value as int,
                         );
                         comentarios.add(comentarioConvertido);
-                      } // TODO: continuar a fazer os comentarios daqui
+                      }
+
+                      comentarios.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
                       return Expanded(
-                        child: ListView.builder(
-                          itemCount: nComentarios,
-                          itemBuilder: (context, i) {
-                            return Text(i.toString());
-                            /*final index = nComentarios - i;
-                            final commentList = snapData.value as List<Object?>;
-                            final thisComment = commentList[index] as dynamic;
-                            return thisComment is Map<Object?, Object?>
-                                ? Comentario(
-                                    i,
-                                    thisComment["user"] as String,
-                                    thisComment["content"] as String,
-                                    _deletarC,
-                                    key: Key(uuid.v4()), // key pra cada comentario ter sua propria foto certinho
-                                  )
-                                : const SizedBox();*/
-                          },
+                        child: ListView(
+                          children: comentarios.map((comentario) {
+                            return Comentario(comentario.user, comentario.content, () {});
+                          }).toList(),
                         ),
                       );
                     } else {

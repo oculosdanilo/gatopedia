@@ -4,7 +4,6 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/animations/routes.dart';
-import 'package:gatopedia/components/comentario.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/screens/home/gatos/forum/forum.dart';
@@ -217,7 +216,7 @@ class _ComentariosForumState extends State<ComentariosForum> {
                         itemCount: postAtual.child("comentarios").children.length,
                         itemBuilder: (c, i) {
                           int index = postAtual.child("comentarios").children.length - i;
-                          return postAtual.child("comentarios/$index/username").value != null
+                          return /*postAtual.child("comentarios/$index/username").value != null
                               ? Comentario(
                                   index,
                                   postAtual.child("comentarios/$index/username").value as String,
@@ -227,9 +226,10 @@ class _ComentariosForumState extends State<ComentariosForum> {
                                     (postAtual.child("comentarios/$index/username").value as String) +
                                         (postAtual.child("comentarios/$index/content").value as String) +
                                         index.toString(),
-                                  ), /* key pra cada comentario ter sua propria foto certinho */
+                                  ), */ /* key pra cada comentario ter sua propria foto certinho */ /*
                                 )
-                              : const SizedBox();
+                              :*/
+                              const SizedBox();
                         },
                       ),
                     )

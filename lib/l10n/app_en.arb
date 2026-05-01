@@ -1,8 +1,8 @@
 {
   "gatopedia": "Cat-opedia!",
-  "internal": "INTERNAL",
-  "closed": "CLOSED",
-  "open": "OPEN",
+  "internal": "INTERNAL TEST",
+  "closed": "CLOSED TEST",
+  "open": "OPEN TEST",
   "cancel": "CANCEL",
   "cancel_camelcase": "Cancel",
   "edit": "EDIT",

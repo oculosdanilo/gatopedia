@@ -1,8 +1,8 @@
 {
   "gatopedia": "Gatopédia!",
-  "internal": "INTERNO",
-  "closed": "FECHADO",
-  "open": "ABERTO",
+  "internal": "TESTE INTERNO",
+  "closed": "TESTE FECHADO",
+  "open": "TESTE ABERTO",
   "cancel": "CANCELAR",
   "cancel_camelcase": "Cancelar",
   "edit": "EDITAR",

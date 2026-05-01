@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/animations/routes.dart';
@@ -7,30 +8,34 @@ import 'package:gatopedia/main.dart';
 import 'package:gatopedia/screens/home/public_profile.dart';
 
 class Comentario extends StatefulWidget {
-  final int index;
   final String usernamePost;
   final String contentPost;
-  final Function(int index) deletarC;
+  final void Function() deletarC;
 
-  const Comentario(this.index, this.usernamePost, this.contentPost, this.deletarC, {super.key});
+  const Comentario(this.usernamePost, this.contentPost, this.deletarC, {super.key});
 
   @override
   State<Comentario> createState() => _ComentarioState();
 }
 
 class _ComentarioState extends State<Comentario> {
-  Future<String?> _pegarFotoGoogle() async {
-    final ref = FirebaseDatabase.instance.ref("users/${widget.usernamePost}/img");
-    final link = await ref.get();
-    return link.value is String? ? link.value as String? : null;
-  }
-
-  late Future<String?> _fotoGoogle;
+  late Future<String> _imageUrlGet;
+  bool _pegouImageUrl = false;
 
   @override
   void initState() {
     super.initState();
-    _fotoGoogle = _pegarFotoGoogle();
+
+    if (!_pegouImageUrl) {
+      try {
+        _imageUrlGet = FirebaseStorage.instance.ref("users/${widget.usernamePost}.webp").getDownloadURL();
+      } on FirebaseException catch (e) {
+        "$e";
+        debugPrint("ops");
+        _imageUrlGet = Future<String>.delayed(Duration.zero, () => "");
+      }
+      _pegouImageUrl = true;
+    }
   }
 
   @override
@@ -49,41 +54,33 @@ class _ComentarioState extends State<Comentario> {
             ClipOval(
               child: GestureDetector(
                 onTap: () => Navigator.push(context, SlideRightAgainRoute(PublicProfile(widget.usernamePost))),
-                child: FadeInImage(
-                  image: NetworkImage(
-                      "https://firebasestorage.googleapis.com/v0/b/fluttergatopedia.appspot.com/o/users%2F${widget.usernamePost}.webp?alt=media"),
-                  placeholder: const AssetImage("assets/animations/loading.gif"),
-                  width: 40,
-                  fit: BoxFit.cover,
-                  fadeInDuration: const Duration(milliseconds: 125),
-                  fadeOutDuration: const Duration(milliseconds: 125),
-                  imageErrorBuilder: (c, obj, stacktrace) {
-                    return FutureBuilder(
-                      future: _fotoGoogle,
-                      builder: (context, snapshotFoto) {
-                        if (snapshotFoto.connectionState == ConnectionState.done) {
-                          if (snapshotFoto.hasData) {
-                            return Image.network(
-                              snapshotFoto.data!,
-                              width: 40,
-                              fit: BoxFit.cover,
-                            );
-                          } else {
-                            return Image.asset(
-                              "assets/user.webp",
-                              width: 40,
-                              fit: BoxFit.cover,
-                            );
-                          }
-                        } else {
-                          return Image.asset(
-                            "assets/animations/loading.gif",
-                            width: 40,
-                            fit: BoxFit.cover,
-                          );
-                        }
-                      },
-                    );
+                child: FutureBuilder(
+                  future: _imageUrlGet,
+                  builder: (context, snapshotFoto) {
+                    if (snapshotFoto.connectionState == ConnectionState.done) {
+                      if (snapshotFoto.hasData) {
+                        return CachedNetworkImage(
+                          imageUrl: snapshotFoto.data!,
+                          width: 40,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              Image.asset("assets/animations/loading.gif", width: 40, fit: BoxFit.cover),
+                          errorListener: (_) {},
+                        );
+                      } else {
+                        return Image.asset(
+                          "assets/user.webp",
+                          width: 40,
+                          fit: BoxFit.cover,
+                        );
+                      }
+                    } else {
+                      return Image.asset(
+                        "assets/animations/loading.gif",
+                        width: 40,
+                        fit: BoxFit.cover,
+                      );
+                    }
                   },
                 ),
               ),
@@ -142,7 +139,7 @@ class _ComentarioState extends State<Comentario> {
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  widget.deletarC(widget.index);
+                                  widget.deletarC();
                                   Navigator.pop(context);
                                   Flushbar(
                                     message: "Excluído com sucesso!",
@@ -176,9 +173,15 @@ class _ComentarioState extends State<Comentario> {
 }
 
 class ComentarioData {
-  String user = "erronulo";
-  String content = "erronulo";
-  int timestamp = 0;
+  final String id;
+  final String user;
+  final String content;
+  final int timestamp;
 
-  ComentarioData({required this.user, required this.content, required this.timestamp});
+  ComentarioData({required this.id, required this.user, required this.content, required this.timestamp});
+
+  @override
+  String toString() {
+    return "\nUsuário: @$user\nComentário: $content\nData: ${DateTime.fromMillisecondsSinceEpoch(timestamp).toString()}";
+  }
 }
