@@ -1,12 +1,12 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ionicons/flutter_ionicons.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:gatopedia/components/dan_icons.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/screens/home/config/config.dart';
 import 'package:gatopedia/screens/home/eu/profile.dart';
 import 'package:gatopedia/screens/home/gatos/gatos.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 int indexAntigo = 0;
@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
           destinations: <NavigationDestination>[
             NavigationDestination(
               icon: const Icon(DanIcons.pawOutline),
-              selectedIcon: Icon(IonIcons.paw, color: Theme.of(context).colorScheme.onPrimary, fill: 1),
+              selectedIcon: Icon(Ionicons.paw, color: Theme.of(context).colorScheme.onPrimary, fill: 1),
               label: AppLocalizations.of(context).gatos_title,
             ),
             NavigationDestination(

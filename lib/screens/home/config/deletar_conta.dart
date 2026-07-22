@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
+import 'package:ant_icons_plus/ant_icons_plus.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +13,6 @@ import 'package:gatopedia/screens/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/screens/index.dart';
 import 'package:gatopedia/screens/login_screen/login/autenticar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,7 +73,7 @@ class _DeletarContaState extends State<DeletarConta> {
                                 }
                               }
                             : () {},
-                        icon: Icon(!confirmado ? AntDesign.google_outline : Symbols.done_rounded),
+                        icon: Icon(!confirmado ? AntIcons.googleOutlined : Symbols.done_rounded),
                         label: Text(
                           !confirmado
                               ? AppLocalizations.of(context).delete_googleConfirm

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ionicons/flutter_ionicons.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/main.dart';
 import 'package:gatopedia/screens/home/config/deletar_conta.dart';
@@ -10,7 +11,6 @@ import 'package:gatopedia/screens/home/gatos/gatos.dart';
 import 'package:gatopedia/screens/home/gatos/wiki/wiki.dart';
 import 'package:gatopedia/screens/index.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -97,7 +97,7 @@ class _AppBarGatosState extends State<AppBarGatos> {
                     child: Material(
                       color: Colors.transparent,
                       child: IconButton(
-                        icon: Icon(IonIcons.paw,
+                        icon: Icon(Ionicons.paw,
                             color: username != null ? const Color(0xffff9922) : const Color(0xff757575)),
                         iconSize: 110,
                         onPressed: () async => await _play(),

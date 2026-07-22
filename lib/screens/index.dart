@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,6 @@ import 'package:gatopedia/screens/login_screen/login/cadastro.dart';
 import 'package:gatopedia/screens/login_screen/login/form.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grayscale/grayscale.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -249,7 +249,7 @@ class _IndexState extends State<Index> {
                           Text(AppLocalizations.of(context).index_loginWith, style: const TextStyle(fontSize: 20)),
                           const Expanded(child: SizedBox()),
                           OutlinedButton.icon(
-                            icon: const Icon(Bootstrap.google),
+                            icon: const Icon(BootstrapIcons.google),
                             onPressed: !_googleConectando ? () => _entrarGoogle(context) : null,
                             style: const ButtonStyle(minimumSize: WidgetStatePropertyAll(Size(50, 45))),
                             label: const Text("Google"),
@@ -437,7 +437,7 @@ class _SemContaState extends State<SemConta> {
                       child: AnimatedOpacity(
                         duration: full || pos != null ? const Duration(milliseconds: 400) : Duration.zero,
                         opacity: pos != null ? 1 : 0,
-                        child: const Icon(Bootstrap.incognito, size: 150, fill: 0, color: Colors.white),
+                        child: const Icon(BootstrapIcons.incognito, size: 150, fill: 0, color: Colors.white),
                       ),
                     ),
                   ),

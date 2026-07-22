@@ -1,25 +1,20 @@
 {
   "fill": {
-    "linear-gradient": [
-      "display-p3:0.00000,0.00000,0.50196,1.00000",
-      "display-p3:0.08622,0.08622,0.30015,1.00000"
-    ],
-    "orientation": {
-      "start": {
-        "x": 0.5,
-        "y": 0
-      },
-      "stop": {
-        "x": 0.5,
-        "y": 0.7
-      }
-    }
+    "solid": "display-p3:0.00000,0.00000,0.40203,1.00000"
   },
   "groups": [
     {
       "layers": [
         {
-          "glass": true,
+          "glass-specializations": [
+            {
+              "value": false
+            },
+            {
+              "appearance": "tinted",
+              "value": false
+            }
+          ],
           "image-name": "pata icon.svg",
           "name": "pata icon",
           "position": {
@@ -35,6 +30,7 @@
         "kind": "neutral",
         "opacity": 0.5
       },
+      "specular": true,
       "translucency": {
         "enabled": true,
         "value": 0.5

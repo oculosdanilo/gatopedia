@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:ant_icons_plus/ant_icons_plus.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +16,6 @@ import 'package:gatopedia/screens/home/gatos/forum/view/comentarios.dart';
 import 'package:gatopedia/screens/home/gatos/forum/view/imagem_view.dart';
 import 'package:gatopedia/screens/home/public_profile.dart';
 import 'package:gatopedia/screens/index.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class ForumPost extends StatefulWidget {
@@ -525,7 +525,7 @@ class _FooterPostState extends State<FooterPost> {
       child: TextButton.icon(
         onPressed: () async => action.call(),
         icon: Icon(
-          AntDesign.comment_outline,
+          AntIcons.commentOutlined,
           color: username != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
         ),
         label: Container(

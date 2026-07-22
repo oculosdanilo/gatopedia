@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:ant_icons_plus/ant_icons_plus.dart';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/animations/routes.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
@@ -7,7 +9,6 @@ import 'package:gatopedia/main.dart';
 import 'package:gatopedia/screens/home/config/deletar_conta.dart';
 import 'package:gatopedia/screens/home/home.dart';
 import 'package:gatopedia/screens/login_screen/colab.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -191,10 +192,7 @@ class _ConfigState extends State<Config> {
                   child: Text(
                     AppLocalizations.of(context).config_copyright(DateTime.now().year),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontFamily: "monospace",
-                    ),
+                    style: TextStyle(color: Theme.of(context).colorScheme.outline),
                   ),
                 ),
                 const SizedBox(height: kBottomNavigationBarHeight),
@@ -387,7 +385,7 @@ class _ConfigState extends State<Config> {
                       children: [
                         Transform.scale(
                           scale: 0.9,
-                          child: const Icon(Bootstrap.google_play),
+                          child: const Icon(BootstrapIcons.google_play),
                         ),
                         const Expanded(
                           child: Center(
@@ -408,7 +406,7 @@ class _ConfigState extends State<Config> {
           ),
           child: Row(
             children: [
-              const Icon(AntDesign.github_fill),
+              const Icon(AntIcons.githubFilled),
               Expanded(
                 child: Center(
                   child: Text(AppLocalizations.of(context).config_botoes_repo, style: const TextStyle(fontSize: 18)),
@@ -425,7 +423,7 @@ class _ConfigState extends State<Config> {
           ),
           child: Row(
             children: [
-              const Icon(AntDesign.github_fill),
+              const Icon(AntIcons.githubFilled),
               Expanded(
                 child: Center(
                   child:

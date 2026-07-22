@@ -32,7 +32,6 @@ dependencies:
   http: ^1.2.1
   flutter_blurhash: ^0.9.1
   google_sign_in: ^7.1.1
-  icons_plus: ^5.0.0
   file_picker: ^12.0.0-beta.7
   image_picker: ^1.1.2
   icons_launcher: ^3.0.0
@@ -46,7 +45,9 @@ dependencies:
   transparent_image: ^2.0.1
   flutter_native_splash: ^2.4.0
   path_provider: any
-
+  flutter_ionicons: ^8.0.13
+  ant_icons_plus: ^2.0.1
+  bootstrap_icons: ^1.13.1+1
 dev_dependencies:
   build_runner: ^2.12.2
   drift_dev: ^2.32.0

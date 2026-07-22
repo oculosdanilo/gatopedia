@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:ant_icons_plus/ant_icons_plus.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:gatopedia/main.dart';
 import 'package:gatopedia/screens/home/gatos/forum/view/imagem_view.dart';
 import 'package:gatopedia/screens/home/gatos/wiki/comentarios.dart';
 import 'package:gatopedia/screens/index.dart';
-import 'package:icons_plus/icons_plus.dart';
 
 class GatoInfo extends StatefulWidget {
   final DataSnapshot gatoInfo;
@@ -68,7 +68,7 @@ class _GatoInfoState extends State<GatoInfo> {
               ),
               onPressed: () async => action.call(),
               icon: Icon(
-                AntDesign.comment_outline,
+                AntIcons.commentOutlined,
                 color:
                     username != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
               ),

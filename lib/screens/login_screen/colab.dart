@@ -1,9 +1,9 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gatopedia/l10n/app_localizations.dart';
 import 'package:gatopedia/screens/home/config/config.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -180,7 +180,7 @@ class _ColaboradoresState extends State<Colaboradores> {
                         ),
                         OutlinedButton.icon(
                           onPressed: () => abrirUrl(_urlGithubDanilo),
-                          icon: const Icon(Bootstrap.github),
+                          icon: const Icon(BootstrapIcons.github),
                           label: const Text("GitHub"),
                         ),
                       ],
