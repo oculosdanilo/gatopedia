@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdk 36
+    compileSdk 37
     ndkVersion "28.2.13676358"
 
     compileOptions {
@@ -51,7 +51,7 @@ android {
     defaultConfig {
         applicationId "io.oculosdanilo.gatopedia"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 36
+        targetSdkVersion 37
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
@@ -82,14 +82,14 @@ flutter {
 }
 
 dependencies {
-    implementation "androidx.core:core-splashscreen:1.0.1"
-    implementation "androidx.core:core-ktx:1.13.1"
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.core:core-splashscreen:1.2.0'
+    implementation 'androidx.core:core-ktx:1.19.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation "androidx.core:core-animation:1.0.0"
     implementation "androidx.interpolator:interpolator:1.0.0"
 
-    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     // For loading and tinting drawables on older versions of the platform
-    implementation "androidx.appcompat:appcompat-resources:1.6.1"
-    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+    implementation 'androidx.appcompat:appcompat-resources:1.7.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 }
